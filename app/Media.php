@@ -8,9 +8,9 @@ class Media extends Model
 {
     //
     protected $fillable = [
-        'title', 'source', 'type', 'description',
+        'title', 'source', 'type', 'description', 'users_id',
     ];
     protected $hidden = [
-        'users_id',
+
     ];
 }

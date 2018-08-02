@@ -34,10 +34,10 @@ class MediaController extends Controller
       $file = $request->file('directMedia');
       $title = $request->input('title');
       //Display File Name
-      echo 'File Name: '.$file->getClientOriginalName();
+      echo 'File Name: '.$file->getClientOriginalName(). "   ".Auth::id();
       //Move Uploaded File
-      $path = $file->store('directMedia');
-      $media = Media::create(['title' => $title,'source' => $path, 'users_id' => Auth::user()->id]);
+      $path = $file->store('public/directMedia');
+      $media = Media::create(['title' => $title,'source' => $path, 'users_id' => Auth::id()]);
     //  $media->save();
       return view('directupload');
     }

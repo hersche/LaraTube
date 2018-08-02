@@ -17,9 +17,10 @@ class CreateMediasTable extends Migration
             $table->increments('id');
             $table->string('title')->unique();
             $table->text('source');
-            $table->text('description')->default('');
+            $table->text('description')->nullable();
             $table->integer('users_id')->references('id')->on('users');
-            $table->integer('category_id')->references('id')->on('categories');
+            $table->integer('category_id')->nullable()->references('id')->on('categories');
+            $table->integer('views')->default(0);
             $table->timestamps();
         });
     }
