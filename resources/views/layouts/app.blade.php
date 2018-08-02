@@ -20,7 +20,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body>
+<body class="container-fluid">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <div class="container">
@@ -48,15 +48,19 @@
                                 <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                             </li>
                         @else
-                        <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
-
-                            <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                  <a class="dropdown-item" href="{{ route('users.index') }}">{{ __('Settings') }}</a>
+                                  @can('role-list')
+                                    <a class="dropdown-item" href="{{ route('roles.index') }}">{{ __('Manage Role') }}</a>
+                                  @endcan
+                                  @can('user-admin')
+                                    <a class="dropdown-item" href="{{ route('users.index') }}">{{ __('Manage Users') }}</a>
+                                  @endcan
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

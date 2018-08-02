@@ -26,3 +26,6 @@ Route::group(['middleware' => ['auth']], function() {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/directUpload','MediaController@index');
+Route::get('/profileEdit','UserController@selfEdit');
+Route::post('/directUpload','MediaController@directUpload');
