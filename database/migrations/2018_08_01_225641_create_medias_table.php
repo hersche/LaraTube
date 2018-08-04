@@ -16,6 +16,7 @@ class CreateMediasTable extends Migration
         Schema::create('media', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->unique();
+            $table->string('type')->default('');
             $table->text('source');
             $table->text('description')->nullable();
             $table->integer('users_id')->references('id')->on('users');

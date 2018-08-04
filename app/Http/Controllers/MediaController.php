@@ -15,9 +15,11 @@ class MediaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('directupload');
+      $data = Media::orderBy('id','DESC')->paginate(5);
+      return view('medias.index',compact('data'))
+          ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     /**
@@ -36,10 +38,14 @@ class MediaController extends Controller
       //Display File Name
       echo 'File Name: '.$file->getClientOriginalName(). "   ".Auth::id();
       //Move Uploaded File
-      $path = $file->store('public/directMedia');
-      $media = Media::create(['title' => $title,'source' => $path, 'users_id' => Auth::id()]);
-    //  $media->save();
-      return view('directupload');
+      $extension = $file->getClientOriginalExtension();
+
+      if(($extension=="mp4")||($extension=="webm")){
+        $path = $file->store('public/directMedia');
+        $media = Media::create(['title' => $title,'source' => $path,'type' => 'localVideo', 'users_id' => Auth::id()]);
+        //  $media->save();
+        return view('directupload');
+      }
     }
     /**
      * Store a newly created resource in storage.
@@ -58,10 +64,12 @@ class MediaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
+     public function show($title)
+     {
+         //$media = Media::find($id);
+         $media = Media::where('title', '=' ,$title)->firstOrFail();
+         return view('medias.show',compact('media'));
+     }
 
     /**
      * Show the form for editing the specified resource.
