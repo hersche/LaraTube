@@ -22,6 +22,11 @@ class MediaController extends Controller
           ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+
+    public function directUploadView(Request $request)
+    {
+      return view('directupload');
+    }
     /**
      * Show the form for creating a new resource.
      *

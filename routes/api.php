@@ -17,3 +17,24 @@ Route::post('register', 'API\RegisterController@register');
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+use App\User;
+use App\Http\Resources\User as UserResource;
+
+Route::get('/user', function () {
+    return UserResource::collection(User::all());
+});
+
+Route::get('/user/{id}', function ($id) {
+    return new UserResource(User::find($id));
+});
+
+use App\Media;
+use App\Http\Resources\Media as MediaResource;
+
+Route::get('/media', function () {
+    return MediaResource::collection(Media::all());
+});
+
+Route::get('/media/{id}', function ($id) {
+    return new MediaResource(Media::find($id));
+});

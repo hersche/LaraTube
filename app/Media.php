@@ -13,4 +13,5 @@ class Media extends Model
     protected $hidden = [
 
     ];
+    protected $table = 'medias';
 }
