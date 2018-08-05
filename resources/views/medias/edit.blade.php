@@ -29,10 +29,15 @@
 
 <div class="row justify-content-center">
     <div class="col-md-8">
-{!! Form::open(array('route' => ['medias.create'],'files'=>'true'))  !!}
+{!! Form::open(array('route' => ['medias.edit',$media->title],'files'=>'true'))  !!}
 <div class="col-xs-12 col-sm-12 col-md-12">
 
 <h4>Direct upload</h4>
+<img src="{{ url($media->poster_source) }}" />
+<div class="form-group">
+    <label>Media-poster:</label>
+    {!! Form::file('poster')  !!}
+</div>
 <div class="form-group">
     <label>Media-title:</label>
     {!! Form::text('title', $media->title, array('placeholder' => 'Media-title','class' => 'form-control')) !!}
@@ -50,12 +55,12 @@
 
 <div class="form-group">
     <label>Media-type:</label>
-    {!! Form::select('type', ['localAudio' => 'Local audio', 'localVideo' => 'Local video', 'directVideo' => 'Direct video', 'directAudio' => 'Direct audio']) !!}
+    {!! Form::select($media->type, ['localAudio' => 'Local audio', 'localVideo' => 'Local video', 'directVideo' => 'Direct video', 'directAudio' => 'Direct audio', 'torrentAudio' => 'Torrent audio', 'torrentVideo' => 'Torrent video']) !!}
 </div>
 
 </div>
 @csrf
-{!! Form::submit('Add media')  !!}
+{!! Form::submit('Edit media')  !!}
 {!! Form::close()  !!}
     </div>
 </div>

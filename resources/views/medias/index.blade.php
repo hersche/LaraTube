@@ -22,7 +22,9 @@
  <tr>
    <th>No</th>
    <th>Title</th>
+   <th>Description</th>
    <th>Source</th>
+   <th>Type</th>
    <th>User</th>
    <th width="280px">Action</th>
  </tr>
@@ -32,12 +34,14 @@
   <tr>
     <td>{{ ++$i }}</td>
     <td>{{ $media->title }}</td>
+    <td>{{ $media->description }}</td>
     <td>{{ $media->source }}</td>
+    <td>{{ $media->type }}</td>
     <td>{{ $media->user()->name }}</td>
     <td>
-       <a class="btn btn-info" href="{{ route('media.show',$media->title) }}">Show</a>
-       <a class="btn btn-info" href="{{ route('medias.editView',$media->title) }}">Edit</a>
-       <a class="btn btn-danger" href="{{ route('medias.delete',$media->title) }}">Delete</a>
+      <a class="btn btn-info" href="{{ route('media.show',$media->title) }}"><ion-icon name="eye"></ion-icon></a>
+      <a class="btn btn-info" href="{{ route('medias.editView',$media->title) }}"><ion-icon name="create"></ion-icon></a>
+      <a class="btn btn-danger" href="{{ route('medias.delete',$media->title) }}"><ion-icon name="trash"></ion-icon></a>
     </td>
 
   </tr>

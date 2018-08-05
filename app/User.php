@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Media;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -35,6 +36,9 @@ class User extends Authenticatable
       return $this->belongsToMany('App\Tags');
     }
 
-
+    public function medias(){
+      $media = Media::where('users_id', '=' ,$this->id)->get();
+      return $media;
+    }
 
 }

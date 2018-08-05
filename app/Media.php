@@ -8,7 +8,7 @@ class Media extends Model
 {
     //
     protected $fillable = [
-        'title', 'source', 'type', 'description', 'users_id',
+        'title', 'source','poster_source', 'type', 'description', 'users_id',
     ];
     protected $hidden = [
 
@@ -17,5 +17,14 @@ class Media extends Model
 
     public function user() {
       return User::find($this->users_id);
+    }
+
+    public function simpleType(){
+      if(($this->type=="torrentAudio")||($this->type=="torrentVideo")) {
+        return "torrent";
+      } else if(($this->type=="directAudio")||($this->type=="localAudio")) {
+        return "audio";
+      }
+      return "video";
     }
 }

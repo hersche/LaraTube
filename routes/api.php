@@ -35,6 +35,10 @@ Route::get('/media', function () {
     return MediaResource::collection(Media::all());
 });
 
-Route::get('/media/{id}', function ($id) {
-    return new MediaResource(Media::find($id));
+Route::get('/media/not/{title}', function ($title) {
+    return MediaResource::collection(Media::where('title', '!=' ,$title)->get());
+});
+
+Route::get('/media/{title}', function ($title) {
+    return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
