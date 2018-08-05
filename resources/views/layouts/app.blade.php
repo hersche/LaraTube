@@ -9,9 +9,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.23/plyr.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.23/plyr.css" rel="stylesheet" type="text/css">
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -48,18 +49,22 @@
                                 <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                             </li>
                         @else
+                            <li class="nav-item"><a class="dropdown-item" href="{{ route('medias.add') }}">{{ __('Upload') }}</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                  <a class="dropdown-item" href="{{ route('users.index') }}">{{ __('Settings') }}</a>
+                                  <a class="dropdown-item" href="{{ route('users.selfedit') }}">{{ __('Settings') }}</a>
                                   @can('role-list')
                                     <a class="dropdown-item" href="{{ route('roles.index') }}">{{ __('Manage Role') }}</a>
                                   @endcan
                                   @can('user-admin')
                                     <a class="dropdown-item" href="{{ route('users.index') }}">{{ __('Manage Users') }}</a>
+                                  @endcan
+                                  @can('admin')
+                                    <a class="dropdown-item" href="{{ route('users.index') }}">{{ __('Site-configuration') }}</a>
                                   @endcan
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
@@ -82,5 +87,8 @@
             @yield('content')
         </main>
     </div>
-</body>
+  </body>
+  <footer>
+
+  </footer>
 </html>

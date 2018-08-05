@@ -17,6 +17,7 @@ class CreateMediasTable extends Migration
             $table->increments('id');
             $table->string('title')->unique();
             $table->string('type')->default('');
+            $table->string('poster_source')->default('');
             $table->text('source');
             $table->text('description')->nullable();
             $table->integer('users_id')->references('id')->on('users');

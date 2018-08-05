@@ -7,7 +7,7 @@
             <h2>Medias Management</h2>
         </div>
         <div class="pull-right">
-            <a class="btn btn-success" href="{{ route('users.create') }}"> Create New Media</a>
+            <a class="btn btn-success" href="{{ route('medias.add') }}"> Create New Media</a>
         </div>
     </div>
 </div>
@@ -21,9 +21,9 @@
 <table class="table table-bordered table-fluid">
  <tr>
    <th>No</th>
-   <th>Name</th>
-   <th>Email</th>
-   <th>Roles</th>
+   <th>Title</th>
+   <th>Source</th>
+   <th>User</th>
    <th width="280px">Action</th>
  </tr>
 
@@ -33,9 +33,11 @@
     <td>{{ ++$i }}</td>
     <td>{{ $media->title }}</td>
     <td>{{ $media->source }}</td>
-    <td>{{ $media->users_id }}</td>
+    <td>{{ $media->user()->name }}</td>
     <td>
        <a class="btn btn-info" href="{{ route('media.show',$media->title) }}">Show</a>
+       <a class="btn btn-info" href="{{ route('medias.editView',$media->title) }}">Edit</a>
+       <a class="btn btn-danger" href="{{ route('medias.delete',$media->title) }}">Delete</a>
     </td>
 
   </tr>

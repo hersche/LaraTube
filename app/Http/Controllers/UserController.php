@@ -9,7 +9,7 @@ use App\User;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
-
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 
@@ -105,7 +105,42 @@ class UserController extends Controller
       return view('users.selfedit',compact('user'));
     }
 
+    public function updateAvatar(Request $request)
+    {
+      $user = User::find(Auth::id());
+      if(!empty($user->avatar_source)){
+        Storage::delete($user->avatar_source);
+      }
+      $file = $request->file('avatar_source');
+      $extension = $file->getClientOriginalExtension();
+      if(($extension=="jpg")||($extension=="jpeg")||($extension=="png")||($extension=="gif")){
+        $user->avatar_source = $file->store('public/u/avatars');
+        $user->save();
+        return redirect()->route('users.selfedit')
+                        ->with('success','Avatar uploaded with success');
+      }
+      return redirect()->route('users.selfedit')
+                      ->with('error','No avatar updated');
+    }
 
+    
+    public function updateBackground(Request $request)
+    {
+      $user = User::find(Auth::id());
+      if(!empty($user->background_source)){
+        Storage::delete($user->background_source);
+      }
+      $file = $request->file('background_source');
+      $extension = $file->getClientOriginalExtension();
+      if(($extension=="jpg")||($extension=="jpeg")||($extension=="png")||($extension=="gif")){
+        $user->background_source = $file->store('public/u/backgrounds');
+        $user->save();
+        return redirect()->route('users.selfedit')
+                        ->with('success','Background uploaded with success');
+      }
+      return redirect()->route('users.selfedit')
+                      ->with('error','No background updated');
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -113,7 +148,6 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
     public function update(Request $request, $id)
     {
         $this->validate($request, [
@@ -122,21 +156,16 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'roles' => 'required'
         ]);
-
         $input = $request->all();
         if(!empty($input['password'])){
             $input['password'] = Hash::make($input['password']);
         }else{
             $input = array_except($input,array('password'));
         }
-
-
         $user = User::find($id);
         $user->update($input);
         DB::table('model_has_roles')->where('model_id',$id)->delete();
-
         $user->assignRole($request->input('roles'));
-
         return redirect()->route('users.index')
                         ->with('success','User updated successfully');
     }
@@ -148,7 +177,6 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
     public function destroy($id)
     {
         User::find($id)->delete();

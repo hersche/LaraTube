@@ -6,6 +6,7 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 
 class MediaController extends Controller
@@ -23,34 +24,47 @@ class MediaController extends Controller
     }
 
 
-    public function directUploadView(Request $request)
+
+
+    public function addMedia(Request $request)
     {
-      return view('directupload');
+      return view('addmedia');
     }
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+        $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'), 'description' => $request->input('description'), 'type' => $request->input('type'), 'users_id' => Auth::id()]);
+        return redirect()->route('medias.add')
+                        ->with('success','Video created successfully');
     }
 
     public function directUpload(Request $request){
       $file = $request->file('directMedia');
       $title = $request->input('title');
-      //Display File Name
-      echo 'File Name: '.$file->getClientOriginalName(). "   ".Auth::id();
       //Move Uploaded File
       $extension = $file->getClientOriginalExtension();
 
       if(($extension=="mp4")||($extension=="webm")){
         $path = $file->store('public/directMedia');
-        $media = Media::create(['title' => $title,'source' => $path,'type' => 'localVideo', 'users_id' => Auth::id()]);
-        //  $media->save();
-        return view('directupload');
+        $media = Media::create(['title' => $title,'source' => $path,'type' => 'localVideo', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        return redirect()->route('medias.add')
+                        ->with('success','Video created successfully');
       }
+      else if(($extension=="mp3")||($extension=="ogg")){
+        $path = $file->store('public/directMedia');
+        $media = Media::create(['title' => $title,'source' => $path,'type' => 'localAudio', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        return redirect()->route('medias.add')
+                        ->with('success','Audio created successfully');
+      } else {
+        return redirect()->route('medias.add')
+                        ->with('error','Media-format is wrong');
+      }
+      return view('addmedia');
     }
     /**
      * Store a newly created resource in storage.
@@ -82,11 +96,24 @@ class MediaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($title)
     {
         //
-    }
+        $media = Media::where('title', '=' ,$title)->firstOrFail();
+        $media->title = $request->input('title');
+        $media->source = $request->input('source');
+        $media->description = $request->input('description');
+        $media->type = $request->input('type');
 
+        $media->save();
+        return view('medias.edit',compact('media'));
+    }
+    public function editView($title)
+    {
+        //$media = Media::find($id);
+        $media = Media::where('title', '=' ,$title)->firstOrFail();
+        return view('medias.edit',compact('media'));
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -105,8 +132,20 @@ class MediaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($title)
     {
         //
+        $media = Media::where('title', '=' ,$title)->firstOrFail();
+        $extension = pathinfo($media->source);
+        if(!empty($extension['extension'])){
+          $extension = $extension['extension'];
+          if(($extension=="mp4")||($extension=="webm")||($extension=="mp3")||($extension=="ogg")){
+            Storage::delete($media->source);
+          }
+        }
+        Storage::delete($media->poster_source);
+        $media->delete();
+        return redirect()->route('media')
+                        ->with('success','Media deleted successfully');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace App;
-
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
@@ -14,4 +14,8 @@ class Media extends Model
 
     ];
     protected $table = 'medias';
+
+    public function user() {
+      return User::find($this->users_id);
+    }
 }

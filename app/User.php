@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'id','name', 'email', 'password', 'avatar_source', 'background_source'
     ];
 
     /**
@@ -31,8 +31,10 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function tags()
-{
-    return $this->belongsToMany('App\Tags');
-}
+    public function tags() {
+      return $this->belongsToMany('App\Tags');
+    }
+
+
+
 }

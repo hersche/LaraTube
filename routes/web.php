@@ -25,8 +25,15 @@ Route::group(['middleware' => ['auth']], function() {
 
 Auth::routes();
 
+Route::post('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
+Route::post('/user/updateBackground','UserController@updateBackground')->name('users.updateBackground');
+
+Route::get('/media/add','MediaController@addMedia')->name('medias.add');
+Route::post('/media/create','MediaController@create')->name('medias.create');
+Route::get('/media/edit/{title}','MediaController@editView')->name('medias.editView');
+Route::get('/media/delete/{title}','MediaController@destroy')->name('medias.delete');
 Route::get('/media/{title}', 'MediaController@show')->name('media.show');
-Route::get('/directUpload','MediaController@directUploadView')->name('media.directupload');
-Route::get('/profileEdit','UserController@selfEdit');
-Route::post('/directUpload','MediaController@directUpload');
-Route::get('/media','MediaController@index');
+
+Route::get('/profileEdit','UserController@selfEdit')->name('users.selfedit');
+Route::post('/directUpload','MediaController@directUpload')->name('medias.directuploadAjax');
+Route::get('/media','MediaController@index')->name('media');
