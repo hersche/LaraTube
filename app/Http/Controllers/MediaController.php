@@ -41,7 +41,7 @@ class MediaController extends Controller
         $posterFile = $request->file('poster');
         $posterPath = '';
         if(!empty($posterFile)){
-          $posterPath = $posterFile>store('public/media/posters');
+          $posterPath = $posterFile->store('public/media/posters');
         }
         $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'),'poster_source' => $posterFile, 'description' => $request->input('description'), 'type' => $request->input('type'), 'users_id' => Auth::id()]);
         return redirect()->route('medias.add')
@@ -60,7 +60,7 @@ class MediaController extends Controller
         $posterFile = $request->file('poster');
         $posterPath = '';
         if(!empty($posterFile)){
-          $posterPath = $posterFile>store('public/media/posters');
+          $posterPath = $posterFile->store('public/media/posters');
         }
         $media = Media::create(['title' => $title,'source' => $path,'poster_source' => $posterPath,'type' => 'localVideo', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
         return redirect()->route('medias.add')

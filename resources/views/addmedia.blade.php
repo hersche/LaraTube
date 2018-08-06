@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+
+@if ($message = Session::get('success'))
+<div class="alert alert-success">
+  <p>{{ $message }}</p>
+</div>
+@endif
+
 <div class="container">
   <nav class="nav">
     <a class="nav-link active" href="#add" data-toggle="tab">Add media</a>
