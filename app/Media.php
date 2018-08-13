@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
+    use \Conner\Tagging\Taggable;
     //
     protected $fillable = [
         'title', 'source','poster_source', 'type', 'description', 'users_id',
@@ -26,5 +27,13 @@ class Media extends Model
         return "audio";
       }
       return "video";
+    }
+    public function tagString(){
+      $string = "";
+      foreach($this->tags as $tag) {
+        $string .= $tag->name." ";
+        #	echo $tag->name . ' with url slug of ' . $tag->slug;
+      }
+      return $string;
     }
 }

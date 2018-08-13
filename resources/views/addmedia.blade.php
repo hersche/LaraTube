@@ -14,7 +14,7 @@
     <a class="nav-link" href="#upload" data-toggle="tab">Direct upload</a>
   </nav>
   <div class="tab-content clearfix">
-  			  <div class="tab-pane active" id="add">
+  			  <div class="tab-pane active bg-light" id="add">
   <div class="row justify-content-center">
       <div class="col-md-8">
 {!! Form::open(array('route' => ['medias.create'],'files'=>'true'))  !!}
@@ -40,7 +40,12 @@
       <label>Media-source:</label>
       {!! Form::text('source', null, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
   </div>
-
+  <div class="col-xs-12 col-sm-12 col-md-12">
+      <div class="form-group">
+          <strong>Tags (separate with spaces):</strong>
+          <input id="tags" type="text" class="form-control" name="tags" value="" >
+      </div>
+  </div>
   <div class="form-group">
       <label>Media-type:</label>
       {!! Form::select('type', ['localAudio' => 'Local audio', 'localVideo' => 'Local video', 'directVideo' => 'Direct video', 'directAudio' => 'Direct audio', 'torrentAudio' => 'Torrent audio', 'torrentVideo' => 'Torrent video']) !!}
@@ -52,11 +57,11 @@
 {!! Form::close()  !!}
       </div>
   </div>
-</div>  			  <div class="tab-pane" id="upload">
-    <div class="row justify-content-center">
+</div>  			  <div class="tab-pane " id="upload">
+    <div class="row justify-content-center bg-secondary">
         <div class="col-md-8">
 {!! Form::open(array('route' => ['medias.directuploadAjax'],'files'=>'true'))  !!}
-<div class="col-xs-12 col-sm-12 col-md-12">
+<div class="col-xs-12 col-sm-12 col-md-12 ">
 
 <h4>Direct upload</h4>
 
@@ -75,6 +80,12 @@
         {!! Form::textarea('description', null, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
     </div>
 
+</div>
+<div class="col-xs-12 col-sm-12 col-md-12">
+    <div class="form-group">
+        <strong>Tags (separate with spaces):</strong>
+        <input id="tags" type="text" class="form-control" name="tags" value="" >
+    </div>
 </div>
 <p>Upload your mp4, webm, mp3 or ogg-files here.</p>
 {!! Form::file('directMedia')  !!}

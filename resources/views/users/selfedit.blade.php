@@ -1,6 +1,32 @@
 @extends('layouts.app')
 
 
+@section('header')
+<!--
+  <script src="{{ asset("js/cropper/dist/cropper.js") }}"></script>
+  <script src="{{ asset("js/croppie/dist/jquery-cropper.js") }}"></script>
+  <link href="{{ asset("js/cropper/dist/cropper.css") }}" rel="stylesheet" type="text/css">
+  <script>
+
+  $( document ).ready(function() {
+    var $image = $('#avsrc');
+
+    $image.cropper({
+      aspectRatio: 16 / 9,
+      crop: function(event) {
+        console.log(event.detail.x);
+        console.log(event.detail.y);
+        console.log(event.detail.width);
+        console.log(event.detail.height);
+        console.log(event.detail.rotate);
+        console.log(event.detail.scaleX);
+        console.log(event.detail.scaleY);
+      }
+    });
+}); -->
+  </script>
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -26,13 +52,18 @@
   </div>
 @endif
 
-<img src="{{ $user->avatar_source }}" />
+<div id="page">
+<img id="avsrc" src="{{ url($user->avatar_source) }}" />
+</div>
+
 {!! Form::open(array('method' => 'POST', 'route' => ['users.updateAvatar'],'files'=>'true'))  !!}
 {!! Form::file('avatar_source')  !!}
 {!! Form::submit('Upload avatar')  !!}
 {!! Form::close()  !!}
 
-<img src="{{ $user->background_source }}" />
+
+
+<img src="{{ url($user->background_source) }}" />
 {!! Form::open(array('method' => 'POST', 'route' => ['users.updateBackground'],'files'=>'true'))  !!}
 {!! Form::file('background_source')  !!}
 {!! Form::submit('Upload background')  !!}
@@ -50,6 +81,12 @@
         <div class="form-group">
             <strong>Email:</strong>
             {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control')) !!}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Tags (separate with spaces):</strong>
+            <input id="tags" type="text" class="form-control" name="tags" value="{{ $user->tagString() }}" >
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">

@@ -65,6 +65,7 @@ class UserController extends Controller
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
+        $user->retag(explode(' ', $request->input('tags')));
         return redirect()->route('users.index')
                         ->with('success','User created successfully');
     }
@@ -123,7 +124,7 @@ class UserController extends Controller
                       ->with('error','No avatar updated');
     }
 
-    
+
     public function updateBackground(Request $request)
     {
       $user = User::find(Auth::id());
@@ -154,7 +155,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
-            'roles' => 'required'
+            //'roles' => 'required'
         ]);
         $input = $request->all();
         if(!empty($input['password'])){
@@ -164,8 +165,11 @@ class UserController extends Controller
         }
         $user = User::find($id);
         $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-        $user->assignRole($request->input('roles'));
+        if(!empty($request->input('roles'))){
+          DB::table('model_has_roles')->where('model_id',$id)->delete();
+          $user->assignRole($request->input('roles'));
+        }
+        $user->retag(explode(' ', $request->input('tags')));
         return redirect()->route('users.index')
                         ->with('success','User updated successfully');
     }

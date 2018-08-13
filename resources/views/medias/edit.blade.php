@@ -32,7 +32,7 @@
 {!! Form::open(array('route' => ['medias.edit',$media->title],'files'=>'true'))  !!}
 <div class="col-xs-12 col-sm-12 col-md-12">
 
-<h4>Direct upload</h4>
+<h4>{{ __("Edit media") }}</h4>
 <img src="{{ url($media->poster_source) }}" />
 <div class="form-group">
     <label>Media-poster:</label>
@@ -53,11 +53,14 @@
     {!! Form::text('source', $media->source, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
 </div>
 
-<div class="form-group">
+    <div class="form-group">
     <label>Media-type:</label>
-    {!! Form::select($media->type, ['localAudio' => 'Local audio', 'localVideo' => 'Local video', 'directVideo' => 'Direct video', 'directAudio' => 'Direct audio', 'torrentAudio' => 'Torrent audio', 'torrentVideo' => 'Torrent video']) !!}
+    {!! Form::select('type', ['localAudio' => 'Local audio', 'localVideo' => 'Local video', 'directVideo' => 'Direct video', 'directAudio' => 'Direct audio', 'torrentAudio' => 'Torrent audio', 'torrentVideo' => 'Torrent video'], $media->pluck('type')) !!}
 </div>
-
+    <div class="form-group">
+        <strong>Tags (separate with spaces):</strong>
+        <input id="tags" type="text" class="form-control" name="tags" value="{{ $media->tagString() }}" >
+    </div>
 </div>
 @csrf
 {!! Form::submit('Edit media')  !!}
