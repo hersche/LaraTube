@@ -4,8 +4,12 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Laravel</title>
+        <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="{{ asset('js/jquery.min.js') }}"></script>
+        <title>LaraTube</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -65,6 +69,23 @@
         </style>
     </head>
     <body>
+      <script>
+      // {{ url("/api/media") }}
+$( document ).ready(function() {
+  //function loadMedias(){
+    $.getJSON( "{{ url("/api/media") }}", function( data ) {
+      var items = "";
+      $.each( data, function( key, val ) {
+        val = val[0];
+        console.log("round "+val.title);
+        items += "<p><a href='{{ url("/media/") }}/" + val.title + "'><img src='" + val.poster_source + "' />" + val.title + "</a></p>";
+      });
+      $("#content").html(items);
+  });
+  //}
+
+});
+      </script>
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
@@ -77,18 +98,8 @@
                 </div>
             @endif
 
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+            <div class="content" id="content">
+                <p>Loading</p>
             </div>
         </div>
     </body>

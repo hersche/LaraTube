@@ -2,29 +2,11 @@
 
 
 @section('header')
-<!--
+  <link href="{{ asset("js/cropper/dist/cropper.css") }}" rel="stylesheet" type="text/css">
   <script src="{{ asset("js/cropper/dist/cropper.js") }}"></script>
   <script src="{{ asset("js/croppie/dist/jquery-cropper.js") }}"></script>
-  <link href="{{ asset("js/cropper/dist/cropper.css") }}" rel="stylesheet" type="text/css">
-  <script>
 
-  $( document ).ready(function() {
-    var $image = $('#avsrc');
 
-    $image.cropper({
-      aspectRatio: 16 / 9,
-      crop: function(event) {
-        console.log(event.detail.x);
-        console.log(event.detail.y);
-        console.log(event.detail.width);
-        console.log(event.detail.height);
-        console.log(event.detail.rotate);
-        console.log(event.detail.scaleX);
-        console.log(event.detail.scaleY);
-      }
-    });
-}); -->
-  </script>
 @endsection
 
 @section('content')
@@ -54,6 +36,64 @@
 
 <div id="page">
 <img id="avsrc" src="{{ url($user->avatar_source) }}" />
+<script>
+var minHeight = 20;
+var minWidth = 20;
+//$( document ).ready(function() {
+  var image = $('#avsrc');
+
+  image.cropper({
+
+      aspectRatio:1,
+      rotatable:false,
+      //using these just to stop box collapsing on itself
+      minCropBoxWidth:minWidth,
+      minCropBoxHeight:minHeight,
+       viewMode: 1,
+         dragMode: 'move',
+
+      crop: function(data){
+
+        var json = [
+          '{"x":' + data.x,
+          '"y":' + data.y,
+          '"height":' + data.height,
+          '"width":' + data.width + '}'
+        ].join();
+        $('#image-data').val(json);
+
+      },
+      zoom: function (e) {
+
+        //prevent zooming in past natural resolution
+        if (e.ratio > 1) {
+          e.preventDefault();
+          $(this).cropper('zoomTo', 1);
+        }
+
+        // This data is based on actual image size
+        var data = $(this).cropper('getData');
+
+        // Zoom out
+        if (e.ratio < e.oldRatio) {
+				//always allow zoom out, it will never cause image to be too small
+        }
+
+        // Zoom In
+        if (e.ratio > e.oldRatio) {
+
+          // Prevent zoom out again
+          if (data.width < minHeight || data.height < minHeight) {
+            e.preventDefault();
+          }
+        }
+
+      }
+
+    });
+  var cropper = image.data('cropper');
+//});
+</script>
 </div>
 
 {!! Form::open(array('method' => 'POST', 'route' => ['users.updateAvatar'],'files'=>'true'))  !!}

@@ -40,7 +40,9 @@ class User extends Authenticatable
     public function tagString(){
       $string = "";
       foreach($this->tags as $tag) {
+        if(!empty($tag)){
         $string .= $tag->name." ";
+      }
         #	echo $tag->name . ' with url slug of ' . $tag->slug;
       }
       return $string;

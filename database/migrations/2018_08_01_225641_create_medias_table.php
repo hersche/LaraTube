@@ -19,9 +19,11 @@ class CreateMediasTable extends Migration
             $table->string('type')->default('');
             $table->string('poster_source')->default('');
             $table->text('source');
+            $table->text('duration')->default('0');
             $table->text('description')->nullable();
             $table->integer('users_id')->references('id')->on('users');
             $table->integer('category_id')->nullable()->references('id')->on('categories');
+            $table->integer('next_id')->nullable()->references('id')->on('medias')->default(0);
             $table->integer('views')->default(0);
             $table->timestamps();
         });
