@@ -22,7 +22,7 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
         <h2>{{ $media->title }}</h2>
           @if ($media->type=="localVideo" || $media->type=="directVideo"|| $media->type=="torrentVideo")
-            <video id="player" poster="{{ url($media->poster_source) }}" playsinline controls>
+            <video class="col-12" id="player" poster="{{ url($media->poster_source) }}" playsinline controls>
               @if ($media->type=="localVideo" || $media->type=="directVideo")
                 <source src="{{ url($media->source) }}" type="video/mp4">
               @endif
@@ -93,4 +93,30 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
     </div>
 </div>
+@auth
+{!! Form::open(['method' => 'PUT','route' => ['comments.add']]) !!}
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Name:</strong>
+            {!! Form::hidden('medias_id', $media->id) !!}
+            {!! Form::hidden('medias_title', $media->title) !!}
+            {!! Form::text('body', null, array('placeholder' => 'Comment...','class' => 'form-control')) !!}
+        </div>
+    </div>
+    {!! Form::submit('Send comment!') !!}
+</div>
+
+{!! Form::close() !!}
+@endauth
+
+@foreach($media->comments() as $comment)
+<div>
+<p>Name: {{ $comment->user()->name }}</p>
+<p>Date: {{ $comment->created_at }}</p>
+<p>Comment: {{ $comment->body }}</p>
+</div>
+
+
+@endforeach
 @endsection

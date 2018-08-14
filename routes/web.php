@@ -38,3 +38,5 @@ Route::get('/media/{title}', 'MediaController@show')->name('media.show');
 Route::get('/profileEdit','UserController@selfEdit')->name('users.selfedit');
 Route::post('/directUpload','MediaController@directUpload')->name('medias.directuploadAjax');
 Route::get('/media','MediaController@index')->name('media');
+
+Route::put('/comment/add','CommentController@create')->name('comments.add');

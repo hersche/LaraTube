@@ -78,7 +78,7 @@ $( document ).ready(function() {
       $.each( data, function( key, val ) {
         val = val[0];
         console.log("round "+val.title);
-        items += "<p><a href='{{ url("/media/") }}/" + val.title + "'><img src='" + val.poster_source + "' />" + val.title + "</a></p>";
+        items += "<div class=''><a href='{{ url("/media/") }}/" + val.title + "'><img src='" + val.poster_source + "' /><p class=''>" + val.title + "</p></a></div>";
       });
       $("#content").html(items);
   });
