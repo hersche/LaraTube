@@ -45,6 +45,7 @@ class MediaController extends Controller
           $posterPath = $posterFile->store('public/media/posters');
         }
         $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'),'poster_source' => $posterFile, 'description' => $request->input('description'), 'type' => $request->input('type'), 'users_id' => Auth::id()]);
+        $media->retag(explode(' ', $request->input('tags')));
         return redirect()->route('medias.add')
                         ->with('success','Video created successfully');
     }
@@ -64,6 +65,7 @@ class MediaController extends Controller
           $posterPath = $posterFile->store('public/media/posters');
         }
         $media = Media::create(['title' => $title,'source' => $path,'poster_source' => $posterPath,'type' => 'localVideo', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        $media->retag(explode(' ', $request->input('tags')));
         return redirect()->route('medias.add')
                         ->with('success','Video created successfully');
       }
@@ -71,6 +73,7 @@ class MediaController extends Controller
         $path = $file->store('public/directMedia');
         $posterPath = $posterFile->store('public/media/posters');
         $media = Media::create(['title' => $title,'source' => $path,'poster_source' => $posterPath,'type' => 'localAudio', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        $media->retag(explode(' ', $request->input('tags')));
         return redirect()->route('medias.add')
                         ->with('success','Audio created successfully');
       } else {
@@ -116,6 +119,7 @@ class MediaController extends Controller
         $media->title = $request->input('title');
         $media->source = $request->input('source');
         $media->description = $request->input('description');
+        $media->retag(explode(' ', $request->input('tags')));
         if(!empty($request->input('type'))){
           $media->type = $request->input('type');
         }
