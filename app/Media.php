@@ -22,7 +22,7 @@ class Media extends Model
     }
 
     public function comments() {
-      $media = Comment::where('medias_id', '=' ,$this->id)->get();
+      $media = Comment::where('medias_id', '=' ,$this->id)->get()->sortByDesc('created_at');;
       return $media;
     }
 

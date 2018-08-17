@@ -98,26 +98,35 @@
 {!! Form::open(['method' => 'PUT','route' => ['comments.add']]) !!}
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
+        <div class="form-group" id="commentForm">
             <strong>Name:</strong>
-            {!! Form::hidden('medias_id', $media->id) !!}
-            {!! Form::hidden('medias_title', $media->title) !!}
-            {!! Form::text('body', null, array('placeholder' => 'Comment...','class' => 'form-control')) !!}
+            {!! Form::hidden('medias_id', $media->id,array('id' => 'medias_id')) !!}
+            {!! Form::hidden('medias_title', $media->title,array('id' => 'medias_title')) !!}
+            {!! Form::text('body', null, array('placeholder' => 'Comment...','class' => 'form-control','id' => 'medias_body')) !!}
         </div>
+        <script>
+        function sendComment(){
+        $.ajax({
+          url: '{{ url("/comment/add") }}',
+          type: 'PUT',
+          data: "medias_title="+$('#medias_title').val()+"&medias_id="+$('#medias_id').val()+"&body="+$('#medias_body').val(),
+          success: function(data) {
+            var commentHtml = "<table class='table table-fluid'><tbody><tr><td class='col-6'>{{ Auth::user()->name }}</td><td class='col-6 float-right'>Created now!</td></tr><tr><td class='col-8'>"+$('#medias_body').val()+"</td></tbody></table>";
+            $("#comments").html(commentHtml + $("#comments").html());
+          }
+        });
+      }
+        </script>
     </div>
-    {!! Form::submit('Send comment!') !!}
+    <input type="button" value="Send comment!" onclick="sendComment();" />
 </div>
 
 {!! Form::close() !!}
 @endauth
 
+<div id="comments" class="container-fluid">
 @foreach($media->comments() as $comment)
-<div>
-<p>Name: {{ $comment->user()->name }}</p>
-<p>Date: {{ $comment->created_at }}</p>
-<p>Comment: {{ $comment->body }}</p>
-</div>
-
-
+  <table class='table table-fluid table-dark mb-2'><tbody><tr><td class='col-6'>{{ $comment->user()->name }}</td><td class='col-6 float-right'>{{ $comment->created_at }}</td></tr><tr><td class='col-8'>{{ $comment->body }}</td></tbody></table>
 @endforeach
+</div>
 @endsection

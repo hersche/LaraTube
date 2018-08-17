@@ -13,8 +13,9 @@
     <a class="nav-link active" href="#add" data-toggle="tab">Add media</a>
     <a class="nav-link" href="#upload" data-toggle="tab">Direct upload</a>
   </nav>
+  <hr />
   <div class="tab-content clearfix">
-  			  <div class="tab-pane active bg-light" id="add">
+  			  <div class="tab-pane active containert" id="add">
   <div class="row justify-content-center">
       <div class="col-md-8">
 {!! Form::open(array('route' => ['medias.create'],'files'=>'true'))  !!}
@@ -57,7 +58,7 @@
 {!! Form::close()  !!}
       </div>
   </div>
-</div>  			  <div class="tab-pane " id="upload">
+</div>  			  <div class="tab-pane container fade" id="upload">
     <div class="row justify-content-center bg-secondary">
         <div class="col-md-8">
 {!! Form::open(array('route' => ['medias.directuploadAjax'],'files'=>'true'))  !!}

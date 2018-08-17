@@ -69,6 +69,7 @@
         </style>
     </head>
     <body>
+
       <script>
       // {{ url("/api/media") }}
 $( document ).ready(function() {
@@ -77,7 +78,6 @@ $( document ).ready(function() {
       var items = "";
       $.each( data, function( key, val ) {
         val = val[0];
-        console.log("round "+val.title);
         items += "<div class=''><a href='{{ url("/media/") }}/" + val.title + "'><img src='" + val.poster_source + "' /><p class=''>" + val.title + "</p></a></div>";
       });
       $("#content").html(items);
@@ -87,6 +87,7 @@ $( document ).ready(function() {
 });
       </script>
         <div class="flex-center position-ref full-height">
+
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
@@ -97,9 +98,10 @@ $( document ).ready(function() {
                     @endauth
                 </div>
             @endif
-
+          <h1>Welcome to {{ config('app.name', 'Laratube') }}</h1> <br />
             <div class="content" id="content">
-                <p>Loading</p>
+
+                <p>{{ __("Loading") }}</p>
             </div>
         </div>
     </body>
