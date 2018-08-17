@@ -77,6 +77,7 @@ $( document ).ready(function() {
     $.getJSON( "{{ url("/api/media") }}", function( data ) {
       var items = "";
       $.each( data, function( key, val ) {
+        console.log("mkentry...");
         val = val[0];
         items += "<div class=''><a href='{{ url("/media/") }}/" + val.title + "'><img src='" + val.poster_source + "' /><p class=''>" + val.title + "</p></a></div>";
       });

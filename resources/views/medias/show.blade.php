@@ -9,18 +9,18 @@
 
 <div class="row">
     <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2> Show Media</h2>
+        <div class="float-left">
+            <h2> {{ $media->title }}</h2>
         </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('media') }}"> Back</a>
+        <div class="float-right">
+            <a class="btn btn-primary float-right" href="{{ url('/') }}"> Back</a>
         </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
-        <h2>{{ $media->title }}</h2>
+        <p>{{ $media->description }}</p>
         <p>Tags: {{ $media->tagString() }}</p>
           @if ($media->type=="localVideo" || $media->type=="directVideo"|| $media->type=="torrentVideo")
             <video class="col-12" id="player" poster="{{ url($media->poster_source) }}" playsinline controls>
