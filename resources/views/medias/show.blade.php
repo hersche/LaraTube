@@ -3,6 +3,9 @@
 @section('header')
   <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.23/plyr.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.23/plyr.css" rel="stylesheet" type="text/css">
+  @if ($media->simpleType()=="torrent")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webtorrent/0.102.0/webtorrent.min.js" ></script>
+  @endif
 @endsection
 
 @section('content')
@@ -38,7 +41,6 @@
             </audio>
           @endif
           @if ($media->simpleType()=="torrent")
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/webtorrent/0.102.0/webtorrent.min.js" ></script>
             <script>
                 var client = new WebTorrent();
             $(document).ready(function () {

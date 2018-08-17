@@ -67,6 +67,7 @@
                 margin-bottom: 30px;
             }
         </style>
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
 
@@ -74,14 +75,24 @@
       // {{ url("/api/media") }}
 $( document ).ready(function() {
   //function loadMedias(){
-    $.getJSON( "{{ url("/api/media") }}", function( data ) {
+    $.getJSON( "{{ url('/api/media') }}", function( data ) {
       var items = "";
-      $.each( data, function( key, val ) {
-        console.log("mkentry...");
-        val = val[0];
-        items += "<div class=''><a href='{{ url("/media/") }}/" + val.title + "'><img src='" + val.poster_source + "' /><p class=''>" + val.title + "</p></a></div>";
+      var indicators = "";
+      var first=true;
+      var actuve = "";
+      $.each( data.data, function( key, value ) {
+        actuve = "";
+        if(first){
+          active="active";
+          first=false;
+        }
+        val1 = value;
+  //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
+        items += "<div class='ml-2 bg-dark"+active+"'><a href='{{ url("/media/") }}/" + val1.title + "'><img class='d-block w-100' src='" + val1.poster_source + "' /><p class='bg-dark' title='"+val1.description+"'>" + val1.title + "</p></a></div>";
       });
-      $("#content").html(items);
+  //    $("#carouselIndicators").html(indicators);
+      $("#carouselBody").html(items);
+    //  $("#carouselExampleIndicators").carousel(0);
   });
   //}
 
@@ -99,10 +110,16 @@ $( document ).ready(function() {
                     @endauth
                 </div>
             @endif
-          <h1>Welcome to {{ config('app.name', 'Laratube') }}</h1> <br />
-            <div class="content" id="content">
 
-                <p>{{ __("Loading") }}</p>
+            <div class="" id="content">
+<div><h1 class="row">{{ config('app.name', 'Laravel') }}</h1>
+
+</div>
+                <div class="row" id="carouselBody" >
+
+                </div>
+
+              </div>
             </div>
         </div>
     </body>
