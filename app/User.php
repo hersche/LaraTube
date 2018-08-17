@@ -37,6 +37,19 @@ class User extends Authenticatable
       return $media;
     }
 
+    public function avatar(){
+      if(empty($this->avatar_source)){
+        return "img/404/avatar.jpg";
+      }
+      return $this->avatar_source;
+    }
+
+    public function background(){
+      if(empty($this->background_source)){
+        return "img/404/background.jpg";
+      }
+      return $this->background_source;
+    }
     public function tagString(){
       $string = "";
       foreach($this->tags as $tag) {

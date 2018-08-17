@@ -107,13 +107,28 @@
             {!! Form::text('body', null, array('placeholder' => 'Comment...','class' => 'form-control','id' => 'medias_body')) !!}
         </div>
         <script>
+
+
+        function deleteComment(id){
+          $.ajax({
+            url: '{{ url("/comment") }}',
+            type: 'DELETE',
+            data: "comments_id="+id,
+            success: function(data) {
+            $("#cid"+id).html("");
+            console.log("dynamicly deleted comment");
+            }
+          });
+        }
+        
+
         function sendComment(){
         $.ajax({
           url: '{{ url("/comment/add") }}',
           type: 'PUT',
           data: "medias_title="+$('#medias_title').val()+"&medias_id="+$('#medias_id').val()+"&body="+$('#medias_body').val(),
           success: function(data) {
-            var commentHtml = "<table class='table table-fluid'><tbody><tr><td class='col-6'>{{ Auth::user()->name }}</td><td class='col-6 float-right'>Created now!</td></tr><tr><td class='col-8'>"+$('#medias_body').val()+"</td></tbody></table>";
+            var commentHtml = "<table class='table table-fluid'><tbody><tr><td class='col-4'>{{ Auth::user()->name }}</td><td class='col-4 float-right'>Created now!</td></tr><tr><td class='col-8'>"+$('#medias_body').val()+"</td></tbody></table>";
             $("#comments").html(commentHtml + $("#comments").html());
           }
         });
@@ -128,7 +143,7 @@
 
 <div id="comments" class="container-fluid">
 @foreach($media->comments() as $comment)
-  <table class='table table-fluid table-dark mb-2'><tbody><tr><td class='col-6'>{{ $comment->user()->name }}</td><td class='col-6 float-right'>{{ $comment->created_at }}</td></tr><tr><td class='col-8'>{{ $comment->body }}</td></tbody></table>
+  <table class='table table-fluid table-info mb-2' id='cid{{ $comment->id }}' ><tbody><tr><td class='col-4'>{{ $comment->user()->name }}</td><td class='col-4 float-right'>{{ $comment->created_at }}</td><td class='col-4 float-right'><input type="button" onclick="deleteComment({{ $comment->id }});" value="Delete" /></td></tr><tr><td class='col-8'>{{ $comment->body }}</td></tbody></table>
 @endforeach
 </div>
 @endsection

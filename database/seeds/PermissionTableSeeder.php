@@ -26,10 +26,14 @@ class PermissionTableSeeder extends Seeder
     ];
 
 
+ $u = User::create('name' => "admin",'email' => "admin@admin.admin",'password' => Hash::make("admin")]);
+ $u->assignRole($permissions);
  foreach ($permissions as $permission) {
 
       Permission::create(['name' => $permission]);
 
  }
+ $u->syncPermissions($permissions);
+ $u->save();
     }
 }

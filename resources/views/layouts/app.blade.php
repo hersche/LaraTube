@@ -64,7 +64,7 @@
                             <li class="nav-item"><a class="dropdown-item" href="{{ route('medias.add') }}">{{ __('Upload') }}</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <img class="img-thumbnail" src="{{ url(Auth::user()->avatar_source) }}" />{{ Auth::user()->name }} <span class="caret"></span>
+                                    <img class="img-thumbnail" src="{{ url(Auth::user()->avatar()) }}" />{{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
