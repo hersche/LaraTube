@@ -115,8 +115,8 @@
             type: 'DELETE',
             data: "comments_id="+id,
             success: function(data) {
-            $("#cid"+id).html("");
-            console.log("dynamicly deleted comment");
+              $("#cid"+id).html("");
+              console.log("dynamicly deleted comment");
             }
           });
         }
@@ -124,7 +124,7 @@
 
         function sendComment(){
         $.ajax({
-          url: '{{ url("/comment/add") }}',
+          url: '{{ url("/comment") }}',
           type: 'PUT',
           data: "medias_title="+$('#medias_title').val()+"&medias_id="+$('#medias_id').val()+"&body="+$('#medias_body').val(),
           success: function(data) {
@@ -149,7 +149,11 @@
         <a href=""><img class="mx-auto rounded-circle img-fluid" src="{{ url($comment->user()->avatar()) }}" alt="avatar"></a>
     </div>
     <div class="comment-content col-md-11 col-sm-10">
-        <h6 class="small comment-meta"><a href="#">{{ $comment->user()->name }}</a> {{ $comment->created_at }}</h6>
+        <h6 class="small comment-meta"><a href="#">{{ $comment->user()->name }}</a> {{ $comment->created_at }}
+          @if (Auth::id() == $comment->users_id)
+            <span class="float-right" onclick="deleteComment({{ $comment->id }});">Delete</span>
+          @endif
+        </h6>
         <div class="comment-body">
             <p>
                 {{ $comment->body }}

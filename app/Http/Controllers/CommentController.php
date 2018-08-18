@@ -17,10 +17,10 @@ class CommentController extends Controller
         //                ->with('success','Comment created successfully');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         //
-        $comment = Comment::where('id', '=' ,$id)->firstOrFail();
+        $comment = Comment::where('id', '=' ,$request->input('comments_id'))->firstOrFail();
         if(Auth::id()==$comment->users_id){
           $comment->delete();
           return;
