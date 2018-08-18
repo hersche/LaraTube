@@ -108,20 +108,21 @@ class UserController extends Controller
 
     public function updateAvatar(Request $request)
     {
+      $data = $request->input('image');
+      list($type, $data) = explode(';', $data);
+      list(, $data)      = explode(',', $data);
+      $data = base64_decode($data);
+    //  $imageName = time().'.png';
+    //  file_put_contents('upload/'.$imageName, $data);
+    //  echo 'done';
       $user = User::find(Auth::id());
       if(!empty($user->avatar_source)){
         Storage::delete($user->avatar_source);
       }
-      $file = $request->file('avatar_source');
-      $extension = $file->getClientOriginalExtension();
-      if(($extension=="jpg")||($extension=="jpeg")||($extension=="png")||($extension=="gif")){
-        $user->avatar_source = $file->store('public/u/avatars');
+        $user->avatar_source = 'public/u/avatars/'.$user->id.'.png';
+        Storage::put('public/u/avatars/'.$user->id.'.png', $data);
         $user->save();
-        return redirect()->route('users.selfedit')
-                        ->with('success','Avatar uploaded with success');
-      }
-      return redirect()->route('users.selfedit')
-                      ->with('error','No avatar updated');
+        return;
     }
 
 

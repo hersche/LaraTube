@@ -12,11 +12,11 @@
 
 <div class="row">
     <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Edit New User</h2>
+        <div class="pull-left float-left">
+            <h2>{{ __("Edit your profile") }}</h2>
         </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
+        <div class="float-right pull-right">
+            <a class="btn btn-primary" href="{{ url('/')}}"> Back</a>
         </div>
     </div>
 </div>
@@ -32,18 +32,6 @@
     </ul>
   </div>
 @endif
-<style>
-#page {
-  background: #FFF;
-  padding: 20px;
-  margin: 20px;
-}
-
-#avsrc {
-  width: 200px;
-  height: 300px;
-}
-</style>
 <div id="">
 <div id="avatar"></div>
 <script>
@@ -52,12 +40,10 @@ var avatarResize;
   $( document ).ready(function() {
     var el = document.getElementById('avatar');
     avatarResize = new Croppie(el, {
-        viewport: { width: 100, height: 100 },
-        boundary: { width: 300, height: 300 },
+        viewport: { width: 60, height: 60, type: 'circle' },
+        boundary: { width: 100, height: 100 },
         showZoomer: true,
         //enableResize: true,
-        enableOrientation: true,
-        mouseWheelZoom: 'ctrl'
     });
 
       avatarResize.bind({
@@ -75,6 +61,24 @@ var avatarResize;
           }
         reader.readAsDataURL(this.files[0]);
       });
+
+
+      $('#avatarUploadAction').on('click', function (ev) {
+      	avatarResize.result({
+      		type: 'canvas',
+      		size: 'viewport'
+      	}).then(function (resp) {
+      		$.ajax({
+      			url: "/user/updateAvatar",
+      			type: "PUT",
+      			data: {"image":resp},
+      			success: function (data) {
+              // success!
+      			}
+      		});
+      	});
+      });
+
     //  resize.refresh();
   });
 </script>
@@ -82,7 +86,7 @@ var avatarResize;
 
 {!! Form::open(array('method' => 'POST', 'route' => ['users.updateAvatar'],'files'=>'true'))  !!}
 {!! Form::file('avatar_source', ['id' => 'avatarUpload'])  !!}
-{!! Form::submit('Upload avatar')  !!}
+<input type="button" value="Save avatar-changes" id="avatarUploadAction" />
 {!! Form::close()  !!}
 
 

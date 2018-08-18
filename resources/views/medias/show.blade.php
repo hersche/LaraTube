@@ -100,11 +100,11 @@
 {!! Form::open(['method' => 'PUT','route' => ['comments.add']]) !!}
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group" id="commentForm">
-            <strong>Name:</strong>
+        <div class="form-inline" id="commentForm">
             {!! Form::hidden('medias_id', $media->id,array('id' => 'medias_id')) !!}
             {!! Form::hidden('medias_title', $media->title,array('id' => 'medias_title')) !!}
-            {!! Form::text('body', null, array('placeholder' => 'Comment...','class' => 'form-control','id' => 'medias_body')) !!}
+            {!! Form::text('body', null, array('placeholder' => 'Comment...','class' => 'col-9','id' => 'medias_body')) !!}
+            <input type="button" class="ml-1" value="Send comment!" onclick="sendComment();" />
         </div>
         <script>
 
@@ -135,18 +135,18 @@
       }
         </script>
     </div>
-    <input type="button" value="Send comment!" onclick="sendComment();" />
+
 </div>
 
 {!! Form::close() !!}
 @endauth
-
-<div id="comments" class="container-fluid">
+<hr />
+<div id="comments" class="container-fluid mt-2">
 @foreach($media->comments() as $comment)
 
 <div class="comment mb-2 row" id='cid{{ $comment->id }}'>
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
-        <a href=""><img class="mx-auto rounded-circle img-fluid" src="http://demos.themes.guide/bodeo/assets/images/users/m103.jpg" alt="avatar"></a>
+        <a href=""><img class="mx-auto rounded-circle img-fluid" src="{{ url($comment->user()->avatar()) }}" alt="avatar"></a>
     </div>
     <div class="comment-content col-md-11 col-sm-10">
         <h6 class="small comment-meta"><a href="#">{{ $comment->user()->name }}</a> {{ $comment->created_at }}</h6>
@@ -158,6 +158,7 @@
             </p>
         </div>
     </div>
+  </div>
 @endforeach
 </div>
 @endsection

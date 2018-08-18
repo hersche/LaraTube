@@ -26,6 +26,7 @@ Route::group(['middleware' => ['auth']], function() {
 Auth::routes();
 
 Route::post('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
+Route::put('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
 Route::post('/user/updateBackground','UserController@updateBackground')->name('users.updateBackground');
 
 Route::get('/media/add','MediaController@addMedia')->name('medias.add');
