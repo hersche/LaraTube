@@ -120,7 +120,7 @@
             }
           });
         }
-        
+
 
         function sendComment(){
         $.ajax({
@@ -143,7 +143,21 @@
 
 <div id="comments" class="container-fluid">
 @foreach($media->comments() as $comment)
-  <table class='table table-fluid table-info mb-2' id='cid{{ $comment->id }}' ><tbody><tr><td class='col-4'>{{ $comment->user()->name }}</td><td class='col-4 float-right'>{{ $comment->created_at }}</td><td class='col-4 float-right'><input type="button" onclick="deleteComment({{ $comment->id }});" value="Delete" /></td></tr><tr><td class='col-8'>{{ $comment->body }}</td></tbody></table>
+
+<div class="comment mb-2 row" id='cid{{ $comment->id }}'>
+    <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
+        <a href=""><img class="mx-auto rounded-circle img-fluid" src="http://demos.themes.guide/bodeo/assets/images/users/m103.jpg" alt="avatar"></a>
+    </div>
+    <div class="comment-content col-md-11 col-sm-10">
+        <h6 class="small comment-meta"><a href="#">{{ $comment->user()->name }}</a> {{ $comment->created_at }}</h6>
+        <div class="comment-body">
+            <p>
+                {{ $comment->body }}
+                <br>
+                <a href="" class="text-right small"><i class="ion-reply"></i> Reply</a>
+            </p>
+        </div>
+    </div>
 @endforeach
 </div>
 @endsection

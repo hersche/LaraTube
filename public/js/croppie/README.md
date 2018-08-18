@@ -1,125 +1,56 @@
-# jquery-cropper
+# Croppie - A Javascript Image Cropper
 
-[![Build Status](https://travis-ci.org/fengyuanchen/jquery-cropper.svg)](https://travis-ci.org/fengyuanchen/jquery-cropper) [![Downloads](https://img.shields.io/npm/dm/jquery-cropper.svg)](https://www.npmjs.com/package/jquery-cropper) [![Version](https://img.shields.io/npm/v/jquery-cropper.svg)](https://www.npmjs.com/package/jquery-cropper)
 
-> A jQuery plugin wrapper for [Cropper.js](https://github.com/fengyuanchen/cropperjs).
+## To Install
+Bower: `bower install croppie`
 
-- [Demo](https://fengyuanchen.github.io/jquery-cropper)
+Npm: `npm install croppie`
 
-## Main
+Download:
+[croppie.js](croppie.js) & [croppie.css](croppie.css)
 
-```text
-dist/
-├── jquery-cropper.js        (UMD)
-├── jquery-cropper.min.js    (UMD, compressed)
-├── jquery-cropper.common.js (CommonJS, default)
-└── jquery-cropper.esm.js    (ES Module)
+## Adding croppie to your site
+```
+<link rel="stylesheet" href="croppie.css" />
+<script src="croppie.js"></script>
 ```
 
-## Getting started
-
-### Installation
-
-```shell
-npm install jquery-cropper jquery cropperjs
+## CDN
+cdnjs.com provides croppie via cdn https://cdnjs.com/libraries/croppie
+```
+https://cdnjs.cloudflare.com/ajax/libs/croppie/{version}/croppie.min.css
+https://cdnjs.cloudflare.com/ajax/libs/croppie/{version}/croppie.min.js
 ```
 
-Include files:
 
-```html
-<script src="/path/to/jquery.js"></script><!-- jQuery is required -->
-<script src="/path/to/cropper.js"></script><!-- Cropper.js is required -->
-<link  href="/path/to/cropper.css" rel="stylesheet">
-<script src="/path/to/jquery-cropper.js"></script>
-```
+## Documentation
+[Documentation](http://foliotek.github.io/Croppie#documentation)
 
-### Usage
-
-Initialize with `$.fn.cropper` method.
-
-```html
-<!-- Wrap the image or canvas element with a block element (container) -->
-<div>
-  <img id="image" src="picture.jpg">
-</div>
-```
-
-```css
-/* Limit image width to avoid overflow the container */
-img {
-  max-width: 100%; /* This rule is very important, please do not ignore this! */
-}
-```
-
-```js
-var $image = $('#image');
-
-$image.cropper({
-  aspectRatio: 16 / 9,
-  crop: function(event) {
-    console.log(event.detail.x);
-    console.log(event.detail.y);
-    console.log(event.detail.width);
-    console.log(event.detail.height);
-    console.log(event.detail.rotate);
-    console.log(event.detail.scaleX);
-    console.log(event.detail.scaleY);
-  }
-});
-
-// Get the Cropper.js instance after initialized
-var cropper = $image.data('cropper');
-```
-
-## Options
-
-See the available [options](https://github.com/fengyuanchen/cropperjs#options) of Cropper.js.
-
-```js
-$().cropper(options);
-```
-
-## Methods
-
-See the available [methods](https://github.com/fengyuanchen/cropperjs#methods) of Cropper.js.
-
-```js
-$().cropper('method', argument1, , argument2, ..., argumentN);
-```
-
-## Events
-
-See the available [events](https://github.com/fengyuanchen/cropperjs#events) of Cropper.js.
-
-```js
-$().on('event', handler);
-```
-
-## No conflict
-
-If you have to use other plugin with the same namespace, just call the `$.fn.cropper.noConflict` method to revert to it.
-
-```html
-<script src="other-plugin.js"></script>
-<script src="jquery-cropper.js"></script>
-<script>
-  $.fn.cropper.noConflict();
-  // Code that uses other plugin's "$().cropper" can follow here.
-</script>
-```
-
-## Browser support
-
-It is the same as the [browser support of Cropper.js](https://github.com/fengyuanchen/cropperjs#browser-support). As a jQuery plugin, you also need to see the [jQuery Browser Support](http://jquery.com/browser-support/).
+## Related Libraries
+* https://github.com/wem/croppie-dart
+* https://github.com/allenRoyston/ngCroppie
+* https://github.com/lpsBetty/angular-croppie
+* https://github.com/dima-kov/django-croppie
+* https://github.com/jofftiquez/vue-croppie
 
 ## Contributing
+First, thanks for contributing.  This project is difficult to maintain with one person.  Here's a "checklist" of things to remember when contributing to croppie.
+* Don't forget to update the documentation.
+* If you're adding a new option/event/method, try adding to an example on the documentation.  Or create a new example, if you feel the need.
+* We don't have tests for Croppie :( (if you want to create tests I'd be forever grateful), so please try to test the functionality you're changing on the demo page.  I've tried to add as many use-cases as I can think of on there.  Compare the functionality in your branch to the one on the official page.  If they all still work, then great!
 
-Please read through our [contributing guidelines](CONTRIBUTING.md).
+If you're looking for a simple server to load the demo page, I use https://github.com/tapio/live-server.
 
-## Versioning
+#### Minifying
+`uglifyjs croppie.js -c -m -r '$,require,exports' -o croppie.min.js`
 
-Maintained under the [Semantic Versioning guidelines](http://semver.org/).
-
-## License
-
-[MIT](http://opensource.org/licenses/MIT) © [Chen Fengyuan](http://chenfengyuan.com)
+#### Releasing a new version
+For the most part, you shouldn't worry about these steps unless you're the one handling the release.  Please don't bump the release and don't minify/uglify in a PR.  That just creates merge conflicts when merging.  Those steps will be peformed when the release is created.
+1. Bump version in croppie.js
+2. Minify/Uglify
+3. Commit
+4. npm version [new version]
+5. `git push && git push --tags`
+6. `npm publish`
+7. Draft a new release with new tag on https://github.com/Foliotek/Croppie/releases
+8. Deploy to gh-pages `npm run deploy`

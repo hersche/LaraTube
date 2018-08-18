@@ -39,7 +39,7 @@ class User extends Authenticatable
 
     public function avatar(){
       if(empty($this->avatar_source)){
-        return "img/404/avatar.jpg";
+        return "img/404/avatar.png";
       }
       return $this->avatar_source;
     }

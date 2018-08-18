@@ -2,9 +2,8 @@
 
 
 @section('header')
-  <link href="{{ asset("js/cropper/dist/cropper.css") }}" rel="stylesheet" type="text/css">
-  <script src="{{ asset("js/cropper/dist/cropper.js") }}"></script>
-  <script src="{{ asset("js/croppie/dist/jquery-cropper.js") }}"></script>
+  <link href="{{ asset("js/croppie/croppie.css") }}" rel="stylesheet" type="text/css">
+  <script src="{{ asset("js/croppie/croppie.js") }}"></script>
 
 
 @endsection
@@ -33,71 +32,56 @@
     </ul>
   </div>
 @endif
+<style>
+#page {
+  background: #FFF;
+  padding: 20px;
+  margin: 20px;
+}
 
-<div id="page">
-<img id="avsrc" src="{{ url($user->avatar_source) }}" />
+#avsrc {
+  width: 200px;
+  height: 300px;
+}
+</style>
+<div id="">
+<div id="avatar"></div>
 <script>
-var minHeight = 20;
-var minWidth = 20;
-//$( document ).ready(function() {
-  var image = $('#avsrc');
 
-  image.cropper({
-
-      aspectRatio:1,
-      rotatable:false,
-      //using these just to stop box collapsing on itself
-      minCropBoxWidth:minWidth,
-      minCropBoxHeight:minHeight,
-       viewMode: 1,
-         dragMode: 'move',
-
-      crop: function(data){
-
-        var json = [
-          '{"x":' + data.x,
-          '"y":' + data.y,
-          '"height":' + data.height,
-          '"width":' + data.width + '}'
-        ].join();
-        $('#image-data').val(json);
-
-      },
-      zoom: function (e) {
-
-        //prevent zooming in past natural resolution
-        if (e.ratio > 1) {
-          e.preventDefault();
-          $(this).cropper('zoomTo', 1);
-        }
-
-        // This data is based on actual image size
-        var data = $(this).cropper('getData');
-
-        // Zoom out
-        if (e.ratio < e.oldRatio) {
-				//always allow zoom out, it will never cause image to be too small
-        }
-
-        // Zoom In
-        if (e.ratio > e.oldRatio) {
-
-          // Prevent zoom out again
-          if (data.width < minHeight || data.height < minHeight) {
-            e.preventDefault();
-          }
-        }
-
-      }
-
+var avatarResize;
+  $( document ).ready(function() {
+    var el = document.getElementById('avatar');
+    avatarResize = new Croppie(el, {
+        viewport: { width: 100, height: 100 },
+        boundary: { width: 300, height: 300 },
+        showZoomer: true,
+        //enableResize: true,
+        enableOrientation: true,
+        mouseWheelZoom: 'ctrl'
     });
-  var cropper = image.data('cropper');
-//});
+
+      avatarResize.bind({
+        url: '{{ url($user->avatar()) }}',
+      });
+
+      $('#avatarUpload').on('change', function () {
+	       var reader = new FileReader();
+         reader.onload = function (e) {
+    	      avatarResize.bind({
+    		        url: e.target.result
+    	         }).then(function(){
+    		           console.log('jQuery bind complete');
+    	       });
+          }
+        reader.readAsDataURL(this.files[0]);
+      });
+    //  resize.refresh();
+  });
 </script>
 </div>
 
 {!! Form::open(array('method' => 'POST', 'route' => ['users.updateAvatar'],'files'=>'true'))  !!}
-{!! Form::file('avatar_source')  !!}
+{!! Form::file('avatar_source', ['id' => 'avatarUpload'])  !!}
 {!! Form::submit('Upload avatar')  !!}
 {!! Form::close()  !!}
 
