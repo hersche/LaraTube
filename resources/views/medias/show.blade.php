@@ -107,7 +107,24 @@
             <input type="button" class="ml-1" value="Send comment!" onclick="sendComment();" />
         </div>
         <script>
+        $( document ).ready(function() {
+          //function loadMedias(){
+            $.getJSON( "{{ url('/api/media/not') }}/{{ $media->title }}", function( data ) {
+              var items = "";
+              var indicators = "";
+              var first=true;
+              $.each( data.data, function( key, value ) {
+                val1 = value;
+          //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
+                items += '<div class="col-lg-6 col-md-4 col-xs-6 card"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="{{ url("/") }}/'+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div></div></div>';
+              });
+          //    $("#carouselIndicators").html(indicators);
+              $("#nextVideos").html(items);
+            //  $("#carouselExampleIndicators").carousel(0);
+          });
+          //}
 
+        });
 
         function deleteComment(id){
           $.ajax({
@@ -120,7 +137,6 @@
             }
           });
         }
-
 
         function sendComment(){
         $.ajax({
@@ -164,5 +180,9 @@
     </div>
   </div>
 @endforeach
+</div>
+<h4>{{ __("Next videos") }}</h4>
+<div id="nextVideos" class="row text-center text-lg-left">
+
 </div>
 @endsection

@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('header')
+  <link href="{{ asset("js/croppie/croppie.css") }}" rel="stylesheet" type="text/css">
+  <script src="{{ asset("js/croppie/croppie.js") }}"></script>
+@endsection
+
 @section('content')
 
 @if ($message = Session::get('success'))
@@ -25,7 +30,53 @@
 
 <div class="form-group">
     <label>Media-poster:</label>
-    {!! Form::file('poster')  !!}
+    <div id="poster"></div>
+    <script>
+
+    var posterResize;
+      $( document ).ready(function() {
+        var el = document.getElementById('poster');
+        posterResize = new Croppie(el, {
+            viewport: { width: 100, height: 60 },
+            boundary: { width: 120, height: 100 },
+            showZoomer: true,
+            //enableResize: true,
+        });
+        posterResize.bind({
+          url: '{{ asset("img/404/image.png") }}',
+        });
+        $('#posterUpload').on('change', function () {
+    	      var reader = new FileReader();
+           reader.onload = function (e) {
+      	      avatarResize.bind({
+        		     url: e.target.result
+        	     }).then(function(){
+        		      console.log('jQuery bind complete');
+        	     });
+            }
+            reader.readAsDataURL(this.files[0]);
+          });
+
+          $('#posterUploadAction').on('click', function (ev) {
+          	posterResize.result({
+          		type: 'canvas',
+          		size: 'viewport'
+          	}).then(function (resp) {
+          		$.ajax({
+          			url: "/user/updateAvatar",
+          			type: "PUT",
+          			data: {"image":resp},
+          			success: function (data) {
+                  // success!
+          			}
+          		});
+          	});
+          });
+
+        });
+        </script>
+
+    {!! Form::file('poster', ['id' => 'avatarUpload'])  !!}
 </div>
   <div class="form-group">
       <label>{{ __('Media-title') }}</label>
@@ -68,7 +119,54 @@
 
 <div class="form-group">
     <label>Media-poster:</label>
-    {!! Form::file('poster')  !!}
+
+    <div id="avatar"></div>
+    <script>
+
+    var avatarResize;
+      $( document ).ready(function() {
+        var el = document.getElementById('avatar');
+        avatarResize = new Croppie(el, {
+            viewport: { width: 100, height: 60 },
+            boundary: { width: 120, height: 100 },
+            showZoomer: true,
+            //enableResize: true,
+        });
+        avatarResize.bind({
+          url: '{{ asset("img/404/image.png") }}',
+        });
+        $('#avatarUpload').on('change', function () {
+    	      var reader = new FileReader();
+           reader.onload = function (e) {
+      	      avatarResize.bind({
+        		     url: e.target.result
+        	     }).then(function(){
+        		      console.log('jQuery bind complete');
+        	     });
+            }
+            reader.readAsDataURL(this.files[0]);
+          });
+
+          $('#avatarUploadAction').on('click', function (ev) {
+          	avatarResize.result({
+          		type: 'canvas',
+          		size: 'viewport'
+          	}).then(function (resp) {
+          		$.ajax({
+          			url: "/user/updateAvatar",
+          			type: "PUT",
+          			data: {"image":resp},
+          			success: function (data) {
+                  // success!
+          			}
+          		});
+          	});
+          });
+
+        });
+        </script>
+
+    {!! Form::file('poster', ['id' => 'avatarUpload'])  !!}
 </div>
 
     <div class="form-group">

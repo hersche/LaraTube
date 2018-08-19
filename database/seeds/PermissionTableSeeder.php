@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use App\User;
 
 class PermissionTableSeeder extends Seeder
 {
@@ -26,8 +27,8 @@ class PermissionTableSeeder extends Seeder
     ];
 
 
- $u = User::create('name' => "admin",'email' => "admin@admin.admin",'password' => Hash::make("admin")]);
- $u->assignRole($permissions);
+ $u = User::create(['name' => 'admin','email' => 'admin@admin.admin','password' => Hash::make('admin')]);
+ //$u->assignRole($permissions);
  foreach ($permissions as $permission) {
 
       Permission::create(['name' => $permission]);

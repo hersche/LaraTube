@@ -82,7 +82,7 @@ $( document ).ready(function() {
       $.each( data.data, function( key, value ) {
         val1 = value;
   //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
-        items += '<div class="col-lg-6 col-md-4 col-xs-6"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block mb-4 h-100"><img class="img-fluid img-thumbnail" src="'+ val1.poster_source + '" alt=""><p>'+val1.title+'</p></a></div>';
+        items += '<div class="col-lg-6 col-md-4 col-xs-6 card"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="'+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div></div></div>';
       });
   //    $("#carouselIndicators").html(indicators);
       $("#carouselBody").html(items);

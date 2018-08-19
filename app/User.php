@@ -7,12 +7,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
-
+use Hootlex\Friendships\Traits\Friendable;
 class User extends Authenticatable
 {
   use HasApiTokens, Notifiable;
   use \Conner\Tagging\Taggable;
   use HasRoles;
+  use Friendable;
   //protected $table = 'users';
     /**
      * The attributes that are mass assignable.

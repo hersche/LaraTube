@@ -39,14 +39,22 @@ Basicly extact the same as laravel
 
 ## Quick install
 
+Best practice is to git clone the project. After, go into the project-directory, to run the following commands.
+
 For secure authenification
 
     php artisan key:generate
 
 For generate first data in the db
 
-    php artisan db:seed
+    php artisan db:seed -v
 
-For oauth2
+Make a storage-link
+
+    ln -s /your-path/app/public /your-path/public/
+
+Result should be a browseable "public/public/" - if you are confused about, this is OK!    
+
+For oauth2 (unused yet)
 
     php artisan passport:install
