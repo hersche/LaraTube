@@ -79,16 +79,10 @@ $( document ).ready(function() {
       var items = "";
       var indicators = "";
       var first=true;
-      var actuve = "";
       $.each( data.data, function( key, value ) {
-        actuve = "";
-        if(first){
-          active="active";
-          first=false;
-        }
         val1 = value;
   //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
-        items += "<div class='ml-2 bg-dark"+active+"'><a href='{{ url("/media/") }}/" + val1.title + "'><img class='d-block w-100' src='" + val1.poster_source + "' /><p class='bg-dark' title='"+val1.description+"'>" + val1.title + "</p></a></div>";
+        items += '<div class="col-lg-6 col-md-4 col-xs-6"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block mb-4 h-100"><img class="img-fluid img-thumbnail" src="'+ val1.poster_source + '" alt=""><p>'+val1.title+'</p></a></div>';
       });
   //    $("#carouselIndicators").html(indicators);
       $("#carouselBody").html(items);
@@ -112,13 +106,13 @@ $( document ).ready(function() {
             @endif
 
             <div class="" id="content">
-<div><h1 class="row">{{ config('app.name', 'Laravel') }}</h1>
 
-</div>
-                <div class="row" id="carouselBody" >
+                <h1 class="class="my-4 text-center text-lg-left"">{{ config('app.name', 'Laravel') }}</h1>
+                <div class="content">
+                  <div class="row text-center text-lg-left" id="carouselBody" >
 
+                  </div>
                 </div>
-
               </div>
             </div>
         </div>

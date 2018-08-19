@@ -37,6 +37,7 @@
 <script>
 
 var avatarResize;
+var backgroundResize;
   $( document ).ready(function() {
     var el = document.getElementById('avatar');
     avatarResize = new Croppie(el, {
@@ -45,23 +46,20 @@ var avatarResize;
         showZoomer: true,
         //enableResize: true,
     });
-
-      avatarResize.bind({
-        url: '{{ url($user->avatar()) }}',
-      });
-
-      $('#avatarUpload').on('change', function () {
-	       var reader = new FileReader();
-         reader.onload = function (e) {
-    	      avatarResize.bind({
-    		        url: e.target.result
-    	         }).then(function(){
-    		           console.log('jQuery bind complete');
-    	       });
-          }
+    avatarResize.bind({
+      url: '{{ url($user->avatar()) }}',
+    });
+    $('#avatarUpload').on('change', function () {
+	      var reader = new FileReader();
+       reader.onload = function (e) {
+  	      avatarResize.bind({
+    		     url: e.target.result
+    	     }).then(function(){
+    		      console.log('jQuery bind complete');
+    	     });
+        }
         reader.readAsDataURL(this.files[0]);
       });
-
 
       $('#avatarUploadAction').on('click', function (ev) {
       	avatarResize.result({
@@ -79,6 +77,44 @@ var avatarResize;
       	});
       });
 
+
+      var el1 = document.getElementById('background');
+      backgroundResize = new Croppie(el1, {
+          viewport: { width: 400, height: 150},
+          boundary: { width: 500, height: 200 },
+          showZoomer: true,
+          //enableResize: true,
+      });
+      backgroundResize.bind({
+        url: '{{ url($user->background()) }}',
+      });
+      $('#backgroundUpload').on('change', function () {
+  	      var reader = new FileReader();
+         reader.onload = function (e) {
+    	      backgroundResize.bind({
+      		     url: e.target.result
+      	     }).then(function(){
+      		      console.log('jQuery bind complete');
+      	     });
+          }
+          reader.readAsDataURL(this.files[0]);
+        });
+
+        $('#backgroundUploadAction').on('click', function (ev) {
+        	backgroundResize.result({
+        		type: 'canvas',
+        		size: 'viewport'
+        	}).then(function (resp) {
+        		$.ajax({
+        			url: "/user/updateBackground",
+        			type: "PUT",
+        			data: {"image":resp},
+        			success: function (data) {
+                // success!
+        			}
+        		});
+        	});
+        });
     //  resize.refresh();
   });
 </script>
@@ -91,10 +127,10 @@ var avatarResize;
 
 
 
-<img src="{{ url($user->background_source) }}" />
+<div id="background"></div>
 {!! Form::open(array('method' => 'POST', 'route' => ['users.updateBackground'],'files'=>'true'))  !!}
-{!! Form::file('background_source')  !!}
-{!! Form::submit('Upload background')  !!}
+{!! Form::file('background_source', ['id' => 'backgroundUpload'])  !!}
+<input type="button" value="Save background-changes" id="backgroundUploadAction" />
 {!! Form::close()  !!}
 
 {!! Form::model($user, ['method' => 'PATCH','route' => ['users.update', $user->id]]) !!}
