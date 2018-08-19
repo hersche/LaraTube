@@ -6,6 +6,11 @@
   @if ($media->simpleType()=="torrent")
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webtorrent/0.102.0/webtorrent.min.js" ></script>
   @endif
+  <script>
+
+
+
+  </script>
 @endsection
 
 @section('content')
@@ -107,12 +112,29 @@
             <input type="button" class="ml-1" value="Send comment!" onclick="sendComment();" />
         </div>
         <script>
+        var nextTitle = "";
+
         $( document ).ready(function() {
+        const player = new Plyr('#player');
+        getAutoplay();
+          var playerEl = document.getElementById("player");
+         if(localStorage.getItem("autoplay")=="true"){
+          //  $("#player").autoplay = true;
+            player.play();
+          }
+          playerEl.onended = function() {
+            console.log("Media ended, if autoplay enabled, next video!");
+            if(localStorage.getItem("autoplay")=="true"){
+              document.location = "{{ url("/media" ) }}/"+nextTitle;
+            }
+          };
           //function loadMedias(){
             $.getJSON( "{{ url('/api/media/not') }}/{{ $media->title }}", function( data ) {
               var items = "";
               var indicators = "";
               var first=true;
+              nextTitle = data.data[0].title;
+              console.log(nextTitle);
               $.each( data.data, function( key, value ) {
                 val1 = value;
           //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
@@ -136,6 +158,23 @@
               console.log("dynamicly deleted comment");
             }
           });
+        }
+
+        function setAutoplay(){
+          if(localStorage.getItem("autoplay")=="true"){
+            localStorage.setItem("autoplay", "false");
+          } else {
+            localStorage.setItem("autoplay", "true");
+          }
+          getAutoplay();
+        }
+
+        function getAutoplay(){
+          if(localStorage.getItem("autoplay")=="true"){
+            $("#autoplayBtn").attr("value", "Autoplay enabled");
+          } else {
+            $("#autoplayBtn").attr("value", "Autoplay disabled");
+          }
         }
 
         function sendComment(){
@@ -181,7 +220,8 @@
   </div>
 @endforeach
 </div>
-<h4>{{ __("Next videos") }}</h4>
+<div class='row'><h4>{{ __("Next videos") }}<input class="float-right pull-right" value="Set autoplay" id="autoplayBtn" type="button" onclick="setAutoplay();" /></h4></div>
+<div class='row'>
 <div id="nextVideos" class="row text-center text-lg-left">
 
 </div>
