@@ -41,7 +41,7 @@ Route::get('/profileEdit','UserController@selfEdit')->name('users.selfedit');
 Route::post('/directUpload','MediaController@directUpload')->name('medias.directuploadAjax');
 Route::put('/directUpload','MediaController@directUpload');
 Route::get('/media','MediaController@index')->name('media');
-
+Route::get('/profile','UserController@profile')->name('profile');
 Route::put('/comment','CommentController@create')->name('comments.add');
 Route::delete('/comment','CommentController@destroy')->name('comments.add');
 Route::get('welcome/{locale}', function ($locale) {

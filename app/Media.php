@@ -24,7 +24,7 @@ class Media extends Model
     }
 
     public function comments() {
-      $media = Comment::where('medias_id', '=' ,$this->id)->get()->sortByDesc('created_at');;
+      $media = Comment::where('medias_id', '=' ,$this->id)->get()->sortByDesc('created_at');
       return $media;
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
     }

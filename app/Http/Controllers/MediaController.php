@@ -150,6 +150,7 @@ class MediaController extends Controller
         $media = Media::where('title', '=' ,$title)->firstOrFail();
         return view('medias.edit',compact('media'));
     }
+
     /**
      * Update the specified resource in storage.
      *
