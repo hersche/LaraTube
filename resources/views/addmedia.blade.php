@@ -3,6 +3,78 @@
 @section('header')
   <link href="{{ asset("js/croppie/croppie.css") }}" rel="stylesheet" type="text/css">
   <script src="{{ asset("js/croppie/croppie.js") }}"></script>
+  <script>
+
+  var avatarResize;
+    var posterResize;
+    $( document ).ready(function() {
+      var el = document.getElementById('avatar');
+      avatarResize = new Croppie(el, {
+          viewport: { width: 100, height: 60 },
+          boundary: { width: 120, height: 100 },
+          showZoomer: true,
+          //enableResize: true,
+      });
+      avatarResize.bind({
+        url: '{{ asset("img/404/image.png") }}',
+      });
+      $('#avatarUpload').on('change', function () {
+          var reader = new FileReader();
+         reader.onload = function (e) {
+            avatarResize.bind({
+               url: e.target.result
+             }).then(function(){
+                console.log('jQuery bind complete');
+             });
+          }
+          reader.readAsDataURL(this.files[0]);
+        });
+
+        $('#addmediabtn').on('click', function (ev) {
+
+          avatarResize.result({
+            type: 'canvas',
+            size: 'viewport'
+          }).then(function (resp) {
+            $("#image").attr("value",resp);
+            $("#directUploadForm").submit();
+          });
+        });
+
+      var el = document.getElementById('poster');
+      posterResize = new Croppie(el, {
+          viewport: { width: 100, height: 60 },
+          boundary: { width: 120, height: 100 },
+          showZoomer: true,
+          //enableResize: true,
+      });
+      posterResize.bind({
+        url: '{{ asset("img/404/image.png") }}',
+      });
+      $('#posterUpload').on('change', function () {
+          var reader = new FileReader();
+         reader.onload = function (e) {
+            posterResize.bind({
+               url: e.target.result
+             }).then(function(){
+                console.log('jQuery bind complete');
+             });
+          }
+          reader.readAsDataURL(this.files[0]);
+        });
+
+        $('#posterUploadAction').on('click', function (ev) {
+          posterResize.result({
+            type: 'canvas',
+            size: 'viewport'
+          }).then(function (resp) {
+            $("#addMediaImage").attr("value",resp);
+            $("#addMediaForm").submit();
+          });
+        });
+
+      });
+      </script>
 @endsection
 
 @section('content')
@@ -23,7 +95,7 @@
   			  <div class="tab-pane active containert" id="add">
   <div class="row justify-content-center">
       <div class="col-md-8">
-{!! Form::open(array('route' => ['medias.create'],'files'=>'true'))  !!}
+{!! Form::open(array('route' => ['medias.create'],'files'=>'true','id'=>'addMediaForm'))  !!}
 <div class="col-xs-12 col-sm-12 col-md-12">
 
 <h4>{{ __('Add media') }}</h4>
@@ -31,55 +103,13 @@
 <div class="form-group">
     <label>Media-poster:</label>
     <div id="poster"></div>
-    <script>
 
-    var posterResize;
-      $( document ).ready(function() {
-        var el = document.getElementById('poster');
-        posterResize = new Croppie(el, {
-            viewport: { width: 100, height: 60 },
-            boundary: { width: 120, height: 100 },
-            showZoomer: true,
-            //enableResize: true,
-        });
-        posterResize.bind({
-          url: '{{ asset("img/404/image.png") }}',
-        });
-        $('#posterUpload').on('change', function () {
-    	      var reader = new FileReader();
-           reader.onload = function (e) {
-      	      avatarResize.bind({
-        		     url: e.target.result
-        	     }).then(function(){
-        		      console.log('jQuery bind complete');
-        	     });
-            }
-            reader.readAsDataURL(this.files[0]);
-          });
 
-          $('#posterUploadAction').on('click', function (ev) {
-          	posterResize.result({
-          		type: 'canvas',
-          		size: 'viewport'
-          	}).then(function (resp) {
-          		$.ajax({
-          			url: "/user/updateAvatar",
-          			type: "PUT",
-          			data: {"image":resp},
-          			success: function (data) {
-                  // success!
-          			}
-          		});
-          	});
-          });
-
-        });
-        </script>
-
-    {!! Form::file('poster', ['id' => 'avatarUpload'])  !!}
+    {!! Form::file('poster', ['id' => 'posterUpload'])  !!}
 </div>
   <div class="form-group">
       <label>{{ __('Media-title') }}</label>
+      <input type="hidden" value="" name="image" id="addMediaImage" />
       {!! Form::text('title', null, array('placeholder' => 'Media-title','class' => 'form-control')) !!}
   </div>
 
@@ -105,14 +135,14 @@
 
 </div>
 @csrf
-{!! Form::submit('Add media')  !!}
+<input class="btn btn-primary" type="button" onclick="" value="Add media" id="posterUploadAction" />
 {!! Form::close()  !!}
       </div>
   </div>
 </div>  			  <div class="tab-pane container fade" id="upload">
     <div class="row justify-content-center bg-secondary">
         <div class="col-md-8">
-{!! Form::open(array('route' => ['medias.directuploadAjax'],'files'=>'true'))  !!}
+{!! Form::open(array('route' => ['medias.directuploadAjax'],'files'=>'true','id'=>'directUploadForm'))  !!}
 <div class="col-xs-12 col-sm-12 col-md-12 ">
 
 <h4>Direct upload</h4>
@@ -121,62 +151,20 @@
     <label>Media-poster:</label>
 
     <div id="avatar"></div>
-    <script>
 
-    var avatarResize;
-      $( document ).ready(function() {
-        var el = document.getElementById('avatar');
-        avatarResize = new Croppie(el, {
-            viewport: { width: 100, height: 60 },
-            boundary: { width: 120, height: 100 },
-            showZoomer: true,
-            //enableResize: true,
-        });
-        avatarResize.bind({
-          url: '{{ asset("img/404/image.png") }}',
-        });
-        $('#avatarUpload').on('change', function () {
-    	      var reader = new FileReader();
-           reader.onload = function (e) {
-      	      avatarResize.bind({
-        		     url: e.target.result
-        	     }).then(function(){
-        		      console.log('jQuery bind complete');
-        	     });
-            }
-            reader.readAsDataURL(this.files[0]);
-          });
-
-          $('#avatarUploadAction').on('click', function (ev) {
-          	avatarResize.result({
-          		type: 'canvas',
-          		size: 'viewport'
-          	}).then(function (resp) {
-          		$.ajax({
-          			url: "/user/updateAvatar",
-          			type: "PUT",
-          			data: {"image":resp},
-          			success: function (data) {
-                  // success!
-          			}
-          		});
-          	});
-          });
-
-        });
-        </script>
 
     {!! Form::file('poster', ['id' => 'avatarUpload'])  !!}
 </div>
 
     <div class="form-group">
         <label>Media-title:</label>
-        {!! Form::text('title', null, array('placeholder' => 'Media-title','class' => 'form-control')) !!}
+        <input type="hidden" value="" name="image" id="image" />
+        {!! Form::text('title', null, array('placeholder' => 'Media-title','class' => 'form-control','id' => 'uploadTitle')) !!}
     </div>
 
     <div class="form-group">
         <label>Media-description:</label>
-        {!! Form::textarea('description', null, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
+        {!! Form::textarea('description', null, array('placeholder' => 'Media-description','class' => 'form-control','id' => 'uploadDescription')) !!}
     </div>
 
 </div>
@@ -187,9 +175,9 @@
     </div>
 </div>
 <p>Upload your mp4, webm, mp3 or ogg-files here.</p>
-{!! Form::file('directMedia')  !!}
+{!! Form::file('directMedia', ['id' => 'directMedia'])  !!}
 @csrf
-{!! Form::submit('Upload file')  !!}
+<input class="btn btn-primary" type="button" onclick="" value="Upload media" id="addmediabtn" />
 {!! Form::close()  !!}
 
         </div>

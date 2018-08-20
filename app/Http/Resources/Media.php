@@ -21,6 +21,7 @@ class Media extends JsonResource
           'poster_source' => $this->poster_source,
           'type' => $this->type,
           'description' => $this->description,
+          'comments' => $this->comments(),
           'created_at' => $this->created_at,
           'updated_at' => $this->updated_at,
       ];

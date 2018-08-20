@@ -39,42 +39,51 @@ class MediaController extends Controller
     public function create(Request $request)
     {
         //
-        $posterFile = $request->file('poster');
-        $posterPath = '';
-        if(!empty($posterFile)){
-          $posterPath = $posterFile->store('public/media/posters');
-        }
-        $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'),'poster_source' => $posterFile, 'description' => $request->input('description'), 'type' => $request->input('type'), 'users_id' => Auth::id()]);
+        $data = $request->input('image');
+        list($type, $data) = explode(';', $data);
+        list(, $data)      = explode(',', $data);
+        $data = base64_decode($data);
+        $title = $request->input('title');
+        Storage::put('public/media/posters/'.$title.'.png', $data);
+        $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'),'poster_source' => 'public/media/posters/'.$title.'.png', 'description' => $request->input('description'), 'type' => $request->input('type'), 'users_id' => Auth::id()]);
         $media->retag(explode(' ', $request->input('tags')));
-        return redirect()->route('medias.add')
+        return redirect()->route('media.show',$title)
                         ->with('success','Video created successfully');
     }
 
     public function directUpload(Request $request){
       $file = $request->file('directMedia');
-      $posterFile = $request->file('poster');
+    //  $posterFile = $request->file('poster');
+
+      $data = $request->input('image');
+      list($type, $data) = explode(';', $data);
+      list(, $data)      = explode(',', $data);
+      $data = base64_decode($data);
       $title = $request->input('title');
       //Move Uploaded File
+      $file = $request->file("directMedia");
       $extension = $file->getClientOriginalExtension();
 
       if(($extension=="mp4")||($extension=="webm")){
         $path = $file->store('public/directMedia');
-        $posterFile = $request->file('poster');
+        //$posterFile = $request->file('poster');
         $posterPath = '';
         if(!empty($posterFile)){
           $posterPath = $posterFile->store('public/media/posters');
         }
-        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => $posterPath,'type' => 'localVideo', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localVideo', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
         $media->retag(explode(' ', $request->input('tags')));
-        return redirect()->route('medias.add')
+        Storage::put('public/media/posters/'.$title.'.png', $data);
+        return redirect()->route('media.show',$title)
                         ->with('success','Video created successfully');
       }
       else if(($extension=="mp3")||($extension=="ogg")){
         $path = $file->store('public/directMedia');
         $posterPath = $posterFile->store('public/media/posters');
-        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => $posterPath,'type' => 'localAudio', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localAudio', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
         $media->retag(explode(' ', $request->input('tags')));
-        return redirect()->route('medias.add')
+        Storage::put('public/media/posters/'.$title.'.png', $data);
+        return redirect()->route('media.show',$title)
                         ->with('success','Audio created successfully');
       } else {
         return redirect()->route('medias.add')
@@ -115,6 +124,10 @@ class MediaController extends Controller
     public function edit(Request $request, $title)
     {
         //
+        $data = $request->input('image');
+        list($type, $data) = explode(';', $data);
+        list(, $data)      = explode(',', $data);
+        $data = base64_decode($data);
         $media = Media::where('title', '=' ,$title)->firstOrFail();
         $media->title = $request->input('title');
         $media->source = $request->input('source');
@@ -123,19 +136,17 @@ class MediaController extends Controller
         if(!empty($request->input('type'))){
           $media->type = $request->input('type');
         }
+
         if(!empty($media->poster_source)){
           Storage::delete($media->poster_source);
         }
-        $posterFile = $request->file('poster');
-        if(!empty($posterFile)){
-          $media->poster_source = $posterFile->store('public/media/posters');
-        }
+        $media->poster_source = 'public/media/posters/'.$media->title.'.png';
+        Storage::put('public/media/posters/'.$media->title.'.png', $data);
         $media->save();
-        return view('medias.edit',compact('media'));
+        return redirect()->route('media.show',$media->title);
     }
     public function editView($title)
     {
-        //$media = Media::find($id);
         $media = Media::where('title', '=' ,$title)->firstOrFail();
         return view('medias.edit',compact('media'));
     }

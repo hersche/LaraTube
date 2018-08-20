@@ -23,6 +23,11 @@
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
       });
+
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
     });
     </script>
 
@@ -32,14 +37,35 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  <!--  <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet"> -->
 </head>
 <body class="container-fluid">
+
+  <!-- Sidebar -->
+<!--  <div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="#">Start Bootstrap</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Shortcuts</a></li>
+            <li><a href="#">Overview</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+  </div> -->
+<!-- /#sidebar-wrapper -->
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'LaraTube') }}
                 </a>
+              <!--  <li class="nav-item">
+                  <a href="#menu-toggle" class="nav-link" id="menu-toggle">Toggle Menu</a>
+                </li> -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -53,6 +79,7 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
+
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>

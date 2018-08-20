@@ -41,6 +41,10 @@ Basicly extact the same as laravel
 
 Best practice is to git clone the project. After, go into the project-directory, to run the following commands.
 
+For get all dependencies
+
+    composer install
+
 For secure authenification
 
     php artisan key:generate
