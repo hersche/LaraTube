@@ -52,7 +52,7 @@
               @if (Auth::user()->isFriendWith($pendingFriend)==false)
 
                   @if ($pendingFriend->email!=Auth::user()->email)
-                  <p><img src="{{ $pendingFriend->avatar() }}" />{{ $pendingFriend->name }}
+                  <p><img src="{{ $pendingFriend->avatar() }}" style="max-height:90px;" /><span class="ml-2">{{ $pendingFriend->name }}</span>
                     <span class="float-right"><input type="button" value="Friend request" onclick="sendFriendRequest({{ $pendingFriend->id }},'request')" /></span>
                     <p class="pl-3">Mutual friends: {{ Auth::user()->getMutualFriendsCount($pendingFriend) }} users</p></p>
                   @endif
