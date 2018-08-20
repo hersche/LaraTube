@@ -12,7 +12,7 @@ class Media extends Model
     use Searchable;
     //
     protected $fillable = [
-        'title', 'source','duration','poster_source', 'type', 'description', 'users_id','comments',
+        'id', 'title', 'source','duration','poster_source', 'type', 'description', 'user_id','comments',
     ];
     protected $hidden = [
 
@@ -24,7 +24,7 @@ class Media extends Model
     }
 
     public function comments() {
-      $media = Comment::where('medias_id', '=' ,$this->id)->get()->sortByDesc('created_at');
+      $media = Comment::where('media_id', '=' ,$this->id)->get()->sortByDesc('created_at');
       return $media;
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
     }

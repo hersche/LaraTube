@@ -45,7 +45,7 @@ class MediaController extends Controller
         $data = base64_decode($data);
         $title = $request->input('title');
         Storage::put('public/media/posters/'.$title.'.png', $data);
-        $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'),'poster_source' => 'public/media/posters/'.$title.'.png', 'description' => $request->input('description'), 'type' => $request->input('type'), 'users_id' => Auth::id()]);
+        $media = Media::create(['title' =>  $request->input('title'),'source' => $request->input('source'),'poster_source' => 'public/media/posters/'.$title.'.png', 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id()]);
         $media->retag(explode(' ', $request->input('tags')));
         return redirect()->route('media.show',$title)
                         ->with('success','Video created successfully');
@@ -71,7 +71,7 @@ class MediaController extends Controller
         if(!empty($posterFile)){
           $posterPath = $posterFile->store('public/media/posters');
         }
-        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localVideo', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localVideo', 'description' => $request->input('description'), 'user_id' => Auth::id()]);
         $media->retag(explode(' ', $request->input('tags')));
         Storage::put('public/media/posters/'.$title.'.png', $data);
         return redirect()->route('media.show',$title)
@@ -80,7 +80,7 @@ class MediaController extends Controller
       else if(($extension=="mp3")||($extension=="ogg")){
         $path = $file->store('public/directMedia');
         $posterPath = $posterFile->store('public/media/posters');
-        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localAudio', 'description' => $request->input('description'), 'users_id' => Auth::id()]);
+        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localAudio', 'description' => $request->input('description'), 'user_id' => Auth::id()]);
         $media->retag(explode(' ', $request->input('tags')));
         Storage::put('public/media/posters/'.$title.'.png', $data);
         return redirect()->route('media.show',$title)

@@ -34,7 +34,37 @@ class UserController extends Controller
     }
     public function profile()
     {
-        return view('profile.index');
+        $users = User::all();
+        $friends = Auth::user()->getAcceptedFriendships();
+        return view('profile.index',compact('users','friends'));
+    }
+    public function profileview($name)
+    {
+        $user = User::where('name','=',$name)->firstOrFail();
+      //  echo $user->name; exit;
+      $medias = $user->medias;
+        return view('profile.view',compact('user','medias'));
+    }
+    public function changeFriends(Request $request)
+    {
+      $input = $request->all();
+      if($input['type']=="request"){
+        $friend = User::find($input['users_id']);
+        if(Auth::user()->hasFriendRequestFrom($friend)){
+          Auth::user()->acceptFriendRequest($friend);
+        } else {
+          Auth::user()->befriend($friend);
+        }
+
+      }
+      if($input['type']=="confirm"){
+        $friend = User::find($input['users_id']);
+        Auth::user()->acceptFriendRequest($friend);
+      }
+      if($input['type']=="unfriend"){
+        $friend = User::find($input['users_id']);
+        Auth::user()->unfriend($friend);
+      }
     }
     /**
      * Show the form for creating a new resource.

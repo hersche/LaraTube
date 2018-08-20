@@ -22,8 +22,8 @@ class CreatePlaylistsTable extends Migration
         });
         Schema::create('playlists_medias', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('playlists_id')->references('id')->on('playlists');
-            $table->integer('medias_id')->references('id')->on('medias');
+            $table->integer('playlist_id')->references('id')->on('playlists');
+            $table->integer('media_id')->references('id')->on('medias');
             $table->integer('order');
             $table->timestamps();
         });

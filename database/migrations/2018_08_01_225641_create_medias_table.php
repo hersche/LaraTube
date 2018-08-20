@@ -21,7 +21,7 @@ class CreateMediasTable extends Migration
             $table->text('source');
             $table->string('duration')->default('0');
             $table->text('description')->nullable();
-            $table->integer('users_id')->references('id')->on('users');
+            $table->integer('user_id')->references('id')->on('users');
             $table->integer('category_id')->nullable()->references('id')->on('categories');
             $table->integer('next_id')->nullable()->references('id')->on('medias')->default(0);
             $table->integer('views')->default(0);

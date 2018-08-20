@@ -5,7 +5,6 @@ namespace App;
 use App\Media;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Hootlex\Friendships\Traits\Friendable;
@@ -23,7 +22,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id','name', 'email', 'password', 'avatar_source', 'background_source'
+        'id','name', 'email', 'password', 'bio', 'avatar_source', 'background_source'
     ];
 
     /**
@@ -36,8 +35,13 @@ class User extends Authenticatable
     ];
 
     public function medias(){
-      $media = Media::where('users_id', '=' ,$this->id)->get();
-      return $media;
+    //  $media = Media::where('user_id', '=' ,$this->id)->get();
+      //var_dump($media); exit;
+    //  return $media;
+  //  echo $this->id; exit;
+  //  $media = Media::where('user_id', '=' ,$this->id)->get()->sortByDesc('created_at');
+      return $this->hasMany('App\Media');
+      //return $media;
     }
 
     public function avatar(){
