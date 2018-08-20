@@ -8,7 +8,22 @@
   @endif
   <script>
 
+  var users = [];
 
+  function getUser(id){
+    for (i = 0; i < users.length; i++) {
+        if(users[i].id==id){
+          return users[i];
+        }
+    }
+    // retrive user-data
+  }
+
+  function User(id, name, avatar_source) {
+      this.id = id;
+      this.name = name;
+      this.avatar_source = avatar_source;
+  }
 
   </script>
 @endsection
@@ -138,7 +153,7 @@
               $.each( data.data, function( key, value ) {
                 val1 = value;
           //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
-                items += '<div class="col-lg-3 col-md-4 col-xs-6 card"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="{{ url("/") }}/'+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div></div></div>';
+                items += '<div style="min-width: 180px;" class="col-lg-3 col-md-4 col-xs-6 card"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="{{ url("/") }}/'+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div></div></div>';
               });
           //    $("#carouselIndicators").html(indicators);
               $("#nextVideos").html(items);
