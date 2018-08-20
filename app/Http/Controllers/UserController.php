@@ -145,9 +145,6 @@ class UserController extends Controller
       list($type, $data) = explode(';', $data);
       list(, $data)      = explode(',', $data);
       $data = base64_decode($data);
-    //  $imageName = time().'.png';
-    //  file_put_contents('upload/'.$imageName, $data);
-    //  echo 'done';
       $user = User::find(Auth::id());
       if(!empty($user->avatar_source)){
         Storage::delete($user->avatar_source);
@@ -161,20 +158,19 @@ class UserController extends Controller
 
     public function updateBackground(Request $request)
     {
+
+      $data = $request->input('image');
+      list($type, $data) = explode(';', $data);
+      list(, $data)      = explode(',', $data);
+      $data = base64_decode($data);
       $user = User::find(Auth::id());
       if(!empty($user->background_source)){
         Storage::delete($user->background_source);
       }
-      $file = $request->file('background_source');
-      $extension = $file->getClientOriginalExtension();
-      if(($extension=="jpg")||($extension=="jpeg")||($extension=="png")||($extension=="gif")){
-        $user->background_source = $file->store('public/u/backgrounds');
+        $user->background_source = 'public/u/backgrounds/'.$user->id.'.png';
+        Storage::put('public/u/backgrounds/'.$user->id.'.png', $data);
         $user->save();
-        return redirect()->route('users.selfedit')
-                        ->with('success','Background uploaded with success');
-      }
-      return redirect()->route('users.selfedit')
-                      ->with('error','No background updated');
+        return;
     }
     /**
      * Update the specified resource in storage.

@@ -35,13 +35,7 @@ class User extends Authenticatable
     ];
 
     public function medias(){
-    //  $media = Media::where('user_id', '=' ,$this->id)->get();
-      //var_dump($media); exit;
-    //  return $media;
-  //  echo $this->id; exit;
-  //  $media = Media::where('user_id', '=' ,$this->id)->get()->sortByDesc('created_at');
       return $this->hasMany('App\Media');
-      //return $media;
     }
 
     public function avatar(){
@@ -53,7 +47,7 @@ class User extends Authenticatable
 
     public function background(){
       if(empty($this->background_source)){
-        return "img/404/background.jpg";
+        return "img/404/background.png";
       }
       return $this->background_source;
     }

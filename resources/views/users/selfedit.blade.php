@@ -41,8 +41,8 @@ var backgroundResize;
   $( document ).ready(function() {
     var el = document.getElementById('avatar');
     avatarResize = new Croppie(el, {
-        viewport: { width: 60, height: 60, type: 'circle' },
-        boundary: { width: 100, height: 100 },
+        viewport: { width: 180, height: 180, type: 'circle' },
+        boundary: { width: 200, height: 200 },
         showZoomer: true,
         //enableResize: true,
     });
@@ -80,8 +80,8 @@ var backgroundResize;
 
       var el1 = document.getElementById('background');
       backgroundResize = new Croppie(el1, {
-          viewport: { width: 400, height: 150},
-          boundary: { width: 500, height: 200 },
+          viewport: { width: 800, height: 300},
+          boundary: { width: 900, height: 350 },
           showZoomer: true,
           //enableResize: true,
       });
@@ -138,19 +138,25 @@ var backgroundResize;
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Name:</strong>
-            {!! Form::text('name', null, array('placeholder' => 'Name','class' => 'form-control')) !!}
+            {!! Form::text('name', $user->name, array('placeholder' => 'Name','class' => 'form-control')) !!}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Email:</strong>
-            {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control')) !!}
+            {!! Form::text('email', $user->email, array('placeholder' => 'Email','class' => 'form-control')) !!}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Tags (separate with spaces):</strong>
             <input id="tags" type="text" class="form-control" name="tags" value="{{ $user->tagString() }}" >
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+      <div class="form-group">
+          <label>Bio:</label>
+          {!! Form::textarea('bio', $user->bio, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
