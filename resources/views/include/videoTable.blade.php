@@ -7,7 +7,7 @@
    <th width="280px">Action</th>
  </tr>
 
- @foreach (Auth::User()->medias() as $key => $media)
+ @foreach (Auth::User()->medias as $key => $media)
 
   <tr>
     <td><img src="{{ url($media->poster_source) }}" /></td>

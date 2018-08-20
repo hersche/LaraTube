@@ -10,8 +10,8 @@
     $( document ).ready(function() {
       var el = document.getElementById('avatar');
       avatarResize = new Croppie(el, {
-          viewport: { width: 100, height: 60 },
-          boundary: { width: 120, height: 100 },
+          viewport: { width: 800, height: 300 },
+          boundary: { width: 850, height: 350 },
           showZoomer: true,
           //enableResize: true,
       });
@@ -43,8 +43,8 @@
 
       var el = document.getElementById('poster');
       posterResize = new Croppie(el, {
-          viewport: { width: 100, height: 60 },
-          boundary: { width: 120, height: 100 },
+        viewport: { width: 800, height: 300 },
+        boundary: { width: 850, height: 350 },
           showZoomer: true,
           //enableResize: true,
       });
