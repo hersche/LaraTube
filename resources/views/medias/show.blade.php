@@ -117,7 +117,8 @@
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
     </div>
-    <div><input value="Like" type="button" onclick="like({{ $media->id }},'media');" /><input value="Disike" type="button" onclick="dislike({{ $media->id }},'media');"  />{{ $media->likes() }}</div>
+    <div><button type="button"  onclick="like({{ $media->id }},'media');" class="btn btn-primary"><ion-icon name="thumbs-up"></ion-icon><span class="ml-1">{{ $media->likes() }}</span></button>
+       <button onclick="dislike({{ $media->id }},'media');"  class="btn btn-primary"><ion-icon name="thumbs-down"></ion-icon><span class="ml-1">{{ $media->dislikes() }}</span></button></div>
 </div>
 @auth
 {!! Form::open(['method' => 'PUT','route' => ['comments.add']]) !!}

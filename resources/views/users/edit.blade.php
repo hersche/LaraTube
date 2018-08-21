@@ -61,8 +61,8 @@
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
       <div class="form-group">
-          <label>Media-description:</label>
-          {!! Form::textarea('description', $media->description, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
+          <label>Bio:</label>
+          {!! Form::textarea('bio', $media->description, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 text-center">

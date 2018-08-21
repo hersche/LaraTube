@@ -34,9 +34,18 @@ class Media extends Model
       $likes = Like::where('media_id', '=',$this->id)->get();
       $counter = 0;
       foreach($likes as $like){
+        if($like->count=="1"){
+          $counter += 1;
+        }
+      }
+      return $counter;
+    }
+
+    public function dislikes(){
+      $likes = Like::where('media_id', '=',$this->id)->get();
+      $counter = 0;
+      foreach($likes as $like){
         if($like->count=="-1"){
-          $counter -= 1;
-        } else {
           $counter += 1;
         }
       }
