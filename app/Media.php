@@ -4,6 +4,7 @@ namespace App;
 use App\User;
 use App\Comment;
 use App\Like;
+use Auth;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,6 +29,14 @@ class Media extends Model
       $media = Comment::where('media_id', '=' ,$this->id)->get()->sortByDesc('created_at');
       return $media;
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
+    }
+
+    public function myLike(){
+      $like = Like::where('media_id', '=',$this->id)->where('user_id',Auth::id())->first();
+      if(empty($like)){
+        return "0";
+      }
+      return $like->count;
     }
 
     public function likes(){
