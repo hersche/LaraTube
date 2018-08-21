@@ -41,6 +41,7 @@ Route::get('/media/{title}', 'MediaController@show')->name('media.show');
 Route::post('/directUpload','MediaController@directUpload')->name('medias.directuploadAjax');
 Route::put('/directUpload','MediaController@directUpload');
 Route::get('/media','MediaController@index')->name('media');
+Route::put('/like','MediaController@like')->name('media.like');
 Route::get('/profile','UserController@profile')->name('profile');
 Route::get('/profile/edit','UserController@selfEdit')->name('users.selfedit');
 Route::get('/profile/{name}','UserController@profileview')->name('profile.view');

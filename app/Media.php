@@ -3,6 +3,7 @@
 namespace App;
 use App\User;
 use App\Comment;
+use App\Like;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,6 +28,19 @@ class Media extends Model
       $media = Comment::where('media_id', '=' ,$this->id)->get()->sortByDesc('created_at');
       return $media;
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
+    }
+
+    public function likes(){
+      $likes = Like::where('media_id', '=',$this->id)->get();
+      $counter = 0;
+      foreach($likes as $like){
+        if($like->count=="-1"){
+          $counter -= 1;
+        } else {
+          $counter += 1;
+        }
+      }
+      return $counter;
     }
     public function poster(){
       if(empty($this->poster_source)){

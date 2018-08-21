@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Media;
 use App\Comment;
+use App\Like;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -51,6 +52,22 @@ class MediaController extends Controller
                         ->with('success','Video created successfully');
     }
 
+    public function like(Request $request){
+      if(!empty($request->input('media_id'))){
+        $like = Like::firstOrCreate(['user_id' => Auth::id(),'media_id' => $request->input('media_id')]);
+      } else if(!empty($request->input('comment_id'))){
+        $like = Like::firstOrCreate(['user_id' => Auth::id(),'comment_id' => $request->input('comment_id')]);
+      }
+      if((($like->count=="1")&&($request->input('count')=="-1"))||(($like->count=="-1")&&($request->input('count')=="1"))){
+        $like->delete();
+      } else {
+        $like->count = $request->input('count');
+        $like->save();
+      }
+    }
+    public function dislike(Request $request){
+
+    }
     public function directUpload(Request $request){
       $file = $request->file('directMedia');
     //  $posterFile = $request->file('poster');
