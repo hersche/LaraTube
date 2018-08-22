@@ -2,18 +2,7 @@
 
 @section('header')
   <script>
-    function sendFriendRequest(id,type){
-      console.log("i should send a request to userid "+id);
-      $.ajax({
-        url: '{{ url("/friends") }}',
-        type: 'PUT',
-        data: "users_id="+id+"&type="+type,
-        success: function(data) {
-        //  $("#cid"+id).html("");
-          console.log("dynamicly deleted comment");
-        }
-      });
-    }
+
   </script>
 @endsection
 

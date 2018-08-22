@@ -22,7 +22,7 @@ class Media extends Model
     protected $table = 'medias';
 
     public function user() {
-      return User::find($this->users_id);
+      return User::find($this->user_id);
     }
 
     public function comments() {

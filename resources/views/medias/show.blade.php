@@ -34,9 +34,6 @@
 
 <div class="row">
     <div class="col-lg-12 margin-tb">
-        <div class="float-left">
-            <h2> {{ $media->title }}</h2>
-        </div>
         <div class="float-right">
             <a class="btn btn-primary float-right" href="{{ url('/') }}"> Back</a>
         </div>
@@ -45,8 +42,6 @@
 
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
-        <p>{{ $media->description }}</p>
-        <p>Tags: {{ $media->tagString() }}</p>
           @if ($media->type=="localVideo" || $media->type=="directVideo"|| $media->type=="torrentVideo")
             <video class="col-12" id="player" poster="{{ url($media->poster_source) }}" playsinline controls>
               @if ($media->type=="localVideo" || $media->type=="directVideo")
@@ -117,20 +112,27 @@
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
     </div>
-    <div class="float-right">
-      @if($media->myLike()=="1")
-        <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
-      @else
-        <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-primary">
-      @endif
-      <ion-icon name="thumbs-up"></ion-icon><span class="ml-1" id="likeCount">{{ $media->likes() }}</span></button>
-      @if($media->myLike()=="-1")
-        <button id="dislike" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-success">
-      @else
-        <button id="dislike" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-primary">
-      @endif
-      <ion-icon name="thumbs-down"></ion-icon><span class="ml-1" id="dislikeCount">{{ $media->dislikes() }}</span></button></div>
-</div>
+    <div class="card">
+      <div class="card-header"><span class='h3'>{{ $media->title }}</span>        <div class="float-right"><span class="btn btn-info mr-1">{{ $media->created_at }}</span><a class="btn btn-primary" href="{{ url("/profile") }}/{{ $media->user()->name }}"><img class="mx-auto rounded-circle img-fluid" src="{{ url($media->user()->avatar()) }}" alt="avatar" style="max-height: 20px;" />{{ $media->user()->name }}</a>
+                @if($media->myLike()=="1")
+                  <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
+                @else
+                  <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-primary">
+                @endif
+                <ion-icon name="thumbs-up"></ion-icon><span class="ml-1" id="likeCount">{{ $media->likes() }}</span></button>
+                @if($media->myLike()=="-1")
+                  <button id="dislike" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-success">
+                @else
+                  <button id="dislike" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-primary">
+                @endif
+                <ion-icon name="thumbs-down"></ion-icon><span class="ml-1" id="dislikeCount">{{ $media->dislikes() }}</span></button></div></div>
+      <div class="card-body">{{ $media->description }}
+
+      </div>
+       <div class="card-footer">Tags: {{ $media->tagString() }}</div>
+    </div>
+  </div>
+
 @auth
 {!! Form::open(['method' => 'PUT','route' => ['comments.add']]) !!}
 <div class="row">
@@ -310,12 +312,12 @@
 
 <div class="comment mb-2 row" id='cid{{ $comment->id }}'>
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
-        <a href=""><img class="mx-auto rounded-circle img-fluid" src="{{ url($comment->user()->avatar()) }}" alt="avatar"></a>
+        <a href=""><img class="mx-auto rounded-circle img-fluid" src="{{ url($comment->user()->avatar()) }}" alt="avatar" /></a>
     </div>
     <div class="comment-content col-md-11 col-sm-10">
-        <h6 class="small comment-meta"><a href="#">{{ $comment->user()->name }}</a> {{ $comment->created_at }}
+        <h6 class="small comment-meta"><a href="{{ url("/profile") }}/{{ $comment->user()->name }}">{{ $comment->user()->name }}</a> {{ $comment->created_at }}
           @if (Auth::id() == $comment->users_id)
-            <span class="float-right" onclick="deleteComment({{ $comment->id }});">Delete</span>
+            <span class="float-right btn btn-danger" onclick="deleteComment({{ $comment->id }});"><ion-icon name="trash"></ion-icon></span>
           @endif
         </h6>
         <div class="comment-body">
@@ -329,7 +331,7 @@
   </div>
 @endforeach
 </div>
-<div class='row'><h4>{{ __("Next videos") }}<input class="float-right pull-right" value="Set autoplay" id="autoplayBtn" type="button" onclick="setAutoplay();" /></h4></div>
+<div class='row container-fluid'><span class='h4'>{{ __("Next videos") }}</span><input class="float-right pull-right" value="Set autoplay" id="autoplayBtn" type="button" onclick="setAutoplay();" /></div>
 <div class='row'>
 <div id="nextVideos" class="row text-center text-lg-left">
 
