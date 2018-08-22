@@ -25,7 +25,6 @@
                 height: 100vh;
                 margin: 0;
             }
-
             .full-height {
                 height: 100vh;
             }
@@ -98,7 +97,28 @@ $( document ).ready(function() {
 
                 <h1 class="my-4 text-center text-lg-left">{{ config('app.name', 'Laravel') }}</h1>
                 <div class="content">
-                  <div class="row text-center text-lg-left" id="carouselBody" >
+                  <h3>{{ __("Newest videos") }}</h3>
+                  <div id="demo" class="carousel slide" data-ride="carousel">
+
+                    <!-- Indicators -->
+                    <ul class="carousel-indicators" id="carouselIndicatorsBody">
+                    </ul>
+
+                    <!-- The slideshow -->
+                    <div class="carousel-inner" id="carouselInnerBody">
+                    </div>
+
+                    <!-- Left and right controls -->
+                    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                      <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#demo" data-slide="next">
+                      <span class="carousel-control-next-icon"></span>
+                    </a>
+
+                  </div>
+
+                  <div class="row text-center text-lg-left" id="galleryBody" >
                   </div>
                 </div>
               </div>

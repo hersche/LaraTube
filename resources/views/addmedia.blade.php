@@ -26,8 +26,8 @@
       })
       var el = document.getElementById('avatar');
       avatarResize = new Croppie(el, {
-          viewport: { width: 800, height: 300 },
-          boundary: { width: 850, height: 350 },
+        viewport: { width: 700, height: 394 },
+        boundary: { width: 730, height: 410 },
           showZoomer: true,
           //enableResize: true,
       });
@@ -59,8 +59,8 @@
 
       var el = document.getElementById('poster');
       posterResize = new Croppie(el, {
-        viewport: { width: 800, height: 300 },
-        boundary: { width: 850, height: 350 },
+        viewport: { width: 700, height: 394 },
+        boundary: { width: 730, height: 410 },
           showZoomer: true,
           //enableResize: true,
       });
