@@ -6,10 +6,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <script>var baseUrl = "{{ url("/") }}/";</script>
+        <script>var baseUrl = "{{ url("/") }}/";
+
+        </script>
 
         <script src="{{ asset('js/jquery.min.js') }}"></script>
         <script src="{{ asset('js/welcome.js') }}" defer></script>
+        <script>
+        function rebuildVideo(url){
+          $.getJSON( url, function( data ) {
+            var items = "";
+            console.log("data: "+data.data);
+            $.each( data.data, function( key, value ) {
+              console.log("do round!");
+              val1 = value;
+              items += '<div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="'+baseUrl+'media/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="'+ baseUrl + val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div>';
+            });
+            var pages = "<input type='button' class='btn btn-info mr-1' value='First' onclick='rebuildVideo(\""+data.links.first+"\");' /> <input class='btn btn-info' type='button' value='Prev' onclick='rebuildVideo(\""+data.links.prev+"\");' /><span class='ml-1 mr-1'>"+data.meta.current_page+"/"+data.meta.last_page+"</span><input class='btn btn-info' type='button' value='Next' onclick='rebuildVideo(\""+data.links.next+"\");' /><input class='btn btn-info ml-1' type='button' value='Last' onclick='rebuildVideo(\""+data.links.last+"\");' />";
+            $("#galleryBody").html(items);
+            $("#pagesBody").html(pages);
+          });
+        }
+        </script>
         <title>LaraTube</title>
 
         <!-- Fonts -->
@@ -119,6 +137,8 @@ $( document ).ready(function() {
                   </div>
 
                   <div class="row text-center text-lg-left" id="galleryBody" >
+                  </div>
+                  <div class="row justify-content-center mt-1 mb-1" id="pagesBody" >
                   </div>
                 </div>
               </div>
