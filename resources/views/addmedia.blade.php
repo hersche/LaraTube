@@ -5,9 +5,25 @@
   <script src="{{ asset("js/croppie/croppie.js") }}"></script>
   <script>
 
+  function getHashTags(inputText) {
+      var regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      var matches = "";
+      var match;
+
+      while ((match = regex.exec(inputText))) {
+          matches += " #"+(match[1]);
+      }
+      return matches;
+  }
+
+
   var avatarResize;
     var posterResize;
     $( document ).ready(function() {
+
+      $("#addMediaDescription").keyup( function(){
+        $("#tags").val(getHashTags($("#addMediaDescription").val()));
+      })
       var el = document.getElementById('avatar');
       avatarResize = new Croppie(el, {
           viewport: { width: 800, height: 300 },
@@ -115,7 +131,7 @@
 
   <div class="form-group">
       <label>Media-description:</label>
-      {!! Form::textarea('description', null, array('placeholder' => 'Media-description','class' => 'form-control')) !!}
+      {!! Form::textarea('description', null, array('placeholder' => 'Media-description','id' => 'addMediaDescription','class' => 'form-control')) !!}
   </div>
 
   <div class="form-group">

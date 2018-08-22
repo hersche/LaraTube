@@ -10,12 +10,12 @@ class Comment extends Model
     protected $table = 'comments';
 
     protected $fillable = [
-        'id','users_id', 'medias_id', 'body'
+        'id','user_id', 'media_id', 'body'
     ];
     public function media() {
-      return Media::find($this->medias_id);
+      return Media::find($this->media_id);
     }
     public function user() {
-      return User::find($this->users_id);
+      return User::find($this->user_id);
     }
 }

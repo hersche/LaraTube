@@ -117,19 +117,19 @@
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
     </div>
-    <div>
+    <div class="float-right">
       @if($media->myLike()=="1")
-        <button id="likes" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
+        <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
       @else
-        <button id="likes" type="button" onclick="like({{ $media->id }},'media');" class="btn primary">
+        <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-primary">
       @endif
-      <ion-icon name="thumbs-up"></ion-icon><span class="ml-1">{{ $media->likes() }}</span></button>
+      <ion-icon name="thumbs-up"></ion-icon><span class="ml-1" id="likeCount">{{ $media->likes() }}</span></button>
       @if($media->myLike()=="-1")
-        <button id="likes" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-success">
+        <button id="dislike" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-success">
       @else
-        <button id="likes" type="button" onclick="dislike({{ $media->id }},'media');" class="btn primary">
+        <button id="dislike" type="button" onclick="dislike({{ $media->id }},'media');" class="btn btn-primary">
       @endif
-      <ion-icon name="thumbs-down"></ion-icon><span class="ml-1">{{ $media->dislikes() }}</span></button></div>
+      <ion-icon name="thumbs-down"></ion-icon><span class="ml-1" id="dislikeCount">{{ $media->dislikes() }}</span></button></div>
 </div>
 @auth
 {!! Form::open(['method' => 'PUT','route' => ['comments.add']]) !!}
@@ -143,8 +143,20 @@
         </div>
         <script>
         var nextTitle = "";
-
+        var myLike = '{{ $media->myLike() }}';
         $( document ).ready(function() {
+        if(myLike=="1"){
+            if($("#like").hasClass("btn-primary")){
+              $("#like").removeClass("btn-primary");
+              $("#like").addClass("btn-success");
+            }
+        }
+        if(myLike=="-1"){
+            if($("#dislike").hasClass("btn-primary")){
+              $("#dislike").removeClass("btn-primary");
+              $("#dislike").addClass("btn-success");
+            }
+        }
         const player = new Plyr('#player');
         getAutoplay();
           var playerEl = document.getElementById("player");
@@ -163,6 +175,7 @@
               var items = "";
               var indicators = "";
               var first=true;
+              if(data.data.length>0){
               nextTitle = data.data[0].title;
               console.log(nextTitle);
               $.each( data.data, function( key, value ) {
@@ -170,8 +183,12 @@
           //      indicators += '<li data-target="#carouselExampleIndicators" data-slide-to="'+(key-1)+'" class="'+active+'"></li>'
                 items += '<div style="min-width: 180px;" class="col-lg-3 col-md-4 col-xs-6 card"><a href="{{ url("/media/") }}/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="{{ url("/") }}/'+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div></div></div>';
               });
+            } else {
+              items = "<strong>No next videos</strong>";
+            }
           //    $("#carouselIndicators").html(indicators);
               $("#nextVideos").html(items);
+
             //  $("#carouselExampleIndicators").carousel(0);
           });
           //}
@@ -224,7 +241,28 @@
         type: 'PUT',
         data: type+"_id="+id+"&count=1",
         success: function(data) {
-          alert("liked");
+        //  alert("liked");
+          if(myLike=="-1"){
+              if($("#like").hasClass("btn-success")){
+                $("#like").addClass("btn-primary");
+                $("#like").removeClass("btn-success");
+              }
+              if($("#dislike").hasClass("btn-success")){
+                $("#ldisike").addClass("btn-primary");
+                $("#dislike").removeClass("btn-success");
+              }
+              myLike="0";
+              $("#dislikeCount").html(Number($("#dislikeCount").html()-1));
+          }
+          else if(myLike=="0"){
+              if($("#like").hasClass("btn-primary")){
+                $("#like").removeClass("btn-primary");
+                $("#like").addClass("btn-success");
+              }
+              $("#likeCount").html(Number($("#likeCount").html()+1));
+              myLike="1";
+          }
+          console.log("mylike: "+myLike);
         }
       });
     }
@@ -234,7 +272,28 @@
       type: 'PUT',
       data: type+"_id="+id+"&count=-1",
       success: function(data) {
-        alert("disliked");
+      //  alert("disliked");
+        if(myLike=="1"){
+            if($("#dislike").hasClass("btn-success")){
+              $("#dislike").addClass("btn-primary");
+              $("#dislike").removeClass("btn-success");
+            }
+              if($("#like").hasClass("btn-success")){
+                  $("#like").addClass("btn-primary");
+                  $("#like").removeClass("btn-success");
+              }
+              $("#likeCount").html(Number($("#likeCount").html()-1));
+            myLike="0";
+        }
+        else if(myLike=="0"){
+            if($("#dislike").hasClass("btn-primary")){
+              $("#disike").removeClass("btn-primary");
+              $("#dislike").addClass("btn-success");
+            }
+            $("#dislikeCount").html(Number($("#dislikeCount").html()+1));
+            myLike="-1";
+        }
+        console.log("dislike: "+myLike);
       }
     });
   }
