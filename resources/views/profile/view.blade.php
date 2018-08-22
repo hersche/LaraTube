@@ -40,8 +40,9 @@
   <div id="profilebody" style="background-color: lightgrey; opacity: 0.8;">
     <h1 class='ml-3'>{{ $user->name }}</h1>
     <p>{{ $user->getFriendsCount() }} friends</p>
-    <p>{{ Auth::user()->getMutualFriendsCount($user) }} mutual friends</p>
-
+    @auth
+      <p>{{ Auth::user()->getMutualFriendsCount($user) }} mutual friends</p>
+    @endauth
     @if (!empty($user->bio))
       {{ $user->bio }}
     @endif
