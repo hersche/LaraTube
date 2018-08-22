@@ -8,24 +8,40 @@
   @endif
   <script>
 
-  var users = [];
+  Array.prototype.remove = function() {
+      var what, a = arguments, L = a.length, ax;
+      while (L && this.length) {
+          what = a[--L];
+          while ((ax = this.indexOf(what)) !== -1) {
+              this.splice(ax, 1);
+          }
+      }
+      return this;
+  };
 
-
-
-  function getUser(id){
-    for (i = 0; i < users.length; i++) {
-        if(users[i].id==id){
-          return users[i];
-        }
+  function rebuildVideo(title){
+    $.getJSON( baseUrl+'api/media/'+title, function( data ) {
+      var playerHtml;
+      if(data.data.simpleType=="video"){
+      playerHtml = '<video id="player">';
+      if(data.data.type=="localVideo"){
+        playerHtml += "<source></source>";
+      }
+      playerHtml += "</video>";
     }
-    // retrive user-data
+      var items = "";
+      console.log("data: "+data.data);
+      $.each( data.data, function( key, value ) {
+        console.log("do round!");
+        val1 = value;
+        items += '<div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="'+baseUrl+'media/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="'+ baseUrl + val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div>';
+      });
+      var pages = "<input type='button' class='btn btn-info mr-1' value='First' onclick='rebuildVideo(\""+data.links.first+"\");' /> <input class='btn btn-info' type='button' value='Prev' onclick='rebuildVideo(\""+data.links.prev+"\");' /><span class='ml-1 mr-1'>"+data.meta.current_page+"/"+data.meta.last_page+"</span><input class='btn btn-info' type='button' value='Next' onclick='rebuildVideo(\""+data.links.next+"\");' /><input class='btn btn-info ml-1' type='button' value='Last' onclick='rebuildVideo(\""+data.links.last+"\");' />";
+      $("#galleryBody").html(items);
+      $("#pagesBody").html(pages);
+    });
   }
 
-  function User(id, name, avatar_source) {
-      this.id = id;
-      this.name = name;
-      this.avatar_source = avatar_source;
-  }
 
   </script>
 @endsection
@@ -113,7 +129,7 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
     </div>
     <div class="card">
-      <div class="card-header"><span class='h3'>{{ $media->title }}</span>        <div class="float-right"><span class="btn btn-info mr-1">{{ $media->created_at }}</span><a class="btn btn-primary" href="{{ url("/profile") }}/{{ $media->user()->name }}"><img class="mx-auto rounded-circle img-fluid" src="{{ url($media->user()->avatar()) }}" alt="avatar" style="max-height: 20px;" />{{ $media->user()->name }}</a>
+      <div class="card-header"><span class='h3'>{{ $media->title }}</span>        <div class="float-right"><span class="btn btn-info mr-1">{{ $media->created_at->diffForHumans() }}</span><a class="btn btn-primary" href="{{ url("/profile") }}/{{ $media->user()->name }}"><img class="mx-auto rounded-circle img-fluid" src="{{ url($media->user()->avatar()) }}" alt="avatar" style="max-height: 20px;" />{{ $media->user()->name }}</a>
                 @if($media->myLike()=="1")
                   <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
                 @else
@@ -147,6 +163,7 @@
         var nextTitle = "";
         var myLike = '{{ $media->myLike() }}';
         $( document ).ready(function() {
+
         if(myLike=="1"){
             if($("#like").hasClass("btn-primary")){
               $("#like").removeClass("btn-primary");
@@ -312,10 +329,10 @@
 
 <div class="comment mb-2 row" id='cid{{ $comment->id }}'>
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
-        <a href=""><img class="mx-auto rounded-circle img-fluid" src="{{ url($comment->user()->avatar()) }}" alt="avatar" /></a>
+        <a href=""><img class="mx-auto rounded-circle img-fluid" src="{{ url($comment->user->avatar()) }}" alt="avatar" /></a>
     </div>
     <div class="comment-content col-md-11 col-sm-10">
-        <h6 class="small comment-meta"><a href="{{ url("/profile") }}/{{ $comment->user()->name }}">{{ $comment->user()->name }}</a> {{ $comment->created_at }}
+        <h6 class="small comment-meta"><a href="{{ url("/profile") }}/{{ $comment->user->name }}">{{ $comment->user->name }}</a> {{ $comment->created_at }}
           @if (Auth::id() == $comment->users_id)
             <span class="float-right btn btn-danger" onclick="deleteComment({{ $comment->id }});"><ion-icon name="trash"></ion-icon></span>
           @endif
@@ -335,5 +352,7 @@
 <div class='row'>
 <div id="nextVideos" class="row text-center text-lg-left">
 
+</div>
+<div class="row justify-content-center mt-1 mb-1" id="pagesBody" >
 </div>
 @endsection
