@@ -23,11 +23,11 @@
     $.getJSON( baseUrl+'api/media/'+title, function( data ) {
       var playerHtml;
       if(data.data.simpleType=="video"){
-      playerHtml = '<video id="player">';
-      if(data.data.type=="localVideo"){
-        playerHtml += "<source></source>";
-      }
-      playerHtml += "</video>";
+        playerHtml = '<video id="player" playsinline controls>';
+        if(data.data.type=="localVideo"){
+          playerHtml += "<source src='"+data.data.source+"'></source>";
+        }
+        playerHtml += "</video>";
     }
       var items = "";
       console.log("data: "+data.data);

@@ -2,7 +2,18 @@
 
 @section('header')
   <script>
-
+  function sendFriendRequest(id,type){
+    console.log("i should send a request to userid "+id);
+    $.ajax({
+      url: '{{ url("/friends") }}',
+      type: 'PUT',
+      data: "users_id="+id+"&type="+type,
+      success: function(data) {
+      //  $("#cid"+id).html("");
+        console.log("friend-request done: "+type);
+      }
+    });
+  }
   </script>
 @endsection
 
@@ -28,7 +39,7 @@
             <h4> Accepted friends</h4>
             @foreach ($users as $pendingFriend)
               @if (Auth::user()->isFriendWith($pendingFriend))
-                <p><img src="{{ $pendingFriend->avatar() }}" />{{ $pendingFriend->name }}
+                <p><img src="{{ $pendingFriend->avatar() }}" style="max-height:90px;" />{{ $pendingFriend->name }}
                   <span class="float-right"><input type="button" value="Unfriend" onclick="sendFriendRequest({{ $pendingFriend->id }},'unfriend')" /></span>
                 </p>
                 <p class="pl-3">Mutual friends: {{ Auth::user()->getMutualFriendsCount($pendingFriend) }} users</p>
