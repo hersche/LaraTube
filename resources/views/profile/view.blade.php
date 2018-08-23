@@ -14,6 +14,17 @@
         }
       });
     }
+
+    function nl2br (str, is_xhtml) {
+    if (typeof str === 'undefined' || str === null) {
+        return '';
+    }
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
+    $( document ).ready(function() {
+      $("#bioBody").html(nl2br($("#bioBody").html()));
+    });
   </script>
   <style>
     #profile{
@@ -37,20 +48,22 @@
     @endif
     @endauth
   </div>
-  <div id="profilebody" class="bg-light" style="opacity: 0.76;">
+  <div id="profilebody" class="bg-light pl-3 pr-3 pb-1 pt-1" style="opacity: 0.76;">
     <h1 class='ml-3'>{{ $user->name }}</h1>
     <p>{{ $user->getFriendsCount() }} friends</p>
     @auth
       <p>{{ Auth::user()->getMutualFriendsCount($user) }} mutual friends</p>
     @endauth
+    <div id="bioBody">
     @if (!empty($user->bio))
       {{ $user->bio }}
     @endif
+  </div>
 
   </div>
 
 </div>
-<div id="profilevideos">
+<div class="row text-center text-lg-left" id="profilevideos">
   @foreach ($user->medias as $media)
     <div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="{{ url("/media/") }}/{{ $media->title }}" class="d-block h-100"><img class="card-img-top" src="{{ url($media->poster()) }}" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">{{ $media->title }}</h4></div></a></div>
   @endforeach
