@@ -18,7 +18,7 @@ class Media extends JsonResource
           'id' => $this->id,
           'title' => $this->title,
           'source' => $this->source,
-          'poster_source' => $this->poster_source,
+          'poster_source' => $this->poster(),
           'type' => $this->type,
           'description' => $this->description,
           'myLike' => $this->myLike(),

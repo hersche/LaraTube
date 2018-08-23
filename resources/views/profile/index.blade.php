@@ -27,8 +27,7 @@
             <h4> Pending friends</h4>
             @foreach ($users as $pendingFriend)
               @if (Auth::user()->hasFriendRequestFrom($pendingFriend))
-
-              <p><img src="{{ $pendingFriend->avatar() }}" />{{ $pendingFriend->name }}
+              <p><img src="{{ $pendingFriend->avatar() }}" style="max-height:90px;" />{{ $pendingFriend->name }}
                 <span class="float-right"><input type="button" value="Confirm request" onclick="sendFriendRequest({{ $pendingFriend->id }},'confirm')" /></span>
               </p>
               <p class="pl-3">Mutual friends: {{ Auth::user()->getMutualFriendsCount($pendingFriend) }} users</p>

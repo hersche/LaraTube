@@ -6,18 +6,10 @@
   @if ($media->simpleType()=="torrent")
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webtorrent/0.102.0/webtorrent.min.js" ></script>
   @endif
+
+  <script src="{{ asset('js/media.js') }}"></script>
   <script>
 
-  Array.prototype.remove = function() {
-      var what, a = arguments, L = a.length, ax;
-      while (L && this.length) {
-          what = a[--L];
-          while ((ax = this.indexOf(what)) !== -1) {
-              this.splice(ax, 1);
-          }
-      }
-      return this;
-  };
 
   function rebuildVideo(title){
     $.getJSON( baseUrl+'api/media/'+title, function( data ) {
@@ -164,20 +156,6 @@
         var myLike = '{{ $media->myLike() }}';
         $( document ).ready(function() {
 
-        if(myLike=="1"){
-            if($("#like").hasClass("btn-primary")){
-              $("#like").removeClass("btn-primary");
-              $("#like").addClass("btn-success");
-            }
-        }
-        if(myLike=="-1"){
-            if($("#dislike").hasClass("btn-primary")){
-              $("#dislike").removeClass("btn-primary");
-              $("#dislike").addClass("btn-success");
-            }
-        }
-        const player = new Plyr('#player');
-        getAutoplay();
           var playerEl = document.getElementById("player");
          if(localStorage.getItem("autoplay")=="true"){
           //  $("#player").autoplay = true;
@@ -186,11 +164,11 @@
           playerEl.onended = function() {
             console.log("Media ended, if autoplay enabled, next video!");
             if(localStorage.getItem("autoplay")=="true"){
-              document.location = "{{ url("/media" ) }}/"+nextTitle;
+              document.location = baseUrl+"media/"+nextTitle;
             }
           };
           //function loadMedias(){
-            $.getJSON( "{{ url('/api/media/not') }}/{{ $media->title }}", function( data ) {
+            $.getJSON( baseUrl+"api/media/not/{{ $media->title }}", function( data ) {
               var items = "";
               var indicators = "";
               var first=true;
@@ -333,7 +311,7 @@
     </div>
     <div class="comment-content col-md-11 col-sm-10">
         <h6 class="small comment-meta"><a href="{{ url("/profile") }}/{{ $comment->user->name }}">{{ $comment->user->name }}</a> {{ $comment->created_at }}
-          @if (Auth::id() == $comment->users_id)
+          @if (Auth::id() == $comment->user_id)
             <span class="float-right btn btn-danger" onclick="deleteComment({{ $comment->id }});"><ion-icon name="trash"></ion-icon></span>
           @endif
         </h6>

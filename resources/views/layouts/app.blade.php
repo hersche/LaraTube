@@ -95,6 +95,7 @@
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                   <a class="dropdown-item" href="{{ route('users.selfedit') }}">{{ __('Settings') }}</a>
+                                  <a class="dropdown-item" href="{{ route('friends') }}">{{ __('Manage friends') }}</a>
                                   @can('role-list')
                                     <a class="dropdown-item" href="{{ route('roles.index') }}">{{ __('Manage Role') }}</a>
                                   @endcan

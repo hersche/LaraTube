@@ -42,7 +42,7 @@ Route::post('/directUpload','MediaController@directUpload')->name('medias.direct
 Route::put('/directUpload','MediaController@directUpload');
 Route::get('/media','MediaController@index')->name('media');
 Route::put('/like','MediaController@like')->name('media.like');
-Route::get('/profile','UserController@profile')->name('profile');
+Route::get('/friends','UserController@profile')->name('friends');
 Route::get('/profile/edit','UserController@selfEdit')->name('users.selfedit');
 Route::get('/profile/{name}','UserController@profileview')->name('profile.view');
 Route::put('/friends','UserController@changeFriends')->name('friends');

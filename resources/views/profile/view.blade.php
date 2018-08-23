@@ -37,7 +37,7 @@
     @endif
     @endauth
   </div>
-  <div id="profilebody" style="background-color: lightgrey; opacity: 0.8;">
+  <div id="profilebody" class="bg-light" style="opacity: 0.76;">
     <h1 class='ml-3'>{{ $user->name }}</h1>
     <p>{{ $user->getFriendsCount() }} friends</p>
     @auth

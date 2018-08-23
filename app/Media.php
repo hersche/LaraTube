@@ -62,7 +62,7 @@ class Media extends Model
     }
     public function poster(){
       if(empty($this->poster_source)){
-        return "img/404/image.png";
+        return "img/404/poster.png";
       }
       return $this->poster_source;
     }

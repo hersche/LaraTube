@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use App\User;
+use App\Media;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,10 +27,25 @@ class DatabaseSeeder extends Seeder
         ];
 
 
-     $u = User::create(['name' => 'admin','email' => 'admin@admin.admin','password' => Hash::make('adminadmin')]);
-     $u1 = User::create(['name' => 'bla','email' => 'bla@bla.bla','password' => Hash::make('blabla')]);
-     $u2 = User::create(['name' => 'ni','email' => 'ni@ni.ni','password' => Hash::make('ninini')]);
-      $u3 = User::create(['name' => 'na','email' => 'na@na.na','password' => Hash::make('nanana')]);
+     $u = User::create(['name' => 'admin','bio' => 'Hi, i am a test-user. My e-mail is admin@admin.admin and my password is adminadmin - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'admin@admin.admin','password' => Hash::make('adminadmin')]);
+     $u1 = User::create(['name' => 'bla','bio' => 'Hi, i am a test-user. My e-mail is bla@bla.bla and my password is blabla - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'bla@bla.bla','password' => Hash::make('blabla')]);
+     $u2 = User::create(['name' => 'ni','bio' => 'Hi, i am a test-user. My e-mail is ni@ni.ni and my password is ninini - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'ni@ni.ni','password' => Hash::make('ninini')]);
+     $u3 = User::create(['name' => 'na','bio' => 'Hi, i am a test-user. My e-mail is na@na.na and my password is nanana - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'na@na.na','password' => Hash::make('nanana')]);
+     $u->befriend($u1);
+     $u->befriend($u3);
+     $u3->acceptFriendRequest($u);
+     $u2->befriend($u3);
+     $u2->befriend($u1);
+     $u3->acceptFriendRequest($u2);
+     $u1->acceptFriendRequest($u2);
+     Media::create(['title' => 'Audio test 1', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
+     Media::create(['title' => 'Big bucks bunny test', 'source' => 'https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from a github-file.','user_id' => 1]);
+     Media::create(['title' => 'Big bucks bunny test 2', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
+     Media::create(['title' => 'Audio test 3', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
+     Media::create(['title' => 'Big test', 'source' => 'https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from a github-file.','user_id' => 3]);
+     Media::create(['title' => 'Big bucks test', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
+     Media::create(['title' => 'Audio test 2', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
+
      //$u->assignRole($permissions);
      foreach ($permissions as $permission) {
 
