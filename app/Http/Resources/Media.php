@@ -23,6 +23,7 @@ class Media extends JsonResource
           'description' => $this->description,
           'myLike' => $this->myLike(),
           'simpleType' => $this->simpleType(),
+          'tagString' => $this->tagString(),
           'created_at' => $this->created_at,
           'created_at_readable' => $this->created_at->diffForHumans(),
           'updated_at' => $this->updated_at,
