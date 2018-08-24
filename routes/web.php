@@ -38,7 +38,9 @@ Route::get('/media/delete/{title}','MediaController@destroy')->name('medias.dele
 Route::get('/media/{title}', 'MediaController@show')->name('media.show');
 
 Route::get('/tags', 'MediaController@tags')->name('tags');
+Route::get('/tags/{tags}', 'MediaController@tagsFilter')->name('tags.filter');
 
+Route::post('/directUpload','MediaController@directUpload')->name('medias.directuploadAjax');
 Route::put('/directUpload','MediaController@directUpload');
 Route::get('/media','MediaController@index')->name('media');
 Route::put('/like','MediaController@like')->name('media.like');

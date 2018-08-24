@@ -51,7 +51,7 @@
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
           @if ($media->type=="localVideo" || $media->type=="directVideo"|| $media->type=="torrentVideo")
-            <video class="col-12" id="player" poster="{{ url($media->poster_source) }}" playsinline controls>
+            <video class="col-12" id="player" poster="{{ url($media->poster()) }}" playsinline controls>
               @if ($media->type=="localVideo" || $media->type=="directVideo")
                 <source src="{{ url($media->source) }}" type="video/mp4">
               @endif
@@ -59,7 +59,7 @@
           @endif
 
           @if ($media->type=="localAudio" || $media->type=="directAudio"|| $media->type=="torrentAudio")
-            <audio id="player" poster="{{ url($media->poster_source) }}" playsinline controls>
+            <audio id="player" poster="{{ url($media->poster()) }}" playsinline controls>
               @if ($media->type=="localAudio" || $media->type=="directAudio")
                 <source src="{{ url($media->source) }}" >
               @endif

@@ -36,7 +36,7 @@
 @section('content')
 <div id="profile" >
   <div id="profileheader">
-    <img class='mr-3' src='{{ url($user->avatar()) }}' />
+    <img class='pl-2 pt-1 pb-1' src='{{ url($user->avatar()) }}' />
     @auth
     @if (Auth::user()->isFriendWith($user))
       <span class="float-right"><input type="button" value="Unfriend" onclick="sendFriendRequest({{ $user->id }},'unfriend')" /></span>

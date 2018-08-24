@@ -99,7 +99,16 @@ class UserController extends Controller
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
-        $user->retag(explode(' ', $request->input('tags')));
+        $tagArrayExtract = explode(' ', $request->input('tags'));
+        $tagArray = array();
+        foreach($tagArrayExtract as $tag){
+          if(starts_with($tag, '#')){
+            array_push($tagArray, substr($tag,1));
+          } else {
+            array_push($tagArray, $tag);
+          }
+        }
+        $user->retag($tagArray);
         return redirect()->route('users.index')
                         ->with('success','User created successfully');
     }
@@ -200,7 +209,16 @@ class UserController extends Controller
           DB::table('model_has_roles')->where('model_id',$id)->delete();
           $user->assignRole($request->input('roles'));
         }
-        $user->retag(explode(' ', $request->input('tags')));
+        $tagArrayExtract = explode(' ', $request->input('tags'));
+        $tagArray = array();
+        foreach($tagArrayExtract as $tag){
+          if(starts_with($tag, '#')){
+            array_push($tagArray, substr($tag,1));
+          } else {
+            array_push($tagArray, $tag);
+          }
+        }
+        $user->retag($tagArray);
         return redirect()->route('profile.view', $user->name)
                         ->with('success','User updated successfully');
     }

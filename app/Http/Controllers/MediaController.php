@@ -48,8 +48,8 @@ class MediaController extends Controller
         $tagArrayExtract = explode(' ', $request->input('tags'));
         $tagArray = array();
         foreach($tagArrayExtract as $tag){
-          if(!starts_with($tag, '#')){
-            array_push($tagArray, "#".$tag);
+          if(starts_with($tag, '#')){
+            array_push($tagArray, substr($tag,1));
           } else {
             array_push($tagArray, $tag);
           }
@@ -79,9 +79,6 @@ class MediaController extends Controller
         $like->save();
       }
     }
-    public function dislike(Request $request){
-
-    }
     public function directUpload(Request $request){
       $file = $request->file('directMedia');
     //  $posterFile = $request->file('poster');
@@ -98,8 +95,8 @@ class MediaController extends Controller
       $tagArrayExtract = explode(' ', $request->input('tags'));
       $tagArray = array();
       foreach($tagArrayExtract as $tag){
-        if(!starts_with($tag, '#')){
-          array_push($tagArray, "#".$tag);
+        if(starts_with($tag, '#')){
+          array_push($tagArray, substr($tag,1));
         } else {
           array_push($tagArray, $tag);
         }
@@ -175,7 +172,16 @@ class MediaController extends Controller
         $media->title = $request->input('title');
         $media->source = $request->input('source');
         $media->description = $request->input('description');
-        $media->retag(explode(' ', $request->input('tags')));
+        $tagArrayExtract = explode(' ', $request->input('tags'));
+        $tagArray = array();
+        foreach($tagArrayExtract as $tag){
+          if(starts_with($tag, '#')){
+            array_push($tagArray, substr($tag,1));
+          } else {
+            array_push($tagArray, $tag);
+          }
+        }
+        $media->retag(explode(' ', $tagArray));
         if(!empty($request->input('type'))){
           $media->type = $request->input('type');
         }
@@ -205,7 +211,21 @@ class MediaController extends Controller
     {
         //
     }
-
+    public function tagsFilter(Request $request, $tags)
+    {
+        //
+        $tagArrayExtract = explode(' ', $tags);
+        $tagArray = array();
+        foreach($tagArrayExtract as $tag){
+          if(starts_with($tag, '#')){
+            array_push($tagArray, substr($tag,1));
+          } else {
+            array_push($tagArray, $tag);
+          }
+        }
+        $medias = Media::withAnyTag($tagArray)->get();
+        return view('tags.filter',compact('medias'));
+    }
     /**
      * Remove the specified resource from storage.
      *
