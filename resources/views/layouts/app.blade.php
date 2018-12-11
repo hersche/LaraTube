@@ -11,8 +11,10 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     <script>var baseUrl = "{{ url("/") }}/";</script>
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    @yield('header-before-js')
     <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}" defer></script>
+
     @yield('header')
     <script src="https://unpkg.com/ionicons@4.3.0/dist/ionicons.js"></script>
     <script>

@@ -30,7 +30,7 @@ class MediaController extends Controller
 
     public function addMedia(Request $request)
     {
-      return view('addmedia');
+      return view('medias.create');
     }
     /**
      * Show the form for creating a new resource.
@@ -129,7 +129,7 @@ class MediaController extends Controller
       }
 
 
-      return view('addmedia');
+      return view('medias.create');
     }
     /**
      * Store a newly created resource in storage.

@@ -7,26 +7,13 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script>var baseUrl = "{{ url("/") }}/";
-
+        var sm;
         </script>
 
         <script src="{{ asset('js/jquery.min.js') }}"></script>
-        <script src="{{ asset('js/welcome.js') }}" defer></script>
+        <script src="{{ asset('js/app.js') }}" defer></script>
         <script>
-        function rebuildVideo(url){
-          $.getJSON( url, function( data ) {
-            var items = "";
-            console.log("data: "+data.data);
-            $.each( data.data, function( key, value ) {
-              console.log("do round!");
-              val1 = value;
-              items += '<div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="'+baseUrl+'media/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="'+ baseUrl + val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div>';
-            });
-            var pages = "<input type='button' class='btn btn-info mr-1' value='First' onclick='rebuildVideo(\""+data.links.first+"\");' /> <input class='btn btn-info' type='button' value='Prev' onclick='rebuildVideo(\""+data.links.prev+"\");' /><span class='ml-1 mr-1'>"+data.meta.current_page+"/"+data.meta.last_page+"</span><input class='btn btn-info' type='button' value='Next' onclick='rebuildVideo(\""+data.links.next+"\");' /><input class='btn btn-info ml-1' type='button' value='Last' onclick='rebuildVideo(\""+data.links.last+"\");' />";
-            $("#galleryBody").html(items);
-            $("#pagesBody").html(pages);
-          });
-        }
+
         </script>
         <title>LaraTube</title>
 
@@ -107,9 +94,12 @@ $( document ).ready(function() {
                         <a href="{{ route('login') }}">Login</a>
                         <a href="{{ route('register') }}">Register</a>
                     @endauth
+                    <div id="mainMenu" class="top-left links">
+
+                    </div>
                 </div>
             @endif
-            <div class="container col-lg-9 mt-2" style="max-height:90%; margin-top: 10%; overflow-y: auto;" id="content">
+            <div class="container col-lg-9 mt-2" style="max-height:90%; margin-top: 10%; overflow-y: auto;" id="mainContent">
 
                 <h1 class="my-4 text-center text-lg-left">{{ config('app.name', 'Laravel') }}</h1>
                 <div class="content">

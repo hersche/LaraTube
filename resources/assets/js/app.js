@@ -6,23 +6,16 @@
  */
 
 require('./bootstrap');
+//var siteManager = require('./siteManager').siteManager();
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-   Array.prototype.remove = function() {
-       var what, a = arguments, L = a.length, ax;
-       while (L && this.length) {
-           what = a[--L];
-           while ((ax = this.indexOf(what)) !== -1) {
-               this.splice(ax, 1);
-           }
-       }
-       return this;
-   };
-
 $( document ).ready(function() {
-
+console.log("why the hell??");
+// sm = new siteManager();
+var sm1 = require('./siteManager').init();
+console.log(sm1);
 });

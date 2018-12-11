@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@section('header-before-js')
+<script>
+var nextTitle = "";
+var myLike = '{{ $media->myLike() }}';
+</script>
+
+@endsection
+
 @section('header')
   <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.23/plyr.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.23/plyr.css" rel="stylesheet" type="text/css">
@@ -8,34 +16,16 @@
   @endif
 
   <script src="{{ asset('js/media.js') }}"></script>
-  <script>
+<script>
+$( document ).ready(function() {
 
+doLikeMarking("media");
 
-  function rebuildVideo(title){
-    $.getJSON( baseUrl+'api/media/'+title, function( data ) {
-      var playerHtml;
-      if(data.data.simpleType=="video"){
-        playerHtml = '<video id="player" playsinline controls>';
-        if(data.data.type=="localVideo"){
-          playerHtml += "<source src='"+data.data.source+"'></source>";
-        }
-        playerHtml += "</video>";
-    }
-      var items = "";
-      console.log("data: "+data.data);
-      $.each( data.data, function( key, value ) {
-        console.log("do round!");
-        val1 = value;
-        items += '<div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="'+baseUrl+'media/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="'+ baseUrl + val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div>';
-      });
-      var pages = "<input type='button' class='btn btn-info mr-1' value='First' onclick='rebuildVideo(\""+data.links.first+"\");' /> <input class='btn btn-info' type='button' value='Prev' onclick='rebuildVideo(\""+data.links.prev+"\");' /><span class='ml-1 mr-1'>"+data.meta.current_page+"/"+data.meta.last_page+"</span><input class='btn btn-info' type='button' value='Next' onclick='rebuildVideo(\""+data.links.next+"\");' /><input class='btn btn-info ml-1' type='button' value='Last' onclick='rebuildVideo(\""+data.links.last+"\");' />";
-      $("#galleryBody").html(items);
-      $("#pagesBody").html(pages);
-    });
-  }
+const player = new Plyr('#player');
+getAutoplay();
 
-
-  </script>
+});
+</script>
 @endsection
 
 @section('content')
@@ -114,6 +104,7 @@
                 } */
               });
             });
+
             </script>
             @endif
         </div>
@@ -152,8 +143,7 @@
             <input type="button" class="ml-1" value="Send comment!" onclick="sendComment();" />
         </div>
         <script>
-        var nextTitle = "";
-        var myLike = '{{ $media->myLike() }}';
+
         $( document ).ready(function() {
 
           var playerEl = document.getElementById("player");
@@ -192,108 +182,6 @@
 
         });
 
-        function deleteComment(id){
-          $.ajax({
-            url: '{{ url("/comment") }}',
-            type: 'DELETE',
-            data: "comments_id="+id,
-            success: function(data) {
-              $("#cid"+id).html("");
-              console.log("dynamicly deleted comment");
-            }
-          });
-        }
-
-        function setAutoplay(){
-          if(localStorage.getItem("autoplay")=="true"){
-            localStorage.setItem("autoplay", "false");
-          } else {
-            localStorage.setItem("autoplay", "true");
-          }
-          getAutoplay();
-        }
-
-        function getAutoplay(){
-          if(localStorage.getItem("autoplay")=="true"){
-            $("#autoplayBtn").attr("value", "Autoplay enabled");
-          } else {
-            $("#autoplayBtn").attr("value", "Autoplay disabled");
-          }
-        }
-
-        function sendComment(){
-        $.ajax({
-          url: '{{ url("/comment") }}',
-          type: 'PUT',
-          data: "medias_title="+$('#medias_title').val()+"&medias_id="+$('#medias_id').val()+"&body="+$('#medias_body').val(),
-          success: function(data) {
-            var commentHtml = "<table class='table table-fluid'><tbody><tr><td class='col-4'>{{ Auth::user()->name }}</td><td class='col-4 float-right'>Created now!</td></tr><tr><td class='col-8'>"+$('#medias_body').val()+"</td></tbody></table>";
-            $("#comments").html(commentHtml + $("#comments").html());
-          }
-        });
-      }
-      function like(id,type){
-      $.ajax({
-        url: '{{ url("/like") }}',
-        type: 'PUT',
-        data: type+"_id="+id+"&count=1",
-        success: function(data) {
-        //  alert("liked");
-          if(myLike=="-1"){
-              if($("#like").hasClass("btn-success")){
-                $("#like").addClass("btn-primary");
-                $("#like").removeClass("btn-success");
-              }
-              if($("#dislike").hasClass("btn-success")){
-                $("#ldisike").addClass("btn-primary");
-                $("#dislike").removeClass("btn-success");
-              }
-              myLike="0";
-              $("#dislikeCount").html(Number($("#dislikeCount").html()-1));
-          }
-          else if(myLike=="0"){
-              if($("#like").hasClass("btn-primary")){
-                $("#like").removeClass("btn-primary");
-                $("#like").addClass("btn-success");
-              }
-              $("#likeCount").html(Number($("#likeCount").html()+1));
-              myLike="1";
-          }
-          console.log("mylike: "+myLike);
-        }
-      });
-    }
-    function dislike(id,type){
-    $.ajax({
-      url: '{{ url("/like") }}',
-      type: 'PUT',
-      data: type+"_id="+id+"&count=-1",
-      success: function(data) {
-      //  alert("disliked");
-        if(myLike=="1"){
-            if($("#dislike").hasClass("btn-success")){
-              $("#dislike").addClass("btn-primary");
-              $("#dislike").removeClass("btn-success");
-            }
-              if($("#like").hasClass("btn-success")){
-                  $("#like").addClass("btn-primary");
-                  $("#like").removeClass("btn-success");
-              }
-              $("#likeCount").html(Number($("#likeCount").html()-1));
-            myLike="0";
-        }
-        else if(myLike=="0"){
-            if($("#dislike").hasClass("btn-primary")){
-              $("#disike").removeClass("btn-primary");
-              $("#dislike").addClass("btn-success");
-            }
-            $("#dislikeCount").html(Number($("#dislikeCount").html()+1));
-            myLike="-1";
-        }
-        console.log("dislike: "+myLike);
-      }
-    });
-  }
         </script>
     </div>
 

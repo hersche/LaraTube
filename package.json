@@ -15,8 +15,17 @@
         "cross-env": "^5.1",
         "jquery": "^3.2",
         "laravel-mix": "^2.0",
-        "lodash": "^4.17.4",
+        "lodash": "^4.17.11",
         "popper.js": "^1.12",
+        "ts-loader": "^5.1.1",
+        "typescript": "^3.0.3",
         "vue": "^2.5.7"
+    },
+    "dependencies": {
+        "@types/jquery": "^3.3.10",
+        "img-loader": "^3.0.0",
+        "plyr": "^3.4.7",
+        "shaka-player": "^2.5.0-beta",
+        "yarn": "^1.10.1"
     }
 }
