@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function getAutoplay() {
+export function getAutoplay() {
     if (localStorage.getItem("autoplay") == "true") {
         //  $("#autoplayBtn").attr("value", "Autoplay enabled");
     }
@@ -8,4 +6,3 @@ function getAutoplay() {
         //  $("#autoplayBtn").attr("value", "Autoplay disabled");
     }
 }
-exports.getAutoplay = getAutoplay;

@@ -4,8 +4,8 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
 require('./bootstrap');
+
 //var siteManager = require('./siteManager').siteManager();
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -14,8 +14,8 @@ require('./bootstrap');
  */
 
 $( document ).ready(function() {
-console.log("why the hell??");
-// sm = new siteManager();
-var sm1 = require('./siteManager').init();
-console.log(sm1);
+  require('./siteManager').init(process.env.MIX_APP_URL);
+
+
+  //require('./siteManager').init("http://127.0.0.1:8000");
 });

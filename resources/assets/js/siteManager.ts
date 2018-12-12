@@ -1,5 +1,10 @@
 var baseUrl:string;
+import Vue from 'vue'
+var theComp = Vue.component(
+    'exco', require("./components/ExampleComponent.vue")
 
+);
+var theVue;
 class siteManager {
 
   medias:Array<Media>;
@@ -7,7 +12,8 @@ class siteManager {
   sites:Array<site>;
   currentSite:site;
   constructor(base:string){
-    baseUrl = base;
+    baseUrl = base+"/";
+
     this.currentPage = "overview";
     this.sites = [];
     this.currentSite = new overviewSite();
@@ -21,9 +27,9 @@ class siteManager {
     //if(this.sites[site]==undefined){
     console.log("changeSite: "+site);
     if(site=="player"){
-      new playerSite(theValue);
+      this.currentSite = new playerSite(theValue);
     } else {
-      new overviewSite();
+      this.currentSite = new overviewSite();
     }
     //}
   }
@@ -66,11 +72,12 @@ class overviewSite extends site {
   receiveMedias(createContentCallback: (dataList: Array<Media>) => void = null):void{
     var that = this;
     $.getJSON("/api/media", function name(data) {
-      that.medias = [];
+      sm.medias = [];
         $.each( data.data, function( key, value ) {
-          that.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user_id,value.created_at,value.created_at_readable));
+          sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user_id,value.created_at,value.created_at_readable));
         });
-        createContentCallback(that.medias);
+        createContentCallback(sm.medias);
+        theVue.medias = sm.medias;
     });
   }
   createContent(data:Array<Media>):void{
@@ -81,9 +88,9 @@ class overviewSite extends site {
     var first = true;
     var firstHtml = " active ";
     $.each( data, function( key, val1 ) {
-      carouselHtml += '<div class="carousel-item bg-dark '+firstHtml+'"><img src="/'+ val1.poster_source + '" alt="'+val1.title+'"><div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;"><h3>'+val1.title+' ('+val1.created_at_readable+')</h3><p>'+val1.description+'<span class="float-right"><a id="'+key+'CaroselPlay" class="btn btn-primary mr-2" >Play</a></span></p></div></div>';
+      carouselHtml += '<div class="carousel-item bg-dark '+firstHtml+'"><img src="'+baseUrl+ val1.poster_source + '" alt="'+val1.title+'"><div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;"><h3>'+val1.title+' ('+val1.created_at_readable+')</h3><p>'+val1.description+'<span class="float-right"><a id="'+key+'CaroselPlay" class="btn btn-primary mr-2" >Play</a></span></p></div></div>';
       carouselIndicatorsHtml += '<li data-target="#demo" data-slide-to="0" class="'+firstHtml+'"></li>';
-      items += '<div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="/media/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="/'+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div>';
+      items += '<div style="min-width: 300px;" class="col-lg-4 col-md-4 col-xs-6 card"><a href="/media/'+val1.title+'" class="d-block h-100"><img class="card-img-top" src="'+baseUrl+ val1.poster_source + '" alt=""><div class="card-img-overlay"><h4 class="card-title bg-secondary text-info" style="opacity: 0.9;">'+val1.title+'</h4></div></a></div>';
       if(first){
         firstHtml = "";
         first = false;
@@ -111,11 +118,12 @@ class playerSite extends site {
 
     var that = this;
     $.getJSON("/api/media/"+that.title, function name(data) {
-      that.medias = [];
+      sm.medias = [];
         $.each( data, function( key, value ) {
-          that.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user_id,value.created_at,value.created_at_readable));
+          sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user_id,value.created_at,value.created_at_readable));
         });
-        createContentCallback(that.medias);
+        createContentCallback(sm.medias);
+        theVue.medias = sm.medias;
     });
   }
 
@@ -126,10 +134,14 @@ class playerSite extends site {
     var finalCarouselHtml;
     $.each( data, function( key, val1 ) {
       if(first){
+        var tmpSourceBase = baseUrl;
+        if(val1.source.substr(0,4)=="http"){
+          tmpSourceBase = "";
+        }
         if(val1.simpleType=="audio"){
-          carouselHtml += '<audio width="320" height="240" controls poster="/'+val1.poster_source + '"><source src="'+val1.source + '" type="audio/mp3"></audio>';
+          carouselHtml += '<audio width="320" height="240" controls poster="'+baseUrl+val1.poster_source + '"><source src="'+tmpSourceBase+val1.source + '" type="audio/mp3"></audio>';
         } else if(val1.simpleType=="video"){
-          carouselHtml += '<video width="320" height="240" controls poster="/'+val1.poster_source + '"><source src="'+val1.source + '" type="video/mp4"></video>';
+          carouselHtml += '<video width="320" height="240" controls poster="'+baseUrl+val1.poster_source + '"><source src="'+tmpSourceBase+val1.source + '" type="video/mp4"></video>';
         }
         finalCarouselHtml = '<h3>'+val1.title+'</h3><div>'+carouselHtml+'</div>';
         $("#mainContent").html(finalCarouselHtml);
@@ -208,6 +220,36 @@ class Media {
 if(sm==undefined){
   var sm;
 }
-export function init() {
+export function init(baseUrl) {
+
+
     sm = new siteManager(baseUrl);
+  var overview = Vue.component(
+      'overview', require("./components/OverviewComponent.vue"));
+  var player = Vue.component(
+      'player', require("./components/MediaComponent.vue"));
+  theVue = new Vue({
+    el: '#app',
+    data : {aFirst : "halloooo du",
+    currentComponent: 'overview', medias:sm.medias},
+    components: {theComp, overview, player},
+    template:'<div><h1>MAin: {{reversedMessage}} {{currentComponent}}</h1><exco :swapComponent="swapComponent" :aSubFirst="aFirst"></exco><div :is="currentComponent" v-bind:medias="medias"></div></div>',
+      computed: {
+        // a computed getter
+        reversedMessage: function () {
+          // `this` points to the vm instance
+          return this.aFirst.split('').reverse().join('')
+        },
+
+      },
+      methods:{
+        swapComponent: function(component) {
+          this.currentComponent = component;
+        }
+      }
+  })
+  console.log(theVue)
+  theVue.aFirst = "Replaced!";
+
+
 }
