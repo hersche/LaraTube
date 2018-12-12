@@ -47744,6 +47744,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['medias']
@@ -47757,19 +47786,189 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("h1", [_vm._v("Overview!!")]),
-    _vm._v(" "),
-    _c(
-      "ul",
-      { attrs: { id: "example-1" } },
-      _vm._l(_vm.medias, function(item) {
-        return _c("li", [_vm._v("\n      " + _vm._s(item.title) + "\n    ")])
+  return _c(
+    "div",
+    [
+      _c("h3", [_vm._v("Newest videos")]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "carousel slide",
+          attrs: { id: "demo", "data-ride": "carousel" }
+        },
+        [
+          _c(
+            "ul",
+            {
+              staticClass: "carousel-indicators",
+              attrs: { id: "carouselIndicatorsBody" }
+            },
+            _vm._l(_vm.medias, function(item, index) {
+              return _c("li", {
+                staticClass: "active",
+                attrs: { "data-target": "#demo", "data-slide-to": index }
+              })
+            })
+          ),
+          _c(
+            "div",
+            {
+              staticClass: "carousel-inner",
+              attrs: { id: "carouselInnerBody" }
+            },
+            [
+              _vm._l(_vm.medias, function(item, index) {
+                return index == 0
+                  ? _c("div", { staticClass: "carousel-item bg-dark active" }, [
+                      _c("img", {
+                        attrs: { src: item.poster_source, alt: item.title }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "carousel-caption bg-dark text-white",
+                          staticStyle: { color: "black", background: "green" }
+                        },
+                        [
+                          _c("h3", { staticStyle: { color: "black" } }, [
+                            _vm._v(
+                              _vm._s(item.title) +
+                                " (" +
+                                _vm._s(item.created_at_readable) +
+                                ")"
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "p",
+                            {
+                              staticStyle: {
+                                color: "black",
+                                "background-color": "green"
+                              }
+                            },
+                            [_vm._v(_vm._s(item.description)), _vm._m(0, true)]
+                          )
+                        ]
+                      )
+                    ])
+                  : _vm._l(_vm.medias, function(item, index) {
+                      return _c(
+                        "div",
+                        { staticClass: "carousel-item bg-dark" },
+                        [
+                          _c("img", {
+                            attrs: { src: item.poster_source, alt: item.title }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass: "carousel-caption",
+                              staticStyle: {
+                                color: "black",
+                                background: "lightgrey",
+                                opacity: "0.9"
+                              }
+                            },
+                            [
+                              _c("h3", [
+                                _vm._v(
+                                  _vm._s(item.title) +
+                                    " (" +
+                                    _vm._s(item.created_at_readable) +
+                                    ")"
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("p", [
+                                _vm._v(_vm._s(item.description)),
+                                _vm._m(1, true)
+                              ])
+                            ]
+                          )
+                        ]
+                      )
+                    })
+              }),
+              _vm._v(" "),
+              _vm._m(2),
+              _vm._m(3)
+            ],
+            2
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _vm._l(_vm.medias, function(item, index) {
+        return _c("p", [
+          _vm._v("\n\n" + _vm._s(index) + " -\n" + _vm._s(item.title) + "\n")
+        ])
       })
-    )
-  ])
+    ],
+    2
+  )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "float-right" }, [
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-primary mr-2",
+          attrs: { id: "'+key+'CaroselPlay" }
+        },
+        [_vm._v("Play")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "float-right" }, [
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-primary mr-2",
+          attrs: { id: "'+key+'CaroselPlay" }
+        },
+        [_vm._v("Play")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "a",
+      {
+        staticClass: "carousel-control-prev bg-dark",
+        attrs: { href: "#demo", "data-slide": "prev" }
+      },
+      [_c("span", { staticClass: "carousel-control-prev-icon" })]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "a",
+      {
+        staticClass: "carousel-control-next bg-dark",
+        attrs: { href: "#demo", "data-slide": "next" }
+      },
+      [_c("span", { staticClass: "carousel-control-next-icon" })]
+    )
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
