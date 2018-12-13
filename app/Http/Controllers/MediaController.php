@@ -186,7 +186,7 @@ class MediaController extends Controller
             array_push($tagArray, $tag);
           }
         }
-        $media->retag(explode(' ', $tagArray));
+        $media->retag($tagArray);
         if(!empty($request->input('type'))){
           $media->type = $request->input('type');
         }

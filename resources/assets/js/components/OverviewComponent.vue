@@ -10,14 +10,14 @@
           <img :src="item.poster_source" :alt="item.title">
           <div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;">
             <h3>{{ item.title }} ({{ item.created_at_readable }})</h3>
-            <p>{{ item.description }}<span class="float-right"><a @click="emitPlayClicked(item.title)" class="btn btn-primary mr-2" >Play</a></span></p>
+            <p>{{ item.description }}<span class="float-right"><router-link class="btn btn-primary mr-2" :to="'/media/'+item.title">Play</router-link></span></p>
           </div>
         </div>
         <div v-for="(item,index) in medias"  v-else class="carousel-item bg-dark">
           <img :src="item.poster_source" :alt="item.title">
           <div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;">
             <h3>{{ item.title }} ({{ item.created_at_readable }})</h3>
-            <p>{{ item.description }}<span class="float-right"><a @click="emitPlayClicked(item.title)" class="btn btn-primary mr-2" >Play</a></span></p>
+            <p>{{ item.description }}<span class="float-right"><router-link class="btn btn-primary mr-2" :to="'/media/'+item.title">Play</router-link></span></p>
           </div>
         </div>
         <a class="carousel-control-prev bg-dark" href="#demo" data-slide="prev">
@@ -33,12 +33,6 @@
 <script>
   import { eventBus } from '../eventBus.js';
   export default {
-    props: ['medias','swapComponent','baseUrl'],
-    methods: {
-      emitPlayClicked(title) {
-        // Send the event on a channel (i-got-clicked) with a payload (the click count.)
-        eventBus.$emit('overviewPlayClick', title);
-      }
-    }
+    props: ['medias','baseUrl'],
   }
 </script>

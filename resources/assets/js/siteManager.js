@@ -13,8 +13,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var baseUrl;
 import Vue from 'vue';
+import Router from 'vue-router';
 import { eventBus } from './eventBus.js';
 var theComp = Vue.component('exco', require("./components/ExampleComponent.vue"));
+var app;
 var theVue;
 var siteManager = /** @class */ (function () {
     function siteManager(base) {
@@ -70,7 +72,7 @@ var overviewSite = /** @class */ (function (_super) {
             if ((sm.medias == undefined) || (forceUpdate)) {
                 sm.medias = [];
                 $.each(data.data, function (key, value) {
-                    sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user, value.created_at, value.created_at_readable, value.comments));
+                    sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user, value.created_at, value.created_at_readable, value.comments, value.tags));
                 });
                 theVue.medias = sm.medias;
             }
@@ -93,7 +95,7 @@ var playerSite = /** @class */ (function (_super) {
             $.getJSON("/api/media/" + that.title, function name(data) {
                 sm.medias = [];
                 $.each(data, function (key, value) {
-                    sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user, value.created_at, value.created_at_readable, value.comments));
+                    sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user, value.created_at, value.created_at_readable, value.comments, value.tags));
                 });
                 //createContentCallback(sm.medias);
                 theVue.medias = sm.medias;
@@ -132,7 +134,7 @@ var playerSite = /** @class */ (function (_super) {
 }(site));
 ;
 var Media = /** @class */ (function () {
-    function Media(title, description, source, poster_source, simpleType, type, user, created_at, created_at_readable, comments) {
+    function Media(title, description, source, poster_source, simpleType, type, user, created_at, created_at_readable, comments, tags) {
         this.title = title;
         this.description = description;
         this.source = source;
@@ -141,6 +143,7 @@ var Media = /** @class */ (function () {
         this.simpleType = simpleType;
         this.user = user;
         this.comments = comments;
+        this.tags = tags;
         this.created_at = created_at;
         this.created_at_readable = created_at_readable;
     }
@@ -184,25 +187,24 @@ export function init(baseUrl) {
     sm = new siteManager(baseUrl);
     var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
     var player = Vue.component('player', require("./components/MediaComponent.vue"));
+    var Foo = { template: '<div>hahha {{ $route.params.currentTitle }}</div>' };
+    var Bar = { template: '<div>bar</div>' };
+    Vue.use(Router);
+    var routes = [
+        { path: '/', component: overview },
+        { path: '/media/:currentTitle', component: player },
+        { path: '/bar', component: Bar }
+    ];
     theVue = new Vue({
-        el: '#app1',
         data: { title: "Overview",
             currentComponent: 'overview', medias: sm.medias, currentTitle: '', baseUrl: baseUrl },
-        components: { theComp: theComp, overview: overview, player: player },
-        template: '<div><div :is="currentComponent" v-bind:medias="medias" v-bind:currentTitle="currentTitle" :swapComponent="swapComponent"></div></div>',
-        computed: {
-            // a computed getter
-            reversedMessage: function () {
-                // `this` points to the vm instance
-                return this.aFirst.split('').reverse().join('');
-            },
-        },
+        router: new Router({ routes: routes }),
         methods: {
             swapComponent: function (component) {
                 this.currentComponent = component;
             }
         }
-    });
+    }).$mount('#app2');
     eventBus.$on('playerBackClick', function (title) {
         console.log("chaNGE BACK");
         theVue.swapComponent("overview");

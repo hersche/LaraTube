@@ -1,10 +1,12 @@
 var baseUrl:string;
 import Vue from 'vue'
+import Router from 'vue-router';
 import { eventBus } from './eventBus.js';
 var theComp = Vue.component(
     'exco', require("./components/ExampleComponent.vue")
 
 );
+var app;
 var theVue;
 class siteManager {
 
@@ -78,7 +80,7 @@ class overviewSite extends site {
       if((sm.medias==undefined)||(forceUpdate)){
       sm.medias = [];
         $.each( data.data, function( key, value ) {
-          sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user,value.created_at,value.created_at_readable,value.comments));
+          sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user,value.created_at,value.created_at_readable,value.comments,value.tags));
         });
         theVue.medias = sm.medias;
       }
@@ -103,7 +105,7 @@ class playerSite extends site {
     $.getJSON("/api/media/"+that.title, function name(data) {
         sm.medias = [];
         $.each( data, function( key, value ) {
-          sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user,value.created_at,value.created_at_readable,value.comments));
+          sm.medias.push(new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, value.user,value.created_at,value.created_at_readable,value.comments,value.tags));
         });
         //createContentCallback(sm.medias);
         theVue.medias = sm.medias;
@@ -153,11 +155,12 @@ class Media {
   user_id:number;
   user:any;
   comments:any;
+  tags:any;
   created_at:string;
   created_at_readable:string;
 
 
-  constructor(title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,created_at:string,created_at_readable:string,comments:any){
+  constructor(title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,created_at:string,created_at_readable:string,comments:any,tags:any){
     this.title = title;
     this.description = description;
     this.source = source;
@@ -166,6 +169,7 @@ class Media {
     this.simpleType = simpleType;
     this.user = user;
     this.comments = comments;
+    this.tags = tags;
     this.created_at = created_at;
     this.created_at_readable = created_at_readable;
   }
@@ -213,26 +217,25 @@ export function init(baseUrl) {
     sm = new siteManager(baseUrl);
   var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
   var player = Vue.component('player', require("./components/MediaComponent.vue"));
-  theVue = new Vue({
-    el: '#app1',
-    data : {title : "Overview",
-    currentComponent: 'overview', medias:sm.medias,currentTitle:'',baseUrl:baseUrl},
-    components: {theComp, overview, player},
-    template:'<div><div :is="currentComponent" v-bind:medias="medias" v-bind:currentTitle="currentTitle" :swapComponent="swapComponent"></div></div>',
-      computed: {
-        // a computed getter
-        reversedMessage: function () {
-          // `this` points to the vm instance
-          return this.aFirst.split('').reverse().join('')
-        },
+  const Foo = { template: '<div>hahha {{ $route.params.currentTitle }}</div>' }
+  const Bar = { template: '<div>bar</div>' }
+  Vue.use(Router)
+  const routes = [
+    { path: '/', component: overview },
+    { path: '/media/:currentTitle', component: player },
+    { path: '/bar', component: Bar }
+  ]
+ theVue = new Vue({
+  data : {title : "Overview",
+  currentComponent: 'overview', medias:sm.medias,currentTitle:'',baseUrl:baseUrl},
+  router:new Router({ routes }),
+  methods:{
+    swapComponent: function(component) {
+      this.currentComponent = component;
+    }
+  }
+}).$mount('#app2');
 
-      },
-      methods:{
-        swapComponent: function(component) {
-          this.currentComponent = component;
-        }
-      }
-  })
   eventBus.$on('playerBackClick', title => {
     console.log("chaNGE BACK")
   theVue.swapComponent("overview");
