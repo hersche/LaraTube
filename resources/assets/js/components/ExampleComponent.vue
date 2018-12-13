@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ aSubFirst }}</h1>
+    <h1>{{ title }}</h1>
       <button @click="swapComponent('overview')" type="submit">Overview</button>
       <button @click="swapComponent('player')" type="submit">Whatever</button>
   </div>
@@ -8,6 +8,6 @@
 <script>
  export default {
   props: [
-   'aSubFirst','swapComponent' ]
+   'title','swapComponent' ]
  }
 </script>

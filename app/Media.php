@@ -26,8 +26,8 @@ class Media extends Model
     }
 
     public function comments() {
-      $media = Comment::where('media_id', '=' ,$this->id)->get()->sortByDesc('created_at');
-      return $media;
+      $comments = Comment::where('media_id', '=' ,$this->id)->get()->sortByDesc('created_at');
+      return $comments;
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
     }
 
@@ -62,9 +62,9 @@ class Media extends Model
     }
     public function poster(){
       if(empty($this->poster_source)){
-        return "img/404/poster.png";
+        return url("/")."/"."img/404/poster.png";
       }
-      return $this->poster_source;
+      return url("/")."/".$this->poster_source;
     }
     public function simpleType(){
       if(($this->type=="torrentAudio")||($this->type=="torrentVideo")) {
@@ -77,10 +77,14 @@ class Media extends Model
 
     public function tagString(){
       $string = "";
+
       foreach($this->tags as $tag) {
+        //var_dump($tag);
+        if($tag!=NULL){
         $string .= $tag->name." ";
         #	echo $tag->name . ' with url slug of ' . $tag->slug;
       }
+    }
       return $string;
     }
 }

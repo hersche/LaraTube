@@ -101,26 +101,31 @@ class MediaController extends Controller
           array_push($tagArray, $tag);
         }
       }
-
+      $posterPath = '';
+      if(!empty($data)){
+        //$posterPath = $posterFile->store('public/media/posters');
+        Storage::put('public/media/posters/'.$title.'.png', $data);
+      }
       if(($extension=="mp4")||($extension=="webm")){
         $path = $file->store('public/directMedia');
         //$posterFile = $request->file('poster');
-        $posterPath = '';
-        if(!empty($posterFile)){
-          $posterPath = $posterFile->store('public/media/posters');
-        }
+
+
         $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localVideo', 'description' => $request->input('description'), 'user_id' => Auth::id()]);
-        $media->retag($tagArray);
-        Storage::put('public/media/posters/'.$title.'.png', $data);
+
+        if(!empty($tagArray)){
+          $media->retag($tagArray);
+        }
         return redirect()->route('media.show',$title)
                         ->with('success','Video created successfully');
       }
       else if(($extension=="mp3")||($extension=="ogg")){
         $path = $file->store('public/directMedia');
-        $posterPath = $posterFile->store('public/media/posters');
         $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localAudio', 'description' => $request->input('description'), 'user_id' => Auth::id()]);
-        $media->retag($tagArray);
-        Storage::put('public/media/posters/'.$title.'.png', $data);
+
+        if(!empty($tagArray)){
+          $media->retag($tagArray);
+        }
         return redirect()->route('media.show',$title)
                         ->with('success','Audio created successfully');
       } else {

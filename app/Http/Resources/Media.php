@@ -14,6 +14,12 @@ class Media extends JsonResource
      */
     public function toArray($request)
     {
+      $finalSource = $this->source;
+      if($this->simpleType()!="torrent"){
+        if(substr($finalSource,0,4)!="http"){
+          $finalSource = url("/")."/".$this->source;
+        }
+      }
       return [
           'id' => $this->id,
           'title' => $this->title,
@@ -24,6 +30,8 @@ class Media extends JsonResource
           'myLike' => $this->myLike(),
           'simpleType' => $this->simpleType(),
           'tagString' => $this->tagString(),
+          'user' => $this->user(),
+          'comments' => $this->comments(),
           'created_at' => $this->created_at,
           'created_at_readable' => $this->created_at->diffForHumans(),
           'updated_at' => $this->updated_at,
