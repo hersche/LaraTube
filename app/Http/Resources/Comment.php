@@ -18,7 +18,7 @@ class Comment extends JsonResource
             'id' => $this->id,
             'body' => $this->body,
             'media' => $this->media_id,
-            'user' => $this->user,
+            'user' => $this->user(),
             'created_at' => $this->created_at,
             'created_at_readable' => $this->created_at->diffForHumans(),
             'updated_at' => $this->updated_at,

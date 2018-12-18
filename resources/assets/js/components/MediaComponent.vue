@@ -23,13 +23,37 @@
           <div class="float-right">
             <span class="btn btn-info mr-1">{{ item.created_at_readable }}</span>
             <a class="btn btn-primary" :href="'/profile/'+item.user.name">
-              <img v-if="item.user.name!=undefined" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
-              <img v-else class="mx-auto rounded-circle img-fluid" :src="item.user.avatar" alt="avatar" style="max-height: 20px;" />
+              <img v-if="item.user.avatar_source==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
+              <img v-else class="mx-auto rounded-circle img-fluid" :src="item.user.avatar_source" alt="avatar" style="max-height: 20px;" />
             </a>
           </div>
           <div class="card-body">{{ item.description }}</div>
-          <div class="card-footer">Tags: <a class="btn btn-xs btn-info mr-1" v-for="tag in item.tags" :href="'/tags/'+tag.name" >{{ tag.name }}</a></div>
+          <div class="card-footer">Tags: <a class="btn btn-xs btn-info mr-1" v-for="tag in item.tags" :href="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</a>
+
+          </div>
+
         </div>
+      </div>
+      <div class="comments">
+        <div v-for="comment in item.comments" class="comment mb-2 row" :id='"cid"+comment.id'>
+            <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
+                <a href=""><img class="mx-auto rounded-circle img-fluid" :src="'/'+comment.user.avatar" alt="avatar" /></a>
+            </div>
+            <div class="comment-content col-md-11 col-sm-10">
+                <h6 class="small comment-meta"><router-link class="btn btn-primary mr-2" :to="'/profile/'+comment.user.id">{{ comment.user.name }}</router-link> {{ comment.created_at }}
+                  <!-- @if (Auth::id() == $comment->user_id)
+                    <span class="float-right btn btn-danger" onclick="deleteComment({{ comment.id }});"><ion-icon name="trash"></ion-icon></span>
+                  @endif -->
+                </h6>
+                <div class="comment-body">
+                    <p>
+                        {{ comment.body }}
+                        <br>
+                        <a href="" class="text-right small"><i class="ion-reply"></i> Reply</a>
+                    </p>
+                </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>

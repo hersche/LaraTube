@@ -58,12 +58,10 @@
     </div>
   </div> -->
 <!-- /#sidebar-wrapper -->
-    <div id="app">
+    <div id="app2">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'LaraTube') }}
-                </a>
+              <router-link class="navbar-brand" to="/">{{ config('app.name', 'LaraTube') }}</router-link>
               <!--  <li class="nav-item">
                   <a href="#menu-toggle" class="nav-link" id="menu-toggle">Toggle Menu</a>
                 </li> -->
