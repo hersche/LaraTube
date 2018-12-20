@@ -4,7 +4,7 @@
     <p><button @click="emitRefreshMedias()">Refresh</button></p>
     <div id="demo" class="carousel slide" data-ride="carousel">
       <ul class="carousel-indicators" id="carouselIndicatorsBody">
-        <li v-for="(item,index) in medias" data-target="#demo" :data-slide-to="index" class="active"></li>
+        <li v-for="(item,index) in medias" v-if="index<3" data-target="#demo" :data-slide-to="index" class="active"></li>
       </ul>
       <div class="carousel-inner" id="carouselInnerBody">
         <div v-for="(item,index) in medias"  v-if="index==0" class="carousel-item bg-dark active">

@@ -12,7 +12,11 @@ var siteManager = /** @class */ (function () {
         this.receiveUsers(true);
         var that = this;
         eventBus.$on('refreshMedias', function (title) {
-            that.receiveMedias(true);
+            that.receiveMedias("/api/media", true);
+            // deprecated, only example for eventbus
+        });
+        eventBus.$on('loadMore', function (title) {
+            that.receiveMedias(that.nextLink);
             // deprecated, only example for eventbus
         });
     }
@@ -48,27 +52,30 @@ var siteManager = /** @class */ (function () {
             }
         });
     };
-    siteManager.prototype.receiveMedias = function (forceUpdate) {
+    siteManager.prototype.receiveMedias = function (url, forceUpdate) {
+        if (url === void 0) { url = "/api/media"; }
         if (forceUpdate === void 0) { forceUpdate = false; }
         var that = this;
-        $.getJSON("/api/media", function name(data) {
-            if ((that.medias == undefined) || (forceUpdate)) {
+        $.getJSON(url, function name(data) {
+            if ((forceUpdate) || (that.medias == undefined)) {
                 that.medias = [];
-                $.each(data.data, function (key, value) {
-                    var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, value.tags);
-                    $.each(med.comments, function (key1, value1) {
-                        med.comments[key1].user = that.getUserById(value1.user_id);
-                    });
-                    that.medias.push(med);
-                });
-                that.nextLink = data.links.next;
-                that.lastLink = data.links.prev;
-                theVue.medias = that.medias;
-                if (theVue.$route.params.profileId != undefined) {
-                    theVue.user = sm.getUserById(theVue.$route.params.profileId);
-                    theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId);
-                }
             }
+            //    if((forceUpdate)||(url!="/api/media")){
+            $.each(data.data, function (key, value) {
+                var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, value.tags);
+                $.each(med.comments, function (key1, value1) {
+                    med.comments[key1].user = that.getUserById(value1.user_id);
+                });
+                that.medias.push(med);
+            });
+            that.nextLink = data.links.next;
+            that.lastLink = data.links.prev;
+            theVue.medias = that.medias;
+            if (theVue.$route.params.profileId != undefined) {
+                theVue.user = sm.getUserById(theVue.$route.params.profileId);
+                theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId);
+            }
+            //    }
         });
     };
     siteManager.prototype.getUserById = function (id) {
