@@ -22,10 +22,10 @@
           <span class='h3'>{{ item.title }}</span>
           <div class="float-right">
             <span class="btn btn-info mr-1">{{ item.created_at_readable }}</span>
-            <a class="btn btn-primary" :href="'/profile/'+item.user.name">
-              <img v-if="item.user.avatar_source==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
-              <img v-else class="mx-auto rounded-circle img-fluid" :src="item.user.avatar_source" alt="avatar" style="max-height: 20px;" />
-            </a>
+              <router-link class="btn btn-primary" :to="'/profile/'+item.user.id">
+                <img v-if="item.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
+              <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+item.user.avatar" alt="avatar" style="max-height: 20px;" />
+            </router-link>
           </div>
           <div class="card-body">{{ item.description }}</div>
           <div class="card-footer">Tags: <a class="btn btn-xs btn-info mr-1" v-for="tag in item.tags" :href="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</a>
