@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 Route::post('register', 'API\RegisterController@register');
-
+Auth::routes();
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -32,6 +32,7 @@ use App\Media;
 use App\DirectTag;
 use App\Http\Resources\Media as MediaResource;
 use App\Http\Resources\Tag as TagResource;
+use App\Http\Resources\Id as Id;
 
 Route::get('/media', function () {
     return MediaResource::collection(Media::orderBy('created_at', 'desc')->paginate(3));

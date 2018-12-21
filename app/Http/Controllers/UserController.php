@@ -39,6 +39,16 @@ class UserController extends Controller
         $friends = Auth::user()->getAcceptedFriendships();
         return view('profile.index',compact('users','friends'));
     }
+
+    public function info(){
+      $au = Auth::id();
+
+    //  if($au==False){
+      //  return "{ login: 0}";
+    //  }
+      return "{ login: ".$au."}";
+    }
+
     public function profileview($name)
     {
         $user = User::where('name','=',$name)->firstOrFail();

@@ -35,6 +35,7 @@
         </div>
       </div>
       <div class="comments">
+        <h4>Comments</h4>
         <div v-for="comment in item.comments" class="comment mb-2 row" :id='"cid"+comment.id'>
             <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
                 <a href=""><img class="mx-auto rounded-circle img-fluid" :src="'/'+comment.user.avatar" alt="avatar" /></a>

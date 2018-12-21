@@ -51012,6 +51012,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -51164,75 +51165,80 @@ var render = function() {
             _c(
               "div",
               { staticClass: "comments" },
-              _vm._l(item.comments, function(comment) {
-                return _c(
-                  "div",
-                  {
-                    staticClass: "comment mb-2 row",
-                    attrs: { id: "cid" + comment.id }
-                  },
-                  [
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "comment-avatar col-md-1 col-sm-2 text-center pr-1"
-                      },
-                      [
-                        _c("a", { attrs: { href: "" } }, [
-                          _c("img", {
-                            staticClass: "mx-auto rounded-circle img-fluid",
-                            attrs: {
-                              src: "/" + comment.user.avatar,
-                              alt: "avatar"
-                            }
-                          })
-                        ])
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "comment-content col-md-11 col-sm-10" },
-                      [
-                        _c(
-                          "h6",
-                          { staticClass: "small comment-meta" },
-                          [
-                            _c(
-                              "router-link",
-                              {
-                                staticClass: "btn btn-primary mr-2",
-                                attrs: { to: "/profile/" + comment.user.id }
-                              },
-                              [_vm._v(_vm._s(comment.user.name))]
-                            ),
-                            _vm._v(
-                              " " +
-                                _vm._s(comment.created_at) +
-                                "\n                "
-                            )
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "comment-body" }, [
-                          _c("p", [
-                            _vm._v(
-                              "\n                      " +
-                                _vm._s(comment.body) +
-                                "\n                      "
-                            ),
-                            _c("br"),
-                            _vm._v(" "),
-                            _vm._m(0, true)
+              [
+                _c("h4", [_vm._v("Comments")]),
+                _vm._v(" "),
+                _vm._l(item.comments, function(comment) {
+                  return _c(
+                    "div",
+                    {
+                      staticClass: "comment mb-2 row",
+                      attrs: { id: "cid" + comment.id }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "comment-avatar col-md-1 col-sm-2 text-center pr-1"
+                        },
+                        [
+                          _c("a", { attrs: { href: "" } }, [
+                            _c("img", {
+                              staticClass: "mx-auto rounded-circle img-fluid",
+                              attrs: {
+                                src: "/" + comment.user.avatar,
+                                alt: "avatar"
+                              }
+                            })
                           ])
-                        ])
-                      ]
-                    )
-                  ]
-                )
-              })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "comment-content col-md-11 col-sm-10" },
+                        [
+                          _c(
+                            "h6",
+                            { staticClass: "small comment-meta" },
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "btn btn-primary mr-2",
+                                  attrs: { to: "/profile/" + comment.user.id }
+                                },
+                                [_vm._v(_vm._s(comment.user.name))]
+                              ),
+                              _vm._v(
+                                " " +
+                                  _vm._s(comment.created_at) +
+                                  "\n                "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "comment-body" }, [
+                            _c("p", [
+                              _vm._v(
+                                "\n                      " +
+                                  _vm._s(comment.body) +
+                                  "\n                      "
+                              ),
+                              _c("br"),
+                              _vm._v(" "),
+                              _vm._m(0, true)
+                            ])
+                          ])
+                        ]
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
             )
           ])
         : _vm._e()
