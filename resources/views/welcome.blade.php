@@ -14,6 +14,6 @@
     <router-link to="/" class="btn btn-primary">Home</router-link>
   </p>
 -->
-  <router-view v-bind:medias="medias" v-bind:currentTitle="currentTitle" v-bind:user="user"></router-view>
+  <router-view v-bind:medias="medias" v-bind:canLoadMore="canLoadMore" v-bind:tags="tags" v-bind:currentTitle="currentTitle" v-bind:user="user"></router-view>
 </div>
 @endsection

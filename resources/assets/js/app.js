@@ -5,6 +5,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 require('./bootstrap');
+var $ = require('jquery')
 
 //var siteManager = require('./siteManager').siteManager();
 /**
@@ -14,8 +15,14 @@ require('./bootstrap');
  */
 
 $( document ).ready(function() {
+  $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  }});
+  $("#menu-toggle").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+  });
   require('./siteManager').init(process.env.MIX_APP_URL);
-
-
   //require('./siteManager').init("http://127.0.0.1:8000");
 });

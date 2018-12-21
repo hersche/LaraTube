@@ -20,6 +20,10 @@ class Media extends JsonResource
           $finalSource = url("/")."/".$this->source;
         }
       }
+      $tagIds = array();
+      foreach($this->tags as $tag){
+        array_push($tagIds, $tag->id);
+      }
       return [
           'id' => $this->id,
           'title' => $this->title,
@@ -30,6 +34,7 @@ class Media extends JsonResource
           'myLike' => $this->myLike(),
           'simpleType' => $this->simpleType(),
           'tags' => $this->tags,
+          'tagsIds' => $tagIds,
           'tagString' => $this->tagString(),
           'user_id' => $this->user_id,
           'comments' => $this->comments(),

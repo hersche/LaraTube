@@ -29,6 +29,7 @@ Route::get('/user/{id}', function ($id) {
 });
 
 use App\Media;
+use App\DirectTag;
 use App\Http\Resources\Media as MediaResource;
 use App\Http\Resources\Tag as TagResource;
 
@@ -44,9 +45,12 @@ Route::get('/media/{title}', function ($title) {
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
 
+Route::get('/media/by/{title}', function ($title) {
+    return MediaResource::collection(Media::where('user_id', '!=' ,$title)->get());
+});
+
 Route::get('/tags', function () {
-    $tags = Media::existingTags();
-    return TagResource::collection($tags);
+    return TagResource::collection(DirectTag::all());
 });
 Route::get('/tags/{tags}', function (Request $request,$tags) {
   $tagArrayExtract = explode(' ', $tags);

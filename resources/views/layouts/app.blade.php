@@ -12,25 +12,11 @@
     <script>var baseUrl = "{{ url("/") }}/";</script>
     <!-- Scripts -->
     @yield('header-before-js')
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     @yield('header')
-    <script src="https://unpkg.com/ionicons@4.3.0/dist/ionicons.js"></script>
-    <script>
-    $( document ).ready(function() {
-      $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-      });
+    <!-- <script src="https://unpkg.com/ionicons@4.3.0/dist/ionicons.js"></script> -->
 
-      $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-      });
-    });
-    </script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -78,7 +64,7 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
-                        <li class="nav-item"><a class="dropdown-item" href="{{ route('tags') }}">{{ __('Tags') }}</a></li>
+                        <li class="nav-item"><router-link class="dropdown-item" to="/tags">{{ __('Tags') }}</a></li>
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>

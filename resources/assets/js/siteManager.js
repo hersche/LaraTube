@@ -33,24 +33,75 @@ var siteManager = /** @class */ (function () {
                     that.users.push(new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds));
                 });
                 //theVue.us = sm.medias;
-                that.receiveMedias();
+                that.receiveTags();
             }
+        });
+    };
+    siteManager.prototype.receiveTags = function (forceUpdate) {
+        if (forceUpdate === void 0) { forceUpdate = false; }
+        var that = this;
+        $.getJSON("/api/tags", function name(data) {
+            if ((that.tags == undefined) || (forceUpdate)) {
+                that.tags = [];
+                $.each(data.data, function (key, value) {
+                    that.tags.push(new Tag(value.id, value.name, value.slug, value.count));
+                });
+            }
+            this.tags = that.tags;
+            theVue.tags = this.tags;
+            that.receiveMedias();
         });
     };
     siteManager.prototype.receiveMediaByName = function (mediaName, forceUpdate) {
         if (forceUpdate === void 0) { forceUpdate = false; }
         var that = this;
+        var existsAlready = false;
         $.getJSON("/api/media/" + mediaName, function name(data) {
-            that.medias[that.findMediaByName(mediaName)].comments = data.comments;
-            theVue.medias = that.medias;
-        });
-    };
-    siteManager.prototype.findMediaByName = function (mediaName) {
-        $.each(this.medias, function (key, value) {
-            if (value.title == mediaName) {
-                return key;
+            $.each(this.medias, function (key, value) {
+                if (value.title == mediaName) {
+                    existsAlready = true;
+                }
+            });
+            if (existsAlready == false) {
+                var m = new Media(data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds));
+                theVue.medias = this.medias;
+                this.medias.push(m);
+            }
+            else {
+                console.warn("If the media already existed, why this method was used?");
             }
         });
+    };
+    siteManager.prototype.getTagsByIdArray = function (arr) {
+        var tmpTags = [];
+        var that = this;
+        $.each(arr, function (key, value) {
+            tmpTags.push(that.findTagById(value));
+        });
+        return tmpTags;
+    };
+    siteManager.prototype.findTagById = function (id) {
+        var returner;
+        console.log("exe");
+        $.each(this.tags, function (key, value) {
+            if (value.id == id) {
+                returner = value;
+            }
+        });
+        return returner;
+    };
+    siteManager.prototype.findMediaByName = function (mediaName) {
+        var returnMedia = undefined;
+        $.each(this.medias, function (key, value) {
+            if (value.title == mediaName) {
+                returnMedia = value;
+            }
+        });
+        if (returnMedia == undefined) {
+            console.log("Media didn't exist, download it.");
+            this.receiveMediaByName(mediaName);
+        }
+        return returnMedia;
     };
     siteManager.prototype.receiveMedias = function (url, forceUpdate) {
         if (url === void 0) { url = "/api/media"; }
@@ -60,9 +111,8 @@ var siteManager = /** @class */ (function () {
             if ((forceUpdate) || (that.medias == undefined)) {
                 that.medias = [];
             }
-            //    if((forceUpdate)||(url!="/api/media")){
             $.each(data.data, function (key, value) {
-                var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, value.tags);
+                var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds));
                 $.each(med.comments, function (key1, value1) {
                     med.comments[key1].user = that.getUserById(value1.user_id);
                 });
@@ -70,12 +120,14 @@ var siteManager = /** @class */ (function () {
             });
             that.nextLink = data.links.next;
             that.lastLink = data.links.prev;
+            if (that.nextLink == null) {
+                theVue.canLoadMore = false;
+            }
             theVue.medias = that.medias;
             if (theVue.$route.params.profileId != undefined) {
                 theVue.user = sm.getUserById(theVue.$route.params.profileId);
                 theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId);
             }
-            //    }
         });
     };
     siteManager.prototype.getUserById = function (id) {
@@ -107,16 +159,18 @@ export function init(baseUrl) {
     var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
     var player = Vue.component('player', require("./components/MediaComponent.vue"));
     var profileComp = Vue.component('player', require("./components/ProfileComponent.vue"));
+    var tagComp = Vue.component('player', require("./components/TagComponent.vue"));
     Vue.use(Router);
     var routes = [
         { path: '/', component: overview },
         { path: '/media/:currentTitle', component: player },
-        { path: '/profile/:profileId', component: profileComp }
+        { path: '/profile/:profileId', component: profileComp },
+        { path: '/tags', component: tagComp }
     ];
     //  sm.receiveUsers(true);
     theVue = new Vue({
         data: { title: "Overview",
-            currentComponent: 'overview', medias: sm.medias, currentTitle: '', user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}), baseUrl: baseUrl },
+            currentComponent: 'overview', tags: sm.tags, canLoadMore: true, medias: sm.medias, currentTitle: '', user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}), baseUrl: baseUrl },
         router: new Router({ routes: routes }),
         methods: {
             swapComponent: function (component) {
@@ -145,6 +199,15 @@ export function init(baseUrl) {
         // deprecated, only example for eventbus
     });
 }
+var Tag = /** @class */ (function () {
+    function Tag(id, name, slug, count) {
+        this.id = id;
+        this.name = name;
+        this.slug = slug;
+        this.count = count;
+    }
+    return Tag;
+}());
 var User = /** @class */ (function () {
     function User(id, name, avatar, background, bio, mediaIds) {
         this.id = id;
@@ -160,7 +223,8 @@ var User = /** @class */ (function () {
     return User;
 }());
 var Media = /** @class */ (function () {
-    function Media(title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags) {
+    function Media(title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags, tagIds) {
+        if (tagIds === void 0) { tagIds = undefined; }
         this.title = title;
         this.description = description;
         this.source = source;
@@ -171,6 +235,7 @@ var Media = /** @class */ (function () {
         this.user_id = user_id;
         this.comments = comments;
         this.tags = tags;
+        this.tagIds = tagIds;
         this.created_at = created_at;
         this.created_at_readable = created_at_readable;
     }

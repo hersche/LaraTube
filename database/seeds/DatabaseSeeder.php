@@ -47,12 +47,12 @@ class DatabaseSeeder extends Seeder
      $u1->acceptFriendRequest($u2);
      $m1 = Media::create(['title' => 'Audio test 1', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
      $m1->tag('Gardening');
-     $m1->tag('Open');
+     $m1->tag('Audio');
      $m1->tag('Test');
      $m1 = Media::create(['title' => 'Big bucks bunny test', 'source' => 'https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from a github-file.','user_id' => 1]);
      $m1->tag('Some');
      $m1->tag('thing');
-     $m1->tag('else');
+     $m1->tag('Movie');
      $m1 = Media::create(['title' => 'Big bucks bunny test 2', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
      $m1->tag('Some');
      $m1->tag('Test');
@@ -64,10 +64,19 @@ class DatabaseSeeder extends Seeder
      $m1->tag('thing');
      $m1 = Media::create(['title' => 'Big bucks test', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
      $m1->tag('Some');
+     $m1->tag('Movie');
+     $m1->tag('Animation');
+     $m1 = Media::create(['title' => 'Ocean test', 'source' => 'http://vjs.zencdn.net/v/oceans.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from http://vjs.zencdn.net/v/oceans.mp4','user_id' => 1]);
+     $m1->tag('Movie');
      $m1->tag('Hello');
+     $m1->tag('Nature');
+     $m1 = Media::create(['title' => 'Another Ocean test', 'source' => 'http://vjs.zencdn.net/v/oceans.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from http://vjs.zencdn.net/v/oceans.mp4','user_id' => 1]);
+     $m1->tag('Movie');
+     $m1->tag('Test');
+     $m1->tag('Some');
      $m1 = Media::create(['title' => 'Audio test 2', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
      $m1->tag('Some');
-     $m1->tag('thing');
+     $m1->tag('Audio');
      $m1->tag('Test');
      $m1->tag('Gardening');
 
