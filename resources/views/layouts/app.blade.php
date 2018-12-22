@@ -67,13 +67,13 @@
                         <li class="nav-item"><router-link class="dropdown-item" to="/tags">{{ __('Tags') }}</a></li>
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <router-link class="nav-link" to="/login">{{ __('Login') }}</router-link>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                             </li>
                         @else
-                            <li class="nav-item"><a class="dropdown-item" href="{{ route('medias.add') }}">{{ __('Upload') }}</a></li>
+                            <li class="nav-item"><router-link class="dropdown-item" to="/upload">{{ __('Upload') }}</router-link></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <img class="mr-1" style="max-height: 45px;" src="{{ url(Auth::user()->avatar()) }}" />{{ Auth::user()->name }} <span class="caret"></span>

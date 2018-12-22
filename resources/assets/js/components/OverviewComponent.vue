@@ -12,7 +12,7 @@
           <div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;">
             <h3>{{ item.title }} ({{ item.created_at_readable }})</h3>
             <p>{{ item.description }}<span class="float-right"><router-link class="btn btn-primary mr-2" :to="'/media/'+item.title">Play</router-link></span></p>
-            <div class="card-footer">Tags: <a class="btn btn-xs btn-info mr-1" v-for="tag in item.tags" :href="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</a></div>
+            <div class="card-footer">Tags: <span v-for="tag in item.tags" ><router-link class="btn btn-xs btn-info mr-1" :to="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</router-link></span></div>
           </div>
         </div>
         <div v-for="(item,index) in medias"  v-else class="carousel-item bg-dark">

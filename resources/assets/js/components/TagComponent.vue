@@ -1,10 +1,12 @@
 <template>
 
 <div>
-      <div v-for="(item,index) in tags" class="btn btn-primary">
+      <input type="text" v-model="filterTags" placeholder="Filter tags">
+      <div v-for="(item,index) in tags" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
         <input type="checkbox" v-model="selectedTags" :value="item" />
-        {{ item.name }}
+        {{ item.name }} ({{item.count}}x)
       </div>
+
       <div class="row text-center text-lg-left" id="profilevideos">
         <div v-for="(item1,index) in medias" v-if="filterMedia(item1,selectedTags)==true" class="col-lg-4 col-md-4 col-xs-6">
           <singleField v-bind:item="item1"></singleField>
@@ -22,7 +24,8 @@
     props: ['medias','baseUrl','user','tags'],
     data(){
       return {
-        selectedTags:[]
+        selectedTags:[],
+        filterTags:''
       }
     },
     methods: {

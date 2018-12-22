@@ -23,6 +23,7 @@
     "dependencies": {
         "@types/jquery": "^3.3.24",
         "@types/node": "^10.12.12",
+        "bootstrap-vue": "^2.0.0-rc.11",
         "img-loader": "^3.0.1",
         "plyr": "^3.4.7",
         "raw-loader": "^1.0.0",

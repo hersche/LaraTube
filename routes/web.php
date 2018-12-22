@@ -54,7 +54,6 @@ Route::put('/comment','CommentController@create')->name('comments.add');
 Route::delete('/comment','CommentController@destroy')->name('comments.add');
 Route::get('welcome/{locale}', function ($locale) {
     App::setLocale($locale);
-
     //
 });
 
