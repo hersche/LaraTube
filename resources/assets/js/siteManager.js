@@ -18,6 +18,7 @@ var siteManager = /** @class */ (function () {
             // deprecated, only example for eventbus
         });
         eventBus.$on('loadMore', function (title) {
+            console.log("received load more");
             that.receiveMedias(that.nextLink);
             // deprecated, only example for eventbus
         });
@@ -182,7 +183,9 @@ var siteManager = /** @class */ (function () {
             });
             that.nextLink = data.links.next;
             that.lastLink = data.links.prev;
-            that.initVue();
+            if (theVue == undefined) {
+                that.initVue();
+            }
             if (that.nextLink == null) {
                 theVue.canLoadMore = false;
             }
