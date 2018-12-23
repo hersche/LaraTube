@@ -64,9 +64,9 @@ Route::get('/tags/{tags}', function (Request $request,$tags) {
     }
   }
   if($request->input('tagsCombine')=="true"){
-    $medias = Media::withAllTags($tagArray)->paginate(12);
+    $medias = Media::withAllTags($tagArray)->get();
   } else {
-    $medias = Media::withAnyTag($tagArray)->paginate(12);
+    $medias = Media::withAnyTag($tagArray)->get();
   }
     return MediaResource::collection($medias);
 });

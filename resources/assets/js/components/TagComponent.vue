@@ -1,9 +1,9 @@
 <template>
 
 <div>
-      <input type="text" v-model="filterTags" placeholder="Filter tags">
+      <div><input type="text" v-model="filterTags" placeholder="Filter tags"><button class="btn btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button></div>
       <div v-for="(item,index) in tags" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
-        <input type="checkbox" v-model="selectedTags" :value="item" />
+        <input type="checkbox" @click="checkTag(item.name)" v-model="selectedTags" :value="item" />
         {{ item.name }} ({{item.count}}x)
       </div>
 
@@ -21,7 +21,7 @@
   import SingleGalleryField from './SingleGalleryField'
   export default {
     name: 'tags',
-    props: ['medias','baseUrl','user','tags'],
+    props: ['medias','baseUrl','user','tags','canloadmore'],
     data(){
       return {
         selectedTags:[],
@@ -29,8 +29,13 @@
       }
     },
     methods: {
+      emitLoadMore() {
+        eventBus.$emit('loadMore','');
+      },
+      checkTag(tagName) {
+        eventBus.$emit('checkTag',tagName);
+      },
       filterMedia(media, sTags) {
-        console.log("Start if")
         var returnVal = false;
         sTags.forEach( function(item, index) {
           media.tags.forEach( function(mediaTag, index2) {

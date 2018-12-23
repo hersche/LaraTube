@@ -89818,21 +89818,31 @@ var siteManager = /** @class */function () {
     function siteManager(base) {
         baseUrl = base + "/";
         this.currentPage = "overview";
+        this.catchedTagMedias = [];
+        this.loggedUserId = Number($("#loggedUserId").attr("content"));
+        console.log("iiiint");
+        console.log($("#loggedUserId").attr("content"));
         this.receiveUsers(true);
         var that = this;
         __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('refreshMedias', function (title) {
+            theVue.canloadmore = true;
+            that.catchedTagMedias = [];
             that.receiveMedias("/api/media", true);
             // deprecated, only example for eventbus
+        });
+        __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('checkTag', function (tagName) {
+            if (that.catchedTagMedias.includes(tagName) == false) {
+                that.catchedTagMedias.push(tagName);
+                that.receiveMedias("/api/tags/" + tagName);
+            }
         });
         __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('loadMore', function (title) {
             console.log("received load more");
             that.receiveMedias(that.nextLink);
-            // deprecated, only example for eventbus
         });
         __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('showAlert', function (data) {
             console.log("got showAlert");
             theVue.dismissCountDown = theVue.dismissSecs;
-            // deprecated, only example for eventbus
         });
     }
     siteManager.prototype.initVue = function () {
@@ -89853,7 +89863,7 @@ var siteManager = /** @class */function () {
                 dismissSecs: 10,
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
-                currentComponent: 'overview', tags: this.tags, canLoadMore: true, medias: this.medias, currentTitle: '', user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}), baseUrl: baseUrl },
+                currentComponent: 'overview', loggeduserid: this.loggedUserId, tags: this.tags, canloadmore: true, medias: this.medias, currentTitle: '', user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}), baseUrl: baseUrl },
             router: new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({ routes: routes }),
             components: {
                 'alert': alertComp
@@ -89947,8 +89957,7 @@ var siteManager = /** @class */function () {
         return tmpTags;
     };
     siteManager.prototype.findTagById = function (id) {
-        var returner;
-        console.log("exe");
+        var returner = undefined;
         $.each(this.tags, function (key, value) {
             if (value.id == id) {
                 returner = value;
@@ -89958,14 +89967,15 @@ var siteManager = /** @class */function () {
     };
     siteManager.prototype.findMediaByName = function (mediaName) {
         var returnMedia = undefined;
-        $.each(this.medias, function (key, value) {
+        var that = this;
+        $.each(that.medias, function (key, value) {
             if (value.title == mediaName) {
                 returnMedia = value;
             }
         });
         if (returnMedia == undefined) {
             console.log("Media didn't exist, download it.");
-            this.receiveMediaByName(mediaName);
+            //that.receiveMediaByName(mediaName);
         }
         return returnMedia;
     };
@@ -89982,19 +89992,23 @@ var siteManager = /** @class */function () {
                 that.medias = [];
             }
             $.each(data.data, function (key, value) {
-                var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds));
-                $.each(med.comments, function (key1, value1) {
-                    med.comments[key1].user = that.getUserById(value1.user_id);
-                });
-                that.medias.push(med);
+                if (that.findMediaByName(value.title) == undefined) {
+                    var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds));
+                    $.each(med.comments, function (key1, value1) {
+                        med.comments[key1].user = that.getUserById(value1.user_id);
+                    });
+                    that.medias.push(med);
+                }
             });
-            that.nextLink = data.links.next;
-            that.lastLink = data.links.prev;
+            if (data.links != undefined) {
+                that.nextLink = data.links.next;
+                that.lastLink = data.links.prev;
+            }
             if (theVue == undefined) {
                 that.initVue();
             }
             if (that.nextLink == null) {
-                theVue.canLoadMore = false;
+                theVue.canloadmore = false;
             }
             theVue.medias = that.medias;
             if (theVue.$route.params.profileId != undefined) {
@@ -106484,7 +106498,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['medias', 'baseUrl'],
+  props: ['medias', 'baseUrl', 'loggeduserid', 'canloadmore'],
   methods: {
     emitRefreshMedias: function emitRefreshMedias() {
       __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('refreshMedias', "");
@@ -106568,10 +106582,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['medias', 'currentTitle', 'swapComponent', 'baseUrl', 'canLoadMore'],
+  props: ['medias', 'currentTitle', 'swapComponent', 'baseUrl', 'canloadmore', 'loggeduserid'],
   methods: {
-    emitLoadMore: function emitLoadMore(title) {
-      __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('loadMore', title);
+    emitLoadMore: function emitLoadMore() {
+      __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('loadMore', '');
     }
   },
   components: {
@@ -106597,10 +106611,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['item']
+  props: ['item', 'loggeduserid']
 });
 
 /***/ }),
@@ -106641,7 +106657,17 @@ var render = function() {
                 _vm._v(_vm._s(_vm.item.title))
               ]),
               _vm._v(" "),
-              _c("p", [_vm._v(_vm._s(_vm.item.description))])
+              _c("p", [
+                _vm._v(
+                  _vm._s(_vm.loggeduserid) + " " + _vm._s(_vm.item.description)
+                )
+              ]),
+              _vm._v(" "),
+              _vm.loggeduserid == _vm.item.user.id
+                ? _c("span", { staticClass: "float-right" }, [
+                    _vm._v("Owner!!")
+                  ])
+                : _vm._e()
             ]
           )
         ]
@@ -106680,25 +106706,29 @@ var render = function() {
           _c(
             "div",
             { staticClass: "card", staticStyle: { "min-width": "300px" } },
-            [_c("singleField", { attrs: { item: item } })],
+            [
+              _c("singleField", {
+                attrs: { item: item, loggeduserid: _vm.loggeduserid }
+              })
+            ],
             1
           )
         ])
       })
     ),
     _vm._v(" "),
-    true
+    _vm.canloadmore
       ? _c(
           "button",
           {
             staticClass: "btn btn-danger",
             on: {
               click: function($event) {
-                _vm.emitLoadMore("")
+                _vm.emitLoadMore()
               }
             }
           },
-          [_vm._v("Load more " + _vm._s(_vm.canLoadMore))]
+          [_vm._v("Load more")]
         )
       : _vm._e()
   ])
@@ -106724,7 +106754,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("h3", [_vm._v("Newest videos")]),
+      _c("h3", [_vm._v("Newest videos " + _vm._s(_vm.loggeduserid))]),
       _vm._v(" "),
       _c("p", [
         _c(
@@ -106848,7 +106878,12 @@ var render = function() {
                                 ],
                                 1
                               )
-                            })
+                            }),
+                            _vm.loggeduserid == item.user.id
+                              ? _c("span", { staticClass: "float-right" }, [
+                                  _vm._v("Owner!!")
+                                ])
+                              : _vm._e()
                           ],
                           2
                         )
@@ -106867,7 +106902,13 @@ var render = function() {
         ]
       ),
       _vm._v(" "),
-      _c("gallery", { attrs: { medias: _vm.medias } })
+      _c("gallery", {
+        attrs: {
+          medias: _vm.medias,
+          canloadmore: _vm.canloadmore,
+          loggeduserid: _vm.loggeduserid
+        }
+      })
     ],
     1
   )
@@ -107509,7 +107550,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'tags',
-  props: ['medias', 'baseUrl', 'user', 'tags'],
+  props: ['medias', 'baseUrl', 'user', 'tags', 'canloadmore'],
   data: function data() {
     return {
       selectedTags: [],
@@ -107518,8 +107559,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
 
   methods: {
+    emitLoadMore: function emitLoadMore() {
+      __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('loadMore', '');
+    },
+    checkTag: function checkTag(tagName) {
+      __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('checkTag', tagName);
+    },
     filterMedia: function filterMedia(media, sTags) {
-      console.log("Start if");
       var returnVal = false;
       sTags.forEach(function (item, index) {
         media.tags.forEach(function (mediaTag, index2) {
@@ -107549,26 +107595,42 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.filterTags,
-            expression: "filterTags"
-          }
-        ],
-        attrs: { type: "text", placeholder: "Filter tags" },
-        domProps: { value: _vm.filterTags },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
+      _c("div", [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.filterTags,
+              expression: "filterTags"
             }
-            _vm.filterTags = $event.target.value
+          ],
+          attrs: { type: "text", placeholder: "Filter tags" },
+          domProps: { value: _vm.filterTags },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.filterTags = $event.target.value
+            }
           }
-        }
-      }),
+        }),
+        _vm.canloadmore
+          ? _c(
+              "button",
+              {
+                staticClass: "btn btn-danger",
+                on: {
+                  click: function($event) {
+                    _vm.emitLoadMore()
+                  }
+                }
+              },
+              [_vm._v("Load more")]
+            )
+          : _vm._e()
+      ]),
       _vm._v(" "),
       _vm._l(_vm.tags, function(item, index) {
         return item.name.toLowerCase().indexOf(_vm.filterTags.toLowerCase()) >
@@ -107591,6 +107653,9 @@ var render = function() {
                     : _vm.selectedTags
                 },
                 on: {
+                  click: function($event) {
+                    _vm.checkTag(item.name)
+                  },
                   change: function($event) {
                     var $$a = _vm.selectedTags,
                       $$el = $event.target,
@@ -108088,17 +108153,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['medias', 'currentTitle', 'swapComponent', 'baseUrl'],
   mounted: function mounted() {
-    console.log("mounted!");
     this.$refs.croppieRef.bind({
       url: '/img/404/image.png'
     });
@@ -108125,8 +108184,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       reader.readAsDataURL($("#posterUpload")[0].files[0]);
     },
     submitAction: function submitAction() {
-      console.log("submit it!");
-      console.log($("#theForm")[0]);
       var that = this;
       $.ajax({
         url: '/media/create',
@@ -108152,16 +108209,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     showAlert: function showAlert() {
       this.dismissCountDown = this.dismissSecs;
-    },
-    bind: function bind() {
-      // Randomize cat photos, nothing special here.
-      var url = this.images[Math.floor(Math.random() * 4)];
-
-      // Just like what we did with .bind({...}) on
-      // the mounted() function above.
-      //this.$refs.croppieRef.bind({
-      //  url: url,
-      //});
     },
 
     // CALBACK USAGE
@@ -108191,8 +108238,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.crop();
       console.log(val);
     },
-    rotate: function rotate(rotationAngle) {
+    rotate: function rotate(rotationAngle, event) {
       // Rotates the image
+      if (event) event.preventDefault();
       this.$refs.croppieRef.rotate(rotationAngle);
     }
   },
@@ -108204,8 +108252,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       alertType: 'warning',
       alertMsg: '',
       showDismissibleAlert: false,
-      cropped: null,
-      images: ['http://i.imgur.com/fHNtPXX.jpg', 'http://i.imgur.com/ecMUngU.jpg', 'http://i.imgur.com/7oO6zrh.jpg', 'http://i.imgur.com/miVkBH2.jpg']
+      cropped: null
     };
   }
 });
@@ -108378,19 +108425,7 @@ var render = function() {
               {
                 on: {
                   click: function($event) {
-                    _vm.bind()
-                  }
-                }
-              },
-              [_vm._v("Bind")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.rotate(-90)
+                    _vm.rotate(-90, $event)
                   }
                 }
               },
@@ -108402,35 +108437,11 @@ var render = function() {
               {
                 on: {
                   click: function($event) {
-                    _vm.rotate(90)
+                    _vm.rotate(90, $event)
                   }
                 }
               },
               [_vm._v("Rotate Right")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.crop()
-                  }
-                }
-              },
-              [_vm._v("Crop Via Callback")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.cropViaEvent()
-                  }
-                }
-              },
-              [_vm._v("Crop Via Event")]
             ),
             _vm._v(" "),
             _c("input", {

@@ -11,21 +11,31 @@ var siteManager = /** @class */ (function () {
     function siteManager(base) {
         baseUrl = base + "/";
         this.currentPage = "overview";
+        this.catchedTagMedias = [];
+        this.loggedUserId = Number($("#loggedUserId").attr("content"));
+        console.log("iiiint");
+        console.log($("#loggedUserId").attr("content"));
         this.receiveUsers(true);
         var that = this;
         eventBus.$on('refreshMedias', function (title) {
+            theVue.canloadmore = true;
+            that.catchedTagMedias = [];
             that.receiveMedias("/api/media", true);
             // deprecated, only example for eventbus
+        });
+        eventBus.$on('checkTag', function (tagName) {
+            if (that.catchedTagMedias.includes(tagName) == false) {
+                that.catchedTagMedias.push(tagName);
+                that.receiveMedias("/api/tags/" + tagName);
+            }
         });
         eventBus.$on('loadMore', function (title) {
             console.log("received load more");
             that.receiveMedias(that.nextLink);
-            // deprecated, only example for eventbus
         });
         eventBus.$on('showAlert', function (data) {
             console.log("got showAlert");
             theVue.dismissCountDown = theVue.dismissSecs;
-            // deprecated, only example for eventbus
         });
     }
     siteManager.prototype.initVue = function () {
@@ -54,7 +64,7 @@ var siteManager = /** @class */ (function () {
                 dismissSecs: 10,
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
-                currentComponent: 'overview', tags: this.tags, canLoadMore: true, medias: this.medias, currentTitle: '', user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}), baseUrl: baseUrl },
+                currentComponent: 'overview', loggeduserid: this.loggedUserId, tags: this.tags, canloadmore: true, medias: this.medias, currentTitle: '', user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}), baseUrl: baseUrl },
             router: new Router({ routes: routes }),
             components: {
                 'alert': alertComp
@@ -144,8 +154,7 @@ var siteManager = /** @class */ (function () {
         return tmpTags;
     };
     siteManager.prototype.findTagById = function (id) {
-        var returner;
-        console.log("exe");
+        var returner = undefined;
         $.each(this.tags, function (key, value) {
             if (value.id == id) {
                 returner = value;
@@ -155,14 +164,15 @@ var siteManager = /** @class */ (function () {
     };
     siteManager.prototype.findMediaByName = function (mediaName) {
         var returnMedia = undefined;
-        $.each(this.medias, function (key, value) {
+        var that = this;
+        $.each(that.medias, function (key, value) {
             if (value.title == mediaName) {
                 returnMedia = value;
             }
         });
         if (returnMedia == undefined) {
             console.log("Media didn't exist, download it.");
-            this.receiveMediaByName(mediaName);
+            //that.receiveMediaByName(mediaName);
         }
         return returnMedia;
     };
@@ -175,19 +185,23 @@ var siteManager = /** @class */ (function () {
                 that.medias = [];
             }
             $.each(data.data, function (key, value) {
-                var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds));
-                $.each(med.comments, function (key1, value1) {
-                    med.comments[key1].user = that.getUserById(value1.user_id);
-                });
-                that.medias.push(med);
+                if (that.findMediaByName(value.title) == undefined) {
+                    var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds));
+                    $.each(med.comments, function (key1, value1) {
+                        med.comments[key1].user = that.getUserById(value1.user_id);
+                    });
+                    that.medias.push(med);
+                }
             });
-            that.nextLink = data.links.next;
-            that.lastLink = data.links.prev;
+            if (data.links != undefined) {
+                that.nextLink = data.links.next;
+                that.lastLink = data.links.prev;
+            }
             if (theVue == undefined) {
                 that.initVue();
             }
             if (that.nextLink == null) {
-                theVue.canLoadMore = false;
+                theVue.canloadmore = false;
             }
             theVue.medias = that.medias;
             if (theVue.$route.params.profileId != undefined) {

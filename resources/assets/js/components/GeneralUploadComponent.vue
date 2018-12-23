@@ -46,14 +46,9 @@
 
           <input type="hidden" id="posterBase" name="poster" :value="cropped" />
 
-
-
-          <button @click="bind()">Bind</button>
           <!-- Rotate angle is Number -->
-          <button @click="rotate(-90)">Rotate Left</button>
-          <button @click="rotate(90)">Rotate Right</button>
-          <button @click="crop()">Crop Via Callback</button>
-          <button @click="cropViaEvent()">Crop Via Event</button>
+          <button @click="rotate(-90,$event)">Rotate Left</button>
+          <button @click="rotate(90,$event)">Rotate Right</button>
         <input id="posterUpload" @change="posterChange()" name="poster" type="file">
         <div id="poster"></div>
     </div>
@@ -84,7 +79,6 @@
   export default {
     props: ['medias','currentTitle','swapComponent','baseUrl'],
     mounted: function () {
-      console.log("mounted!");
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',
       })
@@ -112,9 +106,7 @@
 
       },
       submitAction() {
-        console.log("submit it!");
-        console.log($("#theForm")[0])
-        var that = this;
+        let that = this;
         $.ajax({
             url: '/media/create',
             type: 'POST',
@@ -140,16 +132,6 @@
       showAlert() {
         this.dismissCountDown = this.dismissSecs
       },
-      bind() {
-    // Randomize cat photos, nothing special here.
-    let url = this.images[Math.floor(Math.random() * 4)]
-
-    // Just like what we did with .bind({...}) on
-    // the mounted() function above.
-    //this.$refs.croppieRef.bind({
-      //  url: url,
-    //});
-},
 // CALBACK USAGE
 crop() {
     // Here we are getting the result via callback function
@@ -174,8 +156,9 @@ update(val) {
   this.crop();
     console.log(val);
 },
-rotate(rotationAngle) {
+rotate(rotationAngle,event) {
     // Rotates the image
+    if (event) event.preventDefault()
     this.$refs.croppieRef.rotate(rotationAngle);
 }
     },
@@ -188,12 +171,6 @@ rotate(rotationAngle) {
         alertMsg: '',
         showDismissibleAlert: false,
         cropped: null,
-images: [
-    'http://i.imgur.com/fHNtPXX.jpg',
-    'http://i.imgur.com/ecMUngU.jpg',
-    'http://i.imgur.com/7oO6zrh.jpg',
-    'http://i.imgur.com/miVkBH2.jpg'
-]
       }
     }
   }

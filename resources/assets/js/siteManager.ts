@@ -15,26 +15,37 @@ class siteManager {
   users:Array<User>;
   tags:Array<Tag>;
   nextLink:string;
+  loggedUserId:number;
   lastLink:string;
+  catchedTagMedias:any;
   constructor(base:string){
     baseUrl = base+"/";
     this.currentPage = "overview";
-
+    this.catchedTagMedias=[];
+    this.loggedUserId = Number($("#loggedUserId").attr("content"));
+    console.log("iiiint")
+    console.log($("#loggedUserId").attr("content"))
     this.receiveUsers(true);
     let that = this;
     eventBus.$on('refreshMedias', title => {
+      theVue.canloadmore = true;
+      that.catchedTagMedias=[];
       that.receiveMedias("/api/media",true)
       // deprecated, only example for eventbus
+    });
+    eventBus.$on('checkTag', tagName => {
+      if(that.catchedTagMedias.includes(tagName)==false){
+        that.catchedTagMedias.push(tagName);
+        that.receiveMedias("/api/tags/"+tagName);
+      }
     });
     eventBus.$on('loadMore', title => {
       console.log("received load more")
       that.receiveMedias(that.nextLink)
-      // deprecated, only example for eventbus
     });
     eventBus.$on('showAlert', data => {
       console.log("got showAlert")
       theVue.dismissCountDown = theVue.dismissSecs
-      // deprecated, only example for eventbus
     });
   }
 
@@ -64,7 +75,7 @@ class siteManager {
     dismissSecs: 10,
     dismissCountDown: 0,
     showDismissibleAlert: false,
-    currentComponent: 'overview', tags:this.tags, canLoadMore:true, medias:this.medias,currentTitle:'',user:new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {}),baseUrl:baseUrl},
+    currentComponent: 'overview', loggeduserid:this.loggedUserId, tags:this.tags, canloadmore:true, medias:this.medias,currentTitle:'',user:new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {}),baseUrl:baseUrl},
     router:new Router({ routes }),
     components : {
       'alert': alertComp
@@ -95,7 +106,7 @@ class siteManager {
     return this.currentPage;
   }
   receiveUsers(forceUpdate=false):void{
-    var that = this;
+    let that = this;
     $.getJSON("/api/user", function name(data) {
       if((that.users==undefined)||(forceUpdate)){
       that.users = [];
@@ -111,7 +122,7 @@ class siteManager {
 
 
   receiveTags(forceUpdate=false):void{
-    var that = this;
+    let that = this;
     $.getJSON("/api/tags", function name(data) {
       if((that.tags==undefined)||(forceUpdate)){
       that.tags = [];
@@ -129,7 +140,7 @@ class siteManager {
 
 
   receiveMediaByName(mediaName:string,forceUpdate=false):void{
-    var that = this;
+    let that = this;
     var existsAlready = false;
     $.getJSON("/api/media/"+mediaName, function name(data) {
       $.each(this.medias, function(key,value){
@@ -149,15 +160,14 @@ class siteManager {
 
   getTagsByIdArray(arr:Array<number>){
     var tmpTags = [];
-    var that = this;
+    let that = this;
     $.each(arr, function(key,value){
       tmpTags.push(that.findTagById(value));
     });
     return tmpTags;
   }
   findTagById(id:number){
-    var returner;
-    console.log("exe")
+    var returner:Tag=undefined;
     $.each(this.tags, function(key,value){
       if(value.id==id){
         returner=value;
@@ -167,37 +177,42 @@ class siteManager {
   }
   findMediaByName(mediaName:string):Media{
     var returnMedia = undefined;
-    $.each(this.medias, function(key,value){
+    let that = this;
+    $.each(that.medias, function(key,value){
       if(value.title==mediaName){
         returnMedia=value;
       }
     });
     if(returnMedia==undefined){
       console.log("Media didn't exist, download it.")
-      this.receiveMediaByName(mediaName);
+      //that.receiveMediaByName(mediaName);
     }
     return returnMedia;
   }
   receiveMedias(url="/api/media",forceUpdate=false):void{
-    var that = this;
+    let that = this;
     $.getJSON(url, function name(data) {
       if((forceUpdate)||(that.medias==undefined)){
         that.medias = [];
       }
         $.each( data.data, function( key, value ) {
-          var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds))
-          $.each( med.comments, function( key1, value1 ) {
-            med.comments[key1].user = that.getUserById(value1.user_id)
-          });
-          that.medias.push(med);
+         if(that.findMediaByName(value.title)==undefined){
+            var med = new Media(value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds))
+            $.each( med.comments, function( key1, value1 ) {
+              med.comments[key1].user = that.getUserById(value1.user_id)
+            });
+            that.medias.push(med);
+          }
         });
-        that.nextLink = data.links.next;
-        that.lastLink = data.links.prev;
+        if(data.links!=undefined){
+          that.nextLink = data.links.next;
+          that.lastLink = data.links.prev;
+        }
         if(theVue==undefined){
           that.initVue();
         }
         if(that.nextLink==null){
-          theVue.canLoadMore=false;
+          theVue.canloadmore=false;
         }
         theVue.medias = that.medias;
         if(theVue.$route.params.profileId != undefined){
