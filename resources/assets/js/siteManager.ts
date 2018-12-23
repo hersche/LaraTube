@@ -23,8 +23,6 @@ class siteManager {
     this.currentPage = "overview";
     this.catchedTagMedias=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
-    console.log("iiiint")
-    console.log($("#loggedUserId").attr("content"))
     this.receiveUsers(true);
     let that = this;
     eventBus.$on('refreshMedias', title => {
@@ -40,11 +38,9 @@ class siteManager {
       }
     });
     eventBus.$on('loadMore', title => {
-      console.log("received load more")
       that.receiveMedias(that.nextLink)
     });
     eventBus.$on('showAlert', data => {
-      console.log("got showAlert")
       theVue.dismissCountDown = theVue.dismissSecs
     });
   }
@@ -85,11 +81,22 @@ class siteManager {
         this.currentComponent = component;
       }
     },
+    mounted(){
+    //  if(sm.params.currentTitle!=undefined){
+        // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+      //  if(sm.findMediaByName(sm.params.currentTitle)==undefined){
+        //  sm.receiveMediaByName(sm.params.currentTitle);
+        //}
+      //}
+    },
     watch:{
       $route (to, from){
           //this.show = false;
           if(to.params.currentTitle!=undefined){
             // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+            if(sm.findMediaByName(to.params.currentTitle)==undefined){
+              sm.receiveMediaByName(to.params.currentTitle);
+            }
           }
           if(to.params.profileId!=undefined){
             this.user = sm.getUserById(to.params.profileId)
@@ -149,9 +156,10 @@ class siteManager {
         }
       });
       if(existsAlready==false){
+        data = data.data;
         var m = new Media(data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds));
-        theVue.medias = this.medias;
-        this.medias.push(m)
+        that.medias.push(m)
+        theVue.medias = that.medias;
       } else {
         console.warn("If the media already existed, why this method was used?");
       }
@@ -183,10 +191,6 @@ class siteManager {
         returnMedia=value;
       }
     });
-    if(returnMedia==undefined){
-      console.log("Media didn't exist, download it.")
-      //that.receiveMediaByName(mediaName);
-    }
     return returnMedia;
   }
   receiveMedias(url="/api/media",forceUpdate=false):void{
@@ -218,6 +222,13 @@ class siteManager {
         if(theVue.$route.params.profileId != undefined){
           theVue.user = sm.getUserById(theVue.$route.params.profileId)
           theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId)
+        }
+
+        if(theVue.$route.params.currentTitle!=undefined){
+          // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+          if(that.findMediaByName(theVue.$route.params.currentTitle)==undefined){
+            that.receiveMediaByName(theVue.$route.params.currentTitle);
+          }
         }
     });
 

@@ -89820,8 +89820,6 @@ var siteManager = /** @class */function () {
         this.currentPage = "overview";
         this.catchedTagMedias = [];
         this.loggedUserId = Number($("#loggedUserId").attr("content"));
-        console.log("iiiint");
-        console.log($("#loggedUserId").attr("content"));
         this.receiveUsers(true);
         var that = this;
         __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('refreshMedias', function (title) {
@@ -89837,11 +89835,9 @@ var siteManager = /** @class */function () {
             }
         });
         __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('loadMore', function (title) {
-            console.log("received load more");
             that.receiveMedias(that.nextLink);
         });
         __WEBPACK_IMPORTED_MODULE_4__eventBus_js__["a" /* eventBus */].$on('showAlert', function (data) {
-            console.log("got showAlert");
             theVue.dismissCountDown = theVue.dismissSecs;
         });
     }
@@ -89873,11 +89869,22 @@ var siteManager = /** @class */function () {
                     this.currentComponent = component;
                 }
             },
+            mounted: function mounted() {
+                //  if(sm.params.currentTitle!=undefined){
+                // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+                //  if(sm.findMediaByName(sm.params.currentTitle)==undefined){
+                //  sm.receiveMediaByName(sm.params.currentTitle);
+                //}
+                //}
+            },
             watch: {
                 $route: function $route(to, from) {
                     //this.show = false;
                     if (to.params.currentTitle != undefined) {
                         // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+                        if (sm.findMediaByName(to.params.currentTitle) == undefined) {
+                            sm.receiveMediaByName(to.params.currentTitle);
+                        }
                     }
                     if (to.params.profileId != undefined) {
                         this.user = sm.getUserById(to.params.profileId);
@@ -89940,9 +89947,10 @@ var siteManager = /** @class */function () {
                 }
             });
             if (existsAlready == false) {
+                data = data.data;
                 var m = new Media(data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds));
-                theVue.medias = this.medias;
-                this.medias.push(m);
+                that.medias.push(m);
+                theVue.medias = that.medias;
             } else {
                 console.warn("If the media already existed, why this method was used?");
             }
@@ -89973,10 +89981,6 @@ var siteManager = /** @class */function () {
                 returnMedia = value;
             }
         });
-        if (returnMedia == undefined) {
-            console.log("Media didn't exist, download it.");
-            //that.receiveMediaByName(mediaName);
-        }
         return returnMedia;
     };
     siteManager.prototype.receiveMedias = function (url, forceUpdate) {
@@ -90014,6 +90018,12 @@ var siteManager = /** @class */function () {
             if (theVue.$route.params.profileId != undefined) {
                 theVue.user = sm.getUserById(theVue.$route.params.profileId);
                 theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId);
+            }
+            if (theVue.$route.params.currentTitle != undefined) {
+                // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+                if (that.findMediaByName(theVue.$route.params.currentTitle) == undefined) {
+                    that.receiveMediaByName(theVue.$route.params.currentTitle);
+                }
             }
         });
     };
@@ -106663,11 +106673,36 @@ var render = function() {
                 )
               ]),
               _vm._v(" "),
-              _vm.loggeduserid == _vm.item.user.id
-                ? _c("span", { staticClass: "float-right" }, [
-                    _vm._v("Owner!!")
-                  ])
-                : _vm._e()
+              _c(
+                "span",
+                { staticClass: "card-footer " },
+                [
+                  _c("span", { staticClass: "float-left" }, [_vm._v("Tags:")]),
+                  _vm._l(_vm.item.tags, function(tag) {
+                    return _c("span", { staticClass: "float-left" }, [
+                      _vm._v(_vm._s(tag.name) + " ")
+                    ])
+                  }),
+                  _vm.loggeduserid == _vm.item.user.id
+                    ? _c(
+                        "span",
+                        {},
+                        [
+                          _c(
+                            "router-link",
+                            {
+                              staticClass: "btn btn-sm btn-info float-right",
+                              attrs: { to: "/" }
+                            },
+                            [_vm._v("Edit")]
+                          )
+                        ],
+                        1
+                      )
+                    : _vm._e()
+                ],
+                2
+              )
             ]
           )
         ]
@@ -106808,9 +106843,11 @@ var render = function() {
                     class: { active: index === 0 }
                   },
                   [
-                    _c("img", {
-                      attrs: { src: item.poster_source, alt: item.title }
-                    }),
+                    _c("div", { staticClass: "text-center" }, [
+                      _c("img", {
+                        attrs: { src: item.poster_source, alt: item.title }
+                      })
+                    ]),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -106863,7 +106900,7 @@ var render = function() {
                                   _c(
                                     "router-link",
                                     {
-                                      staticClass: "btn btn-xs btn-info mr-1",
+                                      staticClass: "btn btn-sm btn-info mr-1",
                                       attrs: { to: "/tags/" + tag.name }
                                     },
                                     [
@@ -107064,10 +107101,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['medias', 'currentTitle', 'swapComponent', 'baseUrl'],
+  props: ['medias', 'currentTitle', 'swapComponent', 'baseUrl', 'loggeduserid'],
   methods: {
     emitBackClicked: function emitBackClicked(title) {
       __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('playerBackClick', title);
@@ -107075,13 +107114,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   computed: {
     // a computed getter
-    currentMedia: function currentMedia() {
+    currentmedia: function currentmedia() {
       // `this` points to the vm instance
       var that = this;
-      var theMedia;
+      var theMedia; // = new Media("None","","","","","","","","","","","")
       console.log("CRAAASH");
       this.medias.forEach(function (val, key) {
+        console.log(val.title);
         if (val.title == that.$route.params.currentTitle) {
+          console.log("found it");
           theMedia = val;
         }
       });
@@ -107089,16 +107130,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }
   },
   mounted: function mounted() {
-    if (this.currentMedia.type == "torrentAudio" | this.currentMedia.type == "torrentVideo") {
-      var WebTorrent = __webpack_require__(87);
-      var client = new WebTorrent();
-      client.add(this.currentMedia.source, function (torrent) {
-        // Torrents can contain many files. Let's use the .mp4 file
-        var file = torrent.files.find(function (file) {
-          return file.name.endsWith('.mp4');
+    if (this.currentmedia != undefined) {
+      if (this.currentmedia.type == "torrentAudio" | this.currentmedia.type == "torrentVideo") {
+        var WebTorrent = __webpack_require__(87);
+        var client = new WebTorrent();
+        client.add(this.currentmedia.source, function (torrent) {
+          // Torrents can contain many files. Let's use the .mp4 file
+          var file = torrent.files.find(function (file) {
+            return file.name.endsWith('.mp4');
+          });
+          file.renderTo('#player');
         });
-        file.renderTo('#player');
-      });
+      }
     }
   }
 });
@@ -107111,216 +107154,241 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-xs-12 col-sm-12 col-md-12" }, [
-        _c(
-          "span",
-          { staticClass: "float-right" },
-          [
+  return _vm.currentmedia != undefined
+    ? _c("div", [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-xs-12 col-sm-12 col-md-12" }, [
             _c(
-              "router-link",
-              { staticClass: "btn btn-primary", attrs: { to: "/" } },
-              [_vm._v("Back")]
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("h3", [_vm._v(" " + _vm._s(_vm.currentMedia.title) + " ")]),
-        _vm._v(" "),
-        _vm.currentMedia.simpleType == "audio"
-          ? _c(
-              "audio",
-              {
-                attrs: {
-                  id: "player",
-                  controls: "",
-                  poster: _vm.currentMedia.poster_source
-                }
-              },
+              "span",
+              { staticClass: "float-right" },
               [
-                _c("source", {
-                  attrs: { src: _vm.currentMedia.source, type: "audio/mp3" }
+                _c(
+                  "router-link",
+                  { staticClass: "btn btn-primary", attrs: { to: "/" } },
+                  [_vm._v("Back")]
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("h3", [_vm._v(" " + _vm._s(_vm.currentmedia.title) + " ")]),
+            _vm._v(" "),
+            _vm.currentmedia.simpleType == "audio"
+              ? _c(
+                  "audio",
+                  {
+                    attrs: {
+                      id: "player",
+                      controls: "",
+                      poster: _vm.currentmedia.poster_source
+                    }
+                  },
+                  [
+                    _c("source", {
+                      attrs: { src: _vm.currentmedia.source, type: "audio/mp3" }
+                    })
+                  ]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.currentmedia.simpleType == "video"
+              ? _c(
+                  "video",
+                  {
+                    staticClass: "col-12",
+                    attrs: {
+                      id: "player",
+                      controls: "",
+                      poster: _vm.currentmedia.poster_source
+                    }
+                  },
+                  [
+                    _c("source", {
+                      attrs: { src: _vm.currentmedia.source, type: "video/mp4" }
+                    })
+                  ]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.currentmedia.simpleType == "torrent"
+              ? _c("video", {
+                  staticClass: "col-12",
+                  attrs: {
+                    id: "player",
+                    controls: "",
+                    poster: _vm.currentmedia.poster_source
+                  }
                 })
-              ]
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.currentMedia.simpleType == "video"
-          ? _c(
-              "video",
-              {
-                staticClass: "col-12",
-                attrs: {
-                  id: "player",
-                  controls: "",
-                  poster: _vm.currentMedia.poster_source
-                }
-              },
-              [
-                _c("source", {
-                  attrs: { src: _vm.currentMedia.source, type: "video/mp4" }
-                })
-              ]
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.currentMedia.simpleType == "torrent"
-          ? _c("video", {
-              staticClass: "col-12",
-              attrs: {
-                id: "player",
-                controls: "",
-                poster: _vm.currentMedia.poster_source
-              }
-            })
-          : _vm._e()
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-xs-12 col-sm-12 col-md-12" }),
-    _vm._v(" "),
-    _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _c("span", { staticClass: "h3" }, [
-          _vm._v(_vm._s(_vm.currentMedia.title))
+              : _vm._e()
+          ])
         ]),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "float-right" },
-          [
-            _c("span", { staticClass: "btn btn-info mr-1" }, [
-              _vm._v(_vm._s(_vm.currentMedia.created_at_readable))
+        _c("div", { staticClass: "col-xs-12 col-sm-12 col-md-12" }),
+        _vm._v(" "),
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-header" }, [
+            _c("span", { staticClass: "h3" }, [
+              _vm._v(_vm._s(_vm.currentmedia.title))
             ]),
             _vm._v(" "),
             _c(
-              "router-link",
-              {
-                staticClass: "btn btn-primary",
-                attrs: { to: "/profile/" + _vm.currentMedia.user.id }
-              },
+              "div",
+              { staticClass: "float-right" },
               [
-                _vm.currentMedia.user.avatar == ""
-                  ? _c("img", {
-                      staticClass: "mx-auto rounded-circle img-fluid",
-                      staticStyle: { "max-height": "20px" },
-                      attrs: { src: "/img/404/avatar.png", alt: "avatar" }
-                    })
-                  : _c("img", {
-                      staticClass: "mx-auto rounded-circle img-fluid",
-                      staticStyle: { "max-height": "20px" },
-                      attrs: {
-                        src: "/" + _vm.currentMedia.user.avatar,
-                        alt: "avatar"
-                      }
-                    })
-              ]
+                _c("span", { staticClass: "btn btn-info mr-1" }, [
+                  _vm._v(_vm._s(_vm.currentmedia.created_at_readable))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "router-link",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { to: "/profile/" + _vm.currentmedia.user.id }
+                  },
+                  [
+                    _vm.currentmedia.user.avatar == ""
+                      ? _c("img", {
+                          staticClass: "mx-auto rounded-circle img-fluid",
+                          staticStyle: { "max-height": "20px" },
+                          attrs: { src: "/img/404/avatar.png", alt: "avatar" }
+                        })
+                      : _c("img", {
+                          staticClass: "mx-auto rounded-circle img-fluid",
+                          staticStyle: { "max-height": "20px" },
+                          attrs: {
+                            src: "/" + _vm.currentmedia.user.avatar,
+                            alt: "avatar"
+                          }
+                        })
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.loggeduserid == _vm.currentmedia.user.id
+                  ? _c(
+                      "span",
+                      {},
+                      [
+                        _c(
+                          "router-link",
+                          {
+                            staticClass: "btn btn-sm btn-info float-right",
+                            attrs: { to: "/" }
+                          },
+                          [_vm._v("Edit")]
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e()
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _vm._v(_vm._s(_vm.currentmedia.description))
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "card-footer" },
+              [
+                _vm._v("Tags: "),
+                _vm._l(_vm.currentmedia.tags, function(tag) {
+                  return _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-xs btn-info mr-1",
+                      attrs: { href: "/tags/" + tag.name }
+                    },
+                    [_vm._v(_vm._s(tag.name) + " (" + _vm._s(tag.count) + "x)")]
+                  )
+                })
+              ],
+              2
             )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
-          _vm._v(_vm._s(_vm.currentMedia.description))
+          ])
         ]),
         _vm._v(" "),
         _c(
           "div",
-          { staticClass: "card-footer" },
+          { staticClass: "comments" },
           [
-            _vm._v("Tags: "),
-            _vm._l(_vm.currentMedia.tags, function(tag) {
+            _c("h4", [_vm._v("Comments")]),
+            _vm._v(" "),
+            _vm._l(_vm.currentmedia.comments, function(comment) {
               return _c(
-                "a",
+                "div",
                 {
-                  staticClass: "btn btn-xs btn-info mr-1",
-                  attrs: { href: "/tags/" + tag.name }
+                  staticClass: "comment mb-2 row",
+                  attrs: { id: "cid" + comment.id }
                 },
-                [_vm._v(_vm._s(tag.name) + " (" + _vm._s(tag.count) + "x)")]
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "comment-avatar col-md-1 col-sm-2 text-center pr-1"
+                    },
+                    [
+                      _c("a", { attrs: { href: "" } }, [
+                        _c("img", {
+                          staticClass: "mx-auto rounded-circle img-fluid",
+                          attrs: {
+                            src: "/" + comment.user.avatar,
+                            alt: "avatar"
+                          }
+                        })
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "comment-content col-md-11 col-sm-10" },
+                    [
+                      _c(
+                        "h6",
+                        { staticClass: "small comment-meta" },
+                        [
+                          _c(
+                            "router-link",
+                            {
+                              staticClass: "btn btn-primary mr-2",
+                              attrs: { to: "/profile/" + comment.user.id }
+                            },
+                            [_vm._v(_vm._s(comment.user.name))]
+                          ),
+                          _vm._v(
+                            " " +
+                              _vm._s(comment.created_at) +
+                              "\n                "
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "comment-body" }, [
+                        _c("p", [
+                          _vm._v(
+                            "\n                      " +
+                              _vm._s(comment.body) +
+                              "\n                      "
+                          ),
+                          _c("br"),
+                          _vm._v(" "),
+                          _vm._m(0, true)
+                        ])
+                      ])
+                    ]
+                  )
+                ]
               )
             })
           ],
           2
         )
       ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "comments" },
-      [
-        _c("h4", [_vm._v("Comments")]),
-        _vm._v(" "),
-        _vm._l(_vm.currentMedia.comments, function(comment) {
-          return _c(
-            "div",
-            {
-              staticClass: "comment mb-2 row",
-              attrs: { id: "cid" + comment.id }
-            },
-            [
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "comment-avatar col-md-1 col-sm-2 text-center pr-1"
-                },
-                [
-                  _c("a", { attrs: { href: "" } }, [
-                    _c("img", {
-                      staticClass: "mx-auto rounded-circle img-fluid",
-                      attrs: { src: "/" + comment.user.avatar, alt: "avatar" }
-                    })
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "comment-content col-md-11 col-sm-10" },
-                [
-                  _c(
-                    "h6",
-                    { staticClass: "small comment-meta" },
-                    [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass: "btn btn-primary mr-2",
-                          attrs: { to: "/profile/" + comment.user.id }
-                        },
-                        [_vm._v(_vm._s(comment.user.name))]
-                      ),
-                      _vm._v(
-                        " " + _vm._s(comment.created_at) + "\n                "
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "comment-body" }, [
-                    _c("p", [
-                      _vm._v(
-                        "\n                      " +
-                          _vm._s(comment.body) +
-                          "\n                      "
-                      ),
-                      _c("br"),
-                      _vm._v(" "),
-                      _vm._m(0, true)
-                    ])
-                  ])
-                ]
-              )
-            ]
-          )
-        })
-      ],
-      2
-    )
-  ])
+    : _vm._e()
 }
 var staticRenderFns = [
   function() {
@@ -108161,15 +108229,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     this.$refs.croppieRef.bind({
       url: '/img/404/image.png'
     });
-    $('.directMedia').on('change', function () {
-      var file = this.files[0];
-      //if (file.size > 1024) {
-      //alert('max upload size is 1k')
-      //}
-      console.log(this.files);
-
-      // Also see .name, .type
-    });
   },
 
   methods: {
@@ -108194,7 +108253,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         processData: false,
         complete: function complete(res) {
           if (res.status == 200) {
-            that.dismissCountDown = that.dismissSecs;
+            that.dismissCountDown = 20;
             that.alertMsg = "Video added";
             that.alertType = "success";
             //eventBus.$emit('showAlert',['success','Video uploaded']);
@@ -108212,31 +108271,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     // CALBACK USAGE
-    crop: function crop() {
+    result: function result(output) {
+      this.cropped = output;
+    },
+    update: function update(val) {
       var _this = this;
 
-      // Here we are getting the result via callback function
-      // and set the result to this.cropped which is being
-      // used to display the result above.
       var options = {
         format: 'png'
       };
       this.$refs.croppieRef.result(options, function (output) {
         _this.cropped = output;
-        console.log(output);
       });
-    },
-
-    // EVENT USAGE
-    cropViaEvent: function cropViaEvent() {
-      this.$refs.croppieRef.result(options);
-    },
-    result: function result(output) {
-      this.cropped = output;
-    },
-    update: function update(val) {
-      this.crop();
-      console.log(val);
     },
     rotate: function rotate(rotationAngle, event) {
       // Rotates the image

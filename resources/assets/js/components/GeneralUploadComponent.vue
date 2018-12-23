@@ -82,15 +82,6 @@
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',
       })
-      $('.directMedia').on('change', function() {
-        var file = this.files[0];
-        //if (file.size > 1024) {
-          //alert('max upload size is 1k')
-        //}
-        console.log(this.files);
-
-        // Also see .name, .type
-      });
     },
 
     methods: {
@@ -116,7 +107,7 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                that.dismissCountDown = that.dismissSecs;
+                that.dismissCountDown = 20;
                 that.alertMsg = "Video added"
                 that.alertType = "success"
                 //eventBus.$emit('showAlert',['success','Video uploaded']);
@@ -133,28 +124,16 @@
         this.dismissCountDown = this.dismissSecs
       },
 // CALBACK USAGE
-crop() {
-    // Here we are getting the result via callback function
-    // and set the result to this.cropped which is being
-    // used to display the result above.
-    let options = {
-        format: 'png'
-    }
-    this.$refs.croppieRef.result(options, (output) => {
-        this.cropped = output;
-        console.log(output)
-    });
-},
-// EVENT USAGE
-cropViaEvent() {
-    this.$refs.croppieRef.result(options);
-},
 result(output) {
     this.cropped = output;
 },
 update(val) {
-  this.crop();
-    console.log(val);
+  let options = {
+      format: 'png'
+  }
+  this.$refs.croppieRef.result(options, (output) => {
+      this.cropped = output;
+  });
 },
 rotate(rotationAngle,event) {
     // Rotates the image
