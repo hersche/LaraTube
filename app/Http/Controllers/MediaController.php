@@ -10,7 +10,6 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
-
 class MediaController extends Controller
 {
     /**
@@ -40,7 +39,7 @@ class MediaController extends Controller
     public function create(Request $request)
     {
         //
-
+        $getID3 = new \getID3;
         $title = $request->input('title');
         $poster_source = 'public/media/posters/'.$title.'.png';
         $data = $request->input('poster');
@@ -55,10 +54,12 @@ class MediaController extends Controller
           $poster_source = '';
         }
         $source = $request->input('source');
+        $duration = "0";
         if(empty($source)){
           $file = $request->file('directMedia');
           $extension = $file->getClientOriginalExtension();
           $source = $file->store('public/directMedia');
+          $duration = $getID3->analyze($source)['playtime_string'];
         }
         $tagArrayExtract = explode(' ', $request->input('tags'));
         $tagArray = array();
@@ -70,12 +71,25 @@ class MediaController extends Controller
           }
         }
 
-        $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => $poster_source, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id()]);
+        $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => $poster_source,'duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id()]);
         $media->retag($tagArray);
         return redirect()->route('media.show',$title)
                         ->with('success','Video created successfully');
     }
+    function format_duration($duration){
 
+        // The base case is A:BB
+        if(strlen($duration) == 4){
+            return "00:0" . $duration;
+        }
+        // If AA:BB
+        else if(strlen($duration) == 5){
+            return "00:" . $duration;
+        }   // If A:BB:CC
+        else if(strlen($duration) == 7){
+            return "0" . $duration;
+        }
+    }
     public function tags(Request $request){
       $tags = Media::existingTags();
       return view('tags.index',compact('tags'));

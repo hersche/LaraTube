@@ -2,6 +2,7 @@ var baseUrl:string;
 import Vue from 'vue'
 import Router from 'vue-router';
 import BootstrapVue from 'bootstrap-vue'
+import VueCroppie from 'vue-croppie';
 import { eventBus } from './eventBus.js';
 var app;
 var theVue;
@@ -18,7 +19,7 @@ class siteManager {
   constructor(base:string){
     baseUrl = base+"/";
     this.currentPage = "overview";
-    this.initVue();
+
     this.receiveUsers(true);
     var that = this;
     eventBus.$on('refreshMedias', title => {
@@ -46,6 +47,7 @@ class siteManager {
     var alertComp = Vue.component('alert', require("./components/AlertComponent.vue"));
     Vue.use(Router)
     Vue.use(BootstrapVue);
+    Vue.use(VueCroppie);
     const routes = [
       { path: '/', component: overview },
       { path: '/media/:currentTitle', component: player },
@@ -117,7 +119,9 @@ class siteManager {
         });
       }
       this.tags = that.tags;
-      theVue.tags = this.tags;
+      if(theVue!=undefined){
+        theVue.tags = this.tags;
+      }
       that.receiveMedias();
     });
   }
@@ -188,6 +192,7 @@ class siteManager {
         });
         that.nextLink = data.links.next;
         that.lastLink = data.links.prev;
+        that.initVue();
         if(that.nextLink==null){
           theVue.canLoadMore=false;
         }

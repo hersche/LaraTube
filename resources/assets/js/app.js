@@ -6,7 +6,7 @@
  */
 require('./bootstrap');
 var $ = require('jquery')
-
+var WebTorrent = require('webtorrent')
 //var siteManager = require('./siteManager').siteManager();
 /**
  * Next, we will create a fresh Vue application instance and attach it to

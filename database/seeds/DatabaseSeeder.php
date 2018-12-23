@@ -53,6 +53,15 @@ class DatabaseSeeder extends Seeder
      $m1->tag('Some');
      $m1->tag('thing');
      $m1->tag('Movie');
+     $m1 = Media::create(['title' => 'Walu internetzensur', 'source' => 'magnet:?xs=https%3A%2F%2Fpeertube.video%2Fstatic%2Ftorrents%2Fb4554af3-1d34-4856-b22b-59e471704b92-1080.torrent&xt=urn:btih:f4c2aa378b68098686564d52cf31d7ed663799f2&dn=Wird+China+zum+gro%C3%9Fen+Internetzensur-Vorbild%3F+%7C+WALULIS&tr=wss%3A%2F%2Fpeertube.video%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fpeertube.video%2Ftracker%2Fannounce&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fwebseed%2Fb4554af3-1d34-4856-b22b-59e471704b92-1080.mp4', 'type' => 'torrentVideo','description' => 'Via webtorrent from peertube.video .','user_id' => 1]);
+     $m1->tag('Walulis');
+     $m1->tag('thing');
+     $m1->tag('Movie');
+
+     $m1 = Media::create(['title' => 'Youtube review 2018', 'source' => 'magnet:?xs=https%3A%2F%2Fpeertube.video%2Fstatic%2Ftorrents%2Fea2da85a-0cd7-4e6d-aaf5-ff47592853a7-1080.torrent&xt=urn:btih:cffcacbc092ba06a85f07b0143de58e0f69bfc2a&dn=Rewind+2018%3A+Das+schlechteste+YouTube+Video+ever!%3F+%7C+WALULIS&tr=wss%3A%2F%2Fpeertube.video%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fpeertube.video%2Ftracker%2Fannounce&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fwebseed%2Fea2da85a-0cd7-4e6d-aaf5-ff47592853a7-1080.mp4', 'type' => 'torrentVideo','description' => 'Via webtorrent from peertube.video .','user_id' => 1]);
+     $m1->tag('Walulis');
+     $m1->tag('Some');
+     $m1->tag('Movie');
      $m1 = Media::create(['title' => 'Big bucks bunny test 2', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
      $m1->tag('Some');
      $m1->tag('Test');
