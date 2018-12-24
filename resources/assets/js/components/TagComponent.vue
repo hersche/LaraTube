@@ -1,21 +1,20 @@
 <template>
 
 <div>
-      <div><input type="text" v-model="filterTags" placeholder="Filter tags"><button class="btn btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button></div>
-      <div class="btn btn-success">
-        <input type="checkbox" checked id="specialAllTag" />
-        All
-      </div>
+  <div v-if="tagenabled!=undefined&tagenabled!=false" >
+      <div><input type="text" v-model="filterTags" placeholder="Filter tags"></div>
       <div v-for="(item,index) in tags" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
         <input type="checkbox" @click="checkTag(item.name)" v-model="selectedTags" :value="item" />
         {{ item.name }} ({{item.count}}x)
       </div>
-
+</div>
       <div class="row text-center text-lg-left" id="profilevideos">
         <div v-for="(item1,index) in medias" v-if="filterMedia(item1,selectedTags)==true" class="col-lg-4 col-md-4 col-xs-6">
           <singleField v-bind:item="item1"></singleField>
         </div>
+
       </div>
+      <!--  <div><button class="btn btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button></div> -->
 </div>
 
 </template>
@@ -25,7 +24,7 @@
   import SingleGalleryField from './SingleGalleryField'
   export default {
     name: 'tags',
-    props: ['medias','baseUrl','user','tags','canloadmore'],
+    props: ['medias','baseUrl','user','tags','canloadmore','tagenabled'],
     data(){
       return {
         selectedTags:[],
@@ -41,7 +40,7 @@
       },
       filterMedia(media, sTags) {
         var returnVal = false;
-        if($("#specialAllTag").is(":checked")){
+        if(this.tagenabled==false){
           returnVal=true;
         } else {
         sTags.forEach( function(item, index) {

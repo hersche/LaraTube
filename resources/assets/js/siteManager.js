@@ -6,26 +6,41 @@ import VueCroppie from 'vue-croppie';
 import { eventBus } from './eventBus.js';
 var app;
 var theVue;
+var searchDelay;
 require("./models");
 var siteManager = /** @class */ (function () {
     function siteManager(base) {
+        var _this = this;
         baseUrl = base + "/";
         this.currentPage = "overview";
         this.catchedTagMedias = [];
+        this.usedSearchTerms = [];
         this.loggedUserId = Number($("#loggedUserId").attr("content"));
         this.receiveUsers(true);
         var that = this;
         eventBus.$on('refreshMedias', function (title) {
             theVue.canloadmore = true;
             that.catchedTagMedias = [];
+            _this.usedSearchTerms = [];
             that.receiveMedias("/api/media", true);
             // deprecated, only example for eventbus
         });
         eventBus.$on('checkTag', function (tagName) {
             //if(theVue.$router.currentRoute.path!="/search"){
-            if (that.catchedTagMedias.includes(tagName) == false) {
-                that.catchedTagMedias.push(tagName);
-                that.receiveMedias("/api/tags/" + tagName);
+            if (tagName == '') {
+                if ($("#specialAllTag").is(":checked")) {
+                    theVue.medias = that.medias;
+                }
+                else {
+                    theVue.medias = [];
+                    theVue.medias = that.medias;
+                }
+            }
+            else {
+                if (that.catchedTagMedias.includes(tagName) == false) {
+                    that.catchedTagMedias.push(tagName);
+                    that.receiveMedias("/api/tags/" + tagName);
+                }
             }
             //}
         });
@@ -103,6 +118,15 @@ var siteManager = /** @class */ (function () {
                     }
                     var s = $("#theLiveSearch").val();
                     var m = [];
+                    if (that.usedSearchTerms.includes(s.toString()) == false && s.toString() != "") {
+                        that.usedSearchTerms.push(s);
+                        if (searchDelay != undefined) {
+                            clearTimeout(searchDelay);
+                        }
+                        searchDelay = setTimeout(function () {
+                            that.receiveMedias("/api/media/search/" + s);
+                        }, 300);
+                    }
                     var so = new Search(s.toString(), that.medias, that.tags, that.users);
                     theVue.search = so;
                     theVue.medias = so.mediaResult;

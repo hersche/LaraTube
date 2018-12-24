@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Newest videos {{ loggeduserid }}</h3>
+    <h3>Newest videos</h3>
     <p><button @click="emitRefreshMedias()">Refresh</button></p>
     <div id="demo" class="carousel slide" data-ride="carousel">
       <ul class="carousel-indicators" id="carouselIndicatorsBody">
