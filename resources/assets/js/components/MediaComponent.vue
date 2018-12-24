@@ -63,7 +63,7 @@
 <script>
   import { eventBus } from '../eventBus.js';
   export default {
-    props: ['medias','currentTitle','swapComponent','baseUrl','loggeduserid'],
+    props: ['medias','currentTitle','baseUrl','loggeduserid'],
     methods: {
       emitBackClicked(title) {
         eventBus.$emit('playerBackClick',title);

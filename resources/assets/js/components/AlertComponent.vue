@@ -1,13 +1,13 @@
 <template>
-<b-alert :show="dismissCountDown"
+<b-alert :show="dismisscountdown"
          dismissible
          variant="warning"
-         @dismissed="dismissCountDown=0"
+         @dismissed="dismisscountdown=0"
          @dismiss-count-down="countDownChanged">
-  <p>This alert will dismiss after {{dismissCountDown}} seconds...</p>
+  <p>This alert will dismiss after {{dismisscountdown}} seconds...</p>
   <b-progress variant="warning"
-              :max="dismissSecs"
-              :value="dismissCountDown"
+              :max="dismisssecs"
+              :value="dismisscountdown"
               height="4px">
   </b-progress>
 </b-alert>
@@ -16,13 +16,13 @@
   import { eventBus } from '../eventBus.js';
   import GeneralUploadComponent from './GeneralUploadComponent'
   export default {
-    props: ['medias','currentTitle','swapComponent','baseUrl','dismissSecs','dismissCountDown','showDismissibleAlert'],
+    props: ['medias','currentTitle','baseUrl','dismisssecs','dismisscountdown','showdismissiblealert'],
     components : {
       'generalUpload': GeneralUploadComponent
     },
     methods: {
-      countDownChanged (dismissCountDown) {
-        this.dismissCountDown = dismissCountDown
+      countDownChanged (dismisscountdown) {
+        this.dismisscountdown = dismisscountdown
       }
     },
     data(){

@@ -12,7 +12,7 @@
   import { eventBus } from '../eventBus.js';
   import GeneralUploadComponent from './GeneralUploadComponent'
   export default {
-    props: ['medias','currentTitle','swapComponent','baseUrl'],
+    props: ['medias','currentTitle','baseUrl'],
     components : {
       'generalUpload': GeneralUploadComponent
     },

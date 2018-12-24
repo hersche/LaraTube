@@ -1,8 +1,8 @@
 <template>
 
 <div><div id="profile" >
-  <div id="profileheader" :style="'background-image:url('+user.background+')'">
-    <img class='pl-2 pt-1 pb-1' :src='"/"+user.avatar' /><span><h3 class='ml-2' style='display: inline;'>{{ user.name }}</h3></span>
+  <div id="profileheader" class="text-center" :style="'background-image:url('+user.background+')'">
+    <img class='pl-2 pt-1 pb-1' :src='"/"+user.avatar' /><h3 class='ml-2' style=''>{{ user.name }}</h3>
   </div>
   <div>{{ user.bio }}</div>
 </div>

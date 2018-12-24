@@ -69,6 +69,7 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         <li class="nav-item"><router-link class="dropdown-item" to="/tags">{{ __('Tags') }}</a></li>
+                        <li class="nav-item"><input type="text" placeholder="Search" id="theLiveSearch" class="btn btn-outline-info" @keyup="searching()" @focus="searching()"></li>
                         @guest
                             <li class="nav-item">
                                 <router-link class="nav-link" to="/login">{{ __('Login') }}</router-link>

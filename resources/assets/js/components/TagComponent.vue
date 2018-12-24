@@ -2,6 +2,10 @@
 
 <div>
       <div><input type="text" v-model="filterTags" placeholder="Filter tags"><button class="btn btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button></div>
+      <div class="btn btn-success">
+        <input type="checkbox" checked id="specialAllTag" />
+        All
+      </div>
       <div v-for="(item,index) in tags" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
         <input type="checkbox" @click="checkTag(item.name)" v-model="selectedTags" :value="item" />
         {{ item.name }} ({{item.count}}x)
@@ -37,15 +41,19 @@
       },
       filterMedia(media, sTags) {
         var returnVal = false;
+        if($("#specialAllTag").is(":checked")){
+          returnVal=true;
+        } else {
         sTags.forEach( function(item, index) {
           media.tags.forEach( function(mediaTag, index2) {
           if(mediaTag.id==item.id){
-            console.log(mediaTag.id);
             returnVal = true;
           }
           });
         });
-        return returnVal;
+
+      }
+      return returnVal;
       }
     },
     components : {

@@ -1,14 +1,14 @@
 <template>
     <div class="col-xs-12 col-sm-12 col-md-12">
-      <b-alert style="position: fixed; top: 2px;" :show="dismissCountDown"
+      <b-alert style="position: fixed; top: 2px;" :show="dismisscountdown"
                dismissible
                :variant="alertType"
-               @dismissed="dismissCountDown=0"
+               @dismissed="dismisscountdown=0"
                @dismiss-count-down="countDownChanged">
         <p>{{ alertMsg }}</p>
         <b-progress :variant="alertType"
-                    :max="dismissSecs"
-                    :value="dismissCountDown"
+                    :max="dismisssecs"
+                    :value="dismisscountdown"
                     height="4px">
         </b-progress>
       </b-alert>
@@ -77,7 +77,7 @@
 <script>
   import { eventBus } from '../eventBus.js';
   export default {
-    props: ['medias','currentTitle','swapComponent','baseUrl'],
+    props: ['medias','currentTitle','baseUrl'],
     mounted: function () {
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',
@@ -107,7 +107,7 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                that.dismissCountDown = 20;
+                that.dismisscountdown = 20;
                 that.alertMsg = "Video added"
                 that.alertType = "success"
                 //eventBus.$emit('showAlert',['success','Video uploaded']);
@@ -117,11 +117,11 @@
         });
         return false;
       },
-      countDownChanged (dismissCountDown) {
-        this.dismissCountDown = dismissCountDown
+      countDownChanged (dismisscountdown) {
+        this.dismisscountdown = dismisscountdown
       },
       showAlert() {
-        this.dismissCountDown = this.dismissSecs
+        this.dismisscountdown = this.dismisssecs
       },
 // CALBACK USAGE
 result(output) {
@@ -144,11 +144,11 @@ rotate(rotationAngle,event) {
     data(){
       return {
         mediaType: '',
-        dismissSecs: 20,
-        dismissCountDown: 0,
+        dismisssecs: 20,
+        dismisscountdown: 0,
         alertType: 'warning',
         alertMsg: '',
-        showDismissibleAlert: false,
+        showdismissiblealert: false,
         cropped: null,
       }
     }
