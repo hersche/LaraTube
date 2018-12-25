@@ -35,7 +35,7 @@ var Media = /** @class */ (function () {
         var theTagString = "";
         $.each(this.tags, function (key, val) {
             console.log(val.name);
-            theTagString = val.name + " ";
+            theTagString += val.name + " ";
         });
         return theTagString;
     };

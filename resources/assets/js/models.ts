@@ -54,7 +54,7 @@ export class Media {
     var theTagString = ""
     $.each(this.tags, function(key,val){
       console.log(val.name)
-      theTagString = val.name+" "
+      theTagString += val.name+" "
     });
     return theTagString;
   }

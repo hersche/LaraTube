@@ -36,10 +36,6 @@ var siteManager = /** @class */ (function () {
         eventBus.$on('videoDeleted', function (title) {
             that.deleteMediaByName(title);
         });
-        eventBus.$on('videoEdited', function (json) {
-            that.deleteMediaByName(title);
-            that.receiveTagsForMedia(json);
-        });
         eventBus.$on('videoCreated', function (json) {
             that.receiveTagsForMedia(json);
         });

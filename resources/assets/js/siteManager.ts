@@ -48,10 +48,6 @@ class siteManager {
     eventBus.$on('videoDeleted', title => {
       that.deleteMediaByName(title);
     });
-    eventBus.$on('videoEdited', json => {
-      that.deleteMediaByName(title);
-      that.receiveTagsForMedia(json);
-    });
     eventBus.$on('videoCreated', json => {
       that.receiveTagsForMedia(json);
     });
