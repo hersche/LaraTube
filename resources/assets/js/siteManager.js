@@ -84,6 +84,7 @@ var siteManager = /** @class */ (function () {
         var searchComp = Vue.component('search', require("./components/SearchComponent.vue"));
         var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
         var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
+        var aboutComp = Vue.component('search', require("./components/About.vue"));
         var that = this;
         var routes = [
             { path: '/', component: overview },
@@ -95,6 +96,7 @@ var siteManager = /** @class */ (function () {
             { path: '/upload', component: uploadComp },
             { path: '/search', component: searchComp },
             { path: '/charts', component: chartsComp },
+            { path: '/about', component: aboutComp },
             { path: '/mediaedit/:editTitle', component: editVideoComp }
         ];
         //  sm.receiveUsers(true);

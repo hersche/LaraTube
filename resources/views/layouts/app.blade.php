@@ -72,6 +72,7 @@
                         <li class="nav-item"><button @click="emitLoadAllMedias()" class="btn btn-danger mr-1">Load all medias</button></li>
                         <li class="nav-item"><router-link class="btn btn-primary mr-1" to="/tags">{{ __('Tags') }}</a></li>
                         <li class="nav-item"><router-link class="btn btn-primary mr-1" to="/charts">{{ __('Charts') }}</a></li>
+                          <li class="nav-item"><router-link class="btn btn-primary mr-1" to="/about">{{ __('About') }}</a></li>
                         <li class="nav-item"><a @click="$router.go(-1)" class="mr-1 btn btn-primary">Back</a></li>
                         <li class="nav-item"><input type="text" placeholder="Search" id="theLiveSearch" class="btn btn-outline-info" @keyup="searching()" @focus="searching()"></li>
                         @guest

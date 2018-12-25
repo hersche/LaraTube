@@ -98,6 +98,7 @@ class siteManager {
     var searchComp = Vue.component('search', require("./components/SearchComponent.vue"));
     var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
     var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
+    var aboutComp = Vue.component('search', require("./components/About.vue"));
 
     let that = this;
     const routes = [
@@ -110,6 +111,7 @@ class siteManager {
       { path: '/upload', component: uploadComp },
       { path: '/search', component: searchComp },
       { path: '/charts', component: chartsComp },
+      { path: '/about', component: aboutComp },
       { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
   //  sm.receiveUsers(true);

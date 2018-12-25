@@ -52145,7 +52145,7 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(171);
-module.exports = __webpack_require__(477);
+module.exports = __webpack_require__(479);
 
 
 /***/ }),
@@ -90008,8 +90008,9 @@ var siteManager = /** @class */function () {
         var searchComp = __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('search', __webpack_require__(465));
         var chartsComp = __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('search', __webpack_require__(471));
         var editVideoComp = __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('search', __webpack_require__(474));
+        var aboutComp = __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('search', __webpack_require__(477));
         var that = this;
-        var routes = [{ path: '/', component: overview }, { path: '/media/:currentTitle', component: player }, { path: '/profile/:profileId', component: profileComp }, { path: '/tags', component: tagComp }, { path: '/tags/:tagName', component: tagComp }, { path: '/login', component: loginComp }, { path: '/upload', component: uploadComp }, { path: '/search', component: searchComp }, { path: '/charts', component: chartsComp }, { path: '/mediaedit/:editTitle', component: editVideoComp }];
+        var routes = [{ path: '/', component: overview }, { path: '/media/:currentTitle', component: player }, { path: '/profile/:profileId', component: profileComp }, { path: '/tags', component: tagComp }, { path: '/tags/:tagName', component: tagComp }, { path: '/login', component: loginComp }, { path: '/upload', component: uploadComp }, { path: '/search', component: searchComp }, { path: '/charts', component: chartsComp }, { path: '/about', component: aboutComp }, { path: '/mediaedit/:editTitle', component: editVideoComp }];
         //  sm.receiveUsers(true);
         theVue = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
             data: {
@@ -110233,6 +110234,115 @@ if (false) {
 
 /***/ }),
 /* 477 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(12)
+/* script */
+var __vue_script__ = null
+/* template */
+var __vue_template__ = __webpack_require__(478)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/About.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-10e9c534", Component.options)
+  } else {
+    hotAPI.reload("data-v-10e9c534", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 478 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("h2", [_vm._v("About LaraTube")]),
+      _vm._v(" "),
+      _c("p", [
+        _vm._v(
+          "LaraTube was created because of security-ascpects, for develop a own, indipendend project and finaly: To learn Laravel and Vue."
+        )
+      ]),
+      _vm._v(" "),
+      _c("p", [_vm._v("It is a work in progress, a pre-alpha!")]),
+      _vm._v(" "),
+      _c("h3", [_vm._v("Credits")]),
+      _vm._v(" "),
+      _c("p", [
+        _vm._v(
+          "\n  This project uses a lot of ressources to be created. Thanks to all of them!\n  "
+        ),
+        _c("ul", [
+          _c("li", [_vm._v("Laravel")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("Vue")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("Stackoverflow")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("ApexCharts")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("hootlex/laravel-friendships")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("james-heinrich/getid3")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("rtconner/laravel-tagging")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("spatie/laravel-permission")])
+        ])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-10e9c534", module.exports)
+  }
+}
+
+/***/ }),
+/* 479 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
