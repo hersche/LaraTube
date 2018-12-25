@@ -33,9 +33,10 @@ export class Media {
   created_at:string;
   created_at_readable:string;
   tagString:string;
+  myLike:number;
 
 
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,created_at_readable:string,comments:any,tags:any,tagIds:any=undefined){
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,created_at_readable:string,comments:any,tags:any,myLike:number){
     this.id=id;
     this.title = title;
     this.description = description;
@@ -47,9 +48,9 @@ export class Media {
     this.user_id = user_id;
     this.comments = comments;
     this.tags = tags;
-    this.tagIds = tagIds;
     this.created_at = created_at;
     this.created_at_readable = created_at_readable;
+    this.myLike=myLike;
     this.tagString = this.tagStringing();
   }
   tagStringing(){

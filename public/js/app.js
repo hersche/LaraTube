@@ -24946,10 +24946,7 @@ var User = /** @class */function () {
 }();
 
 var Media = /** @class */function () {
-    function Media(id, title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags, tagIds) {
-        if (tagIds === void 0) {
-            tagIds = undefined;
-        }
+    function Media(id, title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags, myLike) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -24961,9 +24958,9 @@ var Media = /** @class */function () {
         this.user_id = user_id;
         this.comments = comments;
         this.tags = tags;
-        this.tagIds = tagIds;
         this.created_at = created_at;
         this.created_at_readable = created_at_readable;
+        this.myLike = myLike;
         this.tagString = this.tagStringing();
     }
     Media.prototype.tagStringing = function () {
@@ -90153,7 +90150,7 @@ var siteManager = /** @class */function () {
             }
             json = json.data;
             console.log(that.getTagsByIdArray(json.tagsIds));
-            that.medias.unshift(new __WEBPACK_IMPORTED_MODULE_5__models__["Media"](json.id, json.title, json.description, json.source, json.poster_source, json.simpleType, json.type, that.getUserById(json.user_id), json.user_id, json.created_at, json.created_at_readable, json.comments, that.getTagsByIdArray(json.tagsIds)));
+            that.medias.unshift(new __WEBPACK_IMPORTED_MODULE_5__models__["Media"](json.id, json.title, json.description, json.source, json.poster_source, json.simpleType, json.type, that.getUserById(json.user_id), json.user_id, json.created_at, json.created_at_readable, json.comments, that.getTagsByIdArray(json.tagsIds), json.myLike));
             theVue.medias = that.medias;
             theVue.$router.push('/');
         });
@@ -90172,7 +90169,7 @@ var siteManager = /** @class */function () {
             });
             if (existsAlready == false) {
                 data = data.data;
-                var m = new __WEBPACK_IMPORTED_MODULE_5__models__["Media"](data.id, data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds));
+                var m = new __WEBPACK_IMPORTED_MODULE_5__models__["Media"](data.id, data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds), data.myLike);
                 that.medias.push(m);
                 theVue.medias = that.medias;
             } else {
@@ -90237,7 +90234,7 @@ var siteManager = /** @class */function () {
             }
             $.each(data.data, function (key, value) {
                 if (that.findMediaByName(value.title) == undefined) {
-                    var med = new __WEBPACK_IMPORTED_MODULE_5__models__["Media"](value.id, value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds));
+                    var med = new __WEBPACK_IMPORTED_MODULE_5__models__["Media"](value.id, value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike);
                     $.each(med.comments, function (key1, value1) {
                         med.comments[key1].user = that.getUserById(value1.user_id);
                     });
@@ -109988,7 +109985,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     currentmedia: function currentmedia() {
       var m = this.getCurrentMedia();
       if (m == undefined) {
-        return new __WEBPACK_IMPORTED_MODULE_1__models__["Media"](0, "None", "", "", "", "", "", "", "", "", "", "", "");
+        return new __WEBPACK_IMPORTED_MODULE_1__models__["Media"](0, "None", "", "", "", "", "", "", "", "", "", "", "", 0);
       }
       return m;
     }

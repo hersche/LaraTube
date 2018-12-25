@@ -253,7 +253,7 @@ class siteManager {
       }
       json = json.data;
       console.log(that.getTagsByIdArray(json.tagsIds))
-      that.medias.unshift(new Media(json.id,json.title,json.description,json.source,json.poster_source,json.simpleType,json.type,that.getUserById(json.user_id),json.user_id,json.created_at,json.created_at_readable,json.comments,that.getTagsByIdArray(json.tagsIds)))
+      that.medias.unshift(new Media(json.id,json.title,json.description,json.source,json.poster_source,json.simpleType,json.type,that.getUserById(json.user_id),json.user_id,json.created_at,json.created_at_readable,json.comments,that.getTagsByIdArray(json.tagsIds),json.myLike))
       theVue.medias = that.medias
       theVue.$router.push('/');
     });
@@ -271,7 +271,7 @@ class siteManager {
       });
       if(existsAlready==false){
         data = data.data;
-        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds));
+        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike);
         that.medias.push(m)
         theVue.medias = that.medias;
       } else {
@@ -333,7 +333,7 @@ class siteManager {
       }
         $.each( data.data, function( key, value ) {
          if(that.findMediaByName(value.title)==undefined){
-            var med = new Media(value.id,value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds))
+            var med = new Media(value.id,value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike)
             $.each( med.comments, function( key1, value1 ) {
               med.comments[key1].user = that.getUserById(value1.user_id)
             });
