@@ -91,7 +91,7 @@
       currentmedia: function () {
         var m = this.getCurrentMedia();
         if(m==undefined){
-          return new Media("None","","","","","","","","","","","")
+          return new Media(0,"None","","","","","","","","","","","")
         }
         return m;
       }

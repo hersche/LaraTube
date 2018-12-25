@@ -14,8 +14,9 @@ var User = /** @class */ (function () {
 }());
 export { User };
 var Media = /** @class */ (function () {
-    function Media(title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags, tagIds) {
+    function Media(id, title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags, tagIds) {
         if (tagIds === void 0) { tagIds = undefined; }
+        this.id = id;
         this.title = title;
         this.description = description;
         this.source = source;

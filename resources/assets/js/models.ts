@@ -18,6 +18,7 @@ export class User{
   }
 }
 export class Media {
+  id:number;
   title:string;
   description:string;
   source:string;
@@ -34,7 +35,8 @@ export class Media {
   tagString:string;
 
 
-  constructor(title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,created_at_readable:string,comments:any,tags:any,tagIds:any=undefined){
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,created_at_readable:string,comments:any,tags:any,tagIds:any=undefined){
+    this.id=id;
     this.title = title;
     this.description = description;
     this.source = source;

@@ -24,6 +24,15 @@
                 <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
               <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+currentmedia.user.avatar" alt="avatar" style="max-height: 20px;" />
             </router-link>
+          <!--  <button id="like" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
+              <ion-icon name="thumbs-up"></ion-icon>
+              <span class="ml-1" id="likeCount">{{ $media->likes() }}</span>
+            </button>
+            <button id="dislike" type="button" onclick="like({{ $media->id }},'media');" class="btn btn-success">
+              <ion-icon name="thumbs-down"></ion-icon>
+              <span class="ml-1" id="likeCount">{{ $media->likes() }}</span>
+            </button>
+          -->
             <span v-if="loggeduserid==currentmedia.user.id" class=""><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.title">Edit</router-link></span>
           </div>
           <div class="card-body">{{ currentmedia.description }}</div>
@@ -35,6 +44,12 @@
       </div>
       <div class="comments">
         <h4>Comments</h4>
+        <form class="form-inline" id="commentForm">
+          <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
+          <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
+          <input placeholder="Comment..." class="col-9" id="medias_body" name="body" type="text">
+          <input type="button" class="ml-1" value="Send comment!" @click="sendComment();" />
+        </form>
         <div v-for="comment in currentmedia.comments" class="comment mb-2 row" :id='"cid"+comment.id'>
             <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
                 <a href=""><img class="mx-auto rounded-circle img-fluid" :src="'/'+comment.user.avatar" alt="avatar" /></a>
@@ -64,6 +79,27 @@
     methods: {
       emitBackClicked(title) {
         eventBus.$emit('playerBackClick',title);
+      },
+      sendComment(){
+        console.log(new FormData($("#commentForm")[0]))
+        $.ajax({
+            url: '/comment',
+            type: 'POST',
+            data: new FormData($("#commentForm")[0]),
+            cache: false,
+            contentType: false,
+            processData: false,
+            complete : function(res) {
+              if(res.status==200){
+
+                //eventBus.$emit('showAlert',['success','Video uploaded']);
+              }
+
+              console.log(res.responseJSON)
+              eventBus.$emit('commentCreated',res.responseJSON);
+            }
+
+        });
       }
     },
     computed: {
