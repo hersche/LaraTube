@@ -3,8 +3,8 @@
 <div>
   <div v-if="tagenabled!=undefined&tagenabled!=false" >
       <div><input type="text" v-model="filterTags" placeholder="Filter tags"></div>
-      <div v-for="(item,index) in tags" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
-        <input type="checkbox" @click="checkTag(item.name)" v-model="selectedTags" :value="item" />
+      <div v-for="(item,index) in tags"  @click="changeCheck(item.name)" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
+        <input type="checkbox" class="d-none"  @click="checkTag(item.name)" :id="'tagId'+item.name" v-model="selectedTags" :value="item" />
         {{ item.name }} ({{item.count}}x)
       </div>
 </div>
@@ -35,8 +35,25 @@
       emitLoadMore() {
         eventBus.$emit('loadMore','');
       },
-      checkTag(tagName) {
-        eventBus.$emit('checkTag',tagName);
+      checkTag(id) {
+        console.log("checktag")
+        eventBus.$emit('checkTag',id);
+      },
+      changeCheck(id) {
+        console.log("check")
+        $("#tagId"+id).trigger('click');
+        if($("#tagId"+id).is(':checked')){
+          //$("#tagId"+id).prop('checked', false);
+          $("#tagId"+id).parent().removeClass("btn-primary")
+          $("#tagId"+id).parent().addClass("btn-success")
+        } else {
+          //$("#tagId"+id).prop('checked', true);
+
+          $("#tagId"+id).parent().addClass("btn-primary")
+          $("#tagId"+id).parent().removeClass("btn-success")
+        }
+        //eventBus.$emit('checkTag',id);
+
       },
       filterMedia(media, sTags) {
         var returnVal = false;

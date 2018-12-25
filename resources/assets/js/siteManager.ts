@@ -428,11 +428,11 @@ class Search{
     if(search!=""){
     var mediaTitle = $("#theLiveSearchMediaTitle").is(':checked')
     var mediaDescription = $("#theLiveSearchMediaDescription").is(':checked')
-    console.log("WTF??")
-    console.log(mediaTitle)
+    var tagsEnabled = $("#theLiveSearchTags").is(':checked')
     let that = this;
     if($("#theLiveSearchUsers").is(':checked')){
       $.each( users, function( key, value ) {
+
         if(value.name.toLowerCase().indexOf(that.search.toLowerCase()) > -1){
           if(that.userResult.includes(value)==false){
             that.userResult.push(value);
@@ -443,6 +443,7 @@ class Search{
             that.userResult.push(value);
           }
         }
+
       });
     }
     if(mediaTitle||mediaDescription) {
@@ -465,6 +466,11 @@ class Search{
           }
         }
       }
+    /*  if(tagsEnabled){
+        if(that.mediaResult.includes(value)==false){
+          that.mediaResult.push(value);
+        }
+      }*/
       });
     }
     if($("#theLiveSearchMedias").is(':checked')){

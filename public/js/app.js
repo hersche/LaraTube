@@ -90318,8 +90318,7 @@ var Search = /** @class */function () {
         if (search != "") {
             var mediaTitle = $("#theLiveSearchMediaTitle").is(':checked');
             var mediaDescription = $("#theLiveSearchMediaDescription").is(':checked');
-            console.log("WTF??");
-            console.log(mediaTitle);
+            var tagsEnabled = $("#theLiveSearchTags").is(':checked');
             var that_1 = this;
             if ($("#theLiveSearchUsers").is(':checked')) {
                 $.each(users, function (key, value) {
@@ -90353,6 +90352,11 @@ var Search = /** @class */function () {
                             if (that_1.mediaResult.includes(value) == false) {
                                 that_1.mediaResult.push(value);
                             }
+                        }
+                    }
+                    if (tagsEnabled) {
+                        if (that_1.mediaResult.includes(value) == false) {
+                            that_1.mediaResult.push(value);
                         }
                     }
                 });
@@ -107942,8 +107946,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     emitLoadMore: function emitLoadMore() {
       __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('loadMore', '');
     },
-    checkTag: function checkTag(tagName) {
-      __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('checkTag', tagName);
+    checkTag: function checkTag(id) {
+      console.log("checktag");
+      __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('checkTag', id);
+    },
+    changeCheck: function changeCheck(id) {
+      console.log("check");
+      $("#tagId" + id).trigger('click');
+      if ($("#tagId" + id).is(':checked')) {
+        //$("#tagId"+id).prop('checked', false);
+        $("#tagId" + id).parent().removeClass("btn-primary");
+        $("#tagId" + id).parent().addClass("btn-success");
+      } else {
+        //$("#tagId"+id).prop('checked', true);
+
+        $("#tagId" + id).parent().addClass("btn-primary");
+        $("#tagId" + id).parent().removeClass("btn-success");
+      }
+      //eventBus.$emit('checkTag',id);
     },
     filterMedia: function filterMedia(media, sTags) {
       var returnVal = false;
@@ -108007,56 +108027,69 @@ var render = function() {
               return item.name
                 .toLowerCase()
                 .indexOf(_vm.filterTags.toLowerCase()) > -1
-                ? _c("div", { staticClass: "btn btn-primary" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.selectedTags,
-                          expression: "selectedTags"
-                        }
-                      ],
-                      attrs: { type: "checkbox" },
-                      domProps: {
-                        value: item,
-                        checked: Array.isArray(_vm.selectedTags)
-                          ? _vm._i(_vm.selectedTags, item) > -1
-                          : _vm.selectedTags
-                      },
+                ? _c(
+                    "div",
+                    {
+                      staticClass: "btn btn-primary",
                       on: {
                         click: function($event) {
-                          _vm.checkTag(item.name)
-                        },
-                        change: function($event) {
-                          var $$a = _vm.selectedTags,
-                            $$el = $event.target,
-                            $$c = $$el.checked ? true : false
-                          if (Array.isArray($$a)) {
-                            var $$v = item,
-                              $$i = _vm._i($$a, $$v)
-                            if ($$el.checked) {
-                              $$i < 0 && (_vm.selectedTags = $$a.concat([$$v]))
-                            } else {
-                              $$i > -1 &&
-                                (_vm.selectedTags = $$a
-                                  .slice(0, $$i)
-                                  .concat($$a.slice($$i + 1)))
-                            }
-                          } else {
-                            _vm.selectedTags = $$c
-                          }
+                          _vm.changeCheck(item.name)
                         }
                       }
-                    }),
-                    _vm._v(
-                      "\n        " +
-                        _vm._s(item.name) +
-                        " (" +
-                        _vm._s(item.count) +
-                        "x)\n      "
-                    )
-                  ])
+                    },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selectedTags,
+                            expression: "selectedTags"
+                          }
+                        ],
+                        staticClass: "d-none",
+                        attrs: { type: "checkbox", id: "tagId" + item.name },
+                        domProps: {
+                          value: item,
+                          checked: Array.isArray(_vm.selectedTags)
+                            ? _vm._i(_vm.selectedTags, item) > -1
+                            : _vm.selectedTags
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.checkTag(item.name)
+                          },
+                          change: function($event) {
+                            var $$a = _vm.selectedTags,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = item,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  (_vm.selectedTags = $$a.concat([$$v]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.selectedTags = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.selectedTags = $$c
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(
+                        "\n        " +
+                          _vm._s(item.name) +
+                          " (" +
+                          _vm._s(item.count) +
+                          "x)\n      "
+                      )
+                    ]
+                  )
                 : _vm._e()
             })
           ],
@@ -110319,6 +110352,8 @@ var staticRenderFns = [
           _c("li", [_vm._v("Stackoverflow")]),
           _vm._v(" "),
           _c("li", [_vm._v("ApexCharts")]),
+          _vm._v(" "),
+          _c("li", [_vm._v("Webtorrent")]),
           _vm._v(" "),
           _c("li", [_vm._v("hootlex/laravel-friendships")]),
           _vm._v(" "),

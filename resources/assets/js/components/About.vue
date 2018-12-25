@@ -11,6 +11,7 @@
   <li>Vue</li>
   <li>Stackoverflow</li>
   <li>ApexCharts</li>
+  <li>Webtorrent</li>
   <li>hootlex/laravel-friendships</li>
   <li>james-heinrich/getid3</li>
   <li>rtconner/laravel-tagging</li>
