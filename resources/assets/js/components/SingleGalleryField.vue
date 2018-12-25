@@ -6,7 +6,7 @@
               <h4 class="card-title text-center" >{{ item.title }}</h4>
               <p>{{ loggeduserid }} {{ item.description }}</p>
 
-              <span class="card-footer "><span class="float-left">Tags:</span><span class="float-left" v-for="tag in item.tags" >{{ tag.name }} </span><span v-if="loggeduserid==item.user.id" class=""><router-link class="btn btn-sm btn-info float-right" to="/">Edit</router-link></span></span>
+              <span class="card-footer "><span class="float-left">Tags: {{ item.tagString }}</span><span v-if="loggeduserid==item.user.id" class=""><router-link class="btn btn-sm btn-info float-right" to="/">Edit</router-link></span></span>
             </div>
           </router-link>
         </div>

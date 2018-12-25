@@ -4,6 +4,8 @@ import Router from 'vue-router';
 import BootstrapVue from 'bootstrap-vue'
 import VueCroppie from 'vue-croppie';
 import { eventBus } from './eventBus.js';
+import { User, Media, Tag } from './models';
+import VueApexCharts from 'vue-apexcharts'
 var app;
 var theVue;
 
@@ -21,7 +23,9 @@ class siteManager {
   loggedUserId:number;
   lastLink:string;
   catchedTagMedias:any;
+  initing:boolean;
   constructor(base:string){
+    this.initing=true;
     baseUrl = base+"/";
     this.currentPage = "overview";
     this.catchedTagMedias=[];
@@ -35,6 +39,21 @@ class siteManager {
       this.usedSearchTerms=[];
       that.receiveMedias("/api/media",true)
       // deprecated, only example for eventbus
+    });
+    eventBus.$on('loadAllMedias', title => {
+      that.receiveMedias("/api/medias/all",true)
+      theVue.canloadmore=false
+      // deprecated, only example for eventbus
+    });
+    eventBus.$on('videoDeleted', title => {
+      that.deleteMediaByName(title);
+    });
+    eventBus.$on('videoEdited', json => {
+      that.deleteMediaByName(title);
+      that.receiveTagsForMedia(json);
+    });
+    eventBus.$on('videoCreated', json => {
+      that.receiveTagsForMedia(json);
     });
     eventBus.$on('checkTag', tagName => {
       //if(theVue.$router.currentRoute.path!="/search"){
@@ -68,6 +87,11 @@ class siteManager {
   }
 
   initVue(){
+    Vue.use(Router)
+    Vue.use(BootstrapVue);
+    Vue.use(VueCroppie);
+    Vue.use(VueApexCharts)
+    Vue.component('apexchart', VueApexCharts)
     var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
     var player = Vue.component('player', require("./components/MediaComponent.vue"));
     var profileComp = Vue.component('profile', require("./components/ProfileComponent.vue"));
@@ -76,9 +100,9 @@ class siteManager {
     var uploadComp = Vue.component('upload', require("./components/UploadComponent.vue"));
     var alertComp = Vue.component('alert', require("./components/AlertComponent.vue"));
     var searchComp = Vue.component('search', require("./components/SearchComponent.vue"));
-    Vue.use(Router)
-    Vue.use(BootstrapVue);
-    Vue.use(VueCroppie);
+    var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
+    var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
+
     let that = this;
     const routes = [
       { path: '/', component: overview },
@@ -88,7 +112,9 @@ class siteManager {
       { path: '/tags/:tagName', component: tagComp },
       { path: '/login', component: loginComp },
       { path: '/upload', component: uploadComp },
-      { path: '/search', component: searchComp }
+      { path: '/search', component: searchComp },
+      { path: '/charts', component: chartsComp },
+      { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
   //  sm.receiveUsers(true);
    theVue = new Vue({
@@ -112,22 +138,13 @@ class siteManager {
       'alert': alertComp
     },
     methods:{
+      emitRefreshMedias: function() {
+        eventBus.$emit('refreshMedias',"");
+      },
+      emitLoadAllMedias: function() {
+        eventBus.$emit('loadAllMedias',"");
+      },
       searching: function() {
-        //this.search = $("#theLiveSearch").val();
-
-        /*
-        if(s!=''){
-          $.each( that.medias, function( key, value ) {
-            if(value.title.toLowerCase().indexOf(s.toLowerCase()) > -1){
-              m.push(value);
-            }
-          });
-        }
-        */
-        console.log("search!");
-        console.log(s);
-        console.log(that.medias)
-
         if(theVue.$router.currentRoute.path!="/search"){
           theVue.$router.push('/search');
         }
@@ -168,6 +185,12 @@ class siteManager {
               sm.receiveMediaByName(to.params.currentTitle);
             }
           }
+          if(to.params.editTitle!=undefined){
+            // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
+            if(sm.findMediaByName(to.params.editTitle)==undefined){
+              sm.receiveMediaByName(to.params.editTitle);
+            }
+          }
           if(to.params.profileId!=undefined){
             this.user = sm.getUserById(to.params.profileId)
             this.medias = sm.getMediasByUser(to.params.profileId)
@@ -193,8 +216,7 @@ class siteManager {
         $.each( data.data, function( key, value ) {
           that.users.push(new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds));
         });
-
-        that.receiveTags();
+          that.receiveTags();
       }
     });
   }
@@ -214,7 +236,28 @@ class siteManager {
       if(theVue!=undefined){
         theVue.tags = this.tags;
       }
-      that.receiveMedias();
+        that.receiveMedias();
+    });
+  }
+
+  receiveTagsForMedia(json,forceUpdate=true):void{
+    let that = this;
+    $.getJSON("/api/tags", function name(data) {
+      if((that.tags==undefined)||(forceUpdate)){
+      that.tags = [];
+        $.each( data.data, function( key, value ) {
+          that.tags.push(new Tag(value.id, value.name, value.slug, value.count));
+        });
+      }
+      this.tags = that.tags;
+      if(theVue!=undefined){
+        theVue.tags = this.tags;
+      }
+      json = json.data;
+      console.log(that.getTagsByIdArray(json.tagsIds))
+      that.medias.unshift(new Media(json.title,json.description,json.source,json.poster_source,json.simpleType,json.type,that.getUserById(json.user_id),json.user_id,json.created_at,json.created_at_readable,json.comments,that.getTagsByIdArray(json.tagsIds)))
+      theVue.medias = that.medias
+      theVue.$router.push('/');
     });
   }
 
@@ -266,6 +309,24 @@ class siteManager {
     });
     return returnMedia;
   }
+
+  deleteMediaByName(mediaName:string):void{
+    console.log("deletemethod reach")
+    let that = this;
+    var i = 0;
+    $.each(that.medias, function(key,value){
+      if(value!=undefined){
+        if(value.title==mediaName){
+          console.log("delete media "+mediaName)
+          that.medias.splice(i,1)
+        }
+      }
+      i++
+
+    });
+    theVue.medias = that.medias;
+    theVue.$router.push('/');
+  }
   receiveMedias(url="/api/media",forceUpdate=false):void{
     let that = this;
     $.getJSON(url, function name(data) {
@@ -299,11 +360,16 @@ class siteManager {
         }
 
         if(theVue.$route.params.currentTitle!=undefined){
-          // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
           if(that.findMediaByName(theVue.$route.params.currentTitle)==undefined){
             that.receiveMediaByName(theVue.$route.params.currentTitle);
           }
         }
+        if(theVue.$route.params.editTitle!=undefined){
+          if(that.findMediaByName(theVue.$route.params.editTitle)==undefined){
+            that.receiveMediaByName(theVue.$route.params.editTitle);
+          }
+        }
+
         if((theVue.$router.currentRoute.path=="/search")) {
           theVue.searching();
         /*  if($("#theLiveSearch").val()==''){
@@ -349,18 +415,7 @@ export function init(baseUrl) {
 
 }
 
-class Tag {
-  id:number;
-  name:string;
-  slug:string;
-  count:number;
-  constructor(id:number,name:string,slug:string,count:number){
-    this.id=id;
-    this.name=name;
-    this.slug=slug;
-    this.count=count;
-  }
-}
+
 
 class Search{
   mediaResult:any;
@@ -418,63 +473,6 @@ class Search{
       this.userResult=medias
     }
   }
-  }
-
-}
-
-class User{
-  id:number;
-  name:string;
-  avatar:string;
-  background:string;
-  bio:string;
-  mediaIds:any;
-  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any){
-    this.id=id;
-    this.name = name;
-    this.avatar = avatar;
-    this.background = background;
-    this.bio = bio;
-    this.mediaIds = mediaIds;
-  }
-  toJson(){
-    return "{id:"+this.id+",name:'"+this.name+"',avatar:'"+this.avatar+"',background:'"+this.background+"'}"
-  }
-}
-class Media {
-  title:string;
-  description:string;
-  source:string;
-  poster_source:string;
-  type:string;
-  simpleType:string;
-  user_id:number;
-  user:any;
-  comments:any;
-  tags:any;
-  tagIds:any;
-  created_at:string;
-  created_at_readable:string;
-
-
-  constructor(title:string,description:string,source:string,poster_source:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,created_at_readable:string,comments:any,tags:any,tagIds:any=undefined){
-    this.title = title;
-    this.description = description;
-    this.source = source;
-    this.poster_source = poster_source;
-    this.type = type;
-    this.simpleType = simpleType;
-    this.user = user;
-    this.user_id = user_id;
-    this.comments = comments;
-    this.tags = tags;
-    this.tagIds = tagIds;
-    this.created_at = created_at;
-    this.created_at_readable = created_at_readable;
-  }
-
-  toJson(){
-    return "{title:'"+this.title+"',description:'"+this.description+"',source:'"+this.source
   }
 
 }

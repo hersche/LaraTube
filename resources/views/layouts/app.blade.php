@@ -49,7 +49,7 @@
   </div> -->
 <!-- /#sidebar-wrapper -->
     <div id="app2">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-expand-md fixed-top navbar-light navbar-laravel">
             <div class="container">
               <router-link class="navbar-brand" to="/">{{ config('app.name', 'LaraTube') }}</router-link>
               <!--  <li class="nav-item">
@@ -68,7 +68,11 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
-                        <li class="nav-item"><router-link class="dropdown-item" to="/tags">{{ __('Tags') }}</a></li>
+                        <li class="nav-item"><button @click="emitRefreshMedias()" class="btn btn-warning mr-1">Refresh</button></li>
+                        <li class="nav-item"><button @click="emitLoadAllMedias()" class="btn btn-danger mr-1">Load all medias</button></li>
+                        <li class="nav-item"><router-link class="btn btn-primary mr-1" to="/tags">{{ __('Tags') }}</a></li>
+                        <li class="nav-item"><router-link class="btn btn-primary mr-1" to="/charts">{{ __('Charts') }}</a></li>
+                        <li class="nav-item"><a @click="$router.go(-1)" class="mr-1 btn btn-primary">Back</a></li>
                         <li class="nav-item"><input type="text" placeholder="Search" id="theLiveSearch" class="btn btn-outline-info" @keyup="searching()" @focus="searching()"></li>
                         @guest
                             <li class="nav-item">
@@ -81,7 +85,7 @@
                             <li class="nav-item"><router-link class="dropdown-item" to="/upload">{{ __('Upload') }}</router-link></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <img class="mr-1" style="max-height: 45px;" src="{{ url(Auth::user()->avatar()) }}" />{{ Auth::user()->name }} <span class="caret"></span>
+                                    <img class="mr-1" style="max-height: 25px;" src="{{ url(Auth::user()->avatar()) }}" />{{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -120,7 +124,7 @@
               <p>{{ $message }}</p>
             </div>
             @endif
-              <div class="justify-content-center">
+              <div class="justify-content-center mt-5 pt-3">
             @yield('content')
           </div></div>
         </main>

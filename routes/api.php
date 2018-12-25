@@ -50,6 +50,14 @@ Route::get('/media/by/{title}', function ($title) {
     return MediaResource::collection(Media::where('user_id', '!=' ,$title)->get());
 });
 
+Route::get('/medias/all', function () {
+    return MediaResource::collection(Media::orderBy('created_at', 'desc')->get());
+});
+
+
+Route::post('/medias/create','MediaController@create')->name('mediasapi.create');
+Route::delete('/media/{title}','MediaController@destroy')->name('mediasapi.delete');
+Route::post('/media/{title}','MediaController@edit')->name('mediasapi.edit');
 Route::get('/media/search/{title}', function ($title) {
     return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.$title.'%')->orWhere('description', 'LIKE' ,'%'.$title.'%')->get());
 });

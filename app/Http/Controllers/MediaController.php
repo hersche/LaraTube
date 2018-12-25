@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Media;
+use App\Http\Resources\Media as MediaResource;
 use App\Comment;
 use App\Like;
 use Auth;
@@ -73,8 +74,7 @@ class MediaController extends Controller
 
         $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => $poster_source,'duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id()]);
         $media->retag($tagArray);
-        return redirect()->route('media.show',$title)
-                        ->with('success','Video created successfully');
+        return new MediaResource($media);
     }
     function format_duration($duration){
 
@@ -108,6 +108,8 @@ class MediaController extends Controller
         $like->save();
       }
     }
+
+    // DEPRECATED!!! Create can do it!
     public function directUpload(Request $request){
 
     //  $posterFile = $request->file('poster');
@@ -198,13 +200,13 @@ class MediaController extends Controller
     public function edit(Request $request, $title)
     {
         //
-        $data = $request->input('image');
+        $data = $request->input('poster');
         list($type, $data) = explode(';', $data);
         list(, $data)      = explode(',', $data);
         $data = base64_decode($data);
         $media = Media::where('title', '=' ,$title)->firstOrFail();
         $media->title = $request->input('title');
-        $media->source = $request->input('source');
+        //$media->source = $request->input('source');
         $media->description = $request->input('description');
         $tagArrayExtract = explode(' ', $request->input('tags'));
         $tagArray = array();
@@ -226,7 +228,7 @@ class MediaController extends Controller
         $media->poster_source = 'public/media/posters/'.$media->title.'.png';
         Storage::put('public/media/posters/'.$media->title.'.png', $data);
         $media->save();
-        return redirect()->route('media.show',$media->title);
+        return new MediaResource($media);
     }
     public function editView($title)
     {

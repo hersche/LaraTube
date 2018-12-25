@@ -1,6 +1,6 @@
 <template>
     <div class="col-xs-12 col-sm-12 col-md-12">
-      <b-alert style="position: fixed; top: 2px;" :show="dismisscountdown"
+      <b-alert style="position: fixed; top: 75px;" :show="dismisscountdown"
                dismissible
                :variant="alertType"
                @dismissed="dismisscountdown=0"
@@ -12,25 +12,21 @@
                     height="4px">
         </b-progress>
       </b-alert>
-    <h4>Add media</h4>
+    <h4>Edit media</h4>
     <form id="theForm">
+      <div class="form-group">
+          <label>Media-title</label>
+          <input type="hidden" value="" name="image" id="addMediaImage" />
+               <input placeholder="Media-title" class="form-control" :value="currentmedia.title" name="title" type="text">
+      </div>
     <div class="form-group">
-        <label>Media-type:</label>
-         <select v-model="mediaType" name="type"><option selected value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
+        <label>Media-type (only for restore):</label>
+         <select name="type" v-model="currentmedia.type"><option value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
     </div>
-    <div v-if="mediaType=='localAudio'|mediaType=='localVideo'" class="form-group">
-        <label>Media-file:</label>
-         <input id="directMedia" class="directMedia" name="directMedia" type="file">
+    <div class="form-group">
+        <label>Source:</label>
+         <p>{{currentmedia.source}}</p>
     </div>
-    <div v-if="mediaType=='directAudio'|mediaType=='directVideo'" class="form-group">
-        <label>Media-source:</label>
-         <input placeholder="https://server/file.mp4.mp3" class="form-control" name="source" type="text">
-    </div>
-    <div v-if="mediaType=='torrentAudio'|mediaType=='torrentVideo'" class="form-group">
-        <label>Torrent (magnet-link)</label>
-         <input placeholder="magnet://" class="form-control" name="source" type="text">
-    </div>
-
     <div class="form-group">
         <label>Media-poster:</label>
         <!-- the result -->
@@ -52,30 +48,28 @@
         <input id="posterUpload" @change="posterChange()" name="poster" type="file">
         <div id="poster"></div>
     </div>
-      <div class="form-group">
-          <label>Mediatitle</label>
-          <input type="hidden" value="" name="image" id="addMediaImage" />
-               <input placeholder="Media-title" class="form-control" name="title" type="text">
-      </div>
+
 
       <div class="form-group">
           <label>Media-description:</label>
-          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" name="description" cols="50" rows="10"></textarea>
+          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" :value="currentmedia.description" name="description" cols="50" rows="10"></textarea>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-12">
           <div class="form-group">
               <strong>Tags (separate with spaces):</strong>
-              <input id="tags" type="text" class="form-control" name="tags" value="" >
+              <input id="tags" type="text" class="form-control" name="tags" :value="currentmedia.tagString" >
           </div>
       </div>
 
 
     </form>
-    <button @click="submitAction();" >Submit</button>
+
+    <button @click="submitAction();" class="btn btn-success" >Save</button> <button @click="deleteAction();" class="btn btn-danger" >Delete</button>
     </div>
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
+  import { Media }  from '../models';
   export default {
     props: ['medias','currentTitle','baseUrl'],
     mounted: function () {
@@ -83,8 +77,38 @@
         url: '/img/404/image.png',
       })
     },
+    updated: function () {
+      this.$nextTick(function () {
+        if(this.$refs.croppieRef!=undefined){
+          this.$refs.croppieRef.bind({
+            url: this.currentmedia.poster_source,
+          })
+        }
+      })
+    },
+    computed: {
+      // a computed getter
+      currentmedia: function () {
+        var m = this.getCurrentMedia();
+        if(m==undefined){
+          return new Media("None","","","","","","","","","","","")
+        }
+        return m;
+      }
+    },
 
     methods: {
+      getCurrentMedia(){
+        let that = this;
+        var theMedia;
+        this.medias.forEach(function(val,key){
+          if(val.title==that.$route.params.editTitle){
+            theMedia = val;
+          }
+        });
+        return theMedia;
+      },
+
       posterChange(){
         var reader = new FileReader();
         let that = this;
@@ -99,19 +123,43 @@
       submitAction() {
         let that = this;
         $.ajax({
-            url: '/media/create',
+            url: '/api/media/'+this.currentmedia.title,
             type: 'POST',
             data: new FormData($("#theForm")[0]),
             cache: false,
             contentType: false,
             processData: false,
             complete : function(res) {
-              if(res.status==201){
+              if(res.status==200){
                 that.dismisscountdown = 20;
-                that.alertMsg = "Video added"
+                that.alertMsg = "Video edited"
                 that.alertType = "success"
-                eventBus.$emit('videoCreated',res.responseJSON);
+                //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
+              eventBus.$emit('videoDeleted',that.currentmedia.title);
+              eventBus.$emit('videoCreated',res.responseJSON);
+            }
+
+        });
+        return false;
+      },
+      deleteAction() {
+        let that = this;
+        $.ajax({
+            url: '/api/media/'+this.currentmedia.title,
+            type: 'DELETE',
+            cache: false,
+            contentType: false,
+            processData: false,
+            complete : function(res) {
+              if(res.status==200){
+                that.dismisscountdown = 20;
+                that.alertMsg = "Video deleted"
+                that.alertType = "success"
+                //eventBus.$emit('showAlert',['success','Video uploaded']);
+
+              }
+              eventBus.$emit('videoDeleted',that.currentmedia.title);
             }
 
         });
