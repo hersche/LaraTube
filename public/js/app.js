@@ -90354,11 +90354,11 @@ var Search = /** @class */function () {
                             }
                         }
                     }
-                    if (tagsEnabled) {
-                        if (that_1.mediaResult.includes(value) == false) {
-                            that_1.mediaResult.push(value);
+                    /*  if(tagsEnabled){
+                        if(that.mediaResult.includes(value)==false){
+                          that.mediaResult.push(value);
                         }
-                    }
+                      }*/
                 });
             }
             if ($("#theLiveSearchMedias").is(':checked')) {
@@ -107657,15 +107657,25 @@ var render = function() {
               "div",
               { staticClass: "card-footer" },
               [
-                _vm._v("Tags: "),
+                _vm._v("Tags:"),
                 _vm._l(_vm.currentmedia.tags, function(tag) {
                   return _c(
-                    "a",
-                    {
-                      staticClass: "btn btn-xs btn-info mr-1",
-                      attrs: { href: "/tags/" + tag.name }
-                    },
-                    [_vm._v(_vm._s(tag.name) + " (" + _vm._s(tag.count) + "x)")]
+                    "span",
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "btn btn-xs btn-info mr-1",
+                          attrs: { to: "/tags/" + tag.name }
+                        },
+                        [
+                          _vm._v(
+                            _vm._s(tag.name) + " (" + _vm._s(tag.count) + "x)"
+                          )
+                        ]
+                      )
+                    ],
+                    1
                   )
                 })
               ],
@@ -107941,17 +107951,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       filterTags: ''
     };
   },
+  mounted: function mounted() {
+    if (this.$route.params.tagName != '') {
+      this.changeCheck(this.$route.params.tagName);
+    }
+  },
 
   methods: {
     emitLoadMore: function emitLoadMore() {
       __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('loadMore', '');
     },
     checkTag: function checkTag(id) {
-      console.log("checktag");
       __WEBPACK_IMPORTED_MODULE_0__eventBus_js__["a" /* eventBus */].$emit('checkTag', id);
     },
     changeCheck: function changeCheck(id) {
-      console.log("check");
       $("#tagId" + id).trigger('click');
       if ($("#tagId" + id).is(':checked')) {
         //$("#tagId"+id).prop('checked', false);
@@ -107959,7 +107972,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         $("#tagId" + id).parent().addClass("btn-success");
       } else {
         //$("#tagId"+id).prop('checked', true);
-
         $("#tagId" + id).parent().addClass("btn-primary");
         $("#tagId" + id).parent().removeClass("btn-success");
       }
@@ -108030,7 +108042,7 @@ var render = function() {
                 ? _c(
                     "div",
                     {
-                      staticClass: "btn btn-primary",
+                      staticClass: "btn btn-primary ml-1 mb-1",
                       on: {
                         click: function($event) {
                           _vm.changeCheck(item.name)

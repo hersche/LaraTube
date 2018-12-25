@@ -432,11 +432,11 @@ var Search = /** @class */ (function () {
                             }
                         }
                     }
-                    if (tagsEnabled) {
-                        if (that_1.mediaResult.includes(value) == false) {
-                            that_1.mediaResult.push(value);
+                    /*  if(tagsEnabled){
+                        if(that.mediaResult.includes(value)==false){
+                          that.mediaResult.push(value);
                         }
-                    }
+                      }*/
                 });
             }
             if ($("#theLiveSearchMedias").is(':checked')) {

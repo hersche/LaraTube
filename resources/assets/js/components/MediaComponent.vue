@@ -27,7 +27,7 @@
             <span v-if="loggeduserid==currentmedia.user.id" class=""><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.title">Edit</router-link></span>
           </div>
           <div class="card-body">{{ currentmedia.description }}</div>
-          <div class="card-footer">Tags: <a class="btn btn-xs btn-info mr-1" v-for="tag in currentmedia.tags" :href="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</a>
+          <div class="card-footer">Tags:<span v-for="tag in currentmedia.tags"> <router-link class="btn btn-xs btn-info mr-1"  :to="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</router-link></span>
 
           </div>
 

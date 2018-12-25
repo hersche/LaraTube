@@ -3,7 +3,7 @@
 <div>
   <div v-if="tagenabled!=undefined&tagenabled!=false" >
       <div><input type="text" v-model="filterTags" placeholder="Filter tags"></div>
-      <div v-for="(item,index) in tags"  @click="changeCheck(item.name)" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary">
+      <div v-for="(item,index) in tags"  @click="changeCheck(item.name)" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary ml-1 mb-1">
         <input type="checkbox" class="d-none"  @click="checkTag(item.name)" :id="'tagId'+item.name" v-model="selectedTags" :value="item" />
         {{ item.name }} ({{item.count}}x)
       </div>
@@ -31,16 +31,19 @@
         filterTags:''
       }
     },
+    mounted(){
+      if(this.$route.params.tagName!=''){
+        this.changeCheck(this.$route.params.tagName);
+      }
+    },
     methods: {
       emitLoadMore() {
         eventBus.$emit('loadMore','');
       },
       checkTag(id) {
-        console.log("checktag")
         eventBus.$emit('checkTag',id);
       },
       changeCheck(id) {
-        console.log("check")
         $("#tagId"+id).trigger('click');
         if($("#tagId"+id).is(':checked')){
           //$("#tagId"+id).prop('checked', false);
@@ -48,7 +51,6 @@
           $("#tagId"+id).parent().addClass("btn-success")
         } else {
           //$("#tagId"+id).prop('checked', true);
-
           $("#tagId"+id).parent().addClass("btn-primary")
           $("#tagId"+id).parent().removeClass("btn-success")
         }
