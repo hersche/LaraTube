@@ -1,17 +1,5 @@
 <template>
     <div class="col-xs-12 col-sm-12 col-md-12">
-      <b-alert style="position: fixed; top: 75px;" :show="dismisscountdown"
-               dismissible
-               :variant="alertType"
-               @dismissed="dismisscountdown=0"
-               @dismiss-count-down="countDownChanged">
-        <p>{{ alertMsg }}</p>
-        <b-progress :variant="alertType"
-                    :max="dismisssecs"
-                    :value="dismisscountdown"
-                    height="4px">
-        </b-progress>
-      </b-alert>
     <h4>Edit media</h4>
     <form id="theForm">
       <div class="form-group">
@@ -79,7 +67,9 @@
     },
     updated: function () {
       this.$nextTick(function () {
-        if(this.$refs.croppieRef!=undefined){
+        if(this.$refs.croppieRef!=undefined&this.editpicloaded==false){
+          this.editpicloaded=true;
+          console.log("redo picture")
           this.$refs.croppieRef.bind({
             url: this.currentmedia.poster_source,
           })
@@ -91,7 +81,7 @@
       currentmedia: function () {
         var m = this.getCurrentMedia();
         if(m==undefined){
-          return new Media(0,"None","","","","","","","","","","","",0)
+          return new Media(0,"None","","","","","","","","","","","","","",0)
         }
         return m;
       }
@@ -136,8 +126,9 @@
                 that.alertType = "success"
                 //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
-              eventBus.$emit('videoDeleted',that.currentmedia.title);
-              eventBus.$emit('videoCreated',res.responseJSON);
+              eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
+            //  eventBus.$emit('videoDeleted',that.currentmedia.title);
+            //  eventBus.$emit('videoCreated',res.responseJSON);
             }
 
         });
@@ -153,9 +144,6 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                that.dismisscountdown = 20;
-                that.alertMsg = "Video deleted"
-                that.alertType = "success"
                 //eventBus.$emit('showAlert',['success','Video uploaded']);
 
               }
@@ -196,6 +184,7 @@ rotate(rotationAngle,event) {
         dismisscountdown: 0,
         alertType: 'warning',
         alertMsg: '',
+        editpicloaded:false,
         showdismissiblealert: false,
         cropped: null,
       }

@@ -24,11 +24,13 @@ class Media extends JsonResource
       foreach($this->tags as $tag){
         array_push($tagIds, $tag->id);
       }
+      $comments = $this->comments()->sortBy('created_at');
       return [
           'id' => $this->id,
           'title' => $this->title,
           'source' => $this->source,
           'poster_source' => $this->poster(),
+          'duration' => $this->duration,
           'type' => $this->type,
           'description' => $this->description,
           'myLike' => $this->myLike(),
@@ -37,7 +39,7 @@ class Media extends JsonResource
           'tagsIds' => $tagIds,
           'tagString' => $this->tagString(),
           'user_id' => $this->user_id,
-          'comments' => $this->comments(),
+          'comments' => $comments,
           'created_at' => $this->created_at,
           'created_at_readable' => $this->created_at->diffForHumans(),
           'updated_at' => $this->updated_at,

@@ -3,13 +3,16 @@ import Vue from 'vue'
 import Router from 'vue-router';
 import BootstrapVue from 'bootstrap-vue'
 import VueCroppie from 'vue-croppie';
-import { eventBus } from './eventBus.js';
+import { eventBus } from './eventBus';
+import { MediaSorter, Search } from './tools';
 import { User, Media, Tag } from './models';
 import VueApexCharts from 'vue-apexcharts'
 var app;
 var theVue;
 
 var searchDelay;
+
+var theMediaSorter = new MediaSorter();
 
 require("./models")
 
@@ -33,52 +36,7 @@ class siteManager {
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
     this.receiveUsers(true);
     let that = this;
-    eventBus.$on('refreshMedias', title => {
-      theVue.canloadmore = true;
-      that.catchedTagMedias=[];
-      this.usedSearchTerms=[];
-      that.receiveMedias("/api/media",true)
-      // deprecated, only example for eventbus
-    });
-    eventBus.$on('loadAllMedias', title => {
-      that.receiveMedias("/api/medias/all",true)
-      theVue.canloadmore=false
-      // deprecated, only example for eventbus
-    });
-    eventBus.$on('videoDeleted', title => {
-      that.deleteMediaByName(title);
-    });
-    eventBus.$on('videoCreated', json => {
-      that.receiveTagsForMedia(json);
-    });
-    eventBus.$on('checkTag', tagName => {
-      //if(theVue.$router.currentRoute.path!="/search"){
-      if(tagName==''){
-        if($("#specialAllTag").is(":checked")){
-          theVue.medias = that.medias;
-        } else {
-          theVue.medias = [];
-          theVue.medias = that.medias;
-        }
-      } else {
-      if(that.catchedTagMedias.includes(tagName)==false){
-        that.catchedTagMedias.push(tagName);
-        that.receiveMedias("/api/tags/"+tagName);
-      }
-    }
-    //}
-    });
-    eventBus.$on('loadMore', title => {
-      that.receiveMedias(that.nextLink)
-    });
 
-
-    eventBus.$on('refreshSearch', title => {
-      theVue.searching();
-    });
-    eventBus.$on('showAlert', data => {
-      theVue.dismisscountdown = theVue.dismisssecs
-    });
 
   }
 
@@ -94,7 +52,6 @@ class siteManager {
     var tagComp = Vue.component('tags', require("./components/TagComponent.vue"));
     var loginComp = Vue.component('login', require("./components/LoginComponent.vue"));
     var uploadComp = Vue.component('upload', require("./components/UploadComponent.vue"));
-    var alertComp = Vue.component('alert', require("./components/AlertComponent.vue"));
     var searchComp = Vue.component('search', require("./components/SearchComponent.vue"));
     var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
     var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
@@ -121,6 +78,8 @@ class siteManager {
       dismisssecs: 10,
       dismisscountdown: 0,
       showdismissiblealert: false,
+      alertmsg: "",
+      alerttype:"",
       search:'',
       users:this.users,
       loggeduserid:this.loggedUserId,
@@ -132,15 +91,18 @@ class siteManager {
       baseUrl:baseUrl
     },
     router:new Router({ routes }),
-    components : {
-      'alert': alertComp
-    },
     methods:{
       emitRefreshMedias: function() {
         eventBus.$emit('refreshMedias',"");
       },
       emitLoadAllMedias: function() {
         eventBus.$emit('loadAllMedias',"");
+      },
+      countDownChanged (dismisscountdown) {
+        this.dismisscountdown = dismisscountdown
+      },
+      emitGetNewMedias() {
+        eventBus.$emit('getNewMedias',"");
       },
       searching: function() {
         if(theVue.$router.currentRoute.path!="/search"){
@@ -161,7 +123,6 @@ class siteManager {
         var so = new Search(s.toString(),that.medias,that.tags,that.users);
         theVue.search = so;
         theVue.medias = so.mediaResult;
-        console.log(so.mediaResult)
         theVue.users = so.userResult;
 
       }
@@ -201,6 +162,97 @@ class siteManager {
       }
   }
   }).$mount('#app2');
+
+  eventBus.$on('getNewMedias', title => {
+    theVue.dismisscountdown = 10;
+    theVue.alertmsg = "Look for new medias.."
+    theVue.alerttype = "info"
+    that.receiveMedias()
+  });
+
+  eventBus.$on('refreshMedias', title => {
+    theVue.canloadmore = true;
+    that.catchedTagMedias=[];
+    this.usedSearchTerms=[];
+    that.receiveMedias("/api/media",true)
+  });
+  eventBus.$on('loadAllMedias', title => {
+    that.receiveMedias("/api/medias/all",true)
+    theVue.canloadmore=false
+  });
+  eventBus.$on('sortBy', sortBy => {
+    theMediaSorter.sortBy = sortBy
+    if(theVue.$router.currentRoute.path=="/search"){
+      theVue.search.mediaResult = theMediaSorter.sort(theVue.search.mediaResult)
+    }
+    that.medias = theMediaSorter.sort(that.medias)
+    theVue.medias = that.medias
+  });
+  eventBus.$on('commentCreated', json => {
+    // Workaround by receive the media again.
+    that.receiveMediaByName(that.findMediaById(Number(json.data.media_id)).title)
+
+    /*var m = that.findMediaById(Number(json.data.media_id))
+    m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
+    console.log(m.comments)*/
+
+    //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
+    //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
+    //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
+    theVue.dismisscountdown = 10;
+    theVue.alertmsg = "Comment created"
+    theVue.alerttype = "success"
+  });
+  eventBus.$on('videoDeleted', title => {
+    theVue.dismisscountdown = 10;
+    theVue.alertmsg = "Video "+title+" deleted"
+    theVue.alerttype = "success"
+    that.deleteMediaByName(title);
+  });
+  eventBus.$on('videoCreated', json => {
+    that.receiveTagsForMedia(json);
+    theVue.dismisscountdown = 10;
+    theVue.alertmsg = "Video "+json.data.title+" created"
+    theVue.alerttype = "success"
+
+  });
+  eventBus.$on('videoEdited', json => {
+    that.deleteMediaByName(json[0]);
+    that.receiveTagsForMedia(json[1]);
+    theVue.dismisscountdown = 10;
+    theVue.alertmsg = "Video "+json[1].data.title+" edited"
+    theVue.alerttype = "success"
+  });
+  eventBus.$on('checkTag', tagName => {
+    //if(theVue.$router.currentRoute.path!="/search"){
+    if(tagName==''){
+      if($("#specialAllTag").is(":checked")){
+        theVue.medias = that.medias;
+      } else {
+        theVue.medias = [];
+        theVue.medias = that.medias;
+      }
+    } else {
+    if(that.catchedTagMedias.includes(tagName)==false){
+      that.catchedTagMedias.push(tagName);
+      that.receiveMedias("/api/tags/"+tagName);
+    }
+  }
+  //}
+  });
+  eventBus.$on('loadMore', title => {
+    that.receiveMedias(that.nextLink)
+  });
+
+
+  eventBus.$on('refreshSearch', title => {
+    theVue.searching();
+  });
+  eventBus.$on('showAlert', data => {
+    theVue.dismisscountdown = theVue.dismisssecs
+  });
+
+
   }
 
   getCurrentSite(){
@@ -252,8 +304,7 @@ class siteManager {
         theVue.tags = this.tags;
       }
       json = json.data;
-      console.log(that.getTagsByIdArray(json.tagsIds))
-      that.medias.unshift(new Media(json.id,json.title,json.description,json.source,json.poster_source,json.simpleType,json.type,that.getUserById(json.user_id),json.user_id,json.created_at,json.created_at_readable,json.comments,that.getTagsByIdArray(json.tagsIds),json.myLike))
+      that.medias.unshift(new Media(json.id,json.title,json.description,json.source,json.poster_source,json.duration,json.simpleType,json.type,that.getUserById(json.user_id),json.user_id,json.created_at,json.updated_at,json.created_at_readable,json.comments,that.getTagsByIdArray(json.tagsIds),json.myLike))
       theVue.medias = that.medias
       theVue.$router.push('/');
     });
@@ -262,19 +313,37 @@ class siteManager {
 
   receiveMediaByName(mediaName:string,forceUpdate=false):void{
     let that = this;
+    var theKey;
     var existsAlready = false;
+    console.log("media seeeend!")
     $.getJSON("/api/media/"+mediaName, function name(data) {
-      $.each(this.medias, function(key,value){
+      console.log("media received!")
+      $.each(that.medias, function(key,value){
         if(value.title==mediaName){
           existsAlready=true;
+          theKey = key;
         }
       });
-      if(existsAlready==false){
-        data = data.data;
-        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source, data.simpleType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike);
+      data = data.data;
+      if(that.findMediaByName(mediaName)==undefined){
+        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike);
+        $.each( m.comments, function( key1, value1 ) {
+          m.comments[key1].user = that.getUserById(value1.user_id)
+        });
         that.medias.push(m)
+        that.medias = theMediaSorter.sort(that.medias)
         theVue.medias = that.medias;
       } else {
+        console.log("media fuuuurther!")
+        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike);
+        $.each( m.comments, function( key1, value1 ) {
+          m.comments[key1].user = that.getUserById(value1.user_id)
+        });
+        if(m!=that.medias[theKey]){
+          console.log(JSON.parse(JSON.stringify(m.comments)))
+          that.medias[theKey].comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
+          theVue.medias=that.medias
+        }
         console.warn("If the media already existed, why this method was used?");
       }
       });
@@ -307,7 +376,16 @@ class siteManager {
     });
     return returnMedia;
   }
-
+  findMediaById(id:number):Media{
+    var returnMedia = undefined;
+    let that = this;
+    $.each(that.medias, function(key,value){
+      if(value.id==id){
+        returnMedia=value;
+      }
+    });
+    return returnMedia;
+  }
   deleteMediaByName(mediaName:string):void{
     console.log("deletemethod reach")
     let that = this;
@@ -332,12 +410,24 @@ class siteManager {
         that.medias = [];
       }
         $.each( data.data, function( key, value ) {
-         if(that.findMediaByName(value.title)==undefined){
-            var med = new Media(value.id,value.title, value.description, value.source, value.poster_source, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike)
-            $.each( med.comments, function( key1, value1 ) {
-              med.comments[key1].user = that.getUserById(value1.user_id)
+         if(that.findMediaById(value.id)==undefined){
+            var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike)
+            $.each( m.comments, function( key1, value1 ) {
+              m.comments[key1].user = that.getUserById(value1.user_id)
             });
-            that.medias.push(med);
+            //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
+            m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
+            that.medias.push(m);
+          } else {
+            var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike)
+            $.each( m.comments, function( key1, value1 ) {
+              m.comments[key1].user = that.getUserById(value1.user_id)
+            });
+            if(m!=value){
+              console.log("Media replaced "+value.title+" with "+m.title)
+              m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
+              that.medias[key] = m;
+            }
           }
         });
         if(data.links!=undefined){
@@ -351,6 +441,7 @@ class siteManager {
           theVue.canloadmore=false;
         }
         theVue.users = that.users;
+        that.medias = theMediaSorter.sort(that.medias)
         theVue.medias = that.medias;
         if(theVue.$route.params.profileId != undefined){
           theVue.user = sm.getUserById(theVue.$route.params.profileId)
@@ -377,6 +468,7 @@ class siteManager {
     });
 
   }
+
   getUserById(id:number):User{
     var search:User = new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{})
     $.each( this.users, function( key, value ) {
@@ -410,73 +502,5 @@ export function init(baseUrl) {
     theVue.title = title;
     // deprecated, only example for eventbus
   });
-
-}
-
-
-
-class Search{
-  mediaResult:any;
-  tagResult:Array<Tag>;
-  userResult:any;
-  search:string;
-  constructor(search:string,medias,tags,users){
-    this.search = search;
-    this.tagResult=[]
-    this.userResult=[]
-    this.mediaResult=[]
-    if(search!=""){
-    var mediaTitle = $("#theLiveSearchMediaTitle").is(':checked')
-    var mediaDescription = $("#theLiveSearchMediaDescription").is(':checked')
-    var tagsEnabled = $("#theLiveSearchTags").is(':checked')
-    let that = this;
-    if($("#theLiveSearchUsers").is(':checked')){
-      $.each( users, function( key, value ) {
-
-        if(value.name.toLowerCase().indexOf(that.search.toLowerCase()) > -1){
-          if(that.userResult.includes(value)==false){
-            that.userResult.push(value);
-          }
-        }
-        if(value.bio.toLowerCase().indexOf(that.search.toLowerCase()) > -1){
-          if(that.userResult.includes(value)==false){
-            that.userResult.push(value);
-          }
-        }
-
-      });
-    }
-    if(mediaTitle||mediaDescription) {
-      console.log("PAssed media-if")
-      console.log(medias)
-      $.each( medias, function( key, value ) {
-        console.log(that.search)
-        console.log(value.title)
-        if(mediaTitle){
-        if(value.title.toLowerCase().indexOf(that.search.toLowerCase()) > -1){
-          if(that.mediaResult.includes(value)==false){
-            that.mediaResult.push(value);
-          }
-        }
-      }
-      if(mediaDescription){
-        if(value.description.toLowerCase().indexOf(search.toLowerCase()) > -1){
-          if(that.mediaResult.includes(value)==false){
-            that.mediaResult.push(value);
-          }
-        }
-      }
-    /*  if(tagsEnabled){
-        if(that.mediaResult.includes(value)==false){
-          that.mediaResult.push(value);
-        }
-      }*/
-      });
-    }
-    if($("#theLiveSearchMedias").is(':checked')){
-      this.userResult=medias
-    }
-  }
-  }
 
 }

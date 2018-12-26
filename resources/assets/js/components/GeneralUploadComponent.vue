@@ -1,17 +1,5 @@
 <template>
     <div class="col-xs-12 col-sm-12 col-md-12">
-      <b-alert style="position: fixed; top: 2px;" :show="dismisscountdown"
-               dismissible
-               :variant="alertType"
-               @dismissed="dismisscountdown=0"
-               @dismiss-count-down="countDownChanged">
-        <p>{{ alertMsg }}</p>
-        <b-progress :variant="alertType"
-                    :max="dismisssecs"
-                    :value="dismisscountdown"
-                    height="4px">
-        </b-progress>
-      </b-alert>
     <h4>Add media</h4>
     <form id="theForm">
     <div class="form-group">
@@ -107,9 +95,6 @@
             processData: false,
             complete : function(res) {
               if(res.status==201){
-                that.dismisscountdown = 20;
-                that.alertMsg = "Video added"
-                that.alertType = "success"
                 eventBus.$emit('videoCreated',res.responseJSON);
               }
             }
@@ -144,11 +129,6 @@ rotate(rotationAngle,event) {
     data(){
       return {
         mediaType: '',
-        dismisssecs: 20,
-        dismisscountdown: 0,
-        alertType: 'warning',
-        alertMsg: '',
-        showdismissiblealert: false,
         cropped: null,
       }
     }

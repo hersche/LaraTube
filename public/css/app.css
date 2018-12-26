@@ -10471,6 +10471,11 @@ a.text-dark:focus {
   }
 }
 
+.sgfText {
+  padding: 2px;
+  border-radius: 5px;
+}
+
 .customchart {
   width: 510px;
 }

@@ -8,6 +8,9 @@
         {{ item.name }} ({{item.count}}x)
       </div>
 </div>
+<p>Sort by <select @change="sortBy()" id="sortBy" value="created_at" v-model="selectVal"><option value="created_at">Created at</option> <option value="created_at_reverse">Created at (reverse)</option><option value="updated_at">Updated at</option> <option value="updated_at_reverse">Updated at (reverse)</option><option value="title">By title</option><option value="title_reverse">By title (reverse)</option>
+  <option value="type">By type</option><option value="type_reverse">By type (reverse)</option><option value="simpleType">By simpletype</option><option value="simpleType_reverse">By simpletype (reverse)</option>
+</select></p>
       <div class="row text-center text-lg-left" id="profilevideos">
         <div v-for="(item1,index) in medias" v-if="filterMedia(item1,selectedTags)==true" class="col-lg-4 col-md-4 col-xs-6">
           <singleField v-bind:item="item1"></singleField>
@@ -28,13 +31,19 @@
     data(){
       return {
         selectedTags:[],
-        filterTags:''
+        filterTags:'',
+        selectVal:"created_at"
       }
     },
     mounted(){
       if(this.$route.params.tagName!=''){
         this.changeCheck(this.$route.params.tagName);
       }
+      this.$nextTick(function () {
+        var cs = localStorage.getItem("choosenSort")
+        this.selectVal = cs;
+        eventBus.$emit('sortBy',cs);
+      })
     },
     methods: {
       emitLoadMore() {
@@ -42,6 +51,10 @@
       },
       checkTag(id) {
         eventBus.$emit('checkTag',id);
+      },
+      sortBy: function() {
+        localStorage.setItem("choosenSort",this.selectVal)
+        eventBus.$emit('sortBy',this.selectVal);
       },
       changeCheck(id) {
         $("#tagId"+id).trigger('click');

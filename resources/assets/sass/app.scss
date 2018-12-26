@@ -8,6 +8,11 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+.sgfText {
+  padding: 2px;
+  border-radius: 5px;
+}
+
 .customchart {
   width:510px;
   div {

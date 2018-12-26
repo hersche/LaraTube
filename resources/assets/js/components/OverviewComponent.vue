@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h3>Newest videos</h3>
-
+    <h3>Medias (sort by {{ selectVal }})</h3>
+    <p>Sort by <select @change="sortBy()" id="sortBy" value="created_at" v-model="selectVal"><option value="created_at">Created at</option> <option value="created_at_reverse">Created at (reverse)</option><option value="updated_at">Updated at</option> <option value="updated_at_reverse">Updated at (reverse)</option><option value="title">By title</option><option value="title_reverse">By title (reverse)</option>
+      <option value="type">By type</option><option value="type_reverse">By type (reverse)</option><option value="simpleType">By simpletype</option><option value="simpleType_reverse">By simpletype (reverse)</option>
+    </select></p>
     <div id="demo" class="carousel slide" data-ride="carousel">
       <ul class="carousel-indicators" id="carouselIndicatorsBody">
         <li v-for="(item,index) in medias" v-if="index<3" data-target="#demo" :data-slide-to="index" class="active"></li>
@@ -37,10 +39,28 @@
       },
       emitLoadAllMedias: function() {
         eventBus.$emit('loadAllMedias',"");
+      },
+      sortBy: function() {
+        localStorage.setItem("choosenSort",this.selectVal)
+        eventBus.$emit('sortBy',this.selectVal);
       }
     },
   components : {
       'gallery': GalleryComponent
+  },
+  mounted(){
+
+    this.$nextTick(function () {
+      var cs = localStorage.getItem("choosenSort")
+      this.selectVal = cs;
+      eventBus.$emit('sortBy',cs);
+    })
+
+  },
+  data(){
+    return {
+      selectVal:"created_at"
+    }
   }
   }
 </script>

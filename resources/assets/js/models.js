@@ -14,12 +14,13 @@ var User = /** @class */ (function () {
 }());
 export { User };
 var Media = /** @class */ (function () {
-    function Media(id, title, description, source, poster_source, simpleType, type, user, user_id, created_at, created_at_readable, comments, tags, myLike) {
+    function Media(id, title, description, source, poster_source, duration, simpleType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.source = source;
         this.poster_source = poster_source;
+        this.duration = duration;
         this.type = type;
         this.simpleType = simpleType;
         this.user = user;
@@ -27,6 +28,7 @@ var Media = /** @class */ (function () {
         this.comments = comments;
         this.tags = tags;
         this.created_at = created_at;
+        this.updated_at = updated_at;
         this.created_at_readable = created_at_readable;
         this.myLike = myLike;
         this.tagString = this.tagStringing();
