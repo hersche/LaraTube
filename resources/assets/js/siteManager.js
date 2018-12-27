@@ -30,6 +30,9 @@ var siteManager = /** @class */ (function () {
         Vue.use(VueCroppie);
         Vue.use(VueApexCharts);
         Vue.component('apexchart', VueApexCharts);
+        Vue.component('passport-clients', require('./components/passport/Clients.vue').default);
+        Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue').default);
+        Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue').default);
         var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
         var player = Vue.component('player', require("./components/MediaComponent.vue"));
         var profileComp = Vue.component('profile', require("./components/ProfileComponent.vue"));
@@ -69,7 +72,6 @@ var siteManager = /** @class */ (function () {
                 tags: this.tags,
                 canloadmore: true,
                 medias: this.medias,
-                currentTitle: '',
                 user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}),
                 baseUrl: baseUrl
             },
@@ -80,6 +82,16 @@ var siteManager = /** @class */ (function () {
                 },
                 emitLoadAllMedias: function () {
                     eventBus.$emit('loadAllMedias', "");
+                },
+                toggleSidebar: function () {
+                    console.log("toggle clicked!");
+                    $('#sidebar').toggleClass('d-none');
+                    $("#outerContainer").toggleClass('sidebar-spacer');
+                    // close dropdowns
+                    $('.collapse.in').toggleClass('in');
+                    // and also adjust aria-expanded attributes we use for the open/closed arrows
+                    // in our CSS
+                    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
                 },
                 countDownChanged: function (dismisscountdown) {
                     this.dismisscountdown = dismisscountdown;
@@ -99,7 +111,7 @@ var siteManager = /** @class */ (function () {
                             clearTimeout(searchDelay);
                         }
                         searchDelay = setTimeout(function () {
-                            that.receiveMedias("/api/media/search/" + s);
+                            that.receiveMedias("/internal-api/media/search/" + s);
                         }, 300);
                     }
                     var so = new Search(s.toString(), that.medias, that.tags, that.users);
@@ -154,10 +166,10 @@ var siteManager = /** @class */ (function () {
             theVue.canloadmore = true;
             that.catchedTagMedias = [];
             _this.usedSearchTerms = [];
-            that.receiveMedias("/api/media", true);
+            that.receiveMedias("/internal-api/media" + _this.getIgnoreParam(), true);
         });
         eventBus.$on('loadAllMedias', function (title) {
-            that.receiveMedias("/api/medias/all", true);
+            that.receiveMedias("/internal-api/media/all" + _this.getIgnoreParam(), true);
             theVue.canloadmore = false;
         });
         eventBus.$on('sortBy', function (sortBy) {
@@ -245,6 +257,15 @@ var siteManager = /** @class */ (function () {
             }
         });
     };
+    // This method is for telling the server, which medias we don't need to redownload.
+    siteManager.prototype.getIgnoreParam = function () {
+        // id 0 is fake, but by it, we can alway attach ,:id
+        var content = "?i=0";
+        $.each(this.medias, function (key, value) {
+            content += "," + value.id;
+        });
+        return content;
+    };
     siteManager.prototype.receiveTags = function (forceUpdate) {
         if (forceUpdate === void 0) { forceUpdate = false; }
         var that = this;
@@ -277,7 +298,7 @@ var siteManager = /** @class */ (function () {
                 theVue.tags = this.tags;
             }
             json = json.data;
-            that.medias.unshift(new Media(json.id, json.title, json.description, json.source, json.poster_source, json.duration, json.simpleType, json.type, that.getUserById(json.user_id), json.user_id, json.created_at, json.updated_at, json.created_at_readable, json.comments, that.getTagsByIdArray(json.tagsIds), json.myLike));
+            that.medias.unshift(new Media(json.id, json.title, json.description, json.source, json.poster_source, json.duration, json.simpleType, json.type, that.getUserById(json.user_id), json.user_id, json.created_at, json.updated_at, json.created_at_readable, json.comments, that.getTagsByIdArray(json.tagsIds), json.myLike, json.likes, json.dislikes));
             theVue.medias = that.medias;
             theVue.$router.push('/');
         });
@@ -287,9 +308,7 @@ var siteManager = /** @class */ (function () {
         var that = this;
         var theKey;
         var existsAlready = false;
-        console.log("media seeeend!");
-        $.getJSON("/api/media/" + mediaName, function name(data) {
-            console.log("media received!");
+        $.getJSON("/internal-api/media/" + mediaName, function name(data) {
             $.each(that.medias, function (key, value) {
                 if (value.title == mediaName) {
                     existsAlready = true;
@@ -298,7 +317,7 @@ var siteManager = /** @class */ (function () {
             });
             data = data.data;
             if (that.findMediaByName(mediaName) == undefined) {
-                var m = new Media(data.id, data.title, data.description, data.source, data.poster_source, data.duration, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.updated_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds), data.myLike);
+                var m = new Media(data.id, data.title, data.description, data.source, data.poster_source, data.duration, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.updated_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds), data.myLike, data.likes, data.dislikes);
                 $.each(m.comments, function (key1, value1) {
                     m.comments[key1].user = that.getUserById(value1.user_id);
                 });
@@ -307,17 +326,16 @@ var siteManager = /** @class */ (function () {
                 theVue.medias = that.medias;
             }
             else {
-                console.log("media fuuuurther!");
-                var m = new Media(data.id, data.title, data.description, data.source, data.poster_source, data.duration, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.updated_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds), data.myLike);
+                var m = new Media(data.id, data.title, data.description, data.source, data.poster_source, data.duration, data.simpleType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.updated_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds), data.myLike, data.likes, data.dislikes);
                 $.each(m.comments, function (key1, value1) {
                     m.comments[key1].user = that.getUserById(value1.user_id);
                 });
                 if (m != that.medias[theKey]) {
-                    console.log(JSON.parse(JSON.stringify(m.comments)));
+                    //console.log(JSON.parse(JSON.stringify(m.comments)))
                     that.medias[theKey].comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
                     theVue.medias = that.medias;
                 }
-                console.warn("If the media already existed, why this method was used?");
+                //console.warn("If the media already existed, why this method was used?");
             }
         });
     };
@@ -375,7 +393,7 @@ var siteManager = /** @class */ (function () {
         theVue.$router.push('/');
     };
     siteManager.prototype.receiveMedias = function (url, forceUpdate) {
-        if (url === void 0) { url = "/api/media"; }
+        if (url === void 0) { url = "/internal-api/media" + this.getIgnoreParam(); }
         if (forceUpdate === void 0) { forceUpdate = false; }
         var that = this;
         $.getJSON(url, function name(data) {
@@ -384,7 +402,7 @@ var siteManager = /** @class */ (function () {
             }
             $.each(data.data, function (key, value) {
                 if (that.findMediaById(value.id) == undefined) {
-                    var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike);
+                    var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes);
                     $.each(m.comments, function (key1, value1) {
                         m.comments[key1].user = that.getUserById(value1.user_id);
                     });
@@ -393,7 +411,7 @@ var siteManager = /** @class */ (function () {
                     that.medias.push(m);
                 }
                 else {
-                    var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike);
+                    var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes);
                     $.each(m.comments, function (key1, value1) {
                         m.comments[key1].user = that.getUserById(value1.user_id);
                     });
@@ -466,7 +484,6 @@ if (sm == undefined) {
 export function init(baseUrl) {
     sm = new siteManager(baseUrl);
     eventBus.$on('overviewPlayClick', function (title) {
-        theVue.currentTitle = title;
         theVue.title = title;
         // deprecated, only example for eventbus
     });

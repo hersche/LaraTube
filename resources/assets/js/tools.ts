@@ -14,10 +14,8 @@ export class MediaSorter {
     } else if(this.sortBy=="title_reverse"){
       medias.sort(MediaSorter.byTitleReverse)
     } else if(this.sortBy=="created_at"){
-      console.log("do created at")
       medias.sort(MediaSorter.byCreatedAt)
     }  else if(this.sortBy=="created_at_reverse"){
-      console.log("do created at reverse")
       medias.sort(MediaSorter.byCreatedAtReverse)
     } else if(this.sortBy=="type"){
       medias.sort(MediaSorter.byType)
@@ -83,7 +81,6 @@ export class MediaSorter {
     return 0;
   }
   static byCreatedAt(a,b) {
-    console.log(a)
     if (a.created_at.date < b.created_at.date)
       return 1;
     if (a.created_at.date > b.created_at.date)
@@ -91,7 +88,6 @@ export class MediaSorter {
     return 0;
   }
   static byCreatedAtComments(a,b) {
-    console.log(a)
     if (a.created_at < b.created_at)
       return 1;
     if (a.created_at > b.created_at)
@@ -108,7 +104,6 @@ export class MediaSorter {
 
 
   static byUpdatedAt(a,b) {
-    console.log(a.updated_at.date)
     if (a.updated_at.date < b.updated_at.date)
       return 1;
     if (a.updated_at.date > b.updated_at.date)

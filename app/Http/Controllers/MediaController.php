@@ -95,18 +95,29 @@ class MediaController extends Controller
       return view('tags.index',compact('tags'));
     }
 
+
+
     public function like(Request $request){
+    //$like;
+      //echo "the mediaid";
+      echo Auth::id();
+      //echo $request->input('media_id');
+      //var_dump($request);
+      //var_dump($request->all());
       if(!empty($request->input('media_id'))){
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'media_id' => $request->input('media_id')]);
       } else if(!empty($request->input('comment_id'))){
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'comment_id' => $request->input('comment_id')]);
       }
-      if((($like->count=="1")&&($request->input('count')=="-1"))||(($like->count=="-1")&&($request->input('count')=="1"))){
-        $like->delete();
-      } else {
+      //if((($like->count=="1")&&($request->input('count')=="-1"))||(($like->count=="-1")&&($request->input('count')=="1"))){
+        //$like->delete();
+      //} else {
+
         $like->count = $request->input('count');
         $like->save();
-      }
+        echo $like->count;
+      //}
+      return "OK";
     }
 
     // DEPRECATED!!! Create can do it!

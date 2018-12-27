@@ -15,7 +15,7 @@
   import { eventBus } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['medias','currentTitle','baseUrl','canloadmore','loggeduserid'],
+    props: ['medias','baseUrl','canloadmore','loggeduserid'],
     methods: {
       emitLoadMore() {
         eventBus.$emit('loadMore','');

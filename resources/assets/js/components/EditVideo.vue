@@ -59,7 +59,7 @@
   import { eventBus } from '../eventBus.js';
   import { Media }  from '../models';
   export default {
-    props: ['medias','currentTitle','baseUrl'],
+    props: ['medias','baseUrl'],
     mounted: function () {
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',
@@ -81,7 +81,7 @@
       currentmedia: function () {
         var m = this.getCurrentMedia();
         if(m==undefined){
-          return new Media(0,"None","","","","","","","","","","","","","",0)
+          return new Media(0,"None","","","","","","","","","","","","","",0,0,0)
         }
         return m;
       }

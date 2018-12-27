@@ -1,6 +1,8 @@
 <?php
 use Illuminate\Http\Request;
-
+use App\Media;
+use App\DirectTag;
+use App\Http\Resources\Media as MediaResource;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,7 +19,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::get('/api/info', function () {
+Route::get('/internal-api/info', function () {
     return view('info');
 });
 Route::get('/home', 'HomeController@index')->name('home');
@@ -47,6 +49,8 @@ Route::post('/directUpload','MediaController@directUpload')->name('medias.direct
 Route::put('/directUpload','MediaController@directUpload');
 Route::get('/media','MediaController@index')->name('media');
 Route::put('/like','MediaController@like')->name('media.like');
+Route::post('/like','MediaController@like')->name('media222.like');
+Route::get('/like','MediaController@like')->name('media222.like');
 Route::get('/friends','UserController@profile')->name('friends');
 Route::get('/profile/edit','UserController@selfEdit')->name('users.selfedit');
 Route::get('/profile/{name}','UserController@profileview')->name('profile.view');
@@ -62,4 +66,22 @@ Route::get('welcome/{locale}', function ($locale) {
 
 Route::get('/search', function (Request $request) {
     return App\Media::search($request->search)->get();
+});
+
+
+Route::get('/internal-api/media', function (Request $request) {
+    // var_dump(explode(",",$request->input('i')));
+    return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
+});
+
+Route::get('/internal-api/media/all', function (Request $request) {
+    return MediaResource::collection(Media::orderBy('created_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->get());
+});
+
+Route::get('/internal-api/media/search/{title}', function ($title) {
+    return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.$title.'%')->orWhere('description', 'LIKE' ,'%'.$title.'%')->whereNotIn('id', explode(",",$request->input('i')))->get());
+});
+
+Route::get('/internal-api/media/{title}', function ($title) {
+    return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });

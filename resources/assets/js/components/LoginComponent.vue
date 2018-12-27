@@ -4,7 +4,7 @@
         <div class="card-header">Login</div>
 
         <div class="card-body">
-            <form method="POST" action="/login" aria-label="The Login">
+            <form method="POST" action="/api/login" aria-label="The Login">
                 <div class="form-group row">
                     <label for="email" class="col-sm-4 col-form-label text-md-right">E-Mail Address</label>
 

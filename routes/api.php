@@ -1,7 +1,16 @@
 <?php
 
 use Illuminate\Http\Request;
-
+//use Auth;
+use App\User;
+use App\Http\Resources\User as UserResource;
+use App\Media;
+use App\DirectTag;
+use App\Http\Resources\Media as MediaResource;
+use App\Http\Resources\Tag as TagResource;
+use App\Http\Resources\Id as Id;
+use App\Comment;
+use App\Http\Resources\Comment as CommentResource;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -12,13 +21,13 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'API\RegisterController@register');
-Auth::routes();
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+//Auth::routes();
+Route::middleware('auth:api')->get('/user2', function (Request $request) {
     return $request->user();
 });
-use App\User;
-use App\Http\Resources\User as UserResource;
+
 
 Route::get('/user', function () {
     return UserResource::collection(User::all());
@@ -28,14 +37,11 @@ Route::get('/user/{id}', function ($id) {
     return new UserResource(User::find($id));
 });
 
-use App\Media;
-use App\DirectTag;
-use App\Http\Resources\Media as MediaResource;
-use App\Http\Resources\Tag as TagResource;
-use App\Http\Resources\Id as Id;
 
-Route::get('/media', function () {
-    return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));
+
+Route::get('/media', function (Request $request) {
+    // var_dump(explode(",",$request->input('i')));
+    return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
 });
 
 Route::get('/media/not/{title}', function ($title) {
@@ -50,8 +56,8 @@ Route::get('/media/by/{title}', function ($title) {
     return MediaResource::collection(Media::where('user_id', '!=' ,$title)->get());
 });
 
-Route::get('/medias/all', function () {
-    return MediaResource::collection(Media::orderBy('created_at', 'desc')->get());
+Route::get('/medias/all', function (Request $request) {
+    return MediaResource::collection(Media::orderBy('created_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 
 
@@ -59,7 +65,7 @@ Route::post('/medias/create','MediaController@create')->name('mediasapi.create')
 Route::delete('/media/{title}','MediaController@destroy')->name('mediasapi.delete');
 Route::post('/media/{title}','MediaController@edit')->name('mediasapi.edit');
 Route::get('/media/search/{title}', function ($title) {
-    return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.$title.'%')->orWhere('description', 'LIKE' ,'%'.$title.'%')->get());
+    return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.$title.'%')->orWhere('description', 'LIKE' ,'%'.$title.'%')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 
 Route::get('/tags', function () {
@@ -82,8 +88,7 @@ Route::get('/tags/{tags}', function (Request $request,$tags) {
   }
     return MediaResource::collection($medias);
 });
-use App\Comment;
-use App\Http\Resources\Comment as CommentResource;
+
 
 Route::get('/comment', function () {
     return CommentResource::collection(Comment::orderBy('created_at', 'desc')->paginate(10));

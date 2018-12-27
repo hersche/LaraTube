@@ -29,3 +29,12 @@ mix.js('resources/assets/js/app.js', 'public/js')
             extensions: ['*', '.js', '.jsx', '.vue', '.ts', '.tsx'],
         },
     });
+    
+    module.exports = {
+      module: {
+        loaders: [
+          { test: /jquery-mousewheel/, loader: "imports?define=>false&this=>window" },
+          { test: /malihu-custom-scrollbar-plugin/, loader: "imports?define=>false&this=>window" }
+        ]
+      }
+    };

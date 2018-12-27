@@ -25,6 +25,7 @@ class User extends JsonResource
           'background' => $this->background(),
           'bio' => $this->bio,
           'mediaIds' => $mediaIds,
+          'api_token' => $this->api_token,
           'created_at' => $this->created_at,
           'updated_at' => $this->updated_at,
       ];

@@ -5,7 +5,18 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 require('./bootstrap');
-var $ = require('jquery')
+module.exports = {
+	module: {
+		loaders: [
+			{ test: /jquery-mousewheel/, loader: "imports?define=>false&this=>window" },
+			{ test: /malihu-custom-scrollbar-plugin/, loader: "imports?define=>false&this=>window" }
+		]
+	}
+};
+
+var $ = require('jquery');
+//require("jquery-mousewheel")($);
+//require('malihu-custom-scrollbar-plugin')($);
 var WebTorrent = require('webtorrent')
 //var siteManager = require('./siteManager').siteManager();
 /**
@@ -15,6 +26,16 @@ var WebTorrent = require('webtorrent')
  */
 
 $( document ).ready(function() {
+
+/*  $("#sidebar").mCustomScrollbar({
+     theme: "minimal"
+});
+*/
+$('#sidebarCollapse').on('click', function () {
+  console.log("toggle clicked")
+    // open or close navbar
+
+});
   $.ajaxSetup({
       headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

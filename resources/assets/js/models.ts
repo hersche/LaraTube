@@ -36,9 +36,11 @@ export class Media {
   created_at_readable:string;
   tagString:string;
   myLike:number;
+  likes:number;
+  dislikes:number;
 
 
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number){
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number){
     this.id=id;
     this.title = title;
     this.description = description;
@@ -55,12 +57,13 @@ export class Media {
     this.updated_at = updated_at;
     this.created_at_readable = created_at_readable;
     this.myLike=myLike;
+    this.likes=likes;
+    this.dislikes=dislikes;
     this.tagString = this.tagStringing();
   }
   tagStringing(){
     var theTagString = ""
     $.each(this.tags, function(key,val){
-      console.log(val.name)
       theTagString += val.name+" "
     });
     return theTagString;

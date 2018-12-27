@@ -14,11 +14,9 @@ var MediaSorter = /** @class */ (function () {
             medias.sort(MediaSorter.byTitleReverse);
         }
         else if (this.sortBy == "created_at") {
-            console.log("do created at");
             medias.sort(MediaSorter.byCreatedAt);
         }
         else if (this.sortBy == "created_at_reverse") {
-            console.log("do created at reverse");
             medias.sort(MediaSorter.byCreatedAtReverse);
         }
         else if (this.sortBy == "type") {
@@ -84,7 +82,6 @@ var MediaSorter = /** @class */ (function () {
         return 0;
     };
     MediaSorter.byCreatedAt = function (a, b) {
-        console.log(a);
         if (a.created_at.date < b.created_at.date)
             return 1;
         if (a.created_at.date > b.created_at.date)
@@ -92,7 +89,6 @@ var MediaSorter = /** @class */ (function () {
         return 0;
     };
     MediaSorter.byCreatedAtComments = function (a, b) {
-        console.log(a);
         if (a.created_at < b.created_at)
             return 1;
         if (a.created_at > b.created_at)
@@ -107,7 +103,6 @@ var MediaSorter = /** @class */ (function () {
         return 0;
     };
     MediaSorter.byUpdatedAt = function (a, b) {
-        console.log(a.updated_at.date);
         if (a.updated_at.date < b.updated_at.date)
             return 1;
         if (a.updated_at.date > b.updated_at.date)

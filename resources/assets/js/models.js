@@ -14,7 +14,7 @@ var User = /** @class */ (function () {
 }());
 export { User };
 var Media = /** @class */ (function () {
-    function Media(id, title, description, source, poster_source, duration, simpleType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike) {
+    function Media(id, title, description, source, poster_source, duration, simpleType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike, likes, dislikes) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -31,12 +31,13 @@ var Media = /** @class */ (function () {
         this.updated_at = updated_at;
         this.created_at_readable = created_at_readable;
         this.myLike = myLike;
+        this.likes = likes;
+        this.dislikes = dislikes;
         this.tagString = this.tagStringing();
     }
     Media.prototype.tagStringing = function () {
         var theTagString = "";
         $.each(this.tags, function (key, val) {
-            console.log(val.name);
             theTagString += val.name + " ";
         });
         return theTagString;

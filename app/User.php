@@ -35,7 +35,13 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    public function generateToken()
+    {
+        $this->api_token = $user->createToken('web-api')->accessToken;
+        $this->save();
 
+        return $this->api_token;
+    }
     public function medias(){
       return $this->hasMany('App\Media');
     }
