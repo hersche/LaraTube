@@ -2,7 +2,7 @@
   <div>
     <div class="row text-center text-lg-left" id="profilevideos">
     <div v-for="item in medias"  class="col-lg-4 col-md-4 col-xs-6">
-        <div style="min-width: 300px;" class="card">
+        <div class="card">
           <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
         </div>
     </div>

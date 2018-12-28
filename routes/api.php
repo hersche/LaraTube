@@ -21,10 +21,10 @@ use App\Http\Resources\Comment as CommentResource;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('login', 'Auth\LoginController@login');
-Route::post('register', 'API\RegisterController@register');
-//Auth::routes();
-Route::middleware('auth:api')->get('/user2', function (Request $request) {
+//Route::post('login', 'Auth\LoginController@login');
+//Route::post('register', 'API\RegisterController@register');
+Auth::routes();
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 

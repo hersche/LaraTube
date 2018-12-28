@@ -3,9 +3,40 @@
       <div class="row" >
         <div class="col-xs-12 col-sm-12 col-md-12">
           <h3> {{ currentmedia.title }} </h3>
-          <audio id="player" v-if="currentmedia.simpleType=='audio'" controls :poster="currentmedia.poster_source">
-            <source :src="currentmedia.source" type="audio/mp3"></source>
-          </audio>
+
+
+<div class="text-center" v-if="currentmedia.simpleType=='audio'">
+
+          <!-- <av-circle v-show="audiovisualtype=='circle'"
+          ref-link="player1"
+                :outline-width="0"
+                :progress-width="5"
+                :outline-meter-space="5"
+                :playtime="true"
+                playtime-font="18px Monaco"
+                >
+              </av-circle>
+              <av-line v-show="audiovisualtype=='line'"
+                :line-width="2"
+                line-color="lime"
+              ref-link="player1"
+              ></av-line>
+
+           <av-bars
+          caps-color="#FFF"
+:bar-color="['#f00', '#ff0', '#0f0']"
+canv-fill-color="#000"
+:caps-height="2"
+    ref-link="player1"
+    v-show="audiovisualtype=='bar'">
+  </av-bars> -->
+  <p>
+  <img :src="currentmedia.poster_source"></p>
+  <audio class="text-center" ref="player1" id="player"  preload autobuffer v-if="currentmedia.simpleType=='audio'" controls :poster="currentmedia.poster_source">
+     <source :src="currentmedia.source" type="audio/mp3"></source>
+   </audio>
+</div>
+
           <video class="col-12" id="player" v-if="currentmedia.simpleType=='video'" controls :poster="currentmedia.poster_source">
             <source :src="currentmedia.source" type="video/mp4"></source>
           </video>
@@ -18,41 +49,68 @@
         <div class="card-header">
           <span class='h3'>{{ currentmedia.title }}</span>
           <div class="float-right">
-            <span class="btn btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
-              <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.type=='torrentAudio'|currentmedia.type=='torrentVideo'" >Torrent-info</b-btn>
-              <router-link class="btn btn-primary" :to="'/profile/'+currentmedia.user.id">
+
+                          <span v-if="currentmedia.simpleType=='audio'" >visualizer <select value="bar" v-model="audiovisualtype">
+                            <option value="bar">Bar</option>
+                            <option value="circle">Circle</option>
+                            <option value="line">Line</option>
+                          </select></span>
+
+                          <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.type=='torrentAudio'|currentmedia.type=='torrentVideo')" >Download file</a>
+                          <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.type=='torrentAudio'|currentmedia.type=='torrentVideo'" >Torrent-info</b-btn>
+            <span class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
+
+              <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
                 <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
                 <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+currentmedia.user.avatar" alt="avatar" style="max-height: 20px;" />
               </router-link>
-            <button id="like" v-if="mylike==1" type="button" @click="like(0,'like')" class="btn btn-success">
-              <ion-icon name="thumbs-up"></ion-icon>
+
+
+            <button id="like" v-if="mylike==1" type="button" @click="like(0,'like')" class="btn btn-sm btn-success">
+              <vs-icon icon="thumb_up"></vs-icon>
               <span class="ml-1" id="likeCount">{{ likes }}</span>
             </button>
-            <button id="like" v-else type="button" @click="like(1,'like')" class="btn btn-primary">
-              <ion-icon name="thumbs-up"></ion-icon>
+            <button id="like" v-else type="button" @click="like(1,'like')" class="btn btn-sm btn-primary">
+              <vs-icon icon="thumb_up"></vs-icon>
               <span class="ml-1" id="likeCount">{{ likes }}</span>
             </button>
 
 
-            <button id="dislike" v-if="mylike==-1" type="button" @click="like(0,'dislike')" class="btn btn-success">
-              <ion-icon name="thumbs-down"></ion-icon>
+            <button id="dislike" v-if="mylike==-1" type="button" @click="like(0,'dislike')" class="btn btn-sm btn-success">
+              <vs-icon icon="thumb_down"></vs-icon>
               <span class="ml-1" id="likeCount">{{ dislikes }}</span>
             </button>
-            <button id="dislike" v-else type="button" @click="like(-1,'dislike')" class="btn btn-primary">
-              <ion-icon name="thumbs-down"></ion-icon>
+            <button id="dislike" v-else type="button" @click="like(-1,'dislike')" class="btn btn-sm btn-primary">
+              <vs-icon icon="thumb_down"></vs-icon>
               <span class="ml-1" id="likeCount">{{ dislikes }}</span>
             </button>
 
             <span v-if="loggeduserid==currentmedia.user.id" class=""><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.title">Edit</router-link></span>
           </div>
           <div class="card-body">{{ currentmedia.description }}</div>
-          <div class="card-footer">Tags:<span v-for="tag in currentmedia.tags"> <router-link class="btn btn-xs btn-info mr-1"  :to="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</router-link></span>
+          <div class="card-footer"><span v-for="tag in currentmedia.tags"> <router-link class=""  :to="'/tags/'+tag.name" >
+<vs-chip color="primary">
+            <vs-avatar icon="tag" />
+            {{ tag.name }}
+          </vs-chip></router-link></span>
 
           </div>
 
         </div>
       </div>
-      <div class="comments">
+      <div class="col-4 float-right">
+        <h4>Next videos</h4>
+        <p>
+      <vs-switch v-model="autoplay"/>
+    <span for="">Autoplay</span></p>
+        <div v-for="item in medias"  class="" v-if="item.id!=currentmedia.id">
+            <div class="card">
+              <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
+            </div>
+        </div>
+        <button class="btn btn-block btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
+      </div>
+      <div class="comments col-8 float-left">
         <h4>Comments</h4>
         <form class="form-inline mb-1" id="commentForm">
           <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
@@ -81,27 +139,40 @@
             </div>
           </div>
       </div>
-      <b-modal id="torrentmodal" title="Torrent-infos">
+      <p class="" style="">
+
+      </p>
+      <b-modal  style="width:520px;" id="torrentmodal" title="Torrent-infos">
         <p>Peers: {{ peers }}</p>
         <p>Downloadspeed: {{ downloadspeed }}</p>
         <p>Uploadspeed: {{ uploadspeed }}</p>
         <p>Downloadpercent: {{ downloadpercent }}</p>
+        <p><vs-switch v-model="chartEnabled"/><label>Enable chart</label></p>
+<p><apexchart v-if="chartEnabled" width="500" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
       </b-modal>
   </div>
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
+  import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['medias','baseUrl','loggeduserid'],
+    props: ['medias','baseUrl','loggeduserid','canloadmore'],
+    components : {
+        'singleField': SingleGalleryField
+    },
     methods: {
-      prettyBytes(num) {
+      prettyBytes(num,label=true) {
         var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         if (neg) num = -num;
         if (num < 1) return (neg ? '-' : '') + num + ' B';
         exponent = Math.min(Math.floor(Math.log(num) / Math.log(1000)), units.length - 1);
         num = Number((num / Math.pow(1000, exponent)).toFixed(2));
         unit = units[exponent];
-        return (neg ? '-' : '') + num + ' ' + unit;
+        if(label){
+          return (neg ? '-' : '') + num + ' ' + unit;
+        } else {
+          return (neg ? '-' : '') + num;
+        }
       },
       emitBackClicked(title) {
         eventBus.$emit('playerBackClick',title);
@@ -174,7 +245,9 @@
             }
           });*/
         },
-
+        emitLoadMore() {
+          eventBus.$emit('loadMore','');
+        },
       sendComment(){
         //console.log($("#commentForm")[0])
         //console.log(new FormData($("#commentForm")[0]))
@@ -197,6 +270,9 @@
       }
     },
     computed: {
+      series2: function () {
+        return this.chartData;
+      },
       // a computed getter
       currentmedia: function () {
         // `this` points to the vm instance
@@ -217,6 +293,15 @@
       this.likes = this.currentmedia.likes;
       this.dislikes = this.currentmedia.dislikes;
       this.inited=true
+      if(this.currentmedia.simpleType=="audio"){
+        console.log("init visualizer")
+
+
+
+
+
+      }
+
     if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
       var WebTorrent = require('webtorrent')
       var client = new WebTorrent();
@@ -228,12 +313,14 @@
           })
 
             torrent.on('done', onDone);
-            setInterval(onProgress, 500);
+            setInterval(onProgress, 2000);
             onProgress();
             file.getBlobURL(function (err, url) {
               if (err){
                 console.log(err.message);
               }
+
+
               //$("#downloadButton").attr("href",url);
             });
             //$("#torrentDL").html("<a href='"+torrent.torrentFileBlobURL+"' download='Stimulate....torrent'>Torrent-file</a>");
@@ -242,14 +329,23 @@
               that.peers = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers');
               // Progress
               var percent = Math.round(torrent.progress * 100 * 100) / 100;
+              var datetime = new Date();
+              datetime = datetime.getTime();
+              var ds = torrent.downloadSpeed/1000000;
+              var us = torrent.uploadSpeed/1000000;
               that.downloadpercent = that.prettyBytes(torrent.downloaded) + " / " + that.prettyBytes(torrent.length) + " ("+percent+"%)";
-
+              that.chartData[0].data.push({x:datetime,y:percent})
+              that.chartData[1].data.push({x:datetime,y:ds})
+              that.chartData[2].data.push({x:datetime,y:us})
               // Speed rates
               that.downloadspeed = that.prettyBytes(torrent.downloadSpeed) + '/s (down)';
               that.uploadspeed = that.prettyBytes(torrent.uploadSpeed) + '/s (up)';
             }
             function onDone () {
               onProgress();
+              console.log(url)
+              console.log(torrent.torrentFileBlobURL)
+              that.torrentdownloadurl = torrent.torrentFileBlobURL
             }
 
           file.renderTo('#player');
@@ -258,18 +354,78 @@
   } });
     },
     mounted(){
-
+      if(localStorage.getItem("autoplay")!=''){
+        this.autoplay=true;
+      }
   },
   data(){
     return {
       mylike:0,
       likes:0,
+
       dislikes:0,
       inited: false,
       peers: '',
+      data:'',
+      autoplay:false,
+      audiovisualtype:'bar',
       downloadspeed: '',
+      torrentdownloadurl:'',
       downloadpercent: '',
       uploadspeed: '',
+      chartOptions2:{
+            chart: {
+                height: 350,
+                width: 450,
+                type: 'line',
+                animations: {
+                    enabled: false,
+                    easing: 'linear',
+                    dynamicAnimation: {
+                        speed: 400
+                    }
+                },
+                toolbar: {
+                    show: false
+                },
+                zoom: {
+                    enabled: false
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            title: {
+                text: 'Dynamic Updating Chart',
+                align: 'left'
+            },
+            markers: {
+                size: 0
+            },
+            xaxis: {
+                type: 'datetime',
+                format: 'hh:mm:ss'
+            },
+            yaxis: {
+            },
+            legend: {
+                show: false
+            },
+    },
+    chartData:[{
+          name: 'Percent',
+          data: []
+        },{
+              name: 'Mb download',
+              data: []
+            },{
+                  name: 'Mb upload',
+                  data: []
+                },],
+    chartEnabled:false,
     }
   }
   }

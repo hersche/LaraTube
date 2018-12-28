@@ -29,7 +29,7 @@ class RegisterController extends BaseController
 
      */
 
-    public function register(Request $request)
+    public function register222(Request $request)
 
     {
 

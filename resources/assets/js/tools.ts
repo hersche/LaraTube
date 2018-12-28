@@ -144,11 +144,13 @@ export class Search{
             that.userResult.push(value);
           }
         }
+        if(value.bio!=null){
         if(value.bio.toLowerCase().indexOf(that.search.toLowerCase()) > -1){
           if(that.userResult.includes(value)==false){
             that.userResult.push(value);
           }
         }
+      }
 
       });
     }

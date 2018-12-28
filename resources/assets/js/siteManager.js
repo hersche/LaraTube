@@ -7,6 +7,10 @@ import { eventBus } from './eventBus';
 import { MediaSorter, Search } from './tools';
 import { User, Media, Tag } from './models';
 import VueApexCharts from 'vue-apexcharts';
+import Vuesax from 'vuesax';
+import 'material-icons/iconfont/material-icons.css';
+import 'vuesax/dist/vuesax.css'; //Vuesax styles
+import AudioVisual from 'vue-audio-visual';
 var app;
 var theVue;
 var searchDelay;
@@ -29,10 +33,9 @@ var siteManager = /** @class */ (function () {
         Vue.use(BootstrapVue);
         Vue.use(VueCroppie);
         Vue.use(VueApexCharts);
+        Vue.use(Vuesax);
+        Vue.use(AudioVisual);
         Vue.component('apexchart', VueApexCharts);
-        Vue.component('passport-clients', require('./components/passport/Clients.vue').default);
-        Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue').default);
-        Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue').default);
         var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
         var player = Vue.component('player', require("./components/MediaComponent.vue"));
         var profileComp = Vue.component('profile', require("./components/ProfileComponent.vue"));
@@ -43,6 +46,7 @@ var siteManager = /** @class */ (function () {
         var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
         var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
         var aboutComp = Vue.component('search', require("./components/About.vue"));
+        var sidebarComp = Vue.component('thesidebar', require("./components/SidebarComponent.vue"));
         var that = this;
         var routes = [
             { path: '/', component: overview },
@@ -67,6 +71,7 @@ var siteManager = /** @class */ (function () {
                 alertmsg: "",
                 alerttype: "",
                 search: '',
+                currentuser: that.currentUser,
                 users: this.users,
                 loggeduserid: this.loggedUserId,
                 tags: this.tags,
@@ -74,6 +79,9 @@ var siteManager = /** @class */ (function () {
                 medias: this.medias,
                 user: new User(0, "None", "img/404/avatar.png", "img/404/background.png", "None-user", {}),
                 baseUrl: baseUrl
+            },
+            components: {
+                'thesidebar': sidebarComp
             },
             router: new Router({ routes: routes }),
             methods: {
@@ -83,15 +91,11 @@ var siteManager = /** @class */ (function () {
                 emitLoadAllMedias: function () {
                     eventBus.$emit('loadAllMedias', "");
                 },
+                alert: function (msg, type) {
+                    if (type === void 0) { type = "dark"; }
+                    this.$vs.notify({ title: msg, text: '', color: type, position: 'bottom-center' });
+                },
                 toggleSidebar: function () {
-                    console.log("toggle clicked!");
-                    $('#sidebar').toggleClass('d-none');
-                    $("#outerContainer").toggleClass('sidebar-spacer');
-                    // close dropdowns
-                    $('.collapse.in').toggleClass('in');
-                    // and also adjust aria-expanded attributes we use for the open/closed arrows
-                    // in our CSS
-                    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
                 },
                 countDownChanged: function (dismisscountdown) {
                     this.dismisscountdown = dismisscountdown;
@@ -111,7 +115,7 @@ var siteManager = /** @class */ (function () {
                             clearTimeout(searchDelay);
                         }
                         searchDelay = setTimeout(function () {
-                            that.receiveMedias("/internal-api/media/search/" + s);
+                            that.receiveMedias("/internal-api/media/search/" + s + that.getIgnoreParam());
                         }, 300);
                     }
                     var so = new Search(s.toString(), that.medias, that.tags, that.users);
@@ -121,6 +125,7 @@ var siteManager = /** @class */ (function () {
                 }
             },
             mounted: function () {
+                $("#moremodal").show();
                 //  if(sm.params.currentTitle!=undefined){
                 // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
                 //  if(sm.findMediaByName(sm.params.currentTitle)==undefined){
@@ -157,9 +162,7 @@ var siteManager = /** @class */ (function () {
             }
         }).$mount('#app2');
         eventBus.$on('getNewMedias', function (title) {
-            theVue.dismisscountdown = 10;
-            theVue.alertmsg = "Look for new medias..";
-            theVue.alerttype = "info";
+            theVue.alert("Look for new medias..");
             that.receiveMedias();
         });
         eventBus.$on('refreshMedias', function (title) {
@@ -189,28 +192,20 @@ var siteManager = /** @class */ (function () {
             //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
             //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
             //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-            theVue.dismisscountdown = 10;
-            theVue.alertmsg = "Comment created";
-            theVue.alerttype = "success";
+            theVue.alert("Look for new medias..", "success");
         });
         eventBus.$on('videoDeleted', function (title) {
-            theVue.dismisscountdown = 10;
-            theVue.alertmsg = "Video " + title + " deleted";
-            theVue.alerttype = "success";
+            theVue.alert("Video " + title + " deleted", "success");
             that.deleteMediaByName(title);
         });
         eventBus.$on('videoCreated', function (json) {
             that.receiveTagsForMedia(json);
-            theVue.dismisscountdown = 10;
-            theVue.alertmsg = "Video " + json.data.title + " created";
-            theVue.alerttype = "success";
+            theVue.alert("Video " + json.data.title + " created", "success");
         });
         eventBus.$on('videoEdited', function (json) {
             that.deleteMediaByName(json[0]);
             that.receiveTagsForMedia(json[1]);
-            theVue.dismisscountdown = 10;
-            theVue.alertmsg = "Video " + json[1].data.title + " edited";
-            theVue.alerttype = "success";
+            theVue.alert("Video " + json[1].data.title + " edited", "success");
         });
         eventBus.$on('checkTag', function (tagName) {
             //if(theVue.$router.currentRoute.path!="/search"){
@@ -250,8 +245,15 @@ var siteManager = /** @class */ (function () {
         $.getJSON("/api/user", function name(data) {
             if ((that.users == undefined) || (forceUpdate)) {
                 that.users = [];
+                if (that.loggedUserId == 0) {
+                    that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "", "");
+                }
                 $.each(data.data, function (key, value) {
-                    that.users.push(new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds));
+                    var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds);
+                    if (u.id == that.loggedUserId) {
+                        that.currentUser = u;
+                    }
+                    that.users.push(u);
                 });
                 that.receiveTags();
             }

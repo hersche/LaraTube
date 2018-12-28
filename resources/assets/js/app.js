@@ -5,14 +5,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 require('./bootstrap');
-module.exports = {
-	module: {
-		loaders: [
-			{ test: /jquery-mousewheel/, loader: "imports?define=>false&this=>window" },
-			{ test: /malihu-custom-scrollbar-plugin/, loader: "imports?define=>false&this=>window" }
-		]
-	}
-};
+//import treeNav from 'vue-tree-nav'
 
 var $ = require('jquery');
 //require("jquery-mousewheel")($);

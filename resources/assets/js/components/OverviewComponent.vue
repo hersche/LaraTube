@@ -14,7 +14,12 @@
           <div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;">
             <h3>{{ item.title }} ({{ item.created_at_readable }})</h3>
             <p>{{ item.description }}<span class="float-right"><router-link class="btn btn-primary mr-2" :to="'/media/'+item.title">Play</router-link></span></p>
-            <div class="card-footer">Tags: <span v-for="tag in item.tags" ><router-link class="btn btn-sm btn-info mr-1" :to="'/tags/'+tag.name" >{{ tag.name }} ({{ tag.count }}x)</router-link></span><span v-if="loggeduserid==item.user.id" class="float-right"><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+item.title">Edit</router-link></span></div>
+            <div class="card-footer"><span v-for="tag in item.tags" >
+              <router-link class="" :to="'/tags/'+tag.name" >    <vs-chip color="primary">
+      <vs-avatar icon="tag" />
+      {{ tag.name }}
+    </vs-chip></router-link>
+            </span><span v-if="loggeduserid==item.user.id" class="float-right"><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+item.title">Edit</router-link></span></div>
           </div>
         </div>
         <a class="carousel-control-prev bg-dark" href="#demo" data-slide="prev">

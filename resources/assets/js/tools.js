@@ -137,9 +137,11 @@ var Search = /** @class */ (function () {
                             that_1.userResult.push(value);
                         }
                     }
-                    if (value.bio.toLowerCase().indexOf(that_1.search.toLowerCase()) > -1) {
-                        if (that_1.userResult.includes(value) == false) {
-                            that_1.userResult.push(value);
+                    if (value.bio != null) {
+                        if (value.bio.toLowerCase().indexOf(that_1.search.toLowerCase()) > -1) {
+                            if (that_1.userResult.includes(value) == false) {
+                                that_1.userResult.push(value);
+                            }
                         }
                     }
                 });

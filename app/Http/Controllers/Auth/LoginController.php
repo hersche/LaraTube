@@ -39,7 +39,7 @@ class LoginController extends Controller
 
 
 
-public function login(Request $request)
+public function login2(Request $request)
 {
     $this->validateLogin($request);
 
