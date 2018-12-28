@@ -148,8 +148,8 @@ canv-fill-color="#000"
         <p>Downloadspeed: {{ downloadspeed }}</p>
         <p>Uploadspeed: {{ uploadspeed }}</p>
         <p>Downloadpercent: {{ downloadpercent }}</p>
-        <p><vs-switch v-model="chartEnabled"/><label>Enable chart</label></p>
-<p><apexchart v-if="chartEnabled" width="500" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
+        <p><vs-switch v-model="chartEnabled"/><label>Enable chart (workaround)</label></p>
+        <p><apexchart v-if="chartEnabled" width="500" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
       </b-modal>
   </div>
 </template>
@@ -180,6 +180,8 @@ canv-fill-color="#000"
       },
       like(l,kind){
         let that = this;
+
+        // TODO review this logic.. 
         if(kind=="like"){
           if(l==0){
             this.likes-=1;

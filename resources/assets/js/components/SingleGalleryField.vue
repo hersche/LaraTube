@@ -4,7 +4,7 @@
             <img class="card-img-top" :src="item.poster_source" alt="">
             <div class="card-img-overlay text-light" style="padding:0;opacity: 0.875; color: black;">
               <div class=" card-header " style="padding-bottom:0px;">
-                <h4 class="card-title text-center " ><span class="bg-secondary sgfText">{{ item.title }}</span></h4>
+                <p class="h4 card-title text-center " ><span class="bg-secondary sgfText">{{ item.title }}</span></p>
               </div>
             <div class=" card-body " style="padding-top:0px;">
 
