@@ -29,6 +29,20 @@ export class MediaSorter {
       medias.sort(MediaSorter.byUpdatedAt)
     } else if(this.sortBy=="updated_at_reverse"){
       medias.sort(MediaSorter.byUpdatedAtReverse)
+    }else if(this.sortBy=="comments"){
+      medias.sort(MediaSorter.byUpdatedAt)
+    } else if(this.sortBy=="comments_reverse"){
+      medias.sort(MediaSorter.byUpdatedAtReverse)
+    }
+    else if(this.sortBy=="likes"){
+      medias.sort(MediaSorter.byLikes)
+    } else if(this.sortBy=="likes_reverse"){
+      medias.sort(MediaSorter.byLikesReverse)
+    }
+    else if(this.sortBy=="dislikes"){
+      medias.sort(MediaSorter.byDislikes)
+    } else if(this.sortBy=="dislikes_reverse"){
+      medias.sort(MediaSorter.byDislikesReverse)
     }
     return medias
   }
@@ -45,6 +59,22 @@ export class MediaSorter {
     if (a.type < b.type)
       return 1;
     if (a.type > b.type)
+      return -1;
+    return 0;
+  }
+
+  static byComments(a,b) {
+    if (a.comments.length < b.comments.length)
+      return -1;
+    if (a.comments.length > b.comments.length)
+      return 1;
+    return 0;
+  }
+
+  static byCommentsReverse(a,b) {
+    if (a.comments.length < b.comments.length)
+      return 1;
+    if (a.comments.length > b.comments.length)
       return -1;
     return 0;
   }
@@ -80,6 +110,40 @@ export class MediaSorter {
       return -1;
     return 0;
   }
+
+  static byLikes(a,b) {
+    if (a.likes < b.likes)
+      return -1;
+    if (a.likes > b.likes)
+      return 1;
+    return 0;
+  }
+
+  static byLikesReverse(a,b) {
+    if (a.likes < b.likes)
+      return 1;
+    if (a.likes > b.likes)
+      return -1;
+    return 0;
+  }
+
+  static byDislikes(a,b) {
+    if (a.dislikes < b.dislikes)
+      return -1;
+    if (a.dislikes > b.dislikes)
+      return 1;
+    return 0;
+  }
+
+  static byDislikesReverse(a,b) {
+    if (a.dislikes < b.dislikes)
+      return 1;
+    if (a.dislikes > b.dislikes)
+      return -1;
+    return 0;
+  }
+
+
   static byCreatedAt(a,b) {
     if (a.created_at.date < b.created_at.date)
       return 1;

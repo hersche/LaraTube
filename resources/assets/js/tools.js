@@ -37,6 +37,24 @@ var MediaSorter = /** @class */ (function () {
         else if (this.sortBy == "updated_at_reverse") {
             medias.sort(MediaSorter.byUpdatedAtReverse);
         }
+        else if (this.sortBy == "comments") {
+            medias.sort(MediaSorter.byUpdatedAt);
+        }
+        else if (this.sortBy == "comments_reverse") {
+            medias.sort(MediaSorter.byUpdatedAtReverse);
+        }
+        else if (this.sortBy == "likes") {
+            medias.sort(MediaSorter.byLikes);
+        }
+        else if (this.sortBy == "likes_reverse") {
+            medias.sort(MediaSorter.byLikesReverse);
+        }
+        else if (this.sortBy == "dislikes") {
+            medias.sort(MediaSorter.byDislikes);
+        }
+        else if (this.sortBy == "dislikes_reverse") {
+            medias.sort(MediaSorter.byDislikesReverse);
+        }
         return medias;
     };
     MediaSorter.byType = function (a, b) {
@@ -50,6 +68,20 @@ var MediaSorter = /** @class */ (function () {
         if (a.type < b.type)
             return 1;
         if (a.type > b.type)
+            return -1;
+        return 0;
+    };
+    MediaSorter.byComments = function (a, b) {
+        if (a.comments.length < b.comments.length)
+            return -1;
+        if (a.comments.length > b.comments.length)
+            return 1;
+        return 0;
+    };
+    MediaSorter.byCommentsReverse = function (a, b) {
+        if (a.comments.length < b.comments.length)
+            return 1;
+        if (a.comments.length > b.comments.length)
             return -1;
         return 0;
     };
@@ -78,6 +110,34 @@ var MediaSorter = /** @class */ (function () {
         if (a.title < b.title)
             return 1;
         if (a.title > b.title)
+            return -1;
+        return 0;
+    };
+    MediaSorter.byLikes = function (a, b) {
+        if (a.likes < b.likes)
+            return -1;
+        if (a.likes > b.likes)
+            return 1;
+        return 0;
+    };
+    MediaSorter.byLikesReverse = function (a, b) {
+        if (a.likes < b.likes)
+            return 1;
+        if (a.likes > b.likes)
+            return -1;
+        return 0;
+    };
+    MediaSorter.byDislikes = function (a, b) {
+        if (a.dislikes < b.dislikes)
+            return -1;
+        if (a.dislikes > b.dislikes)
+            return 1;
+        return 0;
+    };
+    MediaSorter.byDislikesReverse = function (a, b) {
+        if (a.dislikes < b.dislikes)
+            return 1;
+        if (a.dislikes > b.dislikes)
             return -1;
         return 0;
     };
