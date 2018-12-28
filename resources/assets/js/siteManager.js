@@ -125,7 +125,7 @@ var siteManager = /** @class */ (function () {
                 }
             },
             mounted: function () {
-                $("#moremodal").show();
+                //  $("#moremodal").show();
                 //  if(sm.params.currentTitle!=undefined){
                 // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
                 //  if(sm.findMediaByName(sm.params.currentTitle)==undefined){

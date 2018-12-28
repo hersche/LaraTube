@@ -112,12 +112,13 @@ canv-fill-color="#000"
       </div>
       <div class="comments col-8 float-left">
         <h4>Comments</h4>
-        <form class="form-inline mb-1" id="commentForm">
+        <form class="form-inline mb-1" id="commentForm" v-if="loggeduserid!=0">
           <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
           <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
           <input placeholder="Comment..." class="col-9" id="medias_body" name="body" type="text">
           <input type="button" class="ml-1" value="Send comment!" @click="sendComment();" />
         </form>
+        <p v-else><h4>You need to login for comment</h4></p>
         <div v-for="comment in currentmedia.comments" class="comment mb-2 row" :id='"cid"+comment.id'>
             <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
                 <a href=""><img class="mx-auto rounded-circle img-fluid" :src="'/'+comment.user.avatar" alt="avatar" /></a>

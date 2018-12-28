@@ -138,7 +138,7 @@
               <div class="col-sm-12 col-12 col-lg-10" id="outerContainer">
             @yield('content')
           </div></div></div>
-          <b-modal id="moremodal" style="display: none;" title="More options">
+          <b-modal id="moremodal" style="" title="More options">
             <p>Medias loaded: @{{ medias.length }}</p>
             <p>Users loaded: @{{ users.length }}</p>
             <p>Tags loaded: @{{ tags.length }}</p>
