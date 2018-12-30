@@ -4,11 +4,11 @@
             <img class="card-img-top" :src="item.poster_source" alt="">
             <div class="card-img-overlay text-light" style="padding:0;opacity: 0.875; color: black;">
               <div class=" card-header " style="padding-bottom:0px;">
-                <p class="h4 card-title text-center " ><span class="bg-secondary sgfText">{{ item.title }}</span></p>
+                <p class="card-title text-center pl-sm-0 pr-sm-0 pl-md-1 pr-md-1" ><span class="bg-secondary sgfText">{{ item.title }}</span></p>
               </div>
-            <div class=" card-body " style="padding-top:0px;">
+            <div class=" card-body pl-md-1 pr-md-1 pl-sm-0 pr-sm-0" style="padding-top:0px;">
 
-              <div class="d-none d-md-none d-sm-block d-lg-block" ><span class=" bg-secondary sgfText">{{ shorteneddescription }}</span></div>
+              <div class="d-none d-md-none d-sm-block d-lg-block " ><span class=" bg-secondary sgfText">{{ shorteneddescription }}</span></div>
               <div class="d-none d-lg-block"><span class="bg-secondary sgfText">{{ item.duration }} - {{ item.comments.length }} comments</span><span class="bg-secondary sgfText float-right">{{ item.type }}</span></div>
               <footer class="d-none d-xl-block"><span class="float-left bg-dark sgfText text-info">{{ shortenedtags }}</span>
               <span v-if="loggeduserid==item.user.id" class="d-none d-xl-block float-right bg-secondary sgfText">This is your media</span></footer>
