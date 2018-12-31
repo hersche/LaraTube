@@ -67,6 +67,12 @@ class DatabaseSeeder extends Seeder
      $m1->tag('Walulis');
      $m1->tag('Torrent');
      $m1->tag('Movie');
+     $m1 = Media::create(['title' => 'Hackerethik - eine Einführung', 'source' => 'https://cdn.media.ccc.de/congress/2018/h264-sd/35c3-10011-deu-eng-fra-Hackerethik_-_eine_Einfuehrung_sd.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://media.ccc.de','user_id' => 4]);
+     $m1->tag('35C3');
+     $m1->tag('Doku');
+     $m1 = Media::create(['title' => 'Freude ist nur ein Mangel an information', 'source' => 'https://cdn.media.ccc.de/congress/2018/h264-sd/35c3-9506-deu-eng-gsw-Freude_ist_nur_ein_Mangel_an_Information_sd.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://media.ccc.de','user_id' => 4]);
+     $m1->tag('35C3');
+     $m1->tag('Doku');
      $m1 = Media::create(['title' => 'Big bucks bunny test 2', 'source' => 'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
      $m1->tag('Big');
      $m1->tag('SampleVideos');

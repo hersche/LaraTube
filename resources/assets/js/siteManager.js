@@ -202,7 +202,7 @@ var siteManager = /** @class */ (function () {
             //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
             //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
             //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-            theVue.alert("Look for new medias..", "success");
+            theVue.alert("Comment created", "success");
         });
         eventBus.$on('videoDeleted', function (title) {
             theVue.alert("Video " + title + " deleted", "success");
