@@ -7,7 +7,9 @@
   <div>{{ user.bio }}</div>
 </div>
 
-<overview v-bind:medias="medias"></overview></div>
+<overview v-bind:medias="usermedias" v-if="usermedias.length>0"></overview>
+<h5 v-else>User got no medias</h5>
+</div>
 </template>
 
 <script>
@@ -17,6 +19,20 @@
     props: ['medias','baseUrl','user'],
   components : {
       'overview': OverviewComponent
+  },
+  computed: {
+    // a computed getter
+    usermedias: function () {
+      var filteredMedias = [];
+      let that = this;
+      $.each( this.medias, function( key, value ) {
+        if(value.user.id==that.user.id){
+          filteredMedias.push(value);
+        }
+
+      });
+      return filteredMedias;
+    },
   }
   }
 </script>

@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
      $u1 = User::create(['name' => 'bla','bio' => 'Hi, i am a test-user. My e-mail is bla@bla.bla and my password is blabla - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'bla@bla.bla','password' => Hash::make('blabla')]);
      $u2 = User::create(['name' => 'ni','bio' => 'Hi, i am a test-user. My e-mail is ni@ni.ni and my password is ninini - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'ni@ni.ni','password' => Hash::make('ninini')]);
      $u3 = User::create(['name' => 'na','bio' => 'Hi, i am a test-user. My e-mail is na@na.na and my password is nanana - feel free to try, but remember: this is a work in progress and the database gets dropped from time to time!','email' => 'na@na.na','password' => Hash::make('nanana')]);
-     $u->tag('Test');
+     $u->tag('Movie');
      $u->tag('thing');
      $u1->tag('Some');
      $u1->tag('thing');
@@ -65,34 +65,33 @@ class DatabaseSeeder extends Seeder
 
      $m1 = Media::create(['title' => 'Youtube review 2018', 'source' => 'magnet:?xs=https%3A%2F%2Fpeertube.video%2Fstatic%2Ftorrents%2Fea2da85a-0cd7-4e6d-aaf5-ff47592853a7-1080.torrent&xt=urn:btih:cffcacbc092ba06a85f07b0143de58e0f69bfc2a&dn=Rewind+2018%3A+Das+schlechteste+YouTube+Video+ever!%3F+%7C+WALULIS&tr=wss%3A%2F%2Fpeertube.video%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fpeertube.video%2Ftracker%2Fannounce&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fwebseed%2Fea2da85a-0cd7-4e6d-aaf5-ff47592853a7-1080.mp4', 'type' => 'torrentVideo','description' => 'Via webtorrent from peertube.video .','user_id' => 1]);
      $m1->tag('Walulis');
-     $m1->tag('Some');
+     $m1->tag('Torrent');
      $m1->tag('Movie');
-     $m1 = Media::create(['title' => 'Big bucks bunny test 2', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
-     $m1->tag('Some');
-     $m1->tag('Test');
+     $m1 = Media::create(['title' => 'Big bucks bunny test 2', 'source' => 'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
+     $m1->tag('Big');
+     $m1->tag('SampleVideos');
      $m1 = Media::create(['title' => 'Audio test 3', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
-     $m1->tag('Foo');
-     $m1->tag('thing');
+     $m1->tag('Audio');
+     $m1->tag('SampleVideos');
      $m1 = Media::create(['title' => 'Big test', 'source' => 'https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from a github-file.','user_id' => 3]);
-     $m1->tag('Hello');
-     $m1->tag('thing');
-     $m1 = Media::create(['title' => 'Big bucks test', 'source' => 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
+     $m1->tag('Movie');
+     $m1->tag('Github');
+     $m1 = Media::create(['title' => 'Big bucks test', 'source' => 'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from https://www.sample-videos.com','user_id' => 2]);
      $m1->tag('Some');
      $m1->tag('Movie');
      $m1->tag('Animation');
      $m1 = Media::create(['title' => 'Ocean test', 'source' => 'http://vjs.zencdn.net/v/oceans.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from http://vjs.zencdn.net/v/oceans.mp4','user_id' => 1]);
      $m1->tag('Movie');
-     $m1->tag('Hello');
+     $m1->tag('ZENCDN');
      $m1->tag('Nature');
      $m1 = Media::create(['title' => 'Another Ocean test', 'source' => 'http://vjs.zencdn.net/v/oceans.mp4', 'type' => 'directVideo','description' => 'A automatic generated testvideo, streamed from http://vjs.zencdn.net/v/oceans.mp4','user_id' => 1]);
      $m1->tag('Movie');
-     $m1->tag('Test');
+     $m1->tag('ZENCDN');
      $m1->tag('Some');
      $m1 = Media::create(['title' => 'Audio test 2', 'source' => 'https://www.sample-videos.com/audio/mp3/wave.mp3', 'type' => 'directAudio','description' => 'A automatic generated testaudio, streamed from https://www.sample-videos.com.','user_id' => 3]);
      $m1->tag('Some');
      $m1->tag('Audio');
-     $m1->tag('Test');
-     $m1->tag('Gardening');
+     $m1->tag('SampleVideos');
 
      //$u->assignRole($permissions);
      foreach ($permissions as $permission) {

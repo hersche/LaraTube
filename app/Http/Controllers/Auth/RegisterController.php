@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller
 {
@@ -28,7 +30,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/#/login';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -54,47 +56,81 @@ class RegisterController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
-    public function register22(Request $request)
-{
-    // Here the request is validated. The validator method is located
-    // inside the RegisterController, and makes sure the name, email
-    // password and password_confirmation fields are required.
-    $this->validator($request->all())->validate();
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
 
-    // A Registered event is created and will trigger any relevant
-    // observers, such as sending a confirmation email or any
-    // code that needs to be run as soon as the user is created.
-    event(new Registered($user = $this->create($request->all())));
+        $user = User::create($request->all());
 
-    // After the user is created, he's logged in.
-    $this->guard()->login($user);
+        $avatar_source = 'public/user/avatars/'.$user->name.'.png';
+        $data = $request->input('avatar');
+        if(!empty($data)){
+          //echo $data;
+          list($type, $data) = explode(';', $data);
+          list(, $data)      = explode(',', $data);
+          $data = base64_decode($data);
+          Storage::put('public/user/avatars/'.$user->name.'.png', $data);
+        } else {
+          $avatar_source = '';
+        }
+        $background_source = 'public/user/backgrounds/'.$user->name.'.png';
+        $data = $request->input('background');
+        if(!empty($data)){
+          list($type, $data) = explode(';', $data);
+          list(, $data)      = explode(',', $data);
+          $data = base64_decode($data);
+          Storage::put('public/user/backgrounds/'.$user->name.'.png', $data);
+        } else {
+          $background_source = '';
+        }
+        $user->avatar_source = $avatar_source;
+        $user->background_source = $background_source;
+        $user->save();
+        $this->guard()->login($user);
 
-    // And finally this is the hook that we want. If there is no
-    // registered() method or it returns null, redirect him to
-    // some other URL. In our case, we just need to implement
-    // that method to return the correct response.
-    return $this->registered($request, $user)
-                    ?: redirect($this->redirectPath());
-}
+        return $this->registered($request, $user)
+                       ?: redirect($this->redirectPath());
+    }
 
-protected function registered22(Request $request, $user)
-{
-    $user->generateToken();
+    /**
+     * Get the guard to be used during registration.
+     *
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
 
-    return response()->json(['data' => $user->toArray()], 201);
-}
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered(Request $request, $user)
+    {
+        //
+    }
     /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data)
+  /*  protected function create(array $data)
     {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-    }
+    }*/
 }
