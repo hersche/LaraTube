@@ -60,7 +60,10 @@ class MediaController extends Controller
           $file = $request->file('directMedia');
           $extension = $file->getClientOriginalExtension();
           $source = $file->store('public/directMedia');
-          $duration = $getID3->analyze($source)['playtime_string'];
+          $id3 = $getID3->analyze($source);
+          if(!empty($id3)&&!empty($id3['playtime_string'])){
+            $duration = $id3['playtime_string'];
+          }
         }
         $tagArrayExtract = explode(' ', $request->input('tags'));
         $tagArray = array();

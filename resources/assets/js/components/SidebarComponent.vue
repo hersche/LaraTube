@@ -27,13 +27,8 @@
         </vs-navbar-item>
       </div>
       <div v-else>
-        <h4>Guest</h4>
-        <vs-sidebar-item to="/login" index="0.1" icon="question_answer">
-          Login
-        </vs-sidebar-item>
-        <vs-sidebar-item to="/register" index="0.2" icon="question_answer">
-          Register
-        </vs-sidebar-item>
+        <h4>Hello guest</h4>
+        <p>Sign up or in for more interaction</p>
       </div>
       <vs-navbar-item index="1">
         <router-link class="" to="/">Home</router-link>
@@ -45,7 +40,10 @@
         <router-link class="" to="/tags">Tags</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="3">
-      <b-btn v-b-modal.moremodal class=" btn-block" >More</b-btn>
+        <a @click="emitGetNewMedias()" style="cursor: pointer;" class="">Check 4 new</a>
+      </vs-navbar-item>
+      <vs-navbar-item index="4">
+      <a v-b-modal.moremodal class="" style="cursor: pointer;" >More</a>
       </vs-navbar-item>
       <vs-sidebar-group title="Aplication">
         <vs-sidebar-item index="1" icon="question_answer">
@@ -86,14 +84,13 @@
       </vs-sidebar-item>
 
       <div class="footer-sidebar" slot="footer">
-
-        <vs-button onclick="document.getElementById('logout-form').submit();" icon="reply" color="danger" type="flat">Logout</vs-button>
-
-
-        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+        <vs-button v-if="currentuser.id==0" to="/login" icon="exit_to_app" color="success" type="flat">Login</vs-button>
+        <vs-button v-if="currentuser.id==0" to="/register" icon="person_add" color="success" type="flat">Register</vs-button>
+        <vs-button v-if="currentuser.id!=0" onclick="document.getElementById('logout-form').submit();" icon="power_settings_new" color="danger" type="flat">Logout</vs-button>
+        <form v-if="currentuser.id!=0" id="logout-form" action="/logout" method="POST" style="display: none;">
             <input type="hidden" name="_token" :value="csrf">
         </form>
-        <vs-button icon="settings" color="primary" type="border"></vs-button>
+        <vs-button v-if="currentuser.id!=0" icon="settings" to="/editprofile" color="primary" type="border"></vs-button>
       </div>
 
     </vs-sidebar>
@@ -107,6 +104,9 @@ export default {
   methods:{
     searching(){
       eventBus.$emit('refreshSearch',"");
+    },
+    emitGetNewMedias() {
+      eventBus.$emit('getNewMedias',"");
     }
   },
   props:['currentuser'],

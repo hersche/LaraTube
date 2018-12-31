@@ -17,6 +17,8 @@ class CreateCategoriesTable extends Migration
             $table->increments('id');
             $table->string('title')->unique();
             $table->text('description')->nullable();
+            $table->string('avatar_source')->nullable();
+            $table->string('background_source')->nullable();
             $table->integer('parent_id')->default(0);
             $table->timestamps();
         });

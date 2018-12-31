@@ -57,8 +57,14 @@ class siteManager {
     var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
     var player = Vue.component('player', require("./components/MediaComponent.vue"));
     var profileComp = Vue.component('profile', require("./components/ProfileComponent.vue"));
+    var editProfileComp = Vue.component('editprofile', require("./components/EditProfile.vue"));
     var tagComp = Vue.component('tags', require("./components/TagComponent.vue"));
-    var loginComp = Vue.component('login', require("./components/LoginComponent.vue"));
+    var loginComp = Vue.component('login', require("./components/auth/Login.vue"));
+    var registerComp = Vue.component('register', require("./components/auth/Register.vue"));
+
+    // how place this? may better let this routine static?
+    // var resetComp = Vue.component('reset', require("./components/auth/Reset.vue"));
+
     var uploadComp = Vue.component('upload', require("./components/UploadComponent.vue"));
     var searchComp = Vue.component('search', require("./components/SearchComponent.vue"));
     var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
@@ -74,6 +80,8 @@ class siteManager {
       { path: '/tags', component: tagComp },
       { path: '/tags/:tagName', component: tagComp },
       { path: '/login', component: loginComp },
+      { path: '/editprofile', component: editProfileComp },
+      { path: '/register', component: registerComp },
       { path: '/upload', component: uploadComp },
       { path: '/search', component: searchComp },
       { path: '/charts', component: chartsComp },
@@ -81,6 +89,7 @@ class siteManager {
       { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
   //  sm.receiveUsers(true);
+  // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})
    theVue = new Vue({
     data : {
       title : "Overview",
@@ -96,7 +105,7 @@ class siteManager {
       tags:this.tags,
       canloadmore:true,
       medias:this.medias,
-      user:new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {}),
+      user:that.currentUser,
       baseUrl:baseUrl
     },
     components : {
@@ -119,9 +128,7 @@ class siteManager {
       countDownChanged (dismisscountdown) {
         this.dismisscountdown = dismisscountdown
       },
-      emitGetNewMedias() {
-        eventBus.$emit('getNewMedias',"");
-      },
+
       searching() {
         if(theVue.$router.currentRoute.path!="/search"){
           theVue.$router.push('/search');
@@ -179,6 +186,12 @@ class siteManager {
           if(to.path=="/search"){
             //this.searching();
           }
+          if(to.path=="/login"||to.path=="/register"){
+            if(that.loggedUserId!=0){
+              // Redirect if already logged in
+              theVue.$router.push('/');
+            }
+          }
       }
   }
   }).$mount('#app2');
@@ -195,7 +208,7 @@ class siteManager {
     that.receiveMedias("/internal-api/media"+this.getIgnoreParam(),true)
   });
   eventBus.$on('loadAllMedias', title => {
-    that.receiveMedias("/internal-api/media/all"+this.getIgnoreParam(),true)
+    that.receiveMedias("/internal-api/media/all"+this.getIgnoreParam())
     theVue.canloadmore=false
   });
   eventBus.$on('sortBy', sortBy => {
@@ -404,7 +417,9 @@ class siteManager {
     var returnMedia = undefined;
     let that = this;
     $.each(that.medias, function(key,value){
+      console.log("found the value:"+value.id+" vs "+id)
       if(value.id==id){
+        console.log("found the value:"+value.id)
         returnMedia=value;
       }
     });
@@ -429,17 +444,20 @@ class siteManager {
   }
   receiveMedias(url="/internal-api/media"+this.getIgnoreParam(),forceUpdate=false):void{
     let that = this;
+    var loadCount=0,replaceCount=0;
     $.getJSON(url, function name(data) {
       if((forceUpdate)||(that.medias==undefined)){
         that.medias = [];
       }
         $.each( data.data, function( key, value ) {
+          console.log(that.findMediaById(value.id))
          if(that.findMediaById(value.id)==undefined){
             var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
             $.each( m.comments, function( key1, value1 ) {
               m.comments[key1].user = that.getUserById(value1.user_id)
             });
             //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
+            loadCount++;
             m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
             that.medias.push(m);
           } else {
@@ -448,11 +466,13 @@ class siteManager {
               m.comments[key1].user = that.getUserById(value1.user_id)
             });
             if(m!=value){
+              replaceCount++;
               console.log("Media replaced "+value.title+" with "+m.title)
               m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
               that.medias[key] = m;
             }
           }
+
         });
         if(data.links!=undefined){
           that.nextLink = data.links.next;
@@ -489,6 +509,12 @@ class siteManager {
             theVue.medias = [];
           }*/
         }
+        if(loadCount==0&&replaceCount==0){
+          theVue.alert("All medias are loaded","warning")
+        } else {
+          theVue.alert("Load "+loadCount+" and replace "+replaceCount+" medias.")
+        }
+
     });
 
   }

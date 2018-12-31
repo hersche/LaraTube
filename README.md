@@ -41,6 +41,10 @@ Basicly extact the same as laravel
 
 Best practice is to git clone the project. After, go into the project-directory, to run the following commands.
 
+For debian before composer..
+
+    apt-get install php7.3-xml php7.3-mbstring
+
 For get all dependencies
 
     composer install
@@ -49,13 +53,17 @@ For secure authenification
 
     php artisan key:generate
 
+Create DB
+
+    php artisan migrate
+
 For generate first data in the db
 
     php artisan db:seed -v
 
-Make a storage-link
+Make a storage-link (if avatars and uploads don't work...)
 
-    ln -s /your-path/app/public /your-path/public/
+    ln -s /your-path/storage/app/public /your-path/public/
 
 Result should be a browseable "public/public/" - if you are confused about, this is OK!    
 

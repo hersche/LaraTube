@@ -28,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/#/login';
 
     /**
      * Create a new controller instance.
@@ -54,7 +54,7 @@ class RegisterController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
-    public function register(Request $request)
+    public function register22(Request $request)
 {
     // Here the request is validated. The validator method is located
     // inside the RegisterController, and makes sure the name, email
@@ -77,7 +77,7 @@ class RegisterController extends Controller
                     ?: redirect($this->redirectPath());
 }
 
-protected function registered(Request $request, $user)
+protected function registered22(Request $request, $user)
 {
     $user->generateToken();
 

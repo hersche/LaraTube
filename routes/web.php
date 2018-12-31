@@ -67,6 +67,9 @@ Route::get('/search', function (Request $request) {
 });
 
 
+Route::delete('/internal-api/media/{title}','MediaController@destroy')->name('mediasapi.delete');
+Route::post('/internal-api/media/{title}','MediaController@edit')->name('mediasiapi.edit');
+
 Route::get('/internal-api/media', function (Request $request) {
     // var_dump(explode(",",$request->input('i')));
     return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
