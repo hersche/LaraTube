@@ -2,7 +2,6 @@
   <div v-if="currentmedia!=undefined">
       <div class="row" >
         <div class="col-xs-12 col-sm-12 col-md-12">
-          <h3> {{ currentmedia.title }} </h3>
 
 
 <div class="text-center" v-if="currentmedia.simpleType=='audio'">
@@ -118,7 +117,6 @@ canv-fill-color="#000"
           <input placeholder="Comment..." class="col-9" id="medias_body" name="body" type="text">
           <input type="button" class="ml-1" value="Send comment!" @click="sendComment();" />
         </form>
-        <p v-else><h4>You need to login for comment</h4></p>
         <div v-for="comment in currentmedia.comments" class="comment mb-2 row" :id='"cid"+comment.id'>
             <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
                 <a href=""><img class="mx-auto rounded-circle img-fluid" :src="'/'+comment.user.avatar" alt="avatar" /></a>
@@ -181,7 +179,7 @@ canv-fill-color="#000"
       like(l,kind){
         let that = this;
 
-        // TODO review this logic.. 
+        // TODO review this logic..
         if(kind=="like"){
           if(l==0){
             this.likes-=1;
