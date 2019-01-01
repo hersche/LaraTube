@@ -75,7 +75,7 @@ Route::get('/internal-api/media', function (Request $request) {
     return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
 });
 
-Route::get('/internal-api/media/all', function (Request $request) {
+Route::get('/internal-api/medias/all', function (Request $request) {
     return MediaResource::collection(Media::orderBy('created_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 
@@ -86,4 +86,8 @@ Route::get('/internal-api/media/search/{title}', function (Request $request,$tit
 
 Route::get('/internal-api/media/{title}', function ($title) {
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
+});
+
+Route::get('/internal-api/medias/by/{user}', function (Request $request,$user) {
+    return MediaResource::collection(Media::where('user_id', '=' ,$user)->whereNotIn('id', explode(",",$request->input('i')))->get());
 });

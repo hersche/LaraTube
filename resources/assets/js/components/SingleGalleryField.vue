@@ -3,8 +3,8 @@
           <router-link :to="'/media/'+item.title" class="d-block h-100">
             <img class="card-img-top" :src="item.poster_source" alt="">
             <div class="card-img-overlay text-light" style="padding:0;opacity: 0.875; color: black;">
-              <div class=" card-header " style="padding-bottom:0px;">
-                <p class="card-title text-center pl-sm-0 pr-sm-0 pl-md-1 pr-md-1" ><span class="bg-secondary sgfText">{{ item.title }}</span></p>
+              <div class="pr-sm-0 pl-sm-0 ml-sm-0 mr-sm-0 card-header " style="padding-bottom:0px;">
+                <p class="card-title text-center text-xs-left pl-sm-0 pr-sm-0 pl-md-1 pr-md-1 " ><span style="white-space: nowrap; overflow: hidden;" class="pl-sm-0 pr-sm-0 pl-md-1 pr-md-1 mr-sm-0 ml-sm-0 bg-secondary sgfText">{{ item.title }}</span></p>
               </div>
             <div class=" card-body pl-md-1 pr-md-1 pl-sm-0 pr-sm-0" style="padding-top:0px;">
 

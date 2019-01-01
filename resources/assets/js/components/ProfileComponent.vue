@@ -20,7 +20,13 @@
   components : {
       'overview': OverviewComponent
   },
+  mounted(){
+    // loadUserVideos
+    console.log("user-id for get videos"+this.user.id)
+    eventBus.$emit('loadUserVideos',this.user.id);
+  },
   computed: {
+
     // a computed getter
     usermedias: function () {
       var filteredMedias = [];

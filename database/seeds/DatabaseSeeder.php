@@ -61,8 +61,6 @@ class DatabaseSeeder extends Seeder
      $m1->tag('Big');
      $m1->tag('Torrent');
      $m1->tag('Movie');
-
-
      $m1 = Media::create(['title' => 'Youtube review 2018', 'source' => 'magnet:?xs=https%3A%2F%2Fpeertube.video%2Fstatic%2Ftorrents%2Fea2da85a-0cd7-4e6d-aaf5-ff47592853a7-1080.torrent&xt=urn:btih:cffcacbc092ba06a85f07b0143de58e0f69bfc2a&dn=Rewind+2018%3A+Das+schlechteste+YouTube+Video+ever!%3F+%7C+WALULIS&tr=wss%3A%2F%2Fpeertube.video%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fpeertube.video%2Ftracker%2Fannounce&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fwebseed%2Fea2da85a-0cd7-4e6d-aaf5-ff47592853a7-1080.mp4', 'type' => 'torrentVideo','description' => 'Via webtorrent from peertube.video .','user_id' => 1]);
      $m1->tag('Walulis');
      $m1->tag('Torrent');

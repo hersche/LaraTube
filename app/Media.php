@@ -26,7 +26,8 @@ class Media extends Model
     }
 
     public function comments() {
-      $comments = Comment::where('media_id', '=' ,$this->id)->get()->sortByDesc('created_at');
+    //  ->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')
+      $comments = Comment::where('media_id', '=' ,$this->id)->where("parent_id","=","0")->get()->sortByDesc('created_at');
       return $comments;
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
     }

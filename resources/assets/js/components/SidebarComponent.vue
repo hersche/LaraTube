@@ -14,10 +14,8 @@
     </vs-navbar>
 
     <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
-
       <div v-if="currentuser.id!=0" class="header-sidebar" slot="header" :style="'background-image:url('+currentuser.background+');'">
         <vs-avatar  size="70px" :src="currentuser.avatar"/>
-
         <h4>
           <router-link class="" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link>
           <vs-button color="primary" icon="more_horiz" type="flat"></vs-button>

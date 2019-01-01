@@ -152,9 +152,9 @@ export class MediaSorter {
     return 0;
   }
   static byCreatedAtComments(a,b) {
-    if (a.created_at < b.created_at)
+    if (a.created_at.date < b.created_at.date)
       return 1;
-    if (a.created_at > b.created_at)
+    if (a.created_at.date > b.created_at.date)
       return -1;
     return 0;
   }
