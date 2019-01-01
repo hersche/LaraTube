@@ -163,12 +163,6 @@
         });
         return false;
       },
-      countDownChanged (dismisscountdown) {
-        this.dismisscountdown = dismisscountdown
-      },
-      showAlert() {
-        this.dismisscountdown = this.dismisssecs
-      },
 // CALBACK USAGE
 resultAvatar(output) {
     this.avatarCropped = output;

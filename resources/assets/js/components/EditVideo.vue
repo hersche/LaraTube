@@ -153,12 +153,6 @@
         });
         return false;
       },
-      countDownChanged (dismisscountdown) {
-        this.dismisscountdown = dismisscountdown
-      },
-      showAlert() {
-        this.dismisscountdown = this.dismisssecs
-      },
 // CALBACK USAGE
 result(output) {
     this.cropped = output;

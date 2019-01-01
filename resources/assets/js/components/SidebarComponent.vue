@@ -92,6 +92,13 @@
       </div>
 
     </vs-sidebar>
+    <b-modal id="moremodal" style="" title="More options">
+      <p>Medias loaded: {{ medias.length }}</p>
+      <p>Users loaded: {{ users.length }}</p>
+      <p>Tags loaded: {{ tags.length }}</p>
+      <p ><button @click="emitRefreshMedias()" class="btn btn-warning mr-1">Reset data</button></p>
+      <p><button @click="emitLoadAllMedias()" class="btn btn-danger mr-1">Load all medias</button></p>
+    </b-modal>
   </div>
 
 </template>
@@ -107,12 +114,20 @@ export default {
       eventBus.$emit('getNewMedias',"");
     }
   },
-  props:['currentuser'],
+  props:['currentuser','medias','users','tags'],
   data:()=>({
     active:false,
     activeItem:0,
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  })
+  }),
+  methods:{
+    emitRefreshMedias: function() {
+      eventBus.$emit('refreshMedias',"");
+    },
+    emitLoadAllMedias: function() {
+      eventBus.$emit('loadAllMedias',"");
+    },
+  }
 }
 </script>
 

@@ -200,20 +200,8 @@ class siteManager {
     },
     router:new Router({ routes }),
     methods:{
-      emitRefreshMedias: function() {
-        eventBus.$emit('refreshMedias',"");
-      },
-      emitLoadAllMedias: function() {
-        eventBus.$emit('loadAllMedias',"");
-      },
       alert(msg,type="dark"){
         this.$vs.notify({title:msg,text:'',color:type,position:'bottom-center'})
-      },
-      toggleSidebar(){
-
-      },
-      countDownChanged (dismisscountdown) {
-        this.dismisscountdown = dismisscountdown
       },
 
       searching() {

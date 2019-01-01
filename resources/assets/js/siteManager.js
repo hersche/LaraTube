@@ -171,20 +171,9 @@ var siteManager = /** @class */ (function () {
             },
             router: new Router({ routes: routes }),
             methods: {
-                emitRefreshMedias: function () {
-                    eventBus.$emit('refreshMedias', "");
-                },
-                emitLoadAllMedias: function () {
-                    eventBus.$emit('loadAllMedias', "");
-                },
                 alert: function (msg, type) {
                     if (type === void 0) { type = "dark"; }
                     this.$vs.notify({ title: msg, text: '', color: type, position: 'bottom-center' });
-                },
-                toggleSidebar: function () {
-                },
-                countDownChanged: function (dismisscountdown) {
-                    this.dismisscountdown = dismisscountdown;
                 },
                 searching: function () {
                     if (theVue.$router.currentRoute.path != "/search") {

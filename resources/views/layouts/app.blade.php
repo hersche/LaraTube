@@ -46,7 +46,7 @@
 
 
 
-  <thesidebar :currentuser="currentuser"></thesidebar>
+  <thesidebar :currentuser="currentuser" v-bind:medias="medias" v-bind:users="users" v-bind:tags="tags"></thesidebar>
 
     <!--  <nav id="sidebar" class="d-none bg-light">
           <ul class="list-unstyled components">
@@ -138,13 +138,7 @@
               <div class="col-sm-12 col-12 col-lg-10" id="outerContainer">
             @yield('content')
           </div></div></div>
-          <b-modal id="moremodal" style="" title="More options">
-            <p>Medias loaded: @{{ medias.length }}</p>
-            <p>Users loaded: @{{ users.length }}</p>
-            <p>Tags loaded: @{{ tags.length }}</p>
-            <p ><button @click="emitRefreshMedias()" class="btn btn-warning mr-1">Reset data</button></p>
-            <p><button @click="emitLoadAllMedias()" class="btn btn-danger mr-1">Load all medias</button></p>
-          </b-modal>
+
         </main>
 
     </div>
