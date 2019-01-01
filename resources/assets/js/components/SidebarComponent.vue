@@ -112,22 +112,20 @@ export default {
     },
     emitGetNewMedias() {
       eventBus.$emit('getNewMedias',"");
-    }
-  },
-  props:['currentuser','medias','users','tags'],
-  data:()=>({
-    active:false,
-    activeItem:0,
-    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  }),
-  methods:{
+    },
     emitRefreshMedias: function() {
       eventBus.$emit('refreshMedias',"");
     },
     emitLoadAllMedias: function() {
       eventBus.$emit('loadAllMedias',"");
     },
-  }
+  },
+  props:['currentuser','medias','users','tags'],
+  data:()=>({
+    active:false,
+    activeItem:0,
+    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+  })
 }
 </script>
 

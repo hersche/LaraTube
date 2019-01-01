@@ -203,7 +203,6 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
             //'roles' => 'required'
         ]);
@@ -215,6 +214,30 @@ class UserController extends Controller
         }
         $user = User::find($id);
         $user->update($input);
+        $avatar_source = 'public/user/avatars/'.$user->name.'.png';
+        $data = $request->input('avatar');
+        if(!empty($data)){
+          //echo $data;
+          list($type, $data) = explode(';', $data);
+          list(, $data)      = explode(',', $data);
+          $data = base64_decode($data);
+          Storage::put('public/user/avatars/'.$user->name.'.png', $data);
+        } else {
+          $avatar_source = '';
+        }
+        $background_source = 'public/user/backgrounds/'.$user->name.'.png';
+        $data = $request->input('background');
+        if(!empty($data)){
+          list($type, $data) = explode(';', $data);
+          list(, $data)      = explode(',', $data);
+          $data = base64_decode($data);
+          Storage::put('public/user/backgrounds/'.$user->name.'.png', $data);
+        } else {
+          $background_source = '';
+        }
+        $user->avatar_source = $avatar_source;
+        $user->background_source = $background_source;
+        $user->save();
         if(!empty($request->input('roles'))){
           DB::table('model_has_roles')->where('model_id',$id)->delete();
           $user->assignRole($request->input('roles'));

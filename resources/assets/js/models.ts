@@ -5,13 +5,15 @@ export class User{
   background:string;
   bio:string;
   mediaIds:any;
-  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any){
+  tagString:string;
+  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string){
     this.id=id;
     this.name = name;
     this.avatar = avatar;
     this.background = background;
     this.bio = bio;
     this.mediaIds = mediaIds;
+    this.tagString = tagString;
   }
   toJson(){
     return "{id:"+this.id+",name:'"+this.name+"',avatar:'"+this.avatar+"',background:'"+this.background+"'}"

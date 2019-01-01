@@ -1,11 +1,12 @@
 var User = /** @class */ (function () {
-    function User(id, name, avatar, background, bio, mediaIds) {
+    function User(id, name, avatar, background, bio, mediaIds, tagString) {
         this.id = id;
         this.name = name;
         this.avatar = avatar;
         this.background = background;
         this.bio = bio;
         this.mediaIds = mediaIds;
+        this.tagString = tagString;
     }
     User.prototype.toJson = function () {
         return "{id:" + this.id + ",name:'" + this.name + "',avatar:'" + this.avatar + "',background:'" + this.background + "'}";

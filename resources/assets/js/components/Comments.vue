@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="level==0">
-    <h4>Comments</h4>
+    <h4>Comments <a class="btn btn-sm" @click="refreshMedia()"><vs-icon icon="refresh"></vs-icon></a></h4>
     <form class="form-inline mb-1" id="commentForm" v-if="loggeduserid!=0">
       <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
       <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
@@ -46,6 +46,9 @@ import { eventBus } from '../eventBus.js';
     props: [ 'commentlist','loggeduserid','currentmedia','level'],
     name: 'comments',
         methods: {
+          refreshMedia(id=''){
+            eventBus.$emit('refreshMedia',this.currentmedia.id);
+          },
           sendComment(id=''){
             //console.log($("#commentForm")[0])
             //console.log(new FormData($("#commentForm")[0]))

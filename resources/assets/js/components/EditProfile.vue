@@ -85,14 +85,14 @@
     },
     updated: function () {
       this.$nextTick(function () {
-        if(this.$refs.croppieRef!=undefined&this.editpicloaded==false){
+        if(this.$refs.croppieAvatarRef!=undefined&this.editpicloaded==false){
           this.editpicloaded=true;
           console.log("redo picture")
           this.$refs.croppieAvatarRef.bind({
-            url: this.currentuser.avatar_source,
+            url: this.currentuser.avatar,
           })
           this.$refs.croppieBackgroundRef.bind({
-            url: this.currentuser.background_source,
+            url: this.currentuser.background,
           })
         }
       })
@@ -126,7 +126,7 @@
       submitAction() {
         let that = this;
         $.ajax({
-            url: '/internal-api/media/'+this.currentmedia.title,
+            url: '/internal-api/profiles/edit/'+this.currentuser.id,
             type: 'POST',
             data: new FormData($("#theForm")[0]),
             cache: false,
@@ -136,7 +136,7 @@
               if(res.status==200){
                 //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
-              eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
+              eventBus.$emit('userEdited','')
             //  eventBus.$emit('videoDeleted',that.currentmedia.title);
             //  eventBus.$emit('videoCreated',res.responseJSON);
             }
