@@ -414,8 +414,8 @@ class siteManager {
         });
         if(m!=that.medias[theKey]){
           //console.log(JSON.parse(JSON.stringify(m.comments)))
-          m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          that.medias[theKey] = m;
+          //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+          that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
           theVue.medias=that.medias
         }
         //console.warn("If the media already existed, why this method was used?");
