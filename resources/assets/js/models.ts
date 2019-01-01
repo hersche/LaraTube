@@ -28,6 +28,7 @@ export class Media {
   duration:string;
   type:string;
   simpleType:string;
+  techType:string;
   user_id:number;
   user:any;
   comments:any;
@@ -42,7 +43,7 @@ export class Media {
   dislikes:number;
 
 
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number){
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number){
     this.id=id;
     this.title = title;
     this.description = description;
@@ -51,6 +52,7 @@ export class Media {
     this.duration = duration;
     this.type = type;
     this.simpleType = simpleType;
+    this.techType = techType;
     this.user = user;
     this.user_id = user_id;
     this.comments = comments;

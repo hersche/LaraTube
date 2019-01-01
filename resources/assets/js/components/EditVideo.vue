@@ -81,7 +81,7 @@
       currentmedia: function () {
         var m = this.getCurrentMedia();
         if(m==undefined){
-          return new Media(0,"None","","","","","","","","","","","","","",0,0,0)
+          return new Media(0,"None","","","","","","","","","","","","","","",0,0,0)
         }
         return m;
       }

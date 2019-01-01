@@ -4,7 +4,7 @@
         <div class="col-xs-12 col-sm-12 col-md-12">
 
 
-<div class="text-center" v-if="currentmedia.simpleType=='audio'">
+<div class="text-center" v-if="currentmedia.techType=='audio'">
 
           <!-- <av-circle v-show="audiovisualtype=='circle'"
           ref-link="player1"
@@ -31,15 +31,15 @@ canv-fill-color="#000"
   </av-bars> -->
   <p>
   <img class="img-fluid" :src="currentmedia.poster_source"></p>
-  <audio class="text-center" ref="player1" id="player"  preload autobuffer v-if="currentmedia.simpleType=='audio'" controls :poster="currentmedia.poster_source">
+  <audio class="text-center" ref="player1" id="player"  preload autobuffer v-if="currentmedia.techType=='audio'" controls :poster="currentmedia.poster_source">
      <source :src="currentmedia.source" type="audio/mp3"></source>
    </audio>
 </div>
 
-          <video class="col-12" id="player" v-if="currentmedia.simpleType=='video'" controls :poster="currentmedia.poster_source">
+          <video class="col-12" id="player" v-if="currentmedia.techType=='video'" controls :poster="currentmedia.poster_source">
             <source :src="currentmedia.source" type="video/mp4"></source>
           </video>
-          <video class="col-12" id="player" v-if="currentmedia.simpleType=='torrent'" controls :poster="currentmedia.poster_source">
+          <video class="col-12" id="player" v-if="currentmedia.techType=='torrent'" controls :poster="currentmedia.poster_source">
           </video>
         </div>
       </div>
@@ -49,7 +49,7 @@ canv-fill-color="#000"
           <span class='h3'>{{ currentmedia.title }}</span>
           <div class="float-right">
 
-                          <span v-if="currentmedia.simpleType=='audio'" >visualizer <select value="bar" v-model="audiovisualtype">
+                          <span v-if="currentmedia.techType=='audio'" >visualizer <select value="bar" v-model="audiovisualtype">
                             <option value="bar">Bar</option>
                             <option value="circle">Circle</option>
                             <option value="line">Line</option>
@@ -256,8 +256,8 @@ canv-fill-color="#000"
       this.likes = this.currentmedia.likes;
       this.dislikes = this.currentmedia.dislikes;
       this.inited=true
-      if(this.currentmedia.simpleType=="audio"){
-        console.log("init visualizer")
+      if(this.currentmedia.techType=="audio"){
+      //  console.log("init visualizer")
 
 
 

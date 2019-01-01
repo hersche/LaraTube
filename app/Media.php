@@ -77,6 +77,13 @@ class Media extends Model
       return url("/")."/".$this->poster_source;
     }
     public function simpleType(){
+      if(($this->type=="directAudio")||($this->type=="localAudio")||($this->type=="torrentAudio")) {
+        return "audio";
+      }
+      return "video";
+    }
+
+    public function techType(){
       if(($this->type=="torrentAudio")||($this->type=="torrentVideo")) {
         return "torrent";
       } else if(($this->type=="directAudio")||($this->type=="localAudio")) {

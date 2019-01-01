@@ -38,48 +38,13 @@
         <router-link class="" to="/tags">Tags</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="3">
-        <a @click="emitGetNewMedias()" style="cursor: pointer;" class="">Check 4 new</a>
+        <a @click="emitGetNewMedias()" style="cursor: pointer;" class="">Check 4 new medias</a>
       </vs-navbar-item>
       <vs-navbar-item index="4">
       <a v-b-modal.moremodal class="" style="cursor: pointer;" >More</a>
       </vs-navbar-item>
-      <vs-sidebar-group title="Aplication">
-        <vs-sidebar-item index="1" icon="question_answer">
-          Dashboard
-        </vs-sidebar-item>
-        <vs-sidebar-group title="Store">
-          <vs-sidebar-item index="2.1" icon="store">
-            Store
-          </vs-sidebar-item>
-          <vs-sidebar-item index="2.2" icon="nature_people">
-            Nature
-          </vs-sidebar-item>
-          <vs-sidebar-item index="2.3" icon="style">
-            Style
-          </vs-sidebar-item>
-        </vs-sidebar-group>
-        <vs-sidebar-item index="2" icon="gavel">
-          History
-        </vs-sidebar-item>
-        <vs-sidebar-item index="3" icon="https">
-          security
-        </vs-sidebar-item>
-        <vs-sidebar-item index="4" icon="help">
-          Help
-        </vs-sidebar-item>
-      </vs-sidebar-group>
 
 
-      <vs-divider icon="person" position="left">
-        User
-      </vs-divider>
-
-      <vs-sidebar-item index="5" icon="verified_user">
-        Configurations
-      </vs-sidebar-item>
-      <vs-sidebar-item index="6" icon="account_box">
-        Perfile
-      </vs-sidebar-item>
 
       <div class="footer-sidebar" slot="footer">
         <vs-button v-if="currentuser.id==0" to="/login" icon="exit_to_app" color="success" type="flat">Login</vs-button>

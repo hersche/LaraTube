@@ -54,9 +54,9 @@
         // `this` points to the vm instance
         var videoCount=0,audioCount=0,torrentCount=0;
         this.medias.forEach( function(item, index) {
-          if(item.simpleType=="video"){
+          if(item.techType=="video"){
             videoCount++;
-          } else if (item.simpleType=="audio"){
+          } else if (item.techType=="audio"){
             audioCount++;
           } else {
             torrentCount++;
@@ -66,7 +66,7 @@
             chart: {
                 width: 380,
             },
-            labels: ["Video", "Audio", "Torrent"],
+            labels: ["Video", "Audio"],
             responsive: [{
                 breakpoint: 480,
                 options: {
@@ -81,17 +81,15 @@
         };
     },
       series2: function () {
-        var videoCount=0,audioCount=0,torrentCount=0;
+        var videoCount=0,audioCount=0;
         this.medias.forEach( function(item, index) {
           if(item.simpleType=="video"){
             videoCount++;
           } else if (item.simpleType=="audio"){
             audioCount++;
-          } else {
-            torrentCount++;
           }
         });
-        return [videoCount,audioCount,torrentCount];
+        return [videoCount,audioCount];
       }
     },
   }
