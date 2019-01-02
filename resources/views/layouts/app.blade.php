@@ -1,3 +1,8 @@
+<?php
+header('Access-Control-Allow-Origin: *');
+//header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+ ?>
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>

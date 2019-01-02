@@ -6,40 +6,22 @@
 
 <div class="text-center" v-if="currentmedia.techType=='audio'">
 
-          <!-- <av-circle v-show="audiovisualtype=='circle'"
-          ref-link="player1"
-                :outline-width="0"
-                :progress-width="5"
-                :outline-meter-space="5"
-                :playtime="true"
-                playtime-font="18px Monaco"
-                >
-              </av-circle>
-              <av-line v-show="audiovisualtype=='line'"
-                :line-width="2"
-                line-color="lime"
-              ref-link="player1"
-              ></av-line>
 
-           <av-bars
-          caps-color="#FFF"
-:bar-color="['#f00', '#ff0', '#0f0']"
-canv-fill-color="#000"
-:caps-height="2"
-    ref-link="player1"
-    v-show="audiovisualtype=='bar'">
-  </av-bars> -->
   <p>
-  <img class="img-fluid" :src="currentmedia.poster_source"></p>
-  <audio class="text-center" ref="player1" id="player"  preload autobuffer v-if="currentmedia.techType=='audio'" controls :poster="currentmedia.poster_source">
-     <source :src="currentmedia.source" type="audio/mp3"></source>
+  <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'"></p>
+  <canvas v-if="currentmedia.type=='localAudio'"  class="col-12" height="400" style="height: 400px" id="audioVisual"></canvas>
+  <audio class="text-center"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer v-if="currentmedia.type=='localAudio'"  controls :poster="currentmedia.poster_source">
+     <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
    </audio>
+   <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
+      <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
+    </audio>
 </div>
 
-          <video class="col-12" id="player" v-if="currentmedia.techType=='video'" controls :poster="currentmedia.poster_source">
+          <video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer" v-if="currentmedia.techType=='video'" >
             <source :src="currentmedia.source" type="video/mp4"></source>
           </video>
-          <video class="col-12" id="player" v-if="currentmedia.techType=='torrent'" controls :poster="currentmedia.poster_source">
+          <video class="col-12" id="torrentPlayer" v-if="currentmedia.techType=='torrent'" controls :poster="currentmedia.poster_source">
           </video>
         </div>
       </div>
@@ -49,10 +31,10 @@ canv-fill-color="#000"
           <span class='h3'>{{ currentmedia.title }}</span>
           <div class="float-right">
 
-                          <span v-if="currentmedia.techType=='audio'" >visualizer <select value="bar" v-model="audiovisualtype">
-                            <option value="bar">Bar</option>
-                            <option value="circle">Circle</option>
-                            <option value="line">Line</option>
+                          <span v-if="currentmedia.techType=='audio'" >visualizer <select  value="Flexi - alien fish pond" v-model="audiovisualtype">
+                            <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
+                            <!--<option value="Cope - The Neverending Explosion of Red Liquid Fire">Cope - The Neverending Explosion of Red Liquid Fire</option>
+                            <option value="Flexi - alien fish pond">Flexi - alien fish pond</option>-->
                           </select></span>
 
                           <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.type=='torrentAudio'|currentmedia.type=='torrentVideo')" >Download file</a>
@@ -77,11 +59,11 @@ canv-fill-color="#000"
 
             <button id="dislike" v-if="mylike==-1" type="button" @click="like(0,'dislike')" class="btn btn-sm btn-success">
               <vs-icon icon="thumb_down"></vs-icon>
-              <span class="ml-1" id="likeCount">{{ dislikes }}</span>
+              <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
             </button>
             <button id="dislike" v-else type="button" @click="like(-1,'dislike')" class="btn btn-sm btn-primary">
               <vs-icon icon="thumb_down"></vs-icon>
-              <span class="ml-1" id="likeCount">{{ dislikes }}</span>
+              <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
             </button>
 
             <span v-if="loggeduserid==currentmedia.user.id" class=""><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.title">Edit</router-link></span>
@@ -134,6 +116,17 @@ canv-fill-color="#000"
   import { eventBus } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   import Comments from './Comments'
+  import { User, Media, Tag } from '../models';
+  import butterchurn from 'butterchurn';
+  import butterchurnPresets from 'butterchurn-presets';
+  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {}),"","","","","",0,0,0);
+  var WebTorrent = require('webtorrent')
+  var client = new WebTorrent();
+  var theTorrent;
+  var torrentInterval;
+  var audioCtx, audioNode, gainNode, visualizer;
+  const presets = butterchurnPresets.getPresets();
+  console.log(emptyMedia)
   export default {
     props: ['medias','baseUrl','loggeduserid','canloadmore'],
     components : {
@@ -141,6 +134,111 @@ canv-fill-color="#000"
         'comments': Comments
     },
     methods: {
+      visualTypesShort(val){
+        if(val.length>10){
+          return val.substring(0,9);
+        }else{
+          return val
+        }
+      },
+      initTorrent(){
+        if(torrentInterval!=undefined){
+          clearInterval(torrentInterval)
+          torrentInterval=undefined
+          if(audioNode!=undefined){
+            //audioCtx.close()
+            //audioCtx=undefined
+            audioNode.disconnect();
+            gainNode.disconnect();
+            audioNode=undefined;
+            gainNode=undefined;
+          }
+        }
+            if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
+
+              let that = this;
+              this.lasttorrentid = this.currentmedia.source;
+              client.add(this.currentmedia.source, function (torrent) {
+                theTorrent = torrent;
+                  // Torrents can contain many files. Let's use the .mp4 file
+                  var file = torrent.files.find(function (file) {
+                    return file.name.endsWith('.mp4')
+                  })
+
+                    torrent.on('done', onDone);
+                    torrentInterval = setInterval(onProgress, 500);
+                    onProgress();
+                    file.getBlobURL(function (err, url) {
+                      if (err){
+                        console.log(err.message);
+                      }
+
+
+                      //$("#downloadButton").attr("href",url);
+                    });
+                    //$("#torrentDL").html("<a href='"+torrent.torrentFileBlobURL+"' download='Stimulate....torrent'>Torrent-file</a>");
+                    function onProgress () {
+                      // Peers
+                      that.peers = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers');
+                      // Progress
+                      var percent = Math.round(torrent.progress * 100 * 100) / 100;
+                      var datetime = new Date();
+                      datetime = datetime.getTime();
+                      var ds = torrent.downloadSpeed/1000000;
+                      var us = torrent.uploadSpeed/1000000;
+                      that.downloadpercent = that.prettyBytes(torrent.downloaded) + " / " + that.prettyBytes(torrent.length) + " ("+percent+"%)";
+                      that.chartData[0].data.push({x:datetime,y:percent})
+                      that.chartData[1].data.push({x:datetime,y:ds})
+                      that.chartData[2].data.push({x:datetime,y:us})
+                      // Speed rates
+                      that.downloadspeed = that.prettyBytes(torrent.downloadSpeed) + '/s (down)';
+                      that.uploadspeed = that.prettyBytes(torrent.uploadSpeed) + '/s (up)';
+                    }
+                    function onDone () {
+                      onProgress();
+                      console.log(url)
+                      console.log(torrent.torrentFileBlobURL)
+                      that.torrentdownloadurl = torrent.torrentFileBlobURL
+                    }
+
+                  file.renderTo('video#torrentPlayer');
+                });
+            } else if(this.currentmedia.type=='localAudio'){
+              $('#audioPlayer')[0].crossOrigin = 'Anonymous'
+              audioCtx = new AudioContext();
+              console.log($('#audioPlayer')[0])
+              audioNode = audioCtx.createMediaElementSource($('#audioPlayer')[0]);
+              gainNode = audioCtx.createGain();
+              console.log(audioNode)
+
+              visualizer = butterchurn.createVisualizer(audioCtx, $('#audioVisual')[0], {
+                width: 400,
+                height: 400
+              });
+
+// get audioNode from audio source or microphone
+
+
+audioNode.connect(gainNode);
+gainNode.connect(audioCtx.destination);
+// load a preset
+visualizer.connectAudio(gainNode);
+const preset = presets[this.audiovisualtype];
+console.log(butterchurnPresets.getPresets())
+visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
+
+// resize visualizer
+
+visualizer.setRendererSize(400, 400);
+
+// render a frame
+torrentInterval = setInterval(function(){
+  visualizer.render();
+}, 100);
+
+            }
+      },
+
       prettyBytes(num,label=true) {
         var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         if (neg) num = -num;
@@ -159,46 +257,27 @@ canv-fill-color="#000"
       },
       like(l,kind){
         let that = this;
-
-        // TODO review this logic..
-        if(kind=="like"){
-          if(l==0){
+        // TODO review this logic.. done?
+        if((kind=="like")){
+          if(this.mylike==-1){
+            this.dislikes -= 1;
+          }
+          if(l==0&&this.mylike==1){
             this.likes-=1;
-          } else {
-            this.likes+=1;
+          } else if(l==1&&this.mylike!=1) {
+            this.likes += 1;
           }
         }
         if(kind=="dislike"){
-        if(this.mylike==1){
-          this.likes-=1;
-        }
-        }
-        if(kind=="like"){
-        if(this.mylike==-1){
-          this.dislikes-=1;
-        }
-      }
-        if(kind=="dislike"){
-          if(l==0){
+          if(this.mylike==1){
+            this.likes -= 1;
+          }
+          if(l==0&&this.mylike==-1){
             this.dislikes-=1;
-          } else {
+          } else if(l==-1&&this.mylike!=-1) {
             this.dislikes+=1;
           }
         }
-        /*if(l==1){
-          if(this.mylike==1){
-            this.mylike=0
-          } else {
-            this.mylike=1
-          }
-        }
-        if(l==-1){
-          if(this.mylike==-1){
-            this.mylike=0
-          } else {
-            this.mylike=-1
-          }
-        }*/
         $.ajax({
             url: '/like?media_id='+this.currentmedia.id+'&count='+l,
             type: 'GET',
@@ -230,28 +309,49 @@ canv-fill-color="#000"
         emitLoadMore() {
           eventBus.$emit('loadMore','');
         },
+        getCurrentMedia() {
+          // `this` points to the vm instance
+          let that = this;
+          var theMedia = emptyMedia
+          this.medias.forEach(function(val,key){
+            if(val.title==that.$route.params.currentTitle){
+              //this.originalLikes = val.likes
+              //this.originalDislikes = val.dislikes
+              theMedia = val;
+            }
+          });
+          return theMedia;
+        }
 
+    },
+    watch: {
+      '$route.params.currentTitle': function (val) {
+        //this.fullName = val + ' ' + this.lastName
+        console.log("route-watch")
+        console.log(val)
+        this.currentmedia = this.getCurrentMedia()
+        this.initTorrent()
+      },
+      audiovisualtype: function(val){
+  //      console.log("change visualtype")
+    //    visualizer.loadPreset(presets[val], 0.0);
+      }
     },
     computed: {
       series2: function () {
         return this.chartData;
       },
+      visualPresets: function () {
+        return butterchurnPresets.getPresets();
+      },
       // a computed getter
-      currentmedia: function () {
-        // `this` points to the vm instance
-        let that = this;
-        var theMedia;// = new Media("None","","","","","","","","","","","")
-        this.medias.forEach(function(val,key){
-          if(val.title==that.$route.params.currentTitle){
-            theMedia = val;
-          }
-        });
-        return theMedia;
-      }
     },
     updated: function () {
       this.$nextTick(function () {
+        this.initTorrent();
+      //  this.currentmedia = this.getCurrentMedia()
     if((this.currentmedia!=undefined)&&(this.inited==false)){
+
       this.mylike = Number(this.currentmedia.myLike);
       this.likes = this.currentmedia.likes;
       this.dislikes = this.currentmedia.dislikes;
@@ -264,74 +364,30 @@ canv-fill-color="#000"
 
 
       }
-
-    if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
-      var WebTorrent = require('webtorrent')
-      var client = new WebTorrent();
-      let that = this;
-      client.add(this.currentmedia.source, function (torrent) {
-          // Torrents can contain many files. Let's use the .mp4 file
-          var file = torrent.files.find(function (file) {
-            return file.name.endsWith('.mp4')
-          })
-
-            torrent.on('done', onDone);
-            setInterval(onProgress, 2000);
-            onProgress();
-            file.getBlobURL(function (err, url) {
-              if (err){
-                console.log(err.message);
-              }
-
-
-              //$("#downloadButton").attr("href",url);
-            });
-            //$("#torrentDL").html("<a href='"+torrent.torrentFileBlobURL+"' download='Stimulate....torrent'>Torrent-file</a>");
-            function onProgress () {
-              // Peers
-              that.peers = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers');
-              // Progress
-              var percent = Math.round(torrent.progress * 100 * 100) / 100;
-              var datetime = new Date();
-              datetime = datetime.getTime();
-              var ds = torrent.downloadSpeed/1000000;
-              var us = torrent.uploadSpeed/1000000;
-              that.downloadpercent = that.prettyBytes(torrent.downloaded) + " / " + that.prettyBytes(torrent.length) + " ("+percent+"%)";
-              that.chartData[0].data.push({x:datetime,y:percent})
-              that.chartData[1].data.push({x:datetime,y:ds})
-              that.chartData[2].data.push({x:datetime,y:us})
-              // Speed rates
-              that.downloadspeed = that.prettyBytes(torrent.downloadSpeed) + '/s (down)';
-              that.uploadspeed = that.prettyBytes(torrent.uploadSpeed) + '/s (up)';
-            }
-            function onDone () {
-              onProgress();
-              console.log(url)
-              console.log(torrent.torrentFileBlobURL)
-              that.torrentdownloadurl = torrent.torrentFileBlobURL
-            }
-
-          file.renderTo('#player');
-        });
-    }
+      //this.initTorrent()
   } });
     },
     mounted(){
       if(localStorage.getItem("autoplay")!=''){
         this.autoplay=true;
       }
+      this.currentmedia = this.getCurrentMedia()
+    //  this.initTorrent()
   },
   data(){
     return {
       mylike:0,
       likes:0,
-
       dislikes:0,
       inited: false,
       peers: '',
       data:'',
+      currentmedia:emptyMedia,
+      originalLikes: 0,
+      originalDislikes: 0,
       autoplay:false,
-      audiovisualtype:'bar',
+      lasttorrentid:'',
+      audiovisualtype:'Flexi - alien fish pond',
       downloadspeed: '',
       torrentdownloadurl:'',
       downloadpercent: '',

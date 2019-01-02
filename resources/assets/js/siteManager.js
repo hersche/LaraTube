@@ -15,7 +15,6 @@ var app;
 var theVue;
 var searchDelay;
 var theMediaSorter = new MediaSorter();
-require("./models");
 var siteManager = /** @class */ (function () {
     function siteManager(base) {
         this.initing = true;
@@ -184,7 +183,11 @@ var siteManager = /** @class */ (function () {
             components: {
                 'thesidebar': sidebarComp
             },
-            router: new Router({ routes: routes }),
+            router: new Router({ routes: routes,
+                scrollBehavior: function (to, from, savedPosition) {
+                    return { x: 0, y: 0 };
+                }
+            }),
             methods: {
                 alert: function (msg, type) {
                     if (type === void 0) { type = "dark"; }
@@ -445,12 +448,12 @@ var siteManager = /** @class */ (function () {
                 that.medias = [];
             }
             $.each(data.data, function (key, value) {
-                console.log(that.findMediaById(value.id));
+                //console.log(that.findMediaById(value.id))
                 if (that.findMediaById(value.id) == undefined) {
                     var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes);
                     $.each(m.comments, function (key1, value1) {
                         m.comments[key1] = that.fillUser(value1);
-                        console.log(that.fillUser(value1));
+                        //console.log(that.fillUser(value1))
                         m.comments[key1].user = that.getUserById(value1.user_id);
                     });
                     //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
@@ -462,7 +465,7 @@ var siteManager = /** @class */ (function () {
                     var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes);
                     $.each(m.comments, function (key1, value1) {
                         m.comments[key1] = that.fillUser(value1);
-                        console.log(that.fillUser(value1));
+                        //console.log(that.fillUser(value1))
                         m.comments[key1].user = that.getUserById(value1.user_id);
                     });
                     m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);

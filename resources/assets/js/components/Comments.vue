@@ -10,15 +10,34 @@
       <input type="button" class="ml-1" value="Send comment!" @click="sendComment();" />
     </form>
   </div>
-  <div v-for="comment in commentlist" class="comment mb-2 row" :style="'margin-left:'+Number(level*20)+'px'" :id='"cid"+comment.id'>
+  <div v-for="comment in commentlist" class="comment mb-2 row" :style="'margin-left:'+Number(level*10)+'px'" :id='"cid"+comment.id'>
       <div class="comment-content col-md-11 col-sm-10">
-          <h6 class="small comment-meta"><router-link class="btn btn-primary mr-2" :to="'/profile/'+comment.user.id"><img class="" style="width:25px;"  :src="'/'+comment.user.avatar" alt="avatar" /> {{ comment.user.name }}</router-link> {{ comment.created_at_readable}}
+          <h6 class="small comment-meta"><router-link class="btn btn-sm btn-primary mr-2" :to="'/profile/'+comment.user.id"><img class="" style="width:25px;"  :src="'/'+comment.user.avatar" alt="avatar" /> {{ comment.user.name }}</router-link> {{ comment.created_at_readable}}
               <span v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><vs-icon icon="delete"></vs-icon></span>
           </h6>
           <div class="comment-body">
           <p>{{ comment.body }}</p>
           <p>
-              <vs-collapse>
+            <div class="">
+            <button id="like" v-if="comment.myLike==1" type="button" @click="like(comment,0,'like')" class="btn btn-sm btn-success">
+              <vs-icon icon="thumb_up"></vs-icon>
+              <span class="ml-1" id="likeCount">{{ comment.likes }}</span>
+            </button>
+            <button id="like" v-else type="button" @click="like(comment,1,'like')" class="btn btn-sm btn-primary">
+              <vs-icon icon="thumb_up"></vs-icon>
+              <span class="ml-1" id="likeCount">{{ comment.likes }}</span>
+            </button>
+
+            <button id="dislike" v-if="comment.myLike==-1" type="button" @click="like(comment,0,'dislike')" class="btn btn-sm btn-success">
+              <vs-icon icon="thumb_down"></vs-icon>
+              <span class="ml-1" id="dislikeCount">{{ comment.dislikes }}</span>
+            </button>
+            <button id="dislike" v-else type="button" @click="like(comment,-1,'dislike')" class="btn btn-sm btn-primary">
+              <vs-icon icon="thumb_down"></vs-icon>
+              <span class="ml-1" id="dislikeCount">{{ comment.dislikes }}</span>
+            </button>
+          </div>
+              <vs-collapse class="">
                 <vs-collapse-item>
                   <div slot="header">
                     <vs-icon icon="reply"></vs-icon> Reply
@@ -30,11 +49,17 @@
                     <input placeholder="Comment..." class="col-9" :id="'comment_body'+comment.id" name="body" type="text">
                     <input type="button" class="ml-1" value="Send comment!" @click="sendComment(comment.id);" />
                   </form>
+
                 </vs-collapse-item>
               </vs-collapse>
+
             </p>
+
+            <div class="col-12">
+      <comments v-bind:commentlist="comment.childs" v-bind:level="Number(level)+1" v-bind:loggeduserid="loggeduserid" v-bind:currentmedia="currentmedia" ></comments>
+    </div>
           </div>
-          <comments v-bind:commentlist="comment.childs" v-bind:level="Number(level)+1" v-bind:loggeduserid="loggeduserid" v-bind:currentmedia="currentmedia" ></comments>
+
       </div>
     </div>
   </div>
@@ -57,6 +82,9 @@ import { eventBus } from '../eventBus.js';
                 type: 'POST',
                 data: new FormData($("#commentForm"+id)[0]),
                 cache: false,
+                mylike:0,
+                likes:0,
+                dislikes:0,
                 contentType: false,
                 processData: false,
                 complete : function(res) {
@@ -69,7 +97,44 @@ import { eventBus } from '../eventBus.js';
                 }
 
             });
-          }
+          },
+          like(comment,l,kind){
+            let that = this;
+            // TODO review this logic.. done?
+            if((kind=="like")){
+              if(comment.myLike==-1){
+                comment.dislikes -= 1;
+              }
+              if(l==0&&comment.myLike==1){
+                comment.likes-=1;
+              } else if(l==1&&comment.myLike!=1) {
+                comment.likes += 1;
+              }
+            }
+            if(kind=="dislike"){
+              if(comment.myLike==1){
+                comment.likes -= 1;
+              }
+              if(l==0&&comment.myLike==-1){
+                comment.dislikes-=1;
+              } else if(l==-1&&comment.myLike!=-1) {
+                comment.dislikes+=1;
+              }
+            }
+            $.ajax({
+                url: '/like?comment_id='+comment.id+'&count='+l,
+                type: 'GET',
+                contentType: "application/json",
+                cache: false,
+                complete : function(res) {
+                  /*if(res.status==201){
+                    eventBus.$emit('videoCreated',res.responseJSON);
+                  }*/
+                  comment.myLike=l;
+                }
+
+            });
+          },
         },
   }
 </script>
