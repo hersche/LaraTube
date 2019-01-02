@@ -60,6 +60,15 @@
                       </div>
 
                       <div class="form-group row">
+                          <label for="public" class="col-md-4 col-form-label text-md-right">Public</label>
+
+                          <div class="col-md-6">
+                              <vs-switch v-model="public"/>
+                              <input type="hidden" name="public" :value="Number(public)" />
+                          </div>
+                      </div>
+
+                      <div class="form-group row">
                           <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
 
                           <div class="col-md-6">
@@ -137,6 +146,7 @@
         csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         avatarCropped: null,
         backgroundCropped: null,
+        public: false,
       }
     },
     methods: {

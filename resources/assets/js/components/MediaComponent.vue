@@ -119,7 +119,7 @@
   import { User, Media, Tag } from '../models';
   import butterchurn from 'butterchurn';
   import butterchurnPresets from 'butterchurn-presets';
-  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {}),"","","","","",0,0,0);
+  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0);
   var WebTorrent = require('webtorrent')
   var client = new WebTorrent();
   var theTorrent;
@@ -135,8 +135,8 @@
     },
     methods: {
       visualTypesShort(val){
-        if(val.length>10){
-          return val.substring(0,9);
+        if(val.length>20){
+          return val.substring(0,19);
         }else{
           return val
         }
@@ -145,13 +145,16 @@
         if(torrentInterval!=undefined){
           clearInterval(torrentInterval)
           torrentInterval=undefined
-          if(audioNode!=undefined){
+          /*if(audioNode!=undefined){
             //audioCtx.close()
             //audioCtx=undefined
             audioNode.disconnect();
             gainNode.disconnect();
             audioNode=undefined;
             gainNode=undefined;
+          }*/
+          if(theTorrent!=undefined){
+            theTorrent.destroy();
           }
         }
             if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
@@ -196,7 +199,7 @@
                     }
                     function onDone () {
                       onProgress();
-                      console.log(url)
+                    //  console.log(url)
                       console.log(torrent.torrentFileBlobURL)
                       that.torrentdownloadurl = torrent.torrentFileBlobURL
                     }
@@ -206,10 +209,10 @@
             } else if(this.currentmedia.type=='localAudio'){
               $('#audioPlayer')[0].crossOrigin = 'Anonymous'
               audioCtx = new AudioContext();
-              console.log($('#audioPlayer')[0])
+              //console.log($('#audioPlayer')[0])
               audioNode = audioCtx.createMediaElementSource($('#audioPlayer')[0]);
               gainNode = audioCtx.createGain();
-              console.log(audioNode)
+              //console.log(audioNode)
 
               visualizer = butterchurn.createVisualizer(audioCtx, $('#audioVisual')[0], {
                 width: 400,
@@ -224,7 +227,7 @@ gainNode.connect(audioCtx.destination);
 // load a preset
 visualizer.connectAudio(gainNode);
 const preset = presets[this.audiovisualtype];
-console.log(butterchurnPresets.getPresets())
+//console.log(butterchurnPresets.getPresets())
 visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
 
 // resize visualizer
@@ -236,7 +239,7 @@ torrentInterval = setInterval(function(){
   visualizer.render();
 }, 100);
 
-            }
+}
       },
 
       prettyBytes(num,label=true) {
@@ -327,8 +330,8 @@ torrentInterval = setInterval(function(){
     watch: {
       '$route.params.currentTitle': function (val) {
         //this.fullName = val + ' ' + this.lastName
-        console.log("route-watch")
-        console.log(val)
+      //  console.log("route-watch")
+      //  console.log(val)
         this.currentmedia = this.getCurrentMedia()
         this.initTorrent()
       },

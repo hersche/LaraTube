@@ -6,7 +6,8 @@ export class User{
   bio:string;
   mediaIds:any;
   tagString:string;
-  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string){
+  publicState:boolean;
+  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean){
     this.id=id;
     this.name = name;
     this.avatar = avatar;
@@ -14,6 +15,7 @@ export class User{
     this.bio = bio;
     this.mediaIds = mediaIds;
     this.tagString = tagString;
+    this.publicState = publicState;
   }
   toJson(){
     return "{id:"+this.id+",name:'"+this.name+"',avatar:'"+this.avatar+"',background:'"+this.background+"'}"

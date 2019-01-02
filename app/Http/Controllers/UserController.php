@@ -237,6 +237,7 @@ class UserController extends Controller
         }
         $user->avatar_source = $avatar_source;
         $user->background_source = $background_source;
+
         $user->save();
         if(!empty($request->input('roles'))){
           DB::table('model_has_roles')->where('model_id',$id)->delete();

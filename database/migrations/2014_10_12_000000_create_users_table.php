@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->text('bio')->nullable();
+            $table->boolean('public')->default(false);
             $table->string('avatar_source')->default('');
             $table->string('background_source')->default('');
             $table->string('api_token', 60)->unique()->nullable();
