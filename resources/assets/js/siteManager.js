@@ -10,6 +10,7 @@ import VueApexCharts from 'vue-apexcharts';
 import Vuesax from 'vuesax';
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css'; //Vuesax styles
+import VuePlyr from 'vue-plyr';
 var app;
 var theVue;
 var searchDelay;
@@ -32,6 +33,8 @@ var siteManager = /** @class */ (function () {
         Vue.use(VueCroppie);
         Vue.use(VueApexCharts);
         Vue.use(Vuesax);
+        Vue.use(VuePlyr);
+        //Vue.component('plyr', VuePlyr)
         Vue.component('apexchart', VueApexCharts);
         var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
         var player = Vue.component('player', require("./components/MediaComponent.vue"));
@@ -480,19 +483,20 @@ var siteManager = /** @class */ (function () {
                     that.medias.push(m);
                 }
                 else {
-                    var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes);
-                    $.each(m.comments, function (key1, value1) {
+                    /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
+                      $.each( m.comments, function( key1, value1 ) {
                         m.comments[key1] = that.fillUser(value1);
                         //console.log(that.fillUser(value1))
-                        m.comments[key1].user = that.getUserById(value1.user_id);
-                    });
-                    m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-                    if (m != value) {
+                        m.comments[key1].user = that.getUserById(value1.user_id)
+          
+                      });
+                      m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+                      if(m!=value){
                         replaceCount++;
-                        console.log("Media replaced " + value.title + " with " + m.title);
+                        console.log("Media replaced "+value.title+" with "+m.title)
                         m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
                         that.medias[key] = m;
-                    }
+                      }*/
                 }
             });
             if (data.links != undefined) {

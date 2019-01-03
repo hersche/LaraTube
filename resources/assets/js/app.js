@@ -8,6 +8,7 @@ require('./bootstrap');
 //import treeNav from 'vue-tree-nav'
 
 var $ = require('jquery');
+
 //require("jquery-mousewheel")($);
 //require('malihu-custom-scrollbar-plugin')($);
 var WebTorrent = require('webtorrent')

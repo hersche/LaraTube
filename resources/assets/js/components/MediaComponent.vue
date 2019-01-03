@@ -20,11 +20,14 @@
     </audio>
 </div>
 
-          <video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer" v-if="currentmedia.techType=='video'" >
+          <vue-plyr v-if="currentmedia.techType=='video'"><video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
             <source :src="currentmedia.source" type="video/mp4"></source>
           </video>
-          <video class="col-12" id="torrentPlayer" v-if="currentmedia.techType=='torrent'" controls :poster="currentmedia.poster_source">
+          </vue-plyr>
+          <vue-plyr v-if="currentmedia.techType=='torrent'" >
+          <video class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
           </video>
+          </vue-plyr>
         </div>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-12"></div>
@@ -120,6 +123,7 @@
   import { eventBus } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   import Comments from './Comments'
+  //import plyr from 'plyr'
   import { User, Media, Tag } from '../models';
   import butterchurn from 'butterchurn';
   import butterchurnPresets from 'butterchurn-presets';
@@ -176,8 +180,8 @@
       },
       initTorrent(){
         if(torrentInterval!=undefined){
-          clearInterval(torrentInterval)
-          torrentInterval=undefined
+          //clearInterval(torrentInterval)
+          //torrentInterval=undefined
           /*if(audioNode!=undefined){
             //audioCtx.close()
             //audioCtx=undefined
@@ -190,10 +194,14 @@
             //theTorrent.destroy();
           }
         }
-            if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
+        if(this.currentmedia.techType=="video"){
+        //  var player = new plyr('#videoPlayer');
+        }
+        else if(this.currentmedia.techType=="torrent"){
 
               let that = this;
               this.lasttorrentid = this.currentmedia.source;
+            //  var player = new plyr('#torrentPlayer');
               client.add(this.currentmedia.source, function (torrent) {
                 theTorrent = torrent;
                   // Torrents can contain many files. Let's use the .mp4 file
