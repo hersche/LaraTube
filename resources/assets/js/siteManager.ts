@@ -248,7 +248,7 @@ class siteManager {
             clearTimeout(searchDelay);
           }
           searchDelay = setTimeout(function(){
-            that.receiveMedias("/internal-api/media/search/"+s+that.getIgnoreParam());
+            that.receiveMedias("/internal-api/medias/search/"+s+that.getIgnoreParam());
           }, 300);
 
         }

@@ -1,8 +1,10 @@
 <?php
 use Illuminate\Http\Request;
 use App\Media;
+use App\Category;
 use App\DirectTag;
 use App\Http\Resources\Media as MediaResource;
+use App\Http\Resources\Category as CategoryResource;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -79,11 +81,13 @@ Route::get('/internal-api/medias/all', function (Request $request) {
     return MediaResource::collection(Media::orderBy('created_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 
-Route::get('/internal-api/media/search/{title}', function (Request $request,$title) {
+Route::get('/internal-api/medias/search/{title}', function (Request $request,$title) {
 
     return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')->orWhere('description', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('description', 'LIKE' ,'%'.strtolower($title).'%')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
-
+Route::get('/internal-api/categories', function (Request $request,$title) {
+    return CategoryResource::collection(Category::all());
+});
 Route::get('/internal-api/media/{title}', function ($title) {
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
