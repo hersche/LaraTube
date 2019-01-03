@@ -10,14 +10,16 @@
   <p>
   <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')"></p>
   <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px" id="audioVisual"></canvas>
-  <audio class="text-center"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer v-if="currentmedia.type=='localAudio'"  controls :poster="currentmedia.poster_source">
+  <vue-plyr v-if="currentmedia.type=='localAudio'"><audio class="text-center"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
      <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
    </audio>
+ </vue-plyr>
    <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
-
+<vue-plyr v-if="currentmedia.type=='directAudio'">
    <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
       <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
     </audio>
+    </vue-plyr>
 </div>
 
           <vue-plyr v-if="currentmedia.techType=='video'"><video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
