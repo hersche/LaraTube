@@ -58,7 +58,7 @@ class MediaController extends Controller
         $duration = "0";
         if(empty($source)){
           $file = $request->file('directMedia');
-          $extension = $file->getClientOriginalExtension();
+          //$extension = $file->getClientOriginalExtension();
           $source = $file->store('public/directMedia');
           $id3 = $getID3->analyze($source);
           if(!empty($id3)&&!empty($id3['playtime_string'])){

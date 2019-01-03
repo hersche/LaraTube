@@ -216,7 +216,7 @@ var siteManager = /** @class */ (function () {
                             clearTimeout(searchDelay);
                         }
                         searchDelay = setTimeout(function () {
-                            that.receiveMedias("/internal-api/media/search/" + s + that.getIgnoreParam());
+                            that.receiveMedias("/internal-api/medias/search/" + s + that.getIgnoreParam());
                         }, 300);
                     }
                     var so = new Search(s.toString(), that.medias, that.tags, that.users);
