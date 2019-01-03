@@ -4,6 +4,7 @@ namespace App;
 use App\User;
 use App\Comment;
 use App\Like;
+use App\Track;
 use Auth;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,14 @@ class Media extends Model
 
     public function user() {
       return User::find($this->user_id);
+    }
+
+    public function category() {
+      return Category::find($this->category_id);
+    }
+
+    public function tracks() {
+      return Track::where("media_id","=",$this->id)->get();
     }
 
     public function comments() {

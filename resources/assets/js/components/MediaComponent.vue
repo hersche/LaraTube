@@ -181,6 +181,7 @@
         }
       },
       initTorrent(){
+        console.log("run init")
         if(torrentInterval!=undefined){
           //clearInterval(torrentInterval)
           //torrentInterval=undefined
@@ -193,14 +194,16 @@
             gainNode=undefined;
           }*/
           if(theTorrent!=undefined){
-            //theTorrent.destroy();
+            theTorrent.destroy();
           }
         }
         if(this.currentmedia.techType=="video"){
+          this.inited=true
         //  var player = new plyr('#videoPlayer');
         }
         else if(this.currentmedia.techType=="torrent"){
-
+          this.inited=true
+          console.log("run init for torrent")
               let that = this;
               this.lasttorrentid = this.currentmedia.source;
             //  var player = new plyr('#torrentPlayer');
@@ -250,6 +253,7 @@
                   file.renderTo('video#torrentPlayer');
                 });
             } else if(this.currentmedia.type=='localAudio'&this.audiovisualtype!='Poster'){
+              this.inited=true
               $('#audioPlayer')[0].crossOrigin = 'Anonymous'
               audioCtx = new AudioContext();
               //console.log($('#audioPlayer')[0])
@@ -375,14 +379,15 @@ torrentInterval = setInterval(function(){
         //this.fullName = val + ' ' + this.lastName
       //  console.log("route-watch")
       //  console.log(val)
+      this.inited = false;
         this.currentmedia = this.getCurrentMedia()
         this.initTorrent()
       },
       audiovisualtype: function(val){
-        if(torrentInterval!=undefined&this.audiovisualtype=='Poster'){
+        /*if(torrentInterval!=undefined&this.audiovisualtype=='Poster'){
           clearInterval(torrentInterval)
         }
-        this.initTorrent();
+        this.initTorrent();*/
         localStorage.setItem('audioVisualType',this.audiovisualtype);
   //      console.log("change visualtype")
     //    visualizer.loadPreset(presets[val], 0.0);
@@ -403,14 +408,14 @@ torrentInterval = setInterval(function(){
     updated: function () {
       this.$nextTick(function () {
 
-        this.currentmedia = this.getCurrentMedia()
-        this.initTorrent();
     if((this.currentmedia!=undefined)&&(this.inited==false)){
-
+      this.currentmedia = this.getCurrentMedia()
+      this.initTorrent()
+      //this.initTorrent();
       this.mylike = Number(this.currentmedia.myLike);
       this.likes = this.currentmedia.likes;
       this.dislikes = this.currentmedia.dislikes;
-      this.inited=true
+
       if(this.currentmedia.techType=="audio"){
       //  console.log("init visualizer")
 
@@ -419,7 +424,7 @@ torrentInterval = setInterval(function(){
 
 
       }
-      //this.initTorrent()
+
   } });
     },
     mounted(){
