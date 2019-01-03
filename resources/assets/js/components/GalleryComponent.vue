@@ -8,7 +8,7 @@
     </div>
 
     </div>
-<button class="btn btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
+<p class="text-center" v-if="canloadmore">Scroll to bottom to load more</p>
   </div>
 </template>
 <script>

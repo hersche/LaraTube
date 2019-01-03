@@ -152,6 +152,16 @@ var siteManager = /** @class */ (function () {
         eventBus.$on('loadMore', function (title) {
             that.receiveMedias(that.nextLink);
         });
+        window.onscroll = function () {
+            var d = document.documentElement;
+            var offset = d.scrollTop + window.innerHeight;
+            var height = d.offsetHeight;
+            if (offset >= height) {
+                if (that.nextLink != null) {
+                    that.receiveMedias(that.nextLink);
+                }
+            }
+        };
         eventBus.$on('refreshSearch', function (title) {
             theVue.searching();
         });
@@ -255,6 +265,16 @@ var siteManager = /** @class */ (function () {
                 }
             }
         }).$mount('#app2');
+        if (localStorage.getItem('cookiePolicy') != "read") {
+            theVue.$vs.notify({
+                title: 'We use cookies and the offline-storage',
+                text: 'Some of your informations are saved in your browser or on the server (mostly in case of login).<br /> With a Ok you acceppt this. <br /> <a class="btn btn-success" onclick="localStorage.setItem(\'cookiePolicy\',\'read\');">Ok</a>',
+                color: 'primary',
+                fixed: true,
+                click: function () {
+                },
+            });
+        }
     };
     siteManager.prototype.fillUser = function (comment) {
         var that = this;

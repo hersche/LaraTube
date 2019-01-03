@@ -17,7 +17,7 @@ header('Access-Control-Allow-Origin: *');
     @else
       <meta id="loggedUserId" content="{{ Auth::id() }}">
     @endguest
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'LaraTube') }}</title>
     <script>var baseUrl = "{{ url("/") }}/";</script>
     <!-- Scripts -->
     @yield('header-before-js')

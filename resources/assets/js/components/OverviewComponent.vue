@@ -13,17 +13,35 @@
       <div class="carousel-inner" id="carouselInnerBody">
         <div v-for="(item,index) in medias" :class="{ 'active': index === 0 }" class="carousel-item bg-dark">
           <div class="text-center"><img :src="item.poster_source" class="" :alt="item.title"></div>
-          <div class="carousel-caption" style="color: black; background: lightgrey; opacity:0.9;">
-            <h3>{{ item.title }} ({{ item.created_at_readable }})</h3>
-            <p>{{ item.description }}<span class="float-right"><router-link class="btn btn-primary mr-2" :to="'/media/'+item.title">Play</router-link></span></p>
-            <div class="card-footer"><span v-for="tag in item.tags" >
-              <router-link class="" :to="'/tags/'+tag.name" >    <vs-chip color="primary">
-      <vs-avatar icon="tag" />
-      {{ tag.name }}
-    </vs-chip></router-link>
-            </span><span v-if="loggeduserid==item.user.id" class="float-right"><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+item.title">Edit</router-link></span></div>
-          </div>
+          <div class="carousel-caption" style="color:black; opacity:0.9;">
+
+            <vs-row vs-justify="center">
+              <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
+                <vs-card>
+                  <div slot="header">
+                    <h3>{{ item.title }}</h3>
+                    <h5>({{ item.created_at_readable }})</h5>
+                  </div>
+                  <div>
+                    <div>{{ item.description }}</div>
+                    <div><span v-for="tag in item.tags" ><router-link class="" :to="'/tags/'+tag.name" >    <vs-chip color="primary">
+            <vs-avatar icon="tag" />
+            {{ tag.name }}
+          </vs-chip></router-link></span></div>
+                  </div>
+                  <div slot="footer">
+                    <vs-row vs-justify="flex-end">
+                      <vs-button v-if="loggeduserid==item.user.id" icon="settings" title="Edit media" :to="'/mediaedit/'+item.title"></vs-button>
+                      <vs-button icon="play_circle_filled" title="Play" :to="'/media/'+item.title"></vs-button>
+                    </vs-row>
+                  </div>
+                </vs-card>
+              </vs-col>
+            </vs-row>
+
+
         </div>
+      </div>
         <a class="carousel-control-prev bg-dark" href="#demo" data-slide="prev">
           <span class="carousel-control-prev-icon"></span>
         </a>

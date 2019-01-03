@@ -8,11 +8,13 @@
 
 
   <p>
-  <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'"></p>
-  <canvas v-if="currentmedia.type=='localAudio'"  class="col-12" height="400" style="height: 400px" id="audioVisual"></canvas>
+  <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')"></p>
+  <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px" id="audioVisual"></canvas>
   <audio class="text-center"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer v-if="currentmedia.type=='localAudio'"  controls :poster="currentmedia.poster_source">
      <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
    </audio>
+   <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
+
    <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
       <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
     </audio>
@@ -31,14 +33,16 @@
           <span class='h3'>{{ currentmedia.title }}</span>
           <div class="float-right">
 
-                          <span v-if="currentmedia.techType=='audio'" >visualizer <select  value="Flexi - alien fish pond" v-model="audiovisualtype">
-                            <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
+            <span class="float-left"><vs-input-number v-if="currentmedia.type=='localAudio'" v-model="audioVisualChangeSeconds" :step="0.1"/></span>
+            <span v-if="currentmedia.type=='localAudio'" >visualizer <select  value="Flexi - alien fish pond" v-model="audiovisualtype">
+              <option value="Poster">Poster</option>
+                <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
                             <!--<option value="Cope - The Neverending Explosion of Red Liquid Fire">Cope - The Neverending Explosion of Red Liquid Fire</option>
                             <option value="Flexi - alien fish pond">Flexi - alien fish pond</option>-->
-                          </select></span>
+            </select></span>
 
-                          <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.type=='torrentAudio'|currentmedia.type=='torrentVideo')" >Download file</a>
-                          <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.type=='torrentAudio'|currentmedia.type=='torrentVideo'" >Torrent-info</b-btn>
+                          <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
+                          <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.techType=='torrent'" >Torrent-info</b-btn>
             <span class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
 
               <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
@@ -134,6 +138,35 @@
         'comments': Comments
     },
     methods: {
+      visualFullScreen(){
+        if (
+  document.fullscreenElement ||
+  document.webkitFullscreenElement ||
+  document.mozFullScreenElement ||
+  document.msFullscreenElement
+) {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+} else {
+  var element = $('#audioVisual')[0];
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+}
+},
       visualTypesShort(val){
         if(val.length>20){
           return val.substring(0,19);
@@ -154,7 +187,7 @@
             gainNode=undefined;
           }*/
           if(theTorrent!=undefined){
-            theTorrent.destroy();
+            //theTorrent.destroy();
           }
         }
             if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
@@ -206,7 +239,7 @@
 
                   file.renderTo('video#torrentPlayer');
                 });
-            } else if(this.currentmedia.type=='localAudio'){
+            } else if(this.currentmedia.type=='localAudio'&this.audiovisualtype!='Poster'){
               $('#audioPlayer')[0].crossOrigin = 'Anonymous'
               audioCtx = new AudioContext();
               //console.log($('#audioPlayer')[0])
@@ -336,9 +369,17 @@ torrentInterval = setInterval(function(){
         this.initTorrent()
       },
       audiovisualtype: function(val){
+        if(torrentInterval!=undefined&this.audiovisualtype=='Poster'){
+          clearInterval(torrentInterval)
+        }
+        this.initTorrent();
+        localStorage.setItem('audioVisualType',this.audiovisualtype);
   //      console.log("change visualtype")
     //    visualizer.loadPreset(presets[val], 0.0);
-      }
+  },
+  audioVisualChangeSeconds:function(val){
+    localStorage.setItem('audioVisualChangeSeconds',this.audioVisualChangeSeconds);
+  }
     },
     computed: {
       series2: function () {
@@ -351,8 +392,9 @@ torrentInterval = setInterval(function(){
     },
     updated: function () {
       this.$nextTick(function () {
+
+        this.currentmedia = this.getCurrentMedia()
         this.initTorrent();
-      //  this.currentmedia = this.getCurrentMedia()
     if((this.currentmedia!=undefined)&&(this.inited==false)){
 
       this.mylike = Number(this.currentmedia.myLike);
@@ -375,7 +417,14 @@ torrentInterval = setInterval(function(){
         this.autoplay=true;
       }
       this.currentmedia = this.getCurrentMedia()
-    //  this.initTorrent()
+      if(localStorage.getItem('audioVisualType')!=undefined&localStorage.getItem('audioVisualType')!=''){
+        this.audiovisualtype=localStorage.getItem('audioVisualType');
+      }
+      if(localStorage.getItem('audioVisualChangeSeconds')!=undefined&localStorage.getItem('audioVisualChangeSeconds')!=''){
+        this.audioVisualChangeSeconds=localStorage.getItem('audioVisualChangeSeconds');
+      }
+      //this.currentmedia = this.getCurrentMedia()
+     ///this.initTorrent()
   },
   data(){
     return {
@@ -388,6 +437,7 @@ torrentInterval = setInterval(function(){
       currentmedia:emptyMedia,
       originalLikes: 0,
       originalDislikes: 0,
+      audioVisualChangeSeconds:0.0,
       autoplay:false,
       lasttorrentid:'',
       audiovisualtype:'Flexi - alien fish pond',
