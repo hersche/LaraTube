@@ -12,6 +12,10 @@
          <select name="type" v-model="currentmedia.type"><option value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
     </div>
     <div class="form-group row">
+        <label>Category</label>
+         <select name="category_id" v-model="catid" ><option value="">None</option><option v-for="item in categories" :value="item.id">{{ item.title }}</option></select>
+    </div>
+    <div class="form-group row">
         <label>Source:</label>
          <p>{{currentmedia.source}}</p>
     </div>
@@ -89,7 +93,7 @@
   import { eventBus } from '../eventBus.js';
   import { Media }  from '../models';
   export default {
-    props: ['medias','baseUrl'],
+    props: ['medias','baseUrl','categories'],
     mounted: function () {
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',
@@ -110,6 +114,7 @@
       // a computed getter
       currentmedia: function () {
         var m = this.getCurrentMedia();
+        this.catid = m.category_id;
         if(m==undefined){
           return new Media(0,"None","","","","","","","","","","","","","","",0,0,0,[],0)
         }
@@ -258,6 +263,7 @@ rotate(rotationAngle,event) {
         dismisscountdown: 0,
         alertType: 'warning',
         alertMsg: '',
+        catid:'',
         editpicloaded:false,
         showdismissiblealert: false,
         cropped: null,

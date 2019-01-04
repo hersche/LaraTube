@@ -5,7 +5,7 @@ import BootstrapVue from 'bootstrap-vue';
 import VueCroppie from 'vue-croppie';
 import { eventBus } from './eventBus';
 import { MediaSorter, Search } from './tools';
-import { User, Media, Tag } from './models';
+import { User, Media, Tag, Category } from './models';
 import VueApexCharts from 'vue-apexcharts';
 import Vuesax from 'vuesax';
 import 'material-icons/iconfont/material-icons.css';
@@ -189,6 +189,7 @@ var siteManager = /** @class */ (function () {
                 canloadmore: true,
                 medias: this.medias,
                 user: that.currentUser,
+                categories: that.categories,
                 baseUrl: baseUrl
             },
             components: {
@@ -318,6 +319,7 @@ var siteManager = /** @class */ (function () {
                     that.users.push(u);
                 });
                 that.receiveTags();
+                that.receiveCategories();
             }
         });
     };
@@ -334,17 +336,17 @@ var siteManager = /** @class */ (function () {
         if (forceUpdate === void 0) { forceUpdate = false; }
         var that = this;
         $.getJSON("/internal-api/categories", function name(data) {
-            if ((that.tags == undefined) || (forceUpdate)) {
-                that.tags = [];
+            if ((that.categories == undefined) || (forceUpdate)) {
+                that.categories = [];
                 $.each(data.data, function (key, value) {
-                    that.tags.push(new Tag(value.id, value.name, value.slug, value.count));
+                    console.log("push cat " + value.title);
+                    that.categories.push(new Category(value.id, value.title, value.description, value.avatar_source, value.background_source));
                 });
             }
-            this.tags = that.tags;
+            this.categories = that.categories;
             if (theVue != undefined) {
-                theVue.tags = this.tags;
+                theVue.categories = this.categories;
             }
-            that.receiveMedias();
         });
     };
     siteManager.prototype.receiveTags = function (forceUpdate) {
@@ -400,6 +402,7 @@ var siteManager = /** @class */ (function () {
             if (that.findMediaByName(mediaName) == undefined) {
                 var m = new Media(data.id, data.title, data.description, data.source, data.poster_source, data.duration, data.simpleType, data.techType, data.type, that.getUserById(data.user_id), data.user_id, data.created_at, data.updated_at, data.created_at_readable, data.comments, that.getTagsByIdArray(data.tagsIds), data.myLike, data.likes, data.dislikes, data.tracks, data.category_id);
                 $.each(m.comments, function (key1, value1) {
+                    m.comments[key1] = that.fillUser(value1);
                     m.comments[key1].user = that.getUserById(value1.user_id);
                 });
                 that.medias.push(m);
@@ -531,6 +534,8 @@ var siteManager = /** @class */ (function () {
                 theVue.canloadmore = false;
             }
             theVue.users = that.users;
+            theVue.categories = that.categories;
+            console.log(this.categories);
             that.medias = theMediaSorter.sort(that.medias);
             theVue.medias = that.medias;
             if (theVue.$route.params.profileId != undefined) {

@@ -89,7 +89,7 @@ class MediaController extends Controller
           }
         }
 
-        $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => $poster_source,'duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id()]);
+        $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => $poster_source,'duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id(),'category_id' =>  $request->input('category_id'),]);
         $media->retag($tagArray);
         return new MediaResource($media);
     }
@@ -234,6 +234,7 @@ class MediaController extends Controller
         $data = base64_decode($data);
         $media = Media::where('title', '=' ,$title)->firstOrFail();
         $media->title = $request->input('title');
+        $media->category_id = $request->input('category_id');
         //$media->source = $request->input('source');
         $media->description = $request->input('description');
         $tagArrayExtract = explode(' ', $request->input('tags'));
