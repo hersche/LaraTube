@@ -2,20 +2,20 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
     <h4>Edit media</h4>
     <form id="theForm">
-      <div class="form-group">
+      <div class="form-group row">
           <label>Media-title</label>
           <input type="hidden" value="" name="image" id="addMediaImage" />
                <input placeholder="Media-title" class="form-control" :value="currentmedia.title" name="title" type="text">
       </div>
-    <div class="form-group">
+    <div class="form-group row">
         <label>Media-type (only for restore):</label>
          <select name="type" v-model="currentmedia.type"><option value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <label>Source:</label>
          <p>{{currentmedia.source}}</p>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <label>Media-poster:</label>
         <!-- the result -->
         <vue-croppie
@@ -38,20 +38,50 @@
     </div>
 
 
-      <div class="form-group">
+      <div class="form-group row">
           <label>Media-description:</label>
           <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" :value="currentmedia.description" name="description" cols="50" rows="10"></textarea>
       </div>
-      <div class="col-xs-12 col-sm-12 col-md-12">
-          <div class="form-group">
-              <strong>Tags (separate with spaces):</strong>
+          <div class="form-group row">
+              <label>Tags (separate with spaces):</label>
               <input id="tags" type="text" class="form-control" name="tags" :value="currentmedia.tagString" >
           </div>
-      </div>
+
+          <div class="form-group row">
+              <label>Subtitle</label>
+              <b-button class="float-right" @click="showModal">
+      Manage
+    </b-button>
+              </div>
 
 
     </form>
+    <b-modal ref="myModalRef" hide-footer title="Using Component Methods">
+      <div class="d-block text-center">
+        <h4 v-if="currentmedia.tracks.length>0">Existing tracks</h4>
+        <p v-for="track in currentmedia.tracks">
+          <a class="text-left" :href="track.source">{{ track.lang }}</a> <a class="btn btn-primary btn-sm float-right" @click="deleteTrack(track.id)">DELETE {{ track.lang }}</a>
+        </p>
+        <h4>Add track</h4>
+        <form id="addTrackForm">
+          <div class="form-group row">
+            <label>Language</label>
+            <input type="text" class="form-control" name="lang" />
+            <input type="hidden" class="form-control" name="media_id" :value="currentmedia.id" />
+          </div>
+          <div class="form-group row">
+            <label>File</label>
+            <input id="track" name="track" accept=".srt,.vtt" class="form-control" type="file">
+          </div>
+        </form>
 
+      </div>
+      <div class="row">
+      <b-btn @click="submitTrack();" class="mt-3 col-4" variant="outline-success" block >Upload track</b-btn>
+      <b-btn class="mt-3 col-4" variant="outline-danger" block @click="hideModal">Upload track and close</b-btn>
+      <b-btn @click="$refs.myModalRef.hide()" class="mt-3 col-4" variant="outline-success" block >Cancel</b-btn>
+    </div>
+    </b-modal>
     <button @click="submitAction();" class="btn btn-success" >Save</button> <button @click="deleteAction();" class="btn btn-danger" >Delete</button>
     </div>
 </template>
@@ -81,19 +111,27 @@
       currentmedia: function () {
         var m = this.getCurrentMedia();
         if(m==undefined){
-          return new Media(0,"None","","","","","","","","","","","","","","",0,0,0)
+          return new Media(0,"None","","","","","","","","","","","","","","",0,0,0,[],0)
         }
         return m;
       }
     },
 
     methods: {
+      showModal () {
+  this.$refs.myModalRef.show()
+},
+hideModal () {
+  this.submitTrack();
+  this.$refs.myModalRef.hide()
+},
       getCurrentMedia(){
         let that = this;
         var theMedia;
         this.medias.forEach(function(val,key){
           if(val.title==that.$route.params.editTitle){
             theMedia = val;
+            console.log(val.tracks)
           }
         });
         return theMedia;
@@ -109,6 +147,48 @@
         }
         reader.readAsDataURL($("#posterUpload")[0].files[0]);
 
+      },
+      submitTrack() {
+        let that = this;
+        $.ajax({
+            url: '/internal-api/medias/addTrack',
+            type: 'POST',
+            data: new FormData($("#addTrackForm")[0]),
+            cache: false,
+            contentType: false,
+            processData: false,
+            complete : function(res) {
+              if(res.status==200){
+              }
+              console.log("received create")
+              eventBus.$emit('refreshMedia',that.currentmedia.id);
+            //  eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
+            }
+
+        });
+        return false;
+      },
+
+      deleteTrack(id) {
+        let that = this;
+        console.log("send "+id)
+        $.ajax({
+            url: '/internal-api/medias/deleteTrack/'+id,
+            type: 'POST',
+            data: '',
+            cache: false,
+            contentType: false,
+            processData: false,
+            complete : function(res) {
+              if(res.status==200){
+              }
+              console.log("received delete")
+              eventBus.$emit('refreshMedia',that.currentmedia.id);
+            //  eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
+            }
+
+        });
+        return false;
       },
       submitAction() {
         let that = this;

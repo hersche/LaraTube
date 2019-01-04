@@ -9,12 +9,12 @@
 
   <p>
   <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')"></p>
-  <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px" id="audioVisual"></canvas>
-  <vue-plyr v-if="currentmedia.type=='localAudio'"><audio class="text-center"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
+  <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
+  <vue-plyr v-if="currentmedia.type=='localAudio'"><audio class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
      <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
    </audio>
  </vue-plyr>
-   <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
+   <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary col-1 float-right" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
 <vue-plyr v-if="currentmedia.type=='directAudio'">
    <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
       <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
@@ -24,10 +24,12 @@
 
           <vue-plyr v-if="currentmedia.techType=='video'"><video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
             <source :src="currentmedia.source" type="video/mp4"></source>
+            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
           </video>
           </vue-plyr>
           <vue-plyr v-if="currentmedia.techType=='torrent'" >
           <video class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
+            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
           </video>
           </vue-plyr>
         </div>
@@ -129,7 +131,7 @@
   import { User, Media, Tag } from '../models';
   import butterchurn from 'butterchurn';
   import butterchurnPresets from 'butterchurn-presets';
-  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0);
+  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
   var WebTorrent = require('webtorrent')
   var client = new WebTorrent();
   var theTorrent;
@@ -160,8 +162,13 @@
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
+  if(visualizer!=undefined){
+    console.log("exit set visual")
+    visualizer.setRendererSize(400, 400);
+  }
 } else {
   var element = $('#audioVisual')[0];
+
   if (element.requestFullscreen) {
     element.requestFullscreen();
   } else if (element.mozRequestFullScreen) {
@@ -170,6 +177,10 @@
     element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
   } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen();
+  }
+  if(visualizer!=undefined){
+    console.log("fs set visual")
+    visualizer.setRendererSize($(window).width(), $(window).height());
   }
 }
 },

@@ -16,7 +16,7 @@ var User = /** @class */ (function () {
 }());
 export { User };
 var Media = /** @class */ (function () {
-    function Media(id, title, description, source, poster_source, duration, simpleType, techType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike, likes, dislikes) {
+    function Media(id, title, description, source, poster_source, duration, simpleType, techType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike, likes, dislikes, tracks, category_id) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -37,6 +37,8 @@ var Media = /** @class */ (function () {
         this.likes = likes;
         this.dislikes = dislikes;
         this.tagString = this.tagStringing();
+        this.tracks = tracks;
+        this.category_id = category_id;
     }
     Media.prototype.tagStringing = function () {
         var theTagString = "";
@@ -61,3 +63,14 @@ var Tag = /** @class */ (function () {
     return Tag;
 }());
 export { Tag };
+var Category = /** @class */ (function () {
+    function Category(id, title, description, avatar, background) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.avatar = avatar;
+        this.background = background;
+    }
+    return Category;
+}());
+export { Category };

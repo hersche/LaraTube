@@ -1,44 +1,50 @@
 <template lang="html">
 
   <div id="parentx" class=" fixed-top bg-light">
-    <vs-navbar  v-model="activeItem" class="nabarx" style="">
-<vs-button @click="active=!active" type="flat" icon="menu"></vs-button>
-
-        <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
-
-
+    <vs-navbar class="nabarx" style="">
+      <vs-button @click="active=!active" type="flat" icon="menu"></vs-button>
+      <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
       <vs-spacer></vs-spacer>
-
-
       <input icon="search" placeholder="Search" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
 
-    <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
+    <vs-sidebar parent="body" default-index="0"  color="primary" class="sidebarx" spacer v-model="active">
       <div v-if="currentuser.id!=0" class="header-sidebar" slot="header" :style="'background-image:url('+currentuser.background+');'">
         <vs-avatar  size="70px" :src="currentuser.avatar"/>
         <h4>
-          <router-link class="" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link>
-          <vs-button color="primary" icon="more_horiz" type="flat"></vs-button>
+          <router-link class="btn btn-sm btn-success" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link>
         </h4>
-        <vs-navbar-item index="3">
-          <router-link class="" to="/upload">Upload</router-link>
+        <vs-navbar-item index="0">
+          <router-link class="btn btn-sm btn-success" to="/upload">Upload</router-link>
         </vs-navbar-item>
       </div>
       <vs-navbar-item index="1">
         <router-link class="" to="/">Home</router-link>
       </vs-navbar-item>
-      <vs-navbar-item index="0">
+      <vs-navbar-item index="2">
         <router-link class="" to="/charts">Charts</router-link>
       </vs-navbar-item>
-      <vs-navbar-item index="2">
+      <vs-navbar-item index="3">
         <router-link class="" to="/tags">Tags</router-link>
       </vs-navbar-item>
-      <vs-navbar-item index="3">
+      <vs-navbar-item index="4">
+        <router-link class="" to="/about">About</router-link>
+      </vs-navbar-item>
+      <vs-navbar-item index="5">
         <a @click="emitGetNewMedias()" style="cursor: pointer;" class="">Check 4 new medias</a>
       </vs-navbar-item>
-      <vs-navbar-item index="4">
-      <a v-b-modal.moremodal class="" style="cursor: pointer;" >Special options</a>
-      </vs-navbar-item>
+
+       <vs-sidebar-group title="Dev options">
+         <p>Medias loaded: {{ medias.length }}</p>
+         <p>Users loaded: {{ users.length }}</p>
+         <p>Tags loaded: {{ tags.length }}</p>
+         <vs-navbar-item index="6.1">
+           <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
+         </vs-navbar-item>
+         <vs-navbar-item index="6.1">
+           <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
+          </vs-navbar-item>
+      </vs-sidebar-group>
 
 
 
@@ -53,13 +59,6 @@
       </div>
 
     </vs-sidebar>
-    <b-modal id="moremodal" style="" title="More options">
-      <p>Medias loaded: {{ medias.length }}</p>
-      <p>Users loaded: {{ users.length }}</p>
-      <p>Tags loaded: {{ tags.length }}</p>
-      <p ><button @click="emitRefreshMedias()" class="btn btn-warning mr-1">Reset data</button></p>
-      <p><button @click="emitLoadAllMedias()" class="btn btn-danger mr-1">Load all medias</button></p>
-    </b-modal>
   </div>
 
 </template>

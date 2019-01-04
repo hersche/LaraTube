@@ -7,6 +7,7 @@ export class User{
   mediaIds:any;
   tagString:string;
   publicState:boolean;
+
   constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean){
     this.id=id;
     this.name = name;
@@ -16,6 +17,7 @@ export class User{
     this.mediaIds = mediaIds;
     this.tagString = tagString;
     this.publicState = publicState;
+
   }
   toJson(){
     return "{id:"+this.id+",name:'"+this.name+"',avatar:'"+this.avatar+"',background:'"+this.background+"'}"
@@ -44,8 +46,9 @@ export class Media {
   likes:number;
   dislikes:number;
 
-
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number){
+  tracks:any;
+  category_id:number;
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number){
     this.id=id;
     this.title = title;
     this.description = description;
@@ -66,6 +69,8 @@ export class Media {
     this.likes=likes;
     this.dislikes=dislikes;
     this.tagString = this.tagStringing();
+    this.tracks = tracks;
+    this.category_id = category_id;
   }
   tagStringing(){
     var theTagString = ""
@@ -90,5 +95,20 @@ export class Tag {
     this.name=name;
     this.slug=slug;
     this.count=count;
+  }
+}
+
+export class Category {
+  id:number;
+  title:string;
+  description:string;
+  avatar:string;
+  background:string;
+  constructor(id:number,title:string,description:string,avatar:string,background:string){
+    this.id=id;
+    this.title=title;
+    this.description=description;
+    this.avatar=avatar;
+    this.background=background;
   }
 }

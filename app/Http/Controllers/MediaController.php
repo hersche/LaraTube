@@ -5,6 +5,7 @@ use App\Media;
 use App\Http\Resources\Media as MediaResource;
 use App\Comment;
 use App\Like;
+use App\Track;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -25,7 +26,20 @@ class MediaController extends Controller
           ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    public function addTrack(Request $request){
+      $media_id = $request->input("media_id");
+      $lang = $request->input("lang");
+      $file = $request->file('track');
+      $source = $file->store('public/tracks');
+      $extension = $file->getClientOriginalExtension();
+      Track::create(["lang"=>$lang,"source"=>$source,"media_id"=>$media_id,"type"=>$extension]);
+      return "{}";
+    }
 
+    public function deleteTrack(Request $request,$trackid){
+      Track::find($trackid)->delete();
+      return "{}";
+    }
 
 
     public function addMedia(Request $request)
@@ -58,7 +72,7 @@ class MediaController extends Controller
         $duration = "0";
         if(empty($source)){
           $file = $request->file('directMedia');
-          //$extension = $file->getClientOriginalExtension();
+          //
           $source = $file->store('public/directMedia');
           $id3 = $getID3->analyze($source);
           if(!empty($id3)&&!empty($id3['playtime_string'])){
