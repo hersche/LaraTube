@@ -133,7 +133,8 @@ hideModal () {
         let that = this;
         var theMedia;
         this.medias.forEach(function(val,key){
-          if(val.title==that.$route.params.editTitle){
+          var t = val.title;
+          if(encodeURIComponent(t)==encodeURIComponent(that.$route.params.editTitle)){
             theMedia = val;
             that.catid = val.category_id;
             console.log(val.tracks)
@@ -198,7 +199,7 @@ hideModal () {
       submitAction() {
         let that = this;
         $.ajax({
-            url: '/api/media/'+this.currentmedia.title,
+            url: '/internal-api/media/'+this.currentmedia.id,
             type: 'POST',
             data: new FormData($("#theForm")[0]),
             cache: false,

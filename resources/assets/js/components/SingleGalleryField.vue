@@ -1,6 +1,6 @@
 <template>
         <div class="card hide-on-hover mb-1">
-          <router-link :to="'/media/'+item.title" class="d-block h-100">
+          <router-link :to="'/media/'+encodeURIComponent(item.title)" class="d-block h-100">
             <img class="card-img-top" :src="item.poster_source" alt="">
             <div class="card-img-overlay text-light" style="padding:0;opacity: 0.875; color: black;">
               <div class="pr-sm-0 pl-sm-0 ml-sm-0 mr-sm-0 card-header " style="padding-bottom:0px;">

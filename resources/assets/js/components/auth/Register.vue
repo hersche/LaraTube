@@ -184,7 +184,7 @@
               if(res.status==200){
                 //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
-              eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
+            //  eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
             //  eventBus.$emit('videoDeleted',that.currentmedia.title);
             //  eventBus.$emit('videoCreated',res.responseJSON);
             }

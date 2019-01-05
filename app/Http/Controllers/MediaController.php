@@ -232,7 +232,7 @@ class MediaController extends Controller
         list($type, $data) = explode(';', $data);
         list(, $data)      = explode(',', $data);
         $data = base64_decode($data);
-        $media = Media::where('title', '=' ,$title)->firstOrFail();
+        $media = Media::where('id', '=' ,$title)->firstOrFail();
         $media->title = $request->input('title');
         $media->category_id = $request->input('category_id');
         //$media->source = $request->input('source');

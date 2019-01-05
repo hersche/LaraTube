@@ -92,6 +92,7 @@ Route::get('/internal-api/categories', function (Request $request) {
 Route::get('/internal-api/media/{title}', function ($title) {
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
+Route::post('/internal-api/media/{id}','MediaController@edit')->name('mediasapi.edit');
 Route::post('/internal-api/login', 'Auth\LoginController@login');
 
 Route::get('/internal-api/medias/by/{user}', function (Request $request,$user) {
