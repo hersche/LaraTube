@@ -1,5 +1,6 @@
 var User = /** @class */ (function () {
-    function User(id, name, avatar, background, bio, mediaIds, tagString, publicState) {
+    function User(id, name, avatar, background, bio, mediaIds, tagString, publicState, admin) {
+        if (admin === void 0) { admin = false; }
         this.id = id;
         this.name = name;
         this.avatar = avatar;
@@ -8,6 +9,7 @@ var User = /** @class */ (function () {
         this.mediaIds = mediaIds;
         this.tagString = tagString;
         this.publicState = publicState;
+        this.admin = admin;
     }
     User.prototype.toJson = function () {
         return "{id:" + this.id + ",name:'" + this.name + "',avatar:'" + this.avatar + "',background:'" + this.background + "'}";
@@ -70,6 +72,7 @@ var Category = /** @class */ (function () {
         this.description = description;
         this.avatar = avatar;
         this.background = background;
+        this.medias = [];
     }
     return Category;
 }());

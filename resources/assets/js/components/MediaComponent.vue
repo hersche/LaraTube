@@ -77,7 +77,7 @@
               <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
             </button>
 
-            <span v-if="loggeduserid==currentmedia.user.id" class=""><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.title">Edit</router-link></span>
+            <span v-if="loggeduserid==currentmedia.user.id|currentuser.admin" class=""><router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.title">Edit</router-link></span>
           </div>
           <div class="card-body">{{ currentmedia.description }}</div>
           <div class="card-footer"><span v-for="tag in currentmedia.tags"> <router-link class=""  :to="'/tags/'+tag.name" >
@@ -140,7 +140,7 @@
   const presets = butterchurnPresets.getPresets();
   console.log(emptyMedia)
   export default {
-    props: ['medias','baseUrl','loggeduserid','canloadmore'],
+    props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser'],
     components : {
         'singleField': SingleGalleryField,
         'comments': Comments

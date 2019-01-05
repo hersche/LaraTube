@@ -96,14 +96,13 @@
     props: ['medias','baseUrl','categories','csrf'],
     mounted: function () {
       this.$refs.croppieRef.bind({
-        url: '/img/404/image.png',
+        url: '/img/404/poster.png',
       })
     },
     updated: function () {
       this.$nextTick(function () {
         if(this.$refs.croppieRef!=undefined&this.editpicloaded==false){
           this.editpicloaded=true;
-          console.log("redo picture")
           this.$refs.croppieRef.bind({
             url: this.currentmedia.poster_source,
           })
@@ -136,6 +135,7 @@ hideModal () {
         this.medias.forEach(function(val,key){
           if(val.title==that.$route.params.editTitle){
             theMedia = val;
+            that.catid = val.category_id;
             console.log(val.tracks)
           }
         });

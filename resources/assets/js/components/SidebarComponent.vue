@@ -34,6 +34,14 @@
         <a @click="emitGetNewMedias()" style="cursor: pointer;" class="">Check 4 new medias</a>
       </vs-navbar-item>
 
+      <vs-sidebar-group v-if="currentuser.admin" title="Admin">
+        <vs-navbar-item index="6.1">
+          <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
+        </vs-navbar-item>
+        <vs-navbar-item index="6.1">
+          <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
+         </vs-navbar-item>
+     </vs-sidebar-group>
        <vs-sidebar-group title="Dev options">
          <p>Medias loaded: {{ medias.length }}</p>
          <p>Users loaded: {{ users.length }}</p>

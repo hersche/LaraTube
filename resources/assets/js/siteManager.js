@@ -52,6 +52,7 @@ var siteManager = /** @class */ (function () {
         var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
         var aboutComp = Vue.component('search', require("./components/About.vue"));
         var sidebarComp = Vue.component('thesidebar', require("./components/SidebarComponent.vue"));
+        var catComp = Vue.component('thesidebar', require("./components/Categories.vue"));
         var that = this;
         var routes = [
             { path: '/', component: overview },
@@ -65,6 +66,7 @@ var siteManager = /** @class */ (function () {
             { path: '/upload', component: uploadComp },
             { path: '/search', component: searchComp },
             { path: '/charts', component: chartsComp },
+            { path: '/categories', component: catComp },
             { path: '/about', component: aboutComp },
             { path: '/mediaedit/:editTitle', component: editVideoComp }
         ];
@@ -93,32 +95,25 @@ var siteManager = /** @class */ (function () {
             theVue.loggeduserid = _this.loggedUserId;
             that.currentUser = that.getUserById(_this.loggedUserId);
             theVue.currentuser = that.currentUser;
-            theVue.alert("Welcome back, " + that.getUserById(_this.loggedUserId).name, "success");
+            theVue.alert("Welcome back, " + that.getUserById(_this.loggedUserId).name, "success", "exit_to_app");
             theVue.$router.push('/');
             that.updateCSRF();
-            //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-            //  theVue.canloadmore=false
         });
         eventBus.$on('logout', function (settings) {
             _this.loggedUserId = 0;
             theVue.loggeduserid = _this.loggedUserId;
             that.currentUser = that.getUserById(_this.loggedUserId);
             theVue.currentuser = that.currentUser;
-            theVue.alert("Logged out", "danger");
+            theVue.alert("Logged out", "danger", "power_settings_new");
             theVue.$router.push('/');
             that.updateCSRF();
-            //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-            //  theVue.canloadmore=false
         });
         eventBus.$on('loginFailed', function (settings) {
-            //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-            //  theVue.canloadmore=false
-            theVue.alert("Login failed", "danger");
+            theVue.alert("Login failed", "danger", "error");
         });
         eventBus.$on('loadUserVideos', function (userid) {
             console.log("/internal-api/medias/by/" + userid + _this.getIgnoreParam());
             that.receiveMedias("/internal-api/medias/by/" + userid + _this.getIgnoreParam());
-            //theVue.canloadmore=false
         });
         eventBus.$on('sortBy', function (sortBy) {
             theMediaSorter.sortBy = sortBy;
@@ -237,9 +232,10 @@ var siteManager = /** @class */ (function () {
                 }
             }),
             methods: {
-                alert: function (msg, type) {
+                alert: function (msg, type, icon) {
                     if (type === void 0) { type = "dark"; }
-                    this.$vs.notify({ title: msg, text: '', color: type, position: 'bottom-center' });
+                    if (icon === void 0) { icon = ''; }
+                    this.$vs.notify({ title: msg, text: '', icon: icon, color: type, position: 'bottom-center' });
                 },
                 searching: function () {
                     if (theVue.$router.currentRoute.path != "/search") {
@@ -351,7 +347,7 @@ var siteManager = /** @class */ (function () {
                     that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "", "", "", false);
                 }
                 $.each(data.data, function (key, value) {
-                    var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds, value.tagString, value.public);
+                    var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds, value.tagString, value.public, value.admin);
                     if (u.id == that.loggedUserId) {
                         that.currentUser = u;
                         if (theVue != undefined) {
@@ -392,6 +388,24 @@ var siteManager = /** @class */ (function () {
                 theVue.categories = this.categories;
             }
         });
+    };
+    siteManager.prototype.getCategoryMedias = function (category_id) {
+        var ma = [];
+        $.each(this.medias, function (key, value) {
+            if (value.category_id == category_id) {
+                ma.push(value);
+            }
+        });
+        return ma;
+    };
+    siteManager.prototype.getCategoryKey = function (category_id) {
+        var res;
+        $.each(this.categories, function (key, value) {
+            if (value.id == category_id) {
+                res = key;
+            }
+        });
+        return res;
     };
     siteManager.prototype.receiveTags = function (forceUpdate) {
         if (forceUpdate === void 0) { forceUpdate = false; }
@@ -549,6 +563,9 @@ var siteManager = /** @class */ (function () {
                     loadCount++;
                     m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
                     that.medias.push(m);
+                    if (that.getCategoryKey(m.category_id) != undefined) {
+                        that.categories[that.getCategoryKey(m.category_id)].medias.push(m);
+                    }
                 }
                 else {
                     /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
@@ -582,6 +599,7 @@ var siteManager = /** @class */ (function () {
             console.log(this.categories);
             that.medias = theMediaSorter.sort(that.medias);
             theVue.medias = that.medias;
+            theVue.categories = that.categories;
             if (theVue.$route.params.profileId != undefined) {
                 theVue.user = sm.getUserById(theVue.$route.params.profileId);
                 theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId);

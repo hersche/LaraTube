@@ -25,7 +25,7 @@
               </div>
               <div slot="footer">
                 <vs-row vs-justify="flex-end">
-                  <vs-button v-if="loggeduserid==item.user.id" icon="settings" title="Edit media" :to="'/mediaedit/'+item.title"></vs-button>
+                  <vs-button v-if="loggeduserid==item.user.id|currentuser.admin" icon="settings" title="Edit media" :to="'/mediaedit/'+item.title"></vs-button>
                   <vs-button icon="play_circle_filled" title="Play" :to="'/media/'+item.title"></vs-button>
                 </vs-row>
               </div>
@@ -51,7 +51,7 @@
   import { eventBus } from '../eventBus.js';
   import GalleryComponent from './GalleryComponent'
   export default {
-    props: ['medias','loggeduserid'],
+    props: ['medias','loggeduserid','currentuser'],
     methods: {
 
     },

@@ -73,6 +73,7 @@ class siteManager {
     var editVideoComp = Vue.component('search', require("./components/EditVideo.vue"));
     var aboutComp = Vue.component('search', require("./components/About.vue"));
     var sidebarComp = Vue.component('thesidebar', require("./components/SidebarComponent.vue"));
+    var catComp = Vue.component('thesidebar', require("./components/Categories.vue"));
 
     let that = this;
     const routes = [
@@ -87,6 +88,7 @@ class siteManager {
       { path: '/upload', component: uploadComp },
       { path: '/search', component: searchComp },
       { path: '/charts', component: chartsComp },
+      { path: '/categories', component: catComp },
       { path: '/about', component: aboutComp },
       { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
@@ -117,33 +119,25 @@ class siteManager {
       theVue.loggeduserid = this.loggedUserId
       that.currentUser = that.getUserById(this.loggedUserId);
       theVue.currentuser = that.currentUser;
-      theVue.alert("Welcome back, "+that.getUserById(this.loggedUserId).name,"success")
+      theVue.alert("Welcome back, "+that.getUserById(this.loggedUserId).name,"success","exit_to_app")
       theVue.$router.push('/');
       that.updateCSRF();
-    //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-    //  theVue.canloadmore=false
     });
     eventBus.$on('logout', settings => {
       this.loggedUserId = 0
       theVue.loggeduserid = this.loggedUserId
       that.currentUser = that.getUserById(this.loggedUserId);
       theVue.currentuser = that.currentUser;
-      theVue.alert("Logged out","danger")
+      theVue.alert("Logged out","danger","power_settings_new")
       theVue.$router.push('/');
       that.updateCSRF();
-    //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-    //  theVue.canloadmore=false
     });
     eventBus.$on('loginFailed', settings => {
-    //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-    //  theVue.canloadmore=false
-      theVue.alert("Login failed","danger")
+      theVue.alert("Login failed","danger","error")
     });
     eventBus.$on('loadUserVideos', userid => {
-
       console.log("/internal-api/medias/by/"+userid+this.getIgnoreParam())
       that.receiveMedias("/internal-api/medias/by/"+userid+this.getIgnoreParam())
-      //theVue.canloadmore=false
     });
     eventBus.$on('sortBy', sortBy => {
       theMediaSorter.sortBy = sortBy
@@ -266,8 +260,8 @@ class siteManager {
       }
    }),
     methods:{
-      alert(msg,type="dark"){
-        this.$vs.notify({title:msg,text:'',color:type,position:'bottom-center'})
+      alert(msg,type="dark",icon=''){
+        this.$vs.notify({title:msg,text:'',icon:icon,color:type,position:'bottom-center'})
       },
 
       searching() {
@@ -387,7 +381,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "","","",false);
       }
         $.each( data.data, function( key, value ) {
-          var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds,value.tagString,value.public);
+          var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds,value.tagString,value.public,value.admin);
           if(u.id==that.loggedUserId){
             that.currentUser=u;
             if(theVue!=undefined){
@@ -432,6 +426,24 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
   }
 
+  getCategoryMedias(category_id:number){
+    var ma = []
+    $.each( this.medias, function( key, value ) {
+      if(value.category_id==category_id){
+        ma.push(value);
+      }
+    });
+    return ma;
+  }
+  getCategoryKey(category_id:number){
+    var res;
+    $.each( this.categories, function( key, value ) {
+      if(value.id==category_id){
+        res = key;
+      }
+    });
+    return res;
+  }
   receiveTags(forceUpdate=false):void{
     let that = this;
     $.getJSON("/api/tags", function name(data) {
@@ -587,6 +599,11 @@ if(localStorage.getItem('cookiePolicy')!="read"){
             loadCount++;
             m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
             that.medias.push(m);
+            if(that.getCategoryKey(m.category_id)!=undefined){
+              that.categories[that.getCategoryKey(m.category_id)].medias.push(m)
+            }
+
+
           } else {
           /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
             $.each( m.comments, function( key1, value1 ) {
@@ -620,6 +637,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         console.log(this.categories)
         that.medias = theMediaSorter.sort(that.medias)
         theVue.medias = that.medias;
+        theVue.categories = that.categories;
         if(theVue.$route.params.profileId != undefined){
           theVue.user = sm.getUserById(theVue.$route.params.profileId)
           theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId)

@@ -27,6 +27,7 @@ class User extends JsonResource
           'tagString' => $this->tagString(),
           'mediaIds' => $mediaIds,
           'public' => $this->public,
+          'admin' => $this->can('admin'),
           'api_token' => $this->api_token,
           'created_at' => $this->created_at,
           'updated_at' => $this->updated_at,
