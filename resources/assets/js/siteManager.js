@@ -636,6 +636,15 @@ var siteManager = /** @class */ (function () {
             else {
                 theVue.alert("Load " + loadCount + " and replace " + replaceCount + " medias.");
             }
+            var d = document.documentElement;
+            var offset = d.scrollTop + window.innerHeight;
+            var height = d.offsetHeight;
+            if (offset > height) {
+                if (that.nextLink != null) {
+                    console.log("receive cause no scroll yet");
+                    that.receiveMedias(that.nextLink);
+                }
+            }
         });
     };
     siteManager.prototype.getUserById = function (id) {

@@ -6,8 +6,8 @@
       <option value="likes">By likes</option><option value="likes_reverse">By likes (reverse)</option>
       <option value="dislikes">By dislikes</option><option value="dislikes_reverse">By dislikes (reverse)</option>
     </select></p>
-    <carousel v-bind:medias="medias" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></carousel>
-    <gallery v-bind:medias="medias" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></gallery>
+    <carousel v-bind:medias="medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></carousel>
+    <gallery v-bind:medias="medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></gallery>
   </div>
 </template>
 <script>
@@ -15,7 +15,7 @@
   import GalleryComponent from './GalleryComponent'
   import Carousel from './Carousel'
   export default {
-    props: ['medias','baseUrl','loggeduserid','canloadmore'],
+    props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser'],
     methods: {
       emitRefreshMedias: function() {
         eventBus.$emit('refreshMedias',"");
