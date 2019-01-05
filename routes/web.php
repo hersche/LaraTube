@@ -93,6 +93,7 @@ Route::get('/internal-api/media/{title}', function ($title) {
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
 Route::post('/internal-api/media/{id}','MediaController@edit')->name('mediasapi.edit');
+Route::delete('/internal-api/media/{id}','MediaController@destroy')->name('mediasapi.delete');
 Route::post('/internal-api/login', 'Auth\LoginController@login');
 
 Route::get('/internal-api/medias/by/{user}', function (Request $request,$user) {
@@ -108,3 +109,6 @@ Route::get('/internal-api/refresh-csrf', function(){
 Route::get('/internal-api/users', function () {
     return UserResource::collection(User::where("public","=",1)->get());
 });
+
+Route::delete('/internal-api/user/{id}','UserController@destroy');
+Route::delete('/internal-api/comment/{id}','CommentController@destroy');

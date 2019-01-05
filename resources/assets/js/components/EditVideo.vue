@@ -86,7 +86,7 @@
       <b-btn @click="$refs.myModalRef.hide()" class="mt-3 col-4" variant="outline-success" block >Cancel</b-btn>
     </div>
     </b-modal>
-    <button @click="submitAction();" class="btn btn-success" >Save</button> <button @click="deleteAction();" class="btn btn-danger" >Delete</button>
+    <button @click="submitAction();" class="btn btn-success" >Save</button> <button @click="openConfirm();" class="btn btn-danger float-right" >Delete</button>
     </div>
 </template>
 <script>
@@ -113,15 +113,26 @@
       // a computed getter
       currentmedia: function () {
         var m = this.getCurrentMedia();
-        this.catid = m.category_id;
+
         if(m==undefined){
           return new Media(0,"None","","","","","","","","","","","","","","",0,0,0,[],0)
+        } else {
+          this.catid = m.category_id;
         }
         return m;
       }
     },
 
     methods: {
+      openConfirm(){
+        this.$vs.dialog({
+          type:'confirm',
+          color: 'danger',
+          title: `Delete media?`,
+          text: 'Delete a media can not be reverted. Are you shure?',
+          accept:this.deleteAction
+        })
+      },
       showModal () {
   this.$refs.myModalRef.show()
 },
@@ -223,7 +234,7 @@ hideModal () {
       deleteAction() {
         let that = this;
         $.ajax({
-            url: '/api/media/'+this.currentmedia.title,
+            url: '/internal-api/media/'+this.currentmedia.id,
             type: 'DELETE',
             cache: false,
             contentType: false,
@@ -265,6 +276,7 @@ rotate(rotationAngle,event) {
         alertType: 'warning',
         alertMsg: '',
         catid:'',
+        tmpid:0,
         editpicloaded:false,
         showdismissiblealert: false,
         cropped: null,

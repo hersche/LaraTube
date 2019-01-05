@@ -191,6 +191,8 @@
           return val
         }
       },
+
+
       initTorrent(){
         console.log("run init")
         if(torrentInterval!=undefined){

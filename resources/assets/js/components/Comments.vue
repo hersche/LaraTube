@@ -13,7 +13,7 @@
   <div v-for="comment in commentlist" class="comment mb-2 row" :style="'margin-left:'+Number(level*10)+'px'" :id='"cid"+comment.id'>
       <div class="comment-content col-md-11 col-sm-10">
           <h6 class="small comment-meta"><router-link class="btn btn-sm btn-primary mr-2" :to="'/profile/'+comment.user.id"><img class="" style="width:25px;"  :src="'/'+comment.user.avatar" alt="avatar" /> {{ comment.user.name }}</router-link> {{ comment.created_at_readable}}
-              <span v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><vs-icon icon="delete"></vs-icon></span>
+              <span @click="openConfirm(comment.id)" v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><vs-icon icon="delete"></vs-icon></span>
           </h6>
           <div class="comment-body">
           <p>{{ comment.body }}</p>
@@ -71,6 +71,35 @@ import { eventBus } from '../eventBus.js';
     props: [ 'commentlist','loggeduserid','currentmedia','level'],
     name: 'comments',
         methods: {
+          openConfirm(id){
+            this.tmpid = id
+            this.$vs.dialog({
+              type:'confirm',
+              color: 'danger',
+              title: `Delete comment?`,
+              text: 'Delete a comment can not be reverted. Are you shure?',
+              accept:this.deleteComment
+            })
+          },
+          deleteComment() {
+            console.log(this.tmpid)
+            let that = this;
+            $.ajax({
+                url: '/internal-api/comment/'+this.tmpid,
+                type: 'DELETE',
+                cache: false,
+                contentType: false,
+                processData: false,
+                complete : function(res) {
+                  if(res.status==200){
+                    //eventBus.$emit('showAlert',['success','Video uploaded']);
+                    eventBus.$emit('commentCreated',res.responseJSON);
+                  }
+                }
+
+            });
+            return false;
+          },
           refreshMedia(id=''){
             eventBus.$emit('refreshMedia',this.currentmedia.id);
           },
@@ -136,5 +165,11 @@ import { eventBus } from '../eventBus.js';
             });
           },
         },
+
+        data(){
+          return {
+            tmpid: 0
+          }
+        }
   }
 </script>
