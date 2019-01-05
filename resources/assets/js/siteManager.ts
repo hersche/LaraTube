@@ -34,6 +34,7 @@ class siteManager {
   lastLink:string;
   catchedTagMedias:any;
   initing:boolean;
+  csrf:string;
   constructor(base:string){
     this.initing=true;
     baseUrl = base+"/";
@@ -42,9 +43,8 @@ class siteManager {
     this.usedSearchTerms=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
     this.receiveUsers(true);
-    let that = this;
-
-
+    this.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    setInterval(this.updateCSRF, 1800000);
   }
 
   initVue(){
@@ -105,10 +105,39 @@ class siteManager {
       that.catchedTagMedias=[];
       this.usedSearchTerms=[];
       that.receiveMedias("/internal-api/media"+this.getIgnoreParam(),true)
+      that.updateCSRF();
     });
     eventBus.$on('loadAllMedias', title => {
       that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
       theVue.canloadmore=false
+      that.updateCSRF();
+    });
+    eventBus.$on('login', settings => {
+      this.loggedUserId = settings.user_id
+      theVue.loggeduserid = this.loggedUserId
+      that.currentUser = that.getUserById(this.loggedUserId);
+      theVue.currentuser = that.currentUser;
+      theVue.alert("Welcome back, "+that.getUserById(this.loggedUserId).name,"success")
+      theVue.$router.push('/');
+      that.updateCSRF();
+    //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
+    //  theVue.canloadmore=false
+    });
+    eventBus.$on('logout', settings => {
+      this.loggedUserId = 0
+      theVue.loggeduserid = this.loggedUserId
+      that.currentUser = that.getUserById(this.loggedUserId);
+      theVue.currentuser = that.currentUser;
+      theVue.alert("Logged out","danger")
+      theVue.$router.push('/');
+      that.updateCSRF();
+    //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
+    //  theVue.canloadmore=false
+    });
+    eventBus.$on('loginFailed', settings => {
+    //  that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
+    //  theVue.canloadmore=false
+      theVue.alert("Login failed","danger")
     });
     eventBus.$on('loadUserVideos', userid => {
 
@@ -127,7 +156,7 @@ class siteManager {
     eventBus.$on('commentCreated', json => {
       // Workaround by receive the media again.
       that.receiveMediaByName(that.findMediaById(Number(json.data.media_id)).title)
-
+      that.updateCSRF();
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
       console.log(m.comments)*/
@@ -141,7 +170,7 @@ class siteManager {
     eventBus.$on('refreshMedia', id => {
       // Workaround by receive the media again.
       that.receiveMediaByName(that.findMediaById(Number(id)).title)
-
+      that.updateCSRF();
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
       console.log(m.comments)*/
@@ -155,16 +184,19 @@ class siteManager {
     eventBus.$on('videoDeleted', title => {
       theVue.alert("Video "+title+" deleted","success")
       that.deleteMediaByName(title);
+      that.updateCSRF();
     });
     eventBus.$on('videoCreated', json => {
       that.receiveTagsForMedia(json);
       theVue.alert("Video "+json.data.title+" created","success")
+      that.updateCSRF();
 
     });
     eventBus.$on('videoEdited', json => {
       that.deleteMediaByName(json[0]);
       that.receiveTagsForMedia(json[1]);
       theVue.alert("Video "+json[1].data.title+" edited","success")
+      that.updateCSRF();
     });
     eventBus.$on('checkTag', tagName => {
       //if(theVue.$router.currentRoute.path!="/search"){
@@ -214,6 +246,7 @@ class siteManager {
       alertmsg: "",
       alerttype:"",
       search:'',
+      csrf:that.csrf,
       currentuser:that.currentUser,
       users:this.users,
       loggeduserid:this.loggedUserId,
@@ -335,6 +368,15 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   getCurrentSite(){
     return this.currentPage;
+  }
+  updateCSRF(){
+    $.get('/internal-api/refresh-csrf').done(function(data){
+      this.csrf = data;
+      theVue.csrf = data;
+      $('meta[name="csrf-token"]').attr('content',data)
+  //  csrfToken = data; // the new token
+});
+
   }
   receiveUsers(forceUpdate=false):void{
     let that = this;

@@ -51,8 +51,8 @@
       <div class="footer-sidebar" slot="footer">
         <vs-button v-if="currentuser.id==0" to="/login" icon="exit_to_app" color="success" type="flat">Login</vs-button>
         <vs-button v-if="currentuser.id==0" to="/register" icon="person_add" color="success" type="flat">Register</vs-button>
-        <vs-button v-if="currentuser.id!=0" onclick="document.getElementById('logout-form').submit();" icon="power_settings_new" color="danger" type="flat">Logout</vs-button>
-        <form v-if="currentuser.id!=0" id="logout-form" action="/logout" method="POST" style="display: none;">
+        <vs-button v-if="currentuser.id!=0" @click="emitLogout()" icon="power_settings_new" color="danger" type="flat">Logout</vs-button>
+        <form v-if="currentuser.id!=0" id="logoutForm" action="/logout" method="POST" style="display: none;">
             <input type="hidden" name="_token" :value="csrf">
         </form>
         <vs-button v-if="currentuser.id!=0" icon="settings" to="/editprofile" color="primary" type="border"></vs-button>
@@ -76,15 +76,38 @@ export default {
     emitRefreshMedias: function() {
       eventBus.$emit('refreshMedias',"");
     },
+    emitLogout: function() {
+      $.ajax({
+          url: '/logout',
+          type: 'POST',
+          data: new FormData($("#logoutForm")[0]),
+          cache: false,
+          contentType: false,
+          processData: false,
+          complete : function(res) {
+            if(res.status==200){
+              eventBus.$emit('logout',"");
+              //eventBus.$emit('login',res.responseJSON.data);
+            }
+          }
+
+      });
+
+    },
     emitLoadAllMedias: function() {
       eventBus.$emit('loadAllMedias',"");
     },
   },
-  props:['currentuser','medias','users','tags'],
+  props:['currentuser','medias','users','tags','csrf'],
+  computed:{
+    csrf1: function(){
+      document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    }
+  },
   data:()=>({
     active:false,
     activeItem:0,
-    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+
   })
 }
 </script>

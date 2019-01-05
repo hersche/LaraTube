@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
+use Auth;
+use Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\UserSettings;
+use App\Http\Resources\UserSettings as UserSettingsRessource;
 
 class LoginController extends Controller
 {
@@ -37,8 +41,40 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-
-
+    public function authenticated(Request $request, $user)
+    {
+        if (!empty(Auth::id())) {
+          //echo "logged in";
+          UserSettings::firstOrCreate(['user_id' => Auth::id()]);
+          //return response('{"success"}', 200);
+          return new UserSettingsRessource(UserSettings::where('user_id', '=' ,Auth::id())->firstOrFail());
+          //  return redirect('/home');
+        } else {
+        //  echo "not logged in";
+          return response()->json(["data"=>["error_msg"=>"Login failed"]],403);
+        }
+    }
+    /**
+     * Custom logout function with no redirect if ajax.
+     *
+     * @return void
+     */
+    public function logout(Request $request) {
+        $this->guard()->logout();
+        $request->session()->invalidate();
+        if($request->ajax()) {
+            return Response::json(array(
+                'success' => true,
+                'data'   => 'Logout success'
+            ));
+        }
+        else {
+          return Response::json(array(
+              'success' => false,
+              'data'   => 'Logout failed'
+          ));
+        }
+    }
     public function login(Request $request)
     {
         $this->validateLogin($request);

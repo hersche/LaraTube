@@ -81,7 +81,7 @@
   import { eventBus } from '../eventBus.js';
   import { Media }  from '../models';
   export default {
-    props: ['medias','baseUrl','currentuser'],
+    props: ['medias','baseUrl','currentuser','csrf'],
     mounted: function () {
       this.$refs.croppieAvatarRef.bind({
         url: '/img/404/avatar.png',

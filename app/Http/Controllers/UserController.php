@@ -159,39 +159,6 @@ class UserController extends Controller
       return view('users.selfedit',compact('user'));
     }
 
-    public function updateAvatar(Request $request)
-    {
-      $data = $request->input('image');
-      list($type, $data) = explode(';', $data);
-      list(, $data)      = explode(',', $data);
-      $data = base64_decode($data);
-      $user = User::find(Auth::id());
-      if(!empty($user->avatar_source)){
-        Storage::delete($user->avatar_source);
-      }
-        $user->avatar_source = 'public/u/avatars/'.$user->id.'.png';
-        Storage::put('public/u/avatars/'.$user->id.'.png', $data);
-        $user->save();
-        return;
-    }
-
-
-    public function updateBackground(Request $request)
-    {
-
-      $data = $request->input('image');
-      list($type, $data) = explode(';', $data);
-      list(, $data)      = explode(',', $data);
-      $data = base64_decode($data);
-      $user = User::find(Auth::id());
-      if(!empty($user->background_source)){
-        Storage::delete($user->background_source);
-      }
-        $user->background_source = 'public/u/backgrounds/'.$user->id.'.png';
-        Storage::put('public/u/backgrounds/'.$user->id.'.png', $data);
-        $user->save();
-        return;
-    }
     /**
      * Update the specified resource in storage.
      *

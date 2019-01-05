@@ -51,7 +51,7 @@ header('Access-Control-Allow-Origin: *');
 
 
 
-  <thesidebar :currentuser="currentuser" v-bind:medias="medias" v-bind:users="users" v-bind:tags="tags"></thesidebar>
+  <thesidebar v-bind:csrf="csrf" v-bind:currentuser="currentuser" v-bind:medias="medias" v-bind:users="users" v-bind:tags="tags"></thesidebar>
 
     <!--  <nav id="sidebar" class="d-none bg-light">
           <ul class="list-unstyled components">

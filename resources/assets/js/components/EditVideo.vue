@@ -93,7 +93,7 @@
   import { eventBus } from '../eventBus.js';
   import { Media }  from '../models';
   export default {
-    props: ['medias','baseUrl','categories'],
+    props: ['medias','baseUrl','categories','csrf'],
     mounted: function () {
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',

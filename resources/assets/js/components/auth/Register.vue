@@ -118,7 +118,7 @@
 <script>
   import { eventBus } from '../../eventBus.js';
   export default {
-    props: ['medias','baseUrl','user','tags'],
+    props: ['medias','baseUrl','user','tags','csrf'],
     mounted: function () {
       this.$refs.croppieAvatarRef.bind({
         url: '/img/404/avatar.png',
@@ -143,7 +143,6 @@
     },
     data(){
       return {
-        csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         avatarCropped: null,
         backgroundCropped: null,
         public: false,
