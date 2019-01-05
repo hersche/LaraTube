@@ -45,7 +45,15 @@ class User extends Authenticatable
     public function medias(){
       return $this->hasMany('App\Media');
     }
-
+    public function email(){
+      $email = '';
+      if(!empty(\Auth::id())){
+      if(\Auth::user()->can('admin')){
+        $email = $this->email;
+      }
+      }
+      return $email;
+    }
     public function avatar(){
       if(empty($this->avatar_source)){
         return "img/404/avatar.png";

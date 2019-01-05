@@ -14,9 +14,11 @@
         <h4>
           <router-link class="btn btn-sm btn-success" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link>
         </h4>
-        <vs-navbar-item index="0">
+        <span>
           <router-link class="btn btn-sm btn-success" to="/upload">Upload</router-link>
-        </vs-navbar-item>
+
+          <router-link class="btn btn-sm btn-success" to="/myvideos">My videos</router-link>
+        </span>
       </div>
       <vs-navbar-item index="1">
         <router-link class="" to="/">Home</router-link>
@@ -35,12 +37,9 @@
       </vs-navbar-item>
 
       <vs-sidebar-group v-if="currentuser.admin" title="Admin">
-        <vs-navbar-item index="6.1">
-          <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
+        <vs-navbar-item index="7.1">
+          <router-link class="" to="/admin/users">Users</router-link>
         </vs-navbar-item>
-        <vs-navbar-item index="6.1">
-          <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
-         </vs-navbar-item>
      </vs-sidebar-group>
        <vs-sidebar-group title="Dev options">
          <p>Medias loaded: {{ medias.length }}</p>

@@ -74,6 +74,8 @@ class siteManager {
     var aboutComp = Vue.component('search', require("./components/About.vue"));
     var sidebarComp = Vue.component('thesidebar', require("./components/SidebarComponent.vue"));
     var catComp = Vue.component('thesidebar', require("./components/Categories.vue"));
+    var uaComp = Vue.component('thesidebar', require("./components/UserAdmin.vue"));
+    var myVideosComp = Vue.component('thesidebar', require("./components/MyVideos.vue"));
 
     let that = this;
     const routes = [
@@ -90,6 +92,8 @@ class siteManager {
       { path: '/charts', component: chartsComp },
       { path: '/categories', component: catComp },
       { path: '/about', component: aboutComp },
+      { path: '/myvideos', component: myVideosComp },
+      { path: '/admin/users', component: uaComp },
       { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
 
@@ -115,10 +119,14 @@ class siteManager {
       that.updateCSRF();
     });
     eventBus.$on('login', settings => {
+      this.initing = false;
       this.loggedUserId = settings.user_id
       theVue.loggeduserid = this.loggedUserId
       that.currentUser = that.getUserById(this.loggedUserId);
       theVue.currentuser = that.currentUser;
+      if(that.currentUser.admin){
+        that.receiveUsers(true);
+      }
       theVue.alert("Welcome back, "+that.getUserById(this.loggedUserId).name,"success","exit_to_app")
       theVue.$router.push('/');
       that.updateCSRF();
@@ -374,14 +382,14 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   receiveUsers(forceUpdate=false):void{
     let that = this;
-    $.getJSON("/api/user", function name(data) {
+    $.getJSON("/internal-api/users", function name(data) {
       if((that.users==undefined)||(forceUpdate)){
       that.users = [];
       if(that.loggedUserId==0){
         that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "","","",false);
       }
         $.each( data.data, function( key, value ) {
-          var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds,value.tagString,value.public,value.admin);
+          var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds,value.tagString,value.public,value.admin,value.email,value.created_at.date,value.updated_at.date);
           if(u.id==that.loggedUserId){
             that.currentUser=u;
             if(theVue!=undefined){
@@ -394,8 +402,10 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.users.push(u);
 
         });
+        if(that.initing){
           that.receiveTags();
           that.receiveCategories();
+        }
       }
     });
   }

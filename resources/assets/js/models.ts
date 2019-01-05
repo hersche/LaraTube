@@ -8,8 +8,10 @@ export class User{
   tagString:string;
   publicState:boolean;
   admin:boolean;
-
-  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean,admin:boolean=false){
+  email:string;
+  created_at;
+  updated_at;
+  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean,admin:boolean=false,email:string='',created_at='',updated_at=''){
     this.id=id;
     this.name = name;
     this.avatar = avatar;
@@ -19,6 +21,9 @@ export class User{
     this.tagString = tagString;
     this.publicState = publicState;
     this.admin = admin;
+    this.email = email;
+    this.created_at = created_at;
+    this.updated_at = updated_at;
 
   }
   toJson(){

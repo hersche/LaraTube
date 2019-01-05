@@ -5,6 +5,8 @@ use App\Category;
 use App\DirectTag;
 use App\Http\Resources\Media as MediaResource;
 use App\Http\Resources\Category as CategoryResource;
+use App\User;
+use App\Http\Resources\User as UserResource;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -100,4 +102,8 @@ Route::post('/internal-api/medias/addTrack','MediaController@addTrack');
 Route::post('/internal-api/medias/deleteTrack/{trackid}','MediaController@deleteTrack');
 Route::get('/internal-api/refresh-csrf', function(){
     return csrf_token();
+});
+
+Route::get('/internal-api/users', function () {
+    return UserResource::collection(User::where("public","=",1)->get());
 });

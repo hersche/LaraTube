@@ -53,6 +53,8 @@ var siteManager = /** @class */ (function () {
         var aboutComp = Vue.component('search', require("./components/About.vue"));
         var sidebarComp = Vue.component('thesidebar', require("./components/SidebarComponent.vue"));
         var catComp = Vue.component('thesidebar', require("./components/Categories.vue"));
+        var uaComp = Vue.component('thesidebar', require("./components/UserAdmin.vue"));
+        var myVideosComp = Vue.component('thesidebar', require("./components/MyVideos.vue"));
         var that = this;
         var routes = [
             { path: '/', component: overview },
@@ -68,6 +70,8 @@ var siteManager = /** @class */ (function () {
             { path: '/charts', component: chartsComp },
             { path: '/categories', component: catComp },
             { path: '/about', component: aboutComp },
+            { path: '/myvideos', component: myVideosComp },
+            { path: '/admin/users', component: uaComp },
             { path: '/mediaedit/:editTitle', component: editVideoComp }
         ];
         eventBus.$on('getNewMedias', function (title) {
@@ -91,10 +95,14 @@ var siteManager = /** @class */ (function () {
             that.updateCSRF();
         });
         eventBus.$on('login', function (settings) {
+            _this.initing = false;
             _this.loggedUserId = settings.user_id;
             theVue.loggeduserid = _this.loggedUserId;
             that.currentUser = that.getUserById(_this.loggedUserId);
             theVue.currentuser = that.currentUser;
+            if (that.currentUser.admin) {
+                that.receiveUsers(true);
+            }
             theVue.alert("Welcome back, " + that.getUserById(_this.loggedUserId).name, "success", "exit_to_app");
             theVue.$router.push('/');
             that.updateCSRF();
@@ -340,14 +348,14 @@ var siteManager = /** @class */ (function () {
     siteManager.prototype.receiveUsers = function (forceUpdate) {
         if (forceUpdate === void 0) { forceUpdate = false; }
         var that = this;
-        $.getJSON("/api/user", function name(data) {
+        $.getJSON("/internal-api/users", function name(data) {
             if ((that.users == undefined) || (forceUpdate)) {
                 that.users = [];
                 if (that.loggedUserId == 0) {
                     that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "", "", "", false);
                 }
                 $.each(data.data, function (key, value) {
-                    var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds, value.tagString, value.public, value.admin);
+                    var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds, value.tagString, value.public, value.admin, value.email, value.created_at.date, value.updated_at.date);
                     if (u.id == that.loggedUserId) {
                         that.currentUser = u;
                         if (theVue != undefined) {
@@ -358,8 +366,10 @@ var siteManager = /** @class */ (function () {
                     }
                     that.users.push(u);
                 });
-                that.receiveTags();
-                that.receiveCategories();
+                if (that.initing) {
+                    that.receiveTags();
+                    that.receiveCategories();
+                }
             }
         });
     };

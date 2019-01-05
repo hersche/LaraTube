@@ -1,6 +1,9 @@
 var User = /** @class */ (function () {
-    function User(id, name, avatar, background, bio, mediaIds, tagString, publicState, admin) {
+    function User(id, name, avatar, background, bio, mediaIds, tagString, publicState, admin, email, created_at, updated_at) {
         if (admin === void 0) { admin = false; }
+        if (email === void 0) { email = ''; }
+        if (created_at === void 0) { created_at = ''; }
+        if (updated_at === void 0) { updated_at = ''; }
         this.id = id;
         this.name = name;
         this.avatar = avatar;
@@ -10,6 +13,9 @@ var User = /** @class */ (function () {
         this.tagString = tagString;
         this.publicState = publicState;
         this.admin = admin;
+        this.email = email;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
     User.prototype.toJson = function () {
         return "{id:" + this.id + ",name:'" + this.name + "',avatar:'" + this.avatar + "',background:'" + this.background + "'}";

@@ -1,5 +1,4 @@
 <template>
-  <div>
     <div class="row text-center text-lg-left" id="profilevideos">
   <div v-for="cat in categories"  class="">
     <p>{{ cat.title }}</p>
@@ -10,8 +9,6 @@
   </div>
   </div>
     </div>
-<p class="text-center" v-if="canloadmore">Scroll to bottom to load more</p>
-  </div>
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
