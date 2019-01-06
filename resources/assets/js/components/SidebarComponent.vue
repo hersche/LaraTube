@@ -16,18 +16,20 @@
         </h4>
         <span>
           <router-link class="btn btn-sm btn-success" to="/upload">Upload</router-link>
-
           <router-link class="btn btn-sm btn-success" to="/myvideos">My videos</router-link>
         </span>
       </div>
       <vs-navbar-item index="1">
         <router-link class="" to="/">Home</router-link>
       </vs-navbar-item>
-      <vs-navbar-item index="2">
-        <router-link class="" to="/charts">Charts</router-link>
+      <vs-navbar-item index="9">
+        <router-link class="" to="/categories">Categories</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="3">
         <router-link class="" to="/tags">Tags</router-link>
+      </vs-navbar-item>
+      <vs-navbar-item index="2">
+        <router-link class="" to="/charts">Charts</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="4">
         <router-link class="" to="/about">About</router-link>

@@ -1,5 +1,5 @@
 <template>
-    <div class="col-xs-12 col-sm-12 col-md-12">
+    <div v-if="currentmedia!=undefined" class="col-xs-12 col-sm-12 col-md-12">
     <h4>Edit media</h4>
     <form id="theForm">
       <div class="form-group row">
@@ -9,7 +9,7 @@
       </div>
     <div class="form-group row">
         <label>Media-type (only for restore):</label>
-         <select name="type" v-model="currentmedia.type"><option value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
+         <select name="type" v-model="mediaType"><option value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
     </div>
     <div class="form-group row">
         <label>Category</label>
@@ -37,7 +37,7 @@
           <!-- Rotate angle is Number -->
           <button @click="rotate(-90,$event)">Rotate Left</button>
           <button @click="rotate(90,$event)">Rotate Right</button>
-        <input id="posterUpload" @change="posterChange()" name="poster" type="file">
+        <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="poster" type="file">
         <div id="poster"></div>
     </div>
 
@@ -52,8 +52,8 @@
           </div>
 
           <div class="form-group row">
-              <label>Subtitle</label>
-              <b-button class="float-right" @click="showModal">
+              <label>Subtitles</label>
+              <b-button class="float-right text-right" @click="showModal">
       Manage
     </b-button>
               </div>
@@ -61,11 +61,14 @@
 
     </form>
     <b-modal ref="myModalRef" hide-footer title="Using Component Methods">
-      <div class="d-block text-center">
+
         <h4 v-if="currentmedia.tracks.length>0">Existing tracks</h4>
-        <p v-for="track in currentmedia.tracks">
-          <a class="text-left" :href="track.source">{{ track.lang }}</a> <a class="btn btn-primary btn-sm float-right" @click="deleteTrack(track.id)">DELETE {{ track.lang }}</a>
-        </p>
+        <ul >
+          <li v-for="track in currentmedia.tracks" class="mb-3">
+            <a class="text-left" target="_blank" :href="track.source">{{ track.lang }}</a> <a class="btn btn-danger btn-sm float-right" @click="deleteTrack(track.id)">{{ track.lang }} <vs-icon icon="delete"></vs-icon></a>
+          </li>
+        </ul>
+        <div class="d-block text-center">
         <h4>Add track</h4>
         <form id="addTrackForm">
           <div class="form-group row">
@@ -95,13 +98,14 @@
   export default {
     props: ['medias','baseUrl','categories','csrf'],
     mounted: function () {
-      this.$refs.croppieRef.bind({
-        url: '/img/404/poster.png',
-      })
+    //  this.$refs.croppieRef.bind({
+    //    url: '/img/404/poster.png',
+    //  })
     },
     updated: function () {
       this.$nextTick(function () {
         if(this.$refs.croppieRef!=undefined&this.editpicloaded==false){
+          this.currentmedia=this.getCurrentMedia();
           this.editpicloaded=true;
           this.$refs.croppieRef.bind({
             url: this.currentmedia.poster_source,
@@ -111,18 +115,12 @@
     },
     computed: {
       // a computed getter
-      currentmedia: function () {
-        var m = this.getCurrentMedia();
-
-        if(m==undefined){
-          return new Media(0,"None","","","","","","","","","","","","","","",0,0,0,[],0)
-        } else {
-          this.catid = m.category_id;
-        }
-        return m;
-      }
     },
-
+    watch:{
+      medias: function(val){
+        this.currentmedia = this.getCurrentMedia();
+      },
+    },
     methods: {
       openConfirm(){
         this.$vs.dialog({
@@ -147,10 +145,15 @@ hideModal () {
           var t = val.title;
           if(encodeURIComponent(t)==encodeURIComponent(that.$route.params.editTitle)){
             theMedia = val;
+            that.mediaType=val.type;
             that.catid = val.category_id;
-            console.log(val.tracks)
+            //console.log(val.tracks)
           }
         });
+        if(theMedia==undefined){
+          console.log("media not there for edit yet, want it!");
+          eventBus.$emit('loadMedia',encodeURIComponent(that.$route.params.editTitle));
+        }
         return theMedia;
       },
 
@@ -275,6 +278,7 @@ rotate(rotationAngle,event) {
         dismisscountdown: 0,
         alertType: 'warning',
         alertMsg: '',
+        currentmedia:undefined,
         catid:'',
         tmpid:0,
         editpicloaded:false,

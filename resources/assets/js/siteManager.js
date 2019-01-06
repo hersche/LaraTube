@@ -388,9 +388,13 @@ var siteManager = /** @class */ (function () {
         });
     };
     // This method is for telling the server, which medias we don't need to redownload.
-    siteManager.prototype.getIgnoreParam = function () {
+    siteManager.prototype.getIgnoreParam = function (first) {
+        if (first === void 0) { first = true; }
         // id 0 is fake, but by it, we can alway attach ,:id
-        var content = "?i=0";
+        var content = "&i=0";
+        if (first) {
+            content = "?i=0";
+        }
         $.each(this.medias, function (key, value) {
             content += "," + value.id;
         });
@@ -609,8 +613,8 @@ var siteManager = /** @class */ (function () {
                 }
             });
             if (data.links != undefined) {
-                that.nextLink = data.links.next;
-                that.lastLink = data.links.prev;
+                that.nextLink = data.links.next + that.getIgnoreParam(false);
+                that.lastLink = data.links.prev + that.getIgnoreParam(false);
             }
             if (theVue == undefined) {
                 that.initVue();

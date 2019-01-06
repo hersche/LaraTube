@@ -2,8 +2,9 @@
   <div>
     <h3>My Videos</h3>
     <div class="row text-center text-lg-left" id="profilevideos">
-    <div v-for="item in medias" v-if="item.user_id==loggeduserid"  class="col-lg-4 col-md-4 col-xs-6">
+    <div v-for="item in medias" v-if="item.user_id==loggeduserid"  class="col-lg-3 col-md-3 col-xs-6">
         <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
+        <router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+encodeURIComponent(item.title)">Edit</router-link>
     </div>
 
     </div>

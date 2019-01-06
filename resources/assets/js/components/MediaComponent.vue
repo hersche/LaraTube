@@ -188,7 +188,7 @@
           });
           if(theMedia==emptyMedia){
             console.log("media not there yet, want it!");
-            eventBus.$emit('loadMedia',that.$route.params.currentTitle);
+            eventBus.$emit('loadMedia',encodeURIComponent(that.$route.params.currentTitle));
           }
           return theMedia;
         }

@@ -1,6 +1,6 @@
 <template>
-      <vs-tooltip  :title="item.title" :text="item.description">  <div class="card hide-on-hover mb-1">
-          <router-link :to="'/media/'+encodeURIComponent(item.title)" class="d-block h-100">
+        <div :id="item.id+'scard'" class="card hide-on-hover mb-1">
+          <router-link  :to="'/media/'+encodeURIComponent(item.title)" class="d-block h-100">
 
             <img class="card-img-top" :src="item.poster_source" alt="">
 
@@ -18,7 +18,10 @@
             </div>
           </div>
           </router-link>
-        </div></vs-tooltip>
+          <b-tooltip :target="item.id+'scard'" placement="top">
+            <h5>{{ item.title}}</h5> <p>{{ item.description }}</p>
+          </b-tooltip>
+        </div>
 </template>
 <script>
   import { eventBus } from '../eventBus.js';

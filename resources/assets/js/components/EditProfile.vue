@@ -26,7 +26,7 @@
           <!-- Rotate angle is Number -->
           <button @click="rotateAvatar(-90,$event)">Rotate Left</button>
           <button @click="rotateAvatar(90,$event)">Rotate Right</button>
-        <input id="avatarUpload" @change="avatarChange()" name="avatarf" type="file">
+        <input id="avatarUpload" accept=".png,.jpg,.jpeg" @change="avatarChange()" name="avatarf" type="file">
         <div id="avatar"></div>
     </div>
 
@@ -49,7 +49,7 @@
           <!-- Rotate angle is Number -->
           <button @click="rotateBackground(-90,$event)">Rotate Left</button>
           <button @click="rotateBackground(90,$event)">Rotate Right</button>
-        <input id="backgroundUpload" @change="backgroundChange()" name="backgroundf" type="file">
+        <input id="backgroundUpload" accept=".png,.jpg,.jpeg" @change="backgroundChange()" name="backgroundf" type="file">
         <div id="background"></div>
     </div>
     <div class="form-group">

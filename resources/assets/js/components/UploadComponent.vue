@@ -8,16 +8,23 @@
     </div>
     <div v-if="mediaType=='localAudio'|mediaType=='localVideo'" class="form-group">
         <label>Media-file:</label>
-         <input id="directMedia" class="directMedia" name="directMedia" type="file">
+        <p>Local mean you upload it directly. </p>
+         <input id="directMedia" accept=".mp4,.mp3,.ogg" class="directMedia" name="directMedia" type="file">
     </div>
     <div v-if="mediaType=='directAudio'|mediaType=='directVideo'" class="form-group">
         <label>Media-source:</label>
+        <p>Direct mean you put a link from another server here. It needs to be a link, where you get the media, no html.</p>
          <input placeholder="https://server/file.mp4.mp3" class="form-control" id="source" name="source" type="text">
+         <span class="btn btn-primary" @click="testMedia()">Test link</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     </div>
     <div v-if="mediaType=='torrentAudio'|mediaType=='torrentVideo'" class="form-group">
         <label>Torrent (magnet-link)</label>
+        <p>A webtorrent magnet-link, for example from peertube-videos</p>
          <input placeholder="magnet://" class="form-control" id="source" name="source" type="text">
-         <button class="btn btn-primary" @click="testMedia()">Test link</button>
+         <span class="btn btn-primary" @click="testMedia()">Test link</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
+
     </div>
     <mediaView v-bind:currentmedia="theTestMedia"></mediaView>
     <div class="form-group">
@@ -38,7 +45,7 @@
           <!-- Rotate angle is Number -->
           <button @click="rotate(-90,$event)">Rotate Left</button>
           <button @click="rotate(90,$event)">Rotate Right</button>
-        <input id="posterUpload" @change="posterChange()" name="poster" type="file">
+        <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="poster" type="file">
         <div id="poster"></div>
     </div>
       <div class="form-group">
@@ -82,8 +89,20 @@
 
     methods: {
       testMedia(){
-        this.theTestMedia = new Media(0,"None","",$("#source").val(),"","","","",this.mediaType,new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
+        var techType;
+        if(this.mediaType=="localAudio"||this.mediaType=="directAudio"){
+          techType = "audio";
+        } else if(this.mediaType=="localVideo"||this.mediaType=="directVideo"){
+          techType = "video";
+        } else if(this.mediaType=="torrentAudio"||this.mediaType=="torrentVideo"){
+          techType = "torrent";
+        }
+        this.theTestMedia = new Media(0,"None","",$("#source").val(),"","","",techType,this.mediaType,new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
 
+      },
+      removeTestMedia(){
+
+        this.theTestMedia = undefined;
       },
       posterChange(){
         var reader = new FileReader();
@@ -160,7 +179,7 @@ rotate(rotationAngle,event) {
         mediaType: '',
         cropped: null,
         uploadPercent:-1,
-        theTestMedia:''
+        theTestMedia:undefined
       }
     }
   }
