@@ -18,7 +18,7 @@ var theMediaSorter = new MediaSorter();
 var siteManager = /** @class */ (function () {
     function siteManager(base) {
         this.maxPage = -1;
-        this.currentPage = 1;
+        this.currentPage = 2;
         this.initing = true;
         baseUrl = base + "/";
         this.catchedTagMedias = [];
@@ -604,6 +604,7 @@ var siteManager = /** @class */ (function () {
                     }
                 }
                 else {
+                    replaceCount++;
                     /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
                       $.each( m.comments, function( key1, value1 ) {
                         m.comments[key1] = that.fillUser(value1);
@@ -669,7 +670,7 @@ var siteManager = /** @class */ (function () {
                 theVue.alert("All medias are loaded", "warning");
             }
             else {
-                theVue.alert("Load " + loadCount + " and replace " + replaceCount + " medias.");
+                theVue.alert("Load " + loadCount + " and " + replaceCount + " medias already existed.");
             }
             var d = document.documentElement;
             var offset = d.scrollTop + window.innerHeight;
