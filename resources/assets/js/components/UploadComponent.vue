@@ -59,6 +59,7 @@
 
 
     </form>
+    <vs-progress :percent="uploadPercent" v-if="uploadPercent!=-1" color="primary">primary</vs-progress>
     <button @click="submitAction();" >Submit</button>
     </div>
 </template>
@@ -84,9 +85,32 @@
         reader.readAsDataURL($("#posterUpload")[0].files[0]);
 
       },
+      uploadProgress(){
+
+    },
       submitAction() {
         let that = this;
         $.ajax({
+          xhr: function() {
+            var xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener("progress", function(evt) {
+              if (evt.lengthComputable) {
+                var percentComplete = evt.loaded / evt.total;
+                console.log(percentComplete);
+                that.uploadPercent=percentComplete*100;
+                //Do something with upload progress here
+              }
+            }, false);
+
+            xhr.addEventListener("progress", function(evt) {
+              if (evt.lengthComputable) {
+                var percentComplete = evt.loaded / evt.total;
+                //Do something with download progress
+              }
+            }, false);
+
+   return xhr;
+},
             url: '/media/create',
             type: 'POST',
             data: new FormData($("#theForm")[0]),
@@ -97,7 +121,7 @@
               if(res.status==201){
                 eventBus.$emit('videoCreated',res.responseJSON);
               }
-            }
+            },
 
         });
         return false;
@@ -124,6 +148,7 @@ rotate(rotationAngle,event) {
       return {
         mediaType: '',
         cropped: null,
+        uploadPercent:-1
       }
     }
   }

@@ -1,13 +1,19 @@
 <template>
     <div class="row text-center text-lg-left" id="profilevideos">
-  <div v-for="cat in categories"  class="">
-    <p>{{ cat.title }}</p>
+  <vs-collapse>
+  <vs-collapse-item v-for="cat in categories" :key="cat.id" class="">
+      <div slot="header">
+        {{ cat.title }}
+      </div>
+
+    <p>{{ cat.description }}</p>
     <div class="row text-center">
-    <div v-for="media in cat.medias"  class="col-lg-4 col-md-4 col-xs-6">
+    <div v-for="media in cat.medias"  class="col-lg-3 col-md-3 col-xs-6">
           <singleField v-bind:item="media" v-bind:loggeduserid="loggeduserid"></singleField>
     </div>
   </div>
-  </div>
+  </vs-collapse-item>
+  </vs-collapse>
     </div>
 </template>
 <script>
