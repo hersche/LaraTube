@@ -26,7 +26,7 @@
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
 
     </div>
-    <mediaView v-bind:currentmedia="theTestMedia"></mediaView>
+    <mediaView v-bind:currentmedia="theTestMedia" v-bind:autoplay="false"></mediaView>
     <div class="form-group">
         <label>Media-poster:</label>
         <!-- the result -->

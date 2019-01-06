@@ -76,7 +76,8 @@ Route::post('/internal-api/media/{title}','MediaController@edit')->name('mediasi
 
 Route::get('/internal-api/media', function (Request $request) {
     // var_dump(explode(",",$request->input('i')));
-    return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
+  //  return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
+  return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));
 });
 
 Route::get('/internal-api/medias/all', function (Request $request) {
