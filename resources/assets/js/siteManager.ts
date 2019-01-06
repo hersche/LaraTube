@@ -23,10 +23,11 @@ var theMediaSorter = new MediaSorter();
 
 class siteManager {
   medias:Array<Media>;
-  currentPage:string;
   users:Array<User>;
   usedSearchTerms:any;
   tags:Array<Tag>;
+  maxPage:number;
+  currentPage:number;
   categories:Array<Category>;
   nextLink:string;
   loggedUserId:number;
@@ -36,9 +37,10 @@ class siteManager {
   initing:boolean;
   csrf:string;
   constructor(base:string){
+    this.maxPage=-1;
+    this.currentPage=1;
     this.initing=true;
     baseUrl = base+"/";
-    this.currentPage = "overview";
     this.catchedTagMedias=[];
     this.usedSearchTerms=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
@@ -243,9 +245,20 @@ class siteManager {
       var offset = d.scrollTop + window.innerHeight;
       var height = d.offsetHeight;
       if (offset >= height) {
-        if(that.nextLink!=null){
-          that.receiveMedias(that.nextLink)
+        console.log("current page");
+        console.log(that.currentPage)
+        if(that.maxPage>=that.currentPage){
+
+          that.receiveMedias('/internal-api/media?page='+that.currentPage)
+          that.currentPage++;
+          if(that.currentPage>that.maxPage){
+            console.log("end reached")
+            theVue.canloadmore=false;
+          }
+        } else {
+          console.log("no more because of link is null")
         }
+
       }
 
     };
@@ -385,9 +398,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
     comment.childs = comment.childs.sort(MediaSorter.byCreatedAtComments)
     return comment;
-  }
-  getCurrentSite(){
-    return this.currentPage;
   }
   updateCSRF(){
     $.get('/internal-api/refresh-csrf').done(function(data){
@@ -653,8 +663,17 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           }
 
         });
+        if(data.meta.last_page!=null&&that.maxPage==-1){
+          console.log("set maxPage")
+          console.log(data.meta.last_page)
+          that.maxPage = data.meta.last_page;
+        }
         if(data.links!=undefined){
-          that.nextLink = data.links.next+that.getIgnoreParam(false);
+          console.log("d-link")
+          console.log(data.links.next)
+          if(data.links.next!=null){
+            that.nextLink = data.links.next+that.getIgnoreParam(false);
+          }
           that.lastLink = data.links.prev+that.getIgnoreParam(false);
         }
         if(theVue==undefined){
@@ -700,9 +719,14 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         var offset = d.scrollTop + window.innerHeight;
         var height = d.offsetHeight;
         if(offset > height){
-          if(that.nextLink!=null){
-            console.log("receive cause no scroll yet")
-            that.receiveMedias(that.nextLink)
+          if(that.maxPage>=that.currentPage){
+
+            that.receiveMedias('/internal-api/media?page='+that.currentPage)
+            that.currentPage++;
+            if(that.currentPage>that.maxPage){
+              console.log("end reached")
+              theVue.canloadmore=false;
+            }
           }
         }
     });

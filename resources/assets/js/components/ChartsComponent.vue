@@ -1,10 +1,17 @@
 <template>
-    <div class="row">
-        <span class="" >
+    <div class="">
+      <p>The numbers on this chart represent only your loaded medias. To see all medias, go to the menu -> Developer options -> Load all medias</p>
+      <p>This can take a while / need performance.</p>
+      <div class="row">
+        <span class="col-6" >
           <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
         </span>
-        <span class="" style="">
+        <span class="col-6" style="">
           <apexchart width="500" type="pie" id="chart2" :options="chartOptions2" :series="series2"></apexchart>
+        </span>
+      </div>
+        <span class="col-6" >
+          <apexchart width="500" type="bar" :options="likeOptions" :series="likeSeries"></apexchart>
         </span>
       </div>
 </template>
@@ -12,7 +19,57 @@
   import { eventBus } from '../eventBus.js';
   export default {
     props: ['medias','loggeduserid'],
+    methods:{
+
+    },
     computed: {
+      likeOptions: function () {
+        // `this` points to the vm instance
+        var titles = []
+this.medias.forEach( function(item, index) {
+  titles.push(item.title)
+});
+        return {
+          chart: {
+            id: 'vuechart-likes'
+          },
+          xaxis: {
+            categories: titles
+          }
+      };
+    },
+      likeSeries: function () {
+        var localVideo=0,localAudio=0,directAudio=0,directVideo=0,torrentAudio=0,torrentVideo=0;
+        var likeArray = []
+        var dislikeArray = []
+        this.medias.forEach( function(item, index) {
+          if(item.type=="localVideo"){
+            localVideo++;
+          } else if (item.type=="localAudio"){
+            localAudio++;
+          } else if (item.type=="directAudio"){
+            directAudio++;
+          } else if (item.type=="directVideo"){
+            directVideo++;
+          } else if (item.type=="torrentAudio"){
+            torrentAudio++;
+          } else if (item.type=="torrentVideo"){
+            torrentVideo++;
+          } else {
+            console.warn("Weird type? "+item.type)
+          }
+          likeArray.push(item.likes)
+          dislikeArray.push(item.dislikes)
+        });
+        return [{
+          name: 'Likes',
+          data: likeArray
+        },{
+          name: 'Dislikes',
+          data: dislikeArray
+        },
+      ];
+      },
       // a computed getter
       chartOptions: function () {
         // `this` points to the vm instance
@@ -46,7 +103,7 @@
           }
         });
         return [{
-          name: 'series-1',
+          name: 'Medias',
           data: [localVideo,localAudio,directAudio,directVideo,torrentAudio,torrentVideo]
         }];
       },
