@@ -1,0 +1,311 @@
+<template>
+  <div v-if="currentmedia!=undefined">
+    <div class="row" >
+      <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="text-center" v-if="currentmedia.techType=='audio'">
+          <p>
+            <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
+          </p>
+          <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
+          <vue-plyr v-if="currentmedia.type=='localAudio'">
+            <audio class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
+              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
+            </audio>
+          </vue-plyr>
+          <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary col-1 float-right" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
+          <vue-plyr v-if="currentmedia.type=='directAudio'">
+            <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
+              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
+            </audio>
+          </vue-plyr>
+        </div>
+        <vue-plyr v-if="currentmedia.techType=='video'">
+          <video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
+            <source :src="currentmedia.source" type="video/mp4"></source>
+            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+            </video>
+        </vue-plyr>
+        <vue-plyr v-if="currentmedia.techType=='torrent'" >
+          <video class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
+            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+          </video>
+        </vue-plyr>
+
+
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  import { eventBus } from '../eventBus.js';
+  //import plyr from 'plyr'
+  import { User, Media, Tag } from '../models';
+  import butterchurn from 'butterchurn';
+  import butterchurnPresets from 'butterchurn-presets';
+  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
+  var WebTorrent = require('webtorrent')
+  var client = new WebTorrent();
+  let theTorrent;
+  var currsrc;
+  var torrentInterval;
+  var audioCtx, audioNode, gainNode, visualizer;
+  const presets = butterchurnPresets.getPresets();
+
+  export default {
+    props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser','currentmedia'],
+
+
+    methods: {
+
+      visualFullScreen(){
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+          if(visualizer!=undefined){
+            console.log("exit set visual")
+            visualizer.setRendererSize(400, 400);
+          }
+        } else {
+          var element = $('#audioVisual')[0];
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+          if(visualizer!=undefined){
+            console.log("fs set visual")
+            visualizer.setRendererSize($(window).width(), $(window).height());
+          }
+        }
+      },
+
+      // this and it's initTorrentAfterRemove method exist this way by try to remove the old torrent properly.
+      // i did this as proper as possible, but it's still in the client's array :/
+      initTorrent(){
+        let that = this;
+        //if(client==undefined){
+
+          if(client.torrents.length>0){
+            //client.remove(client.torrents[0].magnetURI,function(err){
+              theTorrent.destroy(function(){
+                  console.log("remove and recheck");
+              //  console.log(err)
+            // client = new WebTorrent();
+                that.initTorrent();
+              })
+
+            //});
+
+          } else {
+            that.initTorrentAfterRemove();
+          }
+
+        //} else {
+        //  client.destroy(function(){
+          //  client = new WebTorrent();
+          //  that.initTorrent2();
+          //});
+
+
+      },
+
+      initTorrentAfterRemove(){
+        let that = this;
+        if(torrentInterval!=undefined){
+          if(theTorrent!=undefined){
+            console.log("torrent destroyed on init..")
+            //theTorrent.destroy();
+            //client.remove()
+            //client.destroy();
+          }
+        }
+        if(this.currentmedia.techType=="video"){
+          this.inited=true
+        }
+        else if(this.currentmedia.techType=="torrent"){
+          this.inited=true
+          console.log("run init for torrent")
+              let that = this;
+
+            //  var player = new plyr('#torrentPlayer');
+              client.add(this.currentmedia.source, function (torrent) {
+                theTorrent = torrent;
+                  // Torrents can contain many files. Let's use the .mp4 file
+                  var file = theTorrent.files.find(function (file) {
+                    that.lasttorrentid = theTorrent.magnetURI;
+                    currsrc = theTorrent.magnetURI;
+                    return file.name.endsWith('.mp4')
+                  })
+
+                    theTorrent.on('done', onDone);
+                    torrentInterval = setInterval(onProgress, 500);
+                    onProgress();
+                    file.getBlobURL(function (err, url) {
+                      if (err){
+                        console.log(err.message);
+                      }
+
+
+                      //$("#downloadButton").attr("href",url);
+                    });
+                    //$("#torrentDL").html("<a href='"+torrent.torrentFileBlobURL+"' download='Stimulate....torrent'>Torrent-file</a>");
+                    function onProgress () {
+                      // Peers
+                      that.peers = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers');
+                      if(that.lasttorrentid == theTorrent.magnetURI&&torrent.numPeers>0){
+
+                      // Progress
+                      var percent = Math.round(torrent.progress * 100 * 100) / 100;
+                      var datetime = new Date();
+                      datetime = datetime.getTime();
+                      var ds = torrent.downloadSpeed/1000000;
+                      var us = torrent.uploadSpeed/1000000;
+                      that.downloadpercent = that.prettyBytes(torrent.downloaded) + " / " + that.prettyBytes(torrent.length) + " ("+percent+"%)";
+                      that.downloadspeed = that.prettyBytes(torrent.downloadSpeed) + '/s (down)';
+                      that.uploadspeed = that.prettyBytes(torrent.uploadSpeed) + '/s (up)';
+                      eventBus.$emit('torrentChartData',[[that.peers,that.downloadpercent,that.downloadspeed,that.uploadspeed],{x:datetime,y:percent},{x:datetime,y:ds},{x:datetime,y:us}]);
+                      // Speed rates
+                      }
+
+                    }
+                    function onDone () {
+                      onProgress();
+                    //  console.log(url)
+                      //console.log(torrent.torrentFileBlobURL)
+                      that.torrentdownloadurl = torrent.torrentFileBlobURL
+                    }
+
+                  file.renderTo('video#torrentPlayer');
+                });
+            } else if(this.currentmedia.type=='localAudio'&this.audiovisualtype!='Poster'){
+              this.inited=true
+              $('#audioPlayer')[0].crossOrigin = 'Anonymous'
+              audioCtx = new AudioContext();
+              //console.log($('#audioPlayer')[0])
+              audioNode = audioCtx.createMediaElementSource($('#audioPlayer')[0]);
+              gainNode = audioCtx.createGain();
+              //console.log(audioNode)
+
+              visualizer = butterchurn.createVisualizer(audioCtx, $('#audioVisual')[0], {
+                width: 400,
+                height: 400
+              });
+
+// get audioNode from audio source or microphone
+
+
+audioNode.connect(gainNode);
+gainNode.connect(audioCtx.destination);
+// load a preset
+visualizer.connectAudio(gainNode);
+var preset = presets[this.audiovisualtype];
+//console.log(butterchurnPresets.getPresets())
+visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
+
+// resize visualizer
+
+visualizer.setRendererSize(400, 400);
+
+// render a frame
+torrentInterval = setInterval(function(){
+  visualizer.render();
+}, 100);
+
+}
+      },
+      prettyBytes(num,label=true) {
+        var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        if (neg) num = -num;
+        if (num < 1) return (neg ? '-' : '') + num + ' B';
+        exponent = Math.min(Math.floor(Math.log(num) / Math.log(1000)), units.length - 1);
+        num = Number((num / Math.pow(1000, exponent)).toFixed(2));
+        unit = units[exponent];
+        if(label){
+          return (neg ? '-' : '') + num + ' ' + unit;
+        } else {
+          return (neg ? '-' : '') + num;
+        }
+      },
+      emitBackClicked(title) {
+        eventBus.$emit('playerBackClick',title);
+      },
+
+
+    },
+    watch: {
+      '$route.params.currentTitle': function (val) {
+        //this.fullName = val + ' ' + this.lastName
+      //  console.log("route-watch")
+      //  console.log(val)
+      this.inited = false;
+      //  this.currentmedia = this.getCurrentMedia()
+        this.initTorrent()
+      },
+    },
+    computed: {
+      // a computed getter
+    },
+    updated: function () {
+      this.$nextTick(function () {
+
+    if((this.currentmedia!=undefined)&&(this.inited==false)){
+      //this.currentmedia = this.getCurrentMedia()
+      this.initTorrent()
+      //this.initTorrent();
+      this.mylike = Number(this.currentmedia.myLike);
+      this.likes = this.currentmedia.likes;
+      this.dislikes = this.currentmedia.dislikes;
+
+      if(this.currentmedia.techType=="audio"){
+      //  console.log("init visualizer")
+      }
+
+  } });
+    },
+    destroyed(){
+      if(theTorrent!=undefined){
+        //client.destroy();
+      }
+    },
+    mounted(){
+      let that = this;
+    //  this.currentmedia = this.getCurrentMedia()
+      eventBus.$on('audioVisualType', visArgs => {
+        that.audiovisualtype = visArgs[0];
+        this.audioVisualChangeSeconds = visArgs[1]
+        if(visualizer!=undefined){
+          console.log("change preeset")
+          visualizer.loadPreset(presets[this.audiovisualtype], this.audioVisualChangeSeconds);
+        }
+      });
+      //this.currentmedia = this.getCurrentMedia()
+     ///this.initTorrent()
+  },
+  data(){
+    return {
+      inited: false,
+      peers: '',
+      data:'',
+      audioVisualChangeSeconds:0.0,
+      visualizer:'',
+      lasttorrentid:'',
+      audiovisualtype:'Flexi - alien fish pond',
+      downloadspeed: '',
+      torrentdownloadurl:'',
+      downloadpercent: '',
+      uploadspeed: '',
+    }
+  }
+  }
+</script>
