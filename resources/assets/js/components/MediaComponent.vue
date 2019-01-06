@@ -19,6 +19,7 @@
             <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
             <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.techType=='torrent'" >Torrent-info</b-btn>
             <span class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
+            <span class="btn btn-sm btn-info mr-1">{{ currentmedia.type }}</span>
             <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
               <vs-tooltip :text="currentmedia.user.name">
                 <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
@@ -181,17 +182,14 @@
           let that = this;
           var theMedia = emptyMedia
           this.medias.forEach(function(val,key){
-            //console.log(that.$route.params.currentTitle);
-            var t = val.title;
-            if(t.includes("?")){
-              //t = t.substring(0,t.indexOf("?"))
-            }
-            if(encodeURIComponent(t)==encodeURIComponent(that.$route.params.currentTitle)){
-              //this.originalLikes = val.likes
-              //this.originalDislikes = val.dislikes
+            if(encodeURIComponent(val.title)==encodeURIComponent(that.$route.params.currentTitle)){
               theMedia = val;
             }
           });
+          if(theMedia==emptyMedia){
+            console.log("media not there yet, want it!");
+            eventBus.$emit('loadMedia',that.$route.params.currentTitle);
+          }
           return theMedia;
         }
 
@@ -205,6 +203,12 @@
         localStorage.setItem('audioVisualType',this.audiovisualtype);
         eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
   },
+  medias: function(val){
+    this.currentmedia = this.getCurrentMedia();
+    this.mylike = Number(this.currentmedia.myLike);
+    this.likes = this.currentmedia.likes;
+    this.dislikes = this.currentmedia.dislikes;
+},
   audioVisualChangeSeconds:function(val){
     localStorage.setItem('audioVisualChangeSeconds',this.audioVisualChangeSeconds);
     eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
@@ -226,30 +230,21 @@
     },
     updated: function () {
       this.$nextTick(function () {
-
-    if((this.currentmedia!=undefined)&&(this.inited==false)){
-      this.inited=true;
-      this.currentmedia = this.getCurrentMedia()
-      this.mylike = Number(this.currentmedia.myLike);
-      this.likes = this.currentmedia.likes;
-      this.dislikes = this.currentmedia.dislikes;
-
-      if(this.currentmedia.techType=="audio"){
-
-
-
-
-
-      }
-
-  } });
+        if(this.inited==false){
+          this.inited=true;
+          this.currentmedia = this.getCurrentMedia();
+          this.mylike = Number(this.currentmedia.myLike);
+          this.likes = this.currentmedia.likes;
+          this.dislikes = this.currentmedia.dislikes;
+        }
+      });
     },
     mounted(){
       let that = this;
       if(localStorage.getItem("autoplay")!=''){
         this.autoplay=true;
       }
-      this.currentmedia = this.getCurrentMedia()
+      //this.currentmedia = this.getCurrentMedia()
       if(localStorage.getItem('audioVisualType')!=undefined&localStorage.getItem('audioVisualType')!=''){
         this.audiovisualtype=localStorage.getItem('audioVisualType');
       }

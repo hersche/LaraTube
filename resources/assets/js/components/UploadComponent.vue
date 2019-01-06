@@ -12,13 +12,14 @@
     </div>
     <div v-if="mediaType=='directAudio'|mediaType=='directVideo'" class="form-group">
         <label>Media-source:</label>
-         <input placeholder="https://server/file.mp4.mp3" class="form-control" name="source" type="text">
+         <input placeholder="https://server/file.mp4.mp3" class="form-control" id="source" name="source" type="text">
     </div>
     <div v-if="mediaType=='torrentAudio'|mediaType=='torrentVideo'" class="form-group">
         <label>Torrent (magnet-link)</label>
-         <input placeholder="magnet://" class="form-control" name="source" type="text">
+         <input placeholder="magnet://" class="form-control" id="source" name="source" type="text">
+         <button class="btn btn-primary" @click="testMedia()">Test link</button>
     </div>
-
+    <mediaView v-bind:currentmedia="theTestMedia"></mediaView>
     <div class="form-group">
         <label>Media-poster:</label>
         <!-- the result -->
@@ -65,8 +66,14 @@
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
+  import { User, Media, Tag } from '../models';
+  import MediaView from './MediaView'
+
   export default {
     props: ['medias','baseUrl','csrf'],
+    components : {
+        'mediaView' : MediaView
+    },
     mounted: function () {
       this.$refs.croppieRef.bind({
         url: '/img/404/image.png',
@@ -74,6 +81,10 @@
     },
 
     methods: {
+      testMedia(){
+        this.theTestMedia = new Media(0,"None","",$("#source").val(),"","","","",this.mediaType,new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
+
+      },
       posterChange(){
         var reader = new FileReader();
         let that = this;
@@ -148,7 +159,8 @@ rotate(rotationAngle,event) {
       return {
         mediaType: '',
         cropped: null,
-        uploadPercent:-1
+        uploadPercent:-1,
+        theTestMedia:''
       }
     }
   }

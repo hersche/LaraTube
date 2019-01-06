@@ -155,6 +155,20 @@ var siteManager = /** @class */ (function () {
             //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
             theVue.alert("Media refreshed", "success");
         });
+        eventBus.$on('loadMedia', function (title) {
+            // Workaround by receive the media again.
+            if (theVue != undefined) {
+                that.receiveMediaByName(title);
+                that.updateCSRF();
+            }
+            /*var m = that.findMediaById(Number(json.data.media_id))
+            m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
+            console.log(m.comments)*/
+            //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
+            //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
+            //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
+            theVue.alert("Media refreshed", "success");
+        });
         eventBus.$on('videoDeleted', function (title) {
             theVue.alert("Video " + title + " deleted", "success");
             that.deleteMediaByName(title);
