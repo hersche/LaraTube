@@ -249,7 +249,7 @@ class siteManager {
         console.log(that.currentPage)
         if(that.maxPage>=that.currentPage){
 
-          that.receiveMedias('/internal-api/media?page='+that.currentPage)
+          that.receiveMedias('/internal-api/media?page='+that.currentPage+that.getIgnoreParam(false))
           that.currentPage++;
           if(that.currentPage>that.maxPage){
             console.log("end reached")
@@ -722,7 +722,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         if(offset > height){
           if(that.maxPage>=that.currentPage){
 
-            that.receiveMedias('/internal-api/media?page='+that.currentPage)
+            that.receiveMedias('/internal-api/media?page='+that.currentPage+that.getIgnoreParam(false))
             that.currentPage++;
             if(that.currentPage>that.maxPage){
               console.log("end reached")

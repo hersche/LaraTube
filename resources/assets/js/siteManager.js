@@ -216,7 +216,7 @@ var siteManager = /** @class */ (function () {
                 console.log("current page");
                 console.log(that.currentPage);
                 if (that.maxPage >= that.currentPage) {
-                    that.receiveMedias('/internal-api/media?page=' + that.currentPage);
+                    that.receiveMedias('/internal-api/media?page=' + that.currentPage + that.getIgnoreParam(false));
                     that.currentPage++;
                     if (that.currentPage > that.maxPage) {
                         console.log("end reached");
@@ -677,7 +677,7 @@ var siteManager = /** @class */ (function () {
             var height = d.offsetHeight;
             if (offset > height) {
                 if (that.maxPage >= that.currentPage) {
-                    that.receiveMedias('/internal-api/media?page=' + that.currentPage);
+                    that.receiveMedias('/internal-api/media?page=' + that.currentPage + that.getIgnoreParam(false));
                     that.currentPage++;
                     if (that.currentPage > that.maxPage) {
                         console.log("end reached");
