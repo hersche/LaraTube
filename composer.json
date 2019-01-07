@@ -16,7 +16,8 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "~5.0",
         "rtconner/laravel-tagging": "~2.2",
-        "spatie/laravel-permission": "^2.16"
+        "spatie/laravel-permission": "^2.16",
+        "ybr-nx/laravel-mariadb": "^1.0"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

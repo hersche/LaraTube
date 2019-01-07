@@ -182,7 +182,6 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
             //  eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
             //  eventBus.$emit('videoDeleted',that.currentmedia.title);
@@ -202,8 +201,6 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                //eventBus.$emit('showAlert',['success','Video uploaded']);
-
               }
               eventBus.$emit('videoDeleted',that.currentmedia.title);
             }
@@ -211,40 +208,39 @@
         });
         return false;
       },
-// CALBACK USAGE
-resultAvatar(output) {
-    this.avatarCropped = output;
-},
-resultBackground(output) {
-    this.backgroundCropped = output;
-},
-updateAvatar(val) {
-  let options = {
-      format: 'png'
-  }
-  this.$refs.croppieAvatarRef.result(options, (output) => {
-      this.avatarCropped = output;
-  });
-},
-updateBackground(val) {
-  let options = {
-      format: 'png'
-  }
-  this.$refs.croppieBackgroundRef.result(options, (output) => {
-      this.backgroundCropped = output;
-  });
-},
-rotateAvatar(rotationAngle,event) {
-    // Rotates the image
-    if (event) event.preventDefault()
-    this.$refs.croppieAvatarRef.rotate(rotationAngle);
-},
-rotateBackground(rotationAngle,event) {
-    // Rotates the image
-    if (event) event.preventDefault()
-    this.$refs.croppieBackgroundRef.rotate(rotationAngle);
-}
+      // CALBACK USAGE
+      resultAvatar(output) {
+        this.avatarCropped = output;
+      },
+      resultBackground(output) {
+        this.backgroundCropped = output;
+      },
+      updateAvatar(val) {
+        let options = {
+          format: 'png'
+        }
+        this.$refs.croppieAvatarRef.result(options, (output) => {
+          this.avatarCropped = output;
+        });
+      },
+      updateBackground(val) {
+        let options = {
+          format: 'png'
+        }
+        this.$refs.croppieBackgroundRef.result(options, (output) => {
+          this.backgroundCropped = output;
+        });
+      },
+      rotateAvatar(rotationAngle,event) {
+        // Rotates the image
+        if (event) event.preventDefault()
+        this.$refs.croppieAvatarRef.rotate(rotationAngle);
+      },
+      rotateBackground(rotationAngle,event) {
+        // Rotates the image
+        if (event) event.preventDefault()
+        this.$refs.croppieBackgroundRef.rotate(rotationAngle);
+      }
     },
-
   }
 </script>

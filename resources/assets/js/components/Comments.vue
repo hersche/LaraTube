@@ -92,7 +92,6 @@ import { eventBus } from '../eventBus.js';
                 processData: false,
                 complete : function(res) {
                   if(res.status==200){
-                    //eventBus.$emit('showAlert',['success','Video uploaded']);
                     eventBus.$emit('commentCreated',res.responseJSON);
                   }
                 }
@@ -118,8 +117,6 @@ import { eventBus } from '../eventBus.js';
                 processData: false,
                 complete : function(res) {
                   if(res.status==200){
-
-                    //eventBus.$emit('showAlert',['success','Video uploaded']);
                   }
                   $("#comment_body"+id).val("")
                   eventBus.$emit('commentCreated',res.responseJSON);

@@ -120,6 +120,8 @@ Route::get('/internal-api/medias/byId/{id}', function ($id) {
     return new MediaResource(Media::where('id', '=' ,$id)->firstOrFail());
 });
 Route::get('/internal-api/medias/byCommentId/{id}', function ($id) {
+//  echo Comment::find($id)->media_id;
+  //echo Media::find(Comment::find($id)->media_id)->id;
     return new MediaResource(Media::where('id', '=' ,Comment::find($id)->media_id)->firstOrFail());
 });
 Route::post('/internal-api/media/{id}','MediaController@edit')->name('mediasapi.edit');

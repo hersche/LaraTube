@@ -319,6 +319,16 @@ class MediaController extends Controller
             Storage::delete($media->source);
           }
         }
+        //$likeList = $media->likeObjects();
+        //foreach ($likeList as $value){
+
+
+          $media->user()->notifications()->where('type', 'App\Notifications\LikeReceived')->where('data',"LIKE", '%"media_id":"'.$media->id.'"%')->delete();
+        //}
+        foreach ($media->comments() as $value){
+          $media->user()->notifications()->where('type', 'App\Notifications\LikeReceived')->where('data',"LIKE", '%"comment_id":"'.$value->id.'"%')->delete();
+          $value->delete();
+        }
         Storage::delete($media->poster_source);
         $media->delete();
         return response()->json(["data"=>["msg"=>"Media deleted"]],200);

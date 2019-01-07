@@ -18,14 +18,20 @@
               </div>
               <div>
                 <div>{{ item.description }}</div>
-                <div><span v-for="tag in item.tags" ><router-link class="" :to="'/tags/'+tag.name" >    <vs-chip color="primary">
-        <vs-avatar icon="tag" />
-        {{ tag.name }}
-      </vs-chip></router-link></span></div>
+                <div>
+                  <span v-for="tag in item.tags" >
+                    <router-link class="" :to="'/tags/'+tag.name" >
+                      <vs-chip color="primary">
+                        <vs-avatar icon="tag" />
+                        {{ tag.name }}
+                      </vs-chip>
+                    </router-link>
+                  </span>
+                </div>
               </div>
               <div slot="footer">
-                <vs-row vs-justify="flex-end">
-                  <vs-button v-if="loggeduserid==item.user.id|currentuser.admin" icon="settings" title="Edit media" :to="'/mediaedit/'+item.title"></vs-button>
+                <vs-row vs-justify="flex-end" style="flex-flow: row!important;">
+                  <vs-button class="mr-1" v-if="loggeduserid==item.user.id|currentuser.admin" icon="settings" title="Edit media" :to="'/mediaedit/'+item.title"></vs-button>
                   <vs-button icon="play_circle_filled" title="Play" :to="'/media/'+encodeURIComponent(item.title)"></vs-button>
                 </vs-row>
               </div>

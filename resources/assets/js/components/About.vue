@@ -9,6 +9,8 @@
   <ul>
   <li>Laravel</li>
   <li>Vue</li>
+  <li>VueSax</li>
+  <li>Bootstrap vue</li>
   <li>Stackoverflow</li>
   <li>ApexCharts</li>
   <li>Webtorrent</li>

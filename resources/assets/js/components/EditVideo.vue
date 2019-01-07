@@ -101,6 +101,7 @@
     //  this.$refs.croppieRef.bind({
     //    url: '/img/404/poster.png',
     //  })
+    this.currentmedia=this.getCurrentMedia();
     },
     updated: function () {
       this.$nextTick(function () {
@@ -221,14 +222,8 @@ hideModal () {
             processData: false,
             complete : function(res) {
               if(res.status==200){
-              //  that.dismisscountdown = 20;
-              //  that.alertMsg = "Video edited"
-              //  that.alertType = "success"
-                //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
               eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
-            //  eventBus.$emit('videoDeleted',that.currentmedia.title);
-            //  eventBus.$emit('videoCreated',res.responseJSON);
             }
 
         });
@@ -274,10 +269,6 @@ rotate(rotationAngle,event) {
     data(){
       return {
         mediaType: '',
-        dismisssecs: 20,
-        dismisscountdown: 0,
-        alertType: 'warning',
-        alertMsg: '',
         currentmedia:undefined,
         catid:'',
         tmpid:0,

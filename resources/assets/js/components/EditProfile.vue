@@ -142,11 +142,8 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                //eventBus.$emit('showAlert',['success','Video uploaded']);
               }
               eventBus.$emit('userEdited','')
-            //  eventBus.$emit('videoDeleted',that.currentmedia.title);
-            //  eventBus.$emit('videoCreated',res.responseJSON);
             }
 
         });
@@ -162,7 +159,6 @@
             processData: false,
             complete : function(res) {
               if(res.status==200){
-                //eventBus.$emit('showAlert',['success','Video uploaded']);
 
               }
               eventBus.$emit('videoDeleted',that.currentmedia.title);
@@ -208,10 +204,6 @@ rotateBackground(rotationAngle,event) {
     data(){
       return {
         mediaType: '',
-        dismisssecs: 20,
-        dismisscountdown: 0,
-        alertType: 'warning',
-        alertMsg: '',
         public: false,
         editpicloaded:false,
         showdismissiblealert: false,

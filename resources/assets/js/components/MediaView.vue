@@ -202,27 +202,25 @@
                 height: 400
               });
 
-// get audioNode from audio source or microphone
+              // get audioNode from audio source or microphone
+              audioNode.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+              // load a preset
+              visualizer.connectAudio(gainNode);
+              var preset = presets[this.audiovisualtype];
+              //console.log(butterchurnPresets.getPresets())
+              visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
 
+              // resize visualizer
 
-audioNode.connect(gainNode);
-gainNode.connect(audioCtx.destination);
-// load a preset
-visualizer.connectAudio(gainNode);
-var preset = presets[this.audiovisualtype];
-//console.log(butterchurnPresets.getPresets())
-visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
+              visualizer.setRendererSize(400, 400);
 
-// resize visualizer
+              // render a frame
+              torrentInterval = setInterval(function(){
+                visualizer.render();
+              }, 100);
 
-visualizer.setRendererSize(400, 400);
-
-// render a frame
-torrentInterval = setInterval(function(){
-  visualizer.render();
-}, 100);
-
-}
+            }
       },
       prettyBytes(num,label=true) {
         var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -289,6 +287,9 @@ torrentInterval = setInterval(function(){
     destroyed(){
       if(theTorrent!=undefined){
         //client.destroy();
+        theTorrent.destroy(function(){
+          console.log("torrent destroyed on vue-destroyed-method")
+        });
       }
     },
     mounted(){

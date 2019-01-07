@@ -30,7 +30,6 @@ class siteManager {
   maxPage:number;
   currentPage:number;
   categories:Array<Category>;
-  nextLink:string;
   loggedUserId:number;
   currentUser:User;
   lastLink:string;
@@ -278,6 +277,7 @@ class siteManager {
       theVue.alert("Video "+title+" deleted","success")
       that.deleteMediaByName(title);
       that.updateCSRF();
+      that.receiveNotifications(undefined,true)
     });
     eventBus.$on('videoCreated', json => {
       that.receiveTagsForMedia(json);
@@ -331,19 +331,11 @@ class siteManager {
     eventBus.$on('refreshSearch', title => {
       theVue.searching();
     });
-    eventBus.$on('showAlert', data => {
-      theVue.dismisscountdown = theVue.dismisssecs
-    });
   //  sm.receiveUsers(true);
   // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})
    theVue = new Vue({
     data : {
       title : "Overview",
-      dismisssecs: 10,
-      dismisscountdown: 0,
-      showdismissiblealert: false,
-      alertmsg: "",
-      alerttype:"",
       search:'',
       nextvideos:[],
       notifications:[],
@@ -575,8 +567,21 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       if((that.notifications==undefined)||(forceUpdate)){
         that.notifications = [];
         $.each( data, function( key, value ) {
-          console.log("push notification "+value.id)
-          that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
+          if(value.data.media_id!=null&&value.data.media_id!=0){
+            that.findMediaById(value.data.media_id,function(){
+              console.log("push media-like-notification "+value.id)
+              that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
+              theVue.notifications = that.notifications
+            });
+          }
+          if(value.data.comment_id!=null&&value.data.comment_id!=0){
+            console.log("load a comment")
+            that.getCommentById2(value.data.comment_id,function(){
+              console.log("push comment-like-notification "+value.id)
+              that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
+              theVue.notifications = that.notifications
+            });
+          }
         });
       }
       this.notifications = that.notifications;
@@ -640,9 +645,29 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       theVue.$router.push('/');
     });
   }
+  getCommentById2(id,callback=undefined){
+    if(id==null||id==0){
+      return;
+    }
+    var theMedia = undefined;
+    let that = this;
+    this.medias.forEach(function(val,key){
+      val.comments.forEach(function(val2,key2){
+      if(val2.id==id){
+        theMedia = val2;
+      }
+      });
+    });
+    if(theMedia==undefined){
+      //eventBus.$emit('loadMediaByCommentId',id);
+      that.receiveMediaByCommentId(id,callback)
+    } else {
+      callback();
+    }
+    return theMedia
+  }
 
-
-  receiveMediaByCommentId(mediaName:number,forceUpdate=false):void{
+  receiveMediaByCommentId(mediaName:number,callback=undefined):void{
     let that = this;
     var theKey;
     var existsAlready = false;
@@ -683,10 +708,13 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         }
         //console.warn("If the media already existed, why this method was used?");
       }
+      if(callback!=undefined){
+        callback();
+      }
       });
   }
 
-  receiveMediaById(mediaName:number,forceUpdate=false):void{
+  receiveMediaById(mediaName:number,callback=undefined):void{
     let that = this;
     var theKey;
     var existsAlready = false;
@@ -724,6 +752,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           theVue.medias=that.medias
         }
         //console.warn("If the media already existed, why this method was used?");
+      }
+      if(callback!=undefined){
+        callback();
       }
       });
   }
@@ -797,7 +828,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
     return returnMedia;
   }
-  findMediaById(id:number):Media{
+  findMediaById(id:number,callback=undefined):Media{
     var returnMedia = undefined;
     let that = this;
     $.each(that.medias, function(key,value){
@@ -806,6 +837,13 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         returnMedia=value;
       }
     });
+    if(returnMedia==undefined){
+      that.receiveMediaById(id,callback);
+    } else {
+      if(callback!=undefined){
+        callback()
+      }
+    }
     return returnMedia;
   }
   deleteMediaByName(mediaName:string):void{
@@ -876,20 +914,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.maxPage = data.meta.last_page;
         }
         }
-        if(data.links!=undefined){
-          console.log("d-link")
-          console.log(data.links.next)
-          if(data.links.next!=null){
-            that.nextLink = data.links.next+that.getIgnoreParam(false);
-          }
-          that.lastLink = data.links.prev+that.getIgnoreParam(false);
-        }
         if(theVue==undefined){
           that.initVue();
           that.receiveNotifications();
-        }
-        if(that.nextLink==null){
-          theVue.canloadmore=false;
         }
         theVue.users = that.users;
         theVue.categories = that.categories;

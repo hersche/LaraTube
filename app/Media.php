@@ -41,6 +41,12 @@ class Media extends Model
     //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
     }
 
+    public function likeObjects() {
+    //  ->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')
+      return Like::where('media_id', '=',$this->id)->get();
+    //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
+    }
+
     public function myLike($request){
       //echo "Auth: ";
       //echo $request->user('api')->id;
