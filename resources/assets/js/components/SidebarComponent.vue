@@ -10,12 +10,13 @@
 
     <vs-sidebar parent="body" default-index="0"  color="primary" class="sidebarx" spacer v-model="active">
       <div v-if="currentuser.id!=0" class="header-sidebar" slot="header" :style="'background-image:url('+currentuser.background+');'">
-        <vs-avatar  size="70px" :src="currentuser.avatar"/>
+        <vs-avatar :badge="n" size="70px" :src="currentuser.avatar"/>
         <h4>
           <router-link class="btn btn-sm btn-success" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link>
         </h4>
         <span>
           <router-link class="btn btn-sm btn-success" to="/upload">Upload</router-link>
+          <router-link class="btn btn-sm btn-success" to="/notifications">Notifications</router-link>
           <router-link class="btn btn-sm btn-success" to="/myvideos">My videos</router-link>
         </span>
       </div>
@@ -107,10 +108,19 @@ export default {
       eventBus.$emit('loadAllMedias',"");
     },
   },
-  props:['currentuser','medias','users','tags','csrf'],
+  props:['notifications','currentuser','medias','users','tags','csrf'],
   computed:{
     csrf1: function(){
       document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    n:function(){
+      var tmpArray = []
+      this.notifications.forEach(function(val,key){
+      if(val.read_at!=null&&val.read_at!=0){
+        tmpArray.push(val)
+      }
+      });
+      return tmpArray.length;
     }
   },
   data:()=>({

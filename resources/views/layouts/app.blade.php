@@ -47,11 +47,10 @@ header('Access-Control-Allow-Origin: *');
     </div>
   </div> -->
 <!-- /#sidebar-wrapper -->
-    <div id="app2" v-cloak >
+    <div id="app" v-cloak >
 
 
-
-  <thesidebar v-bind:csrf="csrf" v-bind:currentuser="currentuser" v-bind:medias="medias" v-bind:users="users" v-bind:tags="tags"></thesidebar>
+  <thesidebar v-bind:notifications="notifications" v-bind:csrf="csrf" v-bind:currentuser="currentuser" v-bind:medias="medias" v-bind:users="users" v-bind:tags="tags"></thesidebar>
 
     <!--  <nav id="sidebar" class="d-none bg-light">
           <ul class="list-unstyled components">

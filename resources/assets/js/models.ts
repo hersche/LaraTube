@@ -121,3 +121,18 @@ export class Category {
     this.medias = []
   }
 }
+
+export class Notification {
+  id:number;
+  type:string;
+  data:any;
+  read_at:string
+  created_at
+  constructor(id:number,type:string,data:any,read_at:string,created_at){
+    this.id=id;
+    this.type=type;
+    this.data=data;
+    this.read_at = read_at;
+    this.created_at = created_at
+  }
+}

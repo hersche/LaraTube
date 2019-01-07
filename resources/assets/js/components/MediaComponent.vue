@@ -256,6 +256,10 @@
       if(localStorage.getItem('audioVisualChangeSeconds')!=undefined&localStorage.getItem('audioVisualChangeSeconds')!=''){
         this.audioVisualChangeSeconds=localStorage.getItem('audioVisualChangeSeconds');
       }
+      this.currentmedia = this.getCurrentMedia();
+      this.mylike = Number(this.currentmedia.myLike);
+      this.likes = this.currentmedia.likes;
+      this.dislikes = this.currentmedia.dislikes;
       eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
       eventBus.$on('torrentChartData', chartData => {
         // [that.peers,that.downloadpercent,that.downloadspeed,that.uploadspeed],{x:datetime,y:percent},{x:datetime,y:ds},{x:datetime,y:us}]

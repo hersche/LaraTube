@@ -265,6 +265,7 @@ torrentInterval = setInterval(function(){
       this.initTorrent()
       if(this.autoplay){
         this.player.play();
+        this.player.fullscreen.enter();
       }
       let that = this;
       this.player.on('ended', () => {

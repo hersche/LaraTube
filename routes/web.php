@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Http\Request;
 use App\Media;
+use App\Comment;
 use App\Category;
 use App\DirectTag;
 use App\Http\Resources\Media as MediaResource;
@@ -74,6 +75,28 @@ Route::post('/internal-api/profiles/edit/{id}','UserController@update')->name('u
 Route::delete('/internal-api/media/{title}','MediaController@destroy')->name('mediasapi.delete');
 Route::post('/internal-api/media/{title}','MediaController@edit')->name('mediasiapi.edit');
 
+Route::get('/internal-api/notifications', function (Request $request) {
+  return Auth::user()->notifications->toJson();
+});
+Route::get('/internal-api/notifications/markasread', function (Request $request) {
+  Auth::user()->unreadNotifications->markAsRead();
+  return Auth::user()->notifications->toJson();
+});
+Route::get('/internal-api/notifications/markasread/{id}', function (Request $request,$id) {
+  foreach (Auth::user()->unreadNotifications as $notification) {
+    if($notification->id==$id){
+      $notification->markAsRead();
+    }
+  }
+  return Auth::user()->notifications->toJson();
+});
+Route::get('/internal-api/notifications/delete', function (Request $request) {
+  Auth::user()->notifications()->delete();
+  //foreach (Auth::user()->notifications as $notification) {
+    //$notification->delete();
+  //}
+  return Auth::user()->notifications->toJson();
+});
 Route::get('/internal-api/media', function (Request $request) {
     // var_dump(explode(",",$request->input('i')));
   //  return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
@@ -92,6 +115,12 @@ Route::get('/internal-api/categories', function (Request $request) {
 });
 Route::get('/internal-api/media/{title}', function ($title) {
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
+});
+Route::get('/internal-api/medias/byId/{id}', function ($id) {
+    return new MediaResource(Media::where('id', '=' ,$id)->firstOrFail());
+});
+Route::get('/internal-api/medias/byCommentId/{id}', function ($id) {
+    return new MediaResource(Media::where('id', '=' ,Comment::find($id)->media_id)->firstOrFail());
 });
 Route::post('/internal-api/media/{id}','MediaController@edit')->name('mediasapi.edit');
 Route::delete('/internal-api/media/{id}','MediaController@destroy')->name('mediasapi.delete');

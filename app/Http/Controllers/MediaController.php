@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Media;
+use App\User;
+use App\Notifications\LikeReceived;
 use App\Http\Resources\Media as MediaResource;
 use App\Comment;
 use App\Like;
@@ -121,22 +123,27 @@ class MediaController extends Controller
     public function like(Request $request){
     //$like;
       //echo "the mediaid";
-      echo Auth::id();
+      //echo Auth::id();
       //echo $request->input('media_id');
       //var_dump($request);
       //var_dump($request->all());
+      $notifyId = 0;
       if(!empty($request->input('media_id'))){
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'media_id' => $request->input('media_id')]);
+        $notifyId = Media::find($request->input('media_id'))->user_id;
       } else if(!empty($request->input('comment_id'))){
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'comment_id' => $request->input('comment_id')]);
+        $notifyId = Comment::find($request->input('comment_id'))->user_id;
       }
+
       //if((($like->count=="1")&&($request->input('count')=="-1"))||(($like->count=="-1")&&($request->input('count')=="1"))){
         //$like->delete();
       //} else {
 
         $like->count = $request->input('count');
         $like->save();
-        echo $like->count;
+        User::find($notifyId)->notify(new LikeReceived($like));
+
       //}
       return "OK";
     }
