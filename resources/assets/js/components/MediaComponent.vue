@@ -9,12 +9,12 @@
 
             <span class="float-left"><vs-input-number v-if="currentmedia.type=='localAudio'" v-model="audioVisualChangeSeconds" :step="0.1"/></span>
             <span v-if="currentmedia.type=='localAudio'" >
-              <button class="btn btn-sm btn-primary" @click="previousVisual()">P</button>
+              <button class="btn btn-sm btn-primary" @click="previousVisual()"><vs-icon icon="skip_previous"></vs-icon></button>
               <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
                 <option value="Poster">Poster</option>
                 <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
               </select>
-              <button class="btn btn-sm btn-primary" @click="nextVisual()">N</button>
+              <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
             </span>
             <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
             <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.techType=='torrent'" >Torrent-info</b-btn>
