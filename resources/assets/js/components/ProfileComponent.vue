@@ -6,19 +6,22 @@
   </div>
   <div>{{ user.bio }}</div>
 </div>
-
-<overview v-bind:medias="usermedias" v-if="usermedias.length>0"></overview>
+<h3>User's medias</h3>
+<p><sortSelect></sortSelect></p>
+<overview v-bind:currentuser="currentuser" v-bind:medias="usermedias" v-if="usermedias.length>0"></overview>
 <h5 v-else>User got no medias</h5>
 </div>
 </template>
 
 <script>
   import { eventBus } from '../eventBus.js';
-  import OverviewComponent from './OverviewComponent'
+  import GalleryComponent from './GalleryComponent'
+  import SortSelect from './SortSelect'
   export default {
-    props: ['medias','baseUrl','user'],
+    props: ['medias','baseUrl','user','currentuser'],
   components : {
-      'overview': OverviewComponent
+      'overview': GalleryComponent,
+      'sortSelect': SortSelect
   },
   mounted(){
     // loadUserVideos

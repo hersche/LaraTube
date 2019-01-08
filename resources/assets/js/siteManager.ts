@@ -563,6 +563,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       that.users = [];
       if(that.loggedUserId==0){
         that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "","","",false);
+        theVue.currentuser = that.currentUser
       }
         $.each( data.data, function( key, value ) {
           var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds,value.tagString,value.public,value.admin,value.email,value.created_at.date,value.updated_at.date);
