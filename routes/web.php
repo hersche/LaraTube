@@ -20,25 +20,25 @@ use App\Http\Resources\User as UserResource;
 */
 Auth::routes();
 Route::get('/', function () {
-    return view('welcome');
+    return view('base');
 });
 
 
 Route::get('/internal-api/info', function () {
     return response()->json(["data"=>["media_count"=>Media::count(),"can_admin"=>Auth::user()->can('admin')]],200);
 });
-Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles','RoleController');
     Route::resource('users','UserController');
 });
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout' );
+/*
 Route::post('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
 Route::put('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
 Route::put('/user/updateBackground','UserController@updateBackground')->name('users.updateBackground');
 
 Route::get('/media/add','MediaController@addMedia')->name('medias.add');
-Route::post('/media/create','MediaController@create')->name('medias.create');
+
 Route::put('/media','MediaController@create')->name('mediaasdasds.create');
 Route::get('/media/edit/{title}','MediaController@editView')->name('medias.editView');
 Route::post('/media/edit/{title}','MediaController@edit')->name('medias.edit');
@@ -57,9 +57,10 @@ Route::get('/like','MediaController@like')->name('media222.like');
 Route::get('/friends','UserController@profile')->name('friends');
 Route::get('/profile/edit','UserController@selfEdit')->name('users.selfedit');
 Route::get('/profile/{name}','UserController@profileview')->name('profile.view');
+
+*/
 Route::put('/friends','UserController@changeFriends')->name('friends');
-Route::put('/comment','CommentController@create')->name('comments.add');
-Route::post('/comment','CommentController@create')->name('commentsasas.add');
+
 
 Route::delete('/comment','CommentController@destroy')->name('comments.add');
 Route::get('welcome/{locale}', function ($locale) {
@@ -71,6 +72,13 @@ Route::get('/search', function (Request $request) {
     return App\Media::search($request->search)->get();
 });
 
+
+Route::put('/comment','CommentController@create')->name('comments.add');
+Route::post('/comment','CommentController@create')->name('commentsasas.add');
+Route::post('/media/create','MediaController@create')->name('medias.create');
+Route::put('/like','MediaController@like')->name('media.like');
+Route::post('/like','MediaController@like')->name('media222.like');
+Route::get('/like','MediaController@like')->name('media222.like');
 Route::post('/internal-api/profiles/edit/{id}','UserController@update')->name('users.edit');
 Route::delete('/internal-api/media/{title}','MediaController@destroy')->name('mediasapi.delete');
 Route::post('/internal-api/media/{title}','MediaController@edit')->name('mediasiapi.edit');
