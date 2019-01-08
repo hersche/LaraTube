@@ -211,7 +211,6 @@ class siteManager {
       theVue.alert("Login failed","danger","error")
     });
     eventBus.$on('loadUserVideos', userid => {
-      console.log("/internal-api/medias/by/"+userid+this.getIgnoreParam())
       that.receiveMedias("/internal-api/medias/by/"+userid+this.getIgnoreParam())
     });
     eventBus.$on('sortBy', sortBy => {
@@ -363,6 +362,9 @@ class siteManager {
         that.nextMedias = that.nextVideosList(this.currentMediaId)
       }
       theVue.nextvideos = that.getFilteredMedias(that.nextMedias);
+      if(theVue.$router.currentRoute.path=="/search"){
+        theVue.searching();
+      }
     });
 
     eventBus.$on('setCurrentMedia', id => {
@@ -420,7 +422,7 @@ class siteManager {
           }, 300);
 
         }
-        var so = new Search(s.toString(),that.medias,that.tags,that.users);
+        var so = new Search(s.toString(),that.getFilteredMedias(),that.tags,that.users);
         theVue.search = so;
         theVue.medias = that.getFilteredMedias(so.mediaResult);
         theVue.users = so.userResult;

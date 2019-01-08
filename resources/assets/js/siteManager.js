@@ -185,7 +185,6 @@ var siteManager = /** @class */ (function () {
             theVue.alert("Login failed", "danger", "error");
         });
         eventBus.$on('loadUserVideos', function (userid) {
-            console.log("/internal-api/medias/by/" + userid + _this.getIgnoreParam());
             that.receiveMedias("/internal-api/medias/by/" + userid + _this.getIgnoreParam());
         });
         eventBus.$on('sortBy', function (sortBy) {
@@ -325,6 +324,9 @@ var siteManager = /** @class */ (function () {
                 that.nextMedias = that.nextVideosList(_this.currentMediaId);
             }
             theVue.nextvideos = that.getFilteredMedias(that.nextMedias);
+            if (theVue.$router.currentRoute.path == "/search") {
+                theVue.searching();
+            }
         });
         eventBus.$on('setCurrentMedia', function (id) {
             console.log("set current id");
@@ -380,7 +382,7 @@ var siteManager = /** @class */ (function () {
                             that.receiveMedias("/internal-api/medias/search/" + s + that.getIgnoreParam());
                         }, 300);
                     }
-                    var so = new Search(s.toString(), that.medias, that.tags, that.users);
+                    var so = new Search(s.toString(), that.getFilteredMedias(), that.tags, that.users);
                     theVue.search = so;
                     theVue.medias = that.getFilteredMedias(so.mediaResult);
                     theVue.users = so.userResult;
