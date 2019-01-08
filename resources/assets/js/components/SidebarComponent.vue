@@ -5,6 +5,15 @@
       <vs-button @click="active=!active" type="flat" icon="menu"></vs-button>
       <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
       <vs-spacer></vs-spacer>
+      <vs-select
+placeholder="Types"
+multiple
+class="selectExample"
+v-model="dataTypes"
+>
+<vs-select-item value="audio" text="Audio" />
+<vs-select-item value="video" text="Video" />
+</vs-select>
       <input icon="search" placeholder="Search" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
 
@@ -14,12 +23,14 @@
         <h4>
           <router-link class="btn btn-sm btn-success" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link>
         </h4>
+
         <span>
           <router-link class="btn btn-sm btn-success" to="/upload">Upload</router-link>
           <router-link class="btn btn-sm btn-success" to="/notifications">Notifications</router-link>
           <router-link class="btn btn-sm btn-success" to="/myvideos">My videos</router-link>
         </span>
       </div>
+
       <vs-navbar-item index="1">
         <router-link class="" to="/">Home</router-link>
       </vs-navbar-item>
@@ -76,6 +87,21 @@
 <script>
   import { eventBus } from '../eventBus.js';
 export default {
+  watch:{
+    dataTypes:function(val){
+      localStorage.setItem("mediaTypes",val.join())
+      eventBus.$emit('filterTypes',val);
+    }
+  },
+  mounted(){
+    let that = this;
+    if(localStorage.getItem("mediaTypes")!=''&&localStorage.getItem("mediaTypes")!=null){
+      this.dataTypes = localStorage.getItem("mediaTypes").split(",")
+    } else {
+      this.dataTypes = ["audio","video"]
+    }
+
+},
   methods:{
     searching(){
       eventBus.$emit('refreshSearch',"");
@@ -116,9 +142,9 @@ export default {
     n:function(){
       var tmpArray = []
       this.notifications.forEach(function(val,key){
-      if(val.read_at!=null&&val.read_at!=0){
-        tmpArray.push(val)
-      }
+        if(val.read_at!=null&&val.read_at!=0){
+          tmpArray.push(val)
+        }
       });
       return tmpArray.length;
     }
@@ -126,6 +152,7 @@ export default {
   data:()=>({
     active:false,
     activeItem:0,
+    dataTypes: ["audio","video"],
 
   })
 }

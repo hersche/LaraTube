@@ -23,6 +23,7 @@ var theMediaSorter = new MediaSorter();
 
 class siteManager {
   medias:Array<Media>;
+  nextMedias:Array<Media>;
   users:Array<User>;
   notifications:Array<Notification>;
   usedSearchTerms:any;
@@ -36,13 +37,22 @@ class siteManager {
   catchedTagMedias:any;
   initing:boolean;
   csrf:string;
+  types:Array<string>;
+  currentMediaId:number;
   constructor(base:string){
     this.maxPage=-1;
+    this.currentMediaId = 0;
     this.currentPage=2;
     this.initing=true;
     baseUrl = base+"/";
+    if(localStorage.getItem("mediaTypes")!=''&&localStorage.getItem("mediaTypes")!=null){
+      this.types = localStorage.getItem("mediaTypes").split(",")
+    } else {
+      this.types = ["audio","video"]
+    }
     this.catchedTagMedias=[];
     this.usedSearchTerms=[];
+    this.nextMedias=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
     this.receiveUsers(true);
     this.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -141,13 +151,14 @@ class siteManager {
         console.log("got values!" + tmpv[0].title)
         theVue.currentmedia = tmpv[0];
         theVue.$router.push('/media/'+encodeURIComponent(tmpv[0].title));
-        theVue.nextvideos = that.nextVideosList(tmpv[0].id)
+        that.nextMedias = that.nextVideosList(tmpv[0].id)
+        theVue.nextvideos = that.nextMedias
         console.log(theVue.nextvideos)
         if(theVue.nextvideos==null||theVue.nextvideos){
           console.log("do load more")
           that.loadMorePages(function(){
-
-            theVue.nextvideos = that.nextVideosList(id)
+            that.nextMedias = that.nextVideosList(id)
+            theVue.nextvideos = that.nextMedias
             console.log("received by callback")
             //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
           });
@@ -155,8 +166,8 @@ class siteManager {
       } else {
       //  console.log("do alternative next medias")
         that.loadMorePages(function(){
-
-          theVue.nextvideos = that.nextVideosList(id)
+          that.nextMedias = that.nextVideosList(id)
+          theVue.nextvideos = that.nextMedias
       //    console.log("received by callback")
           theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
           theVue.currentmedia = theVue.nextvideos[0];
@@ -164,7 +175,8 @@ class siteManager {
           if(theVue.nextvideos==null||theVue.nextvideos){
           //  console.log("do load more")
             that.loadMorePages(function(){
-              theVue.nextvideos = that.nextVideosList(id)
+              that.nextMedias = that.nextVideosList(id)
+              theVue.nextvideos = that.nextMedias
             //  console.log("received by callback")
               //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
             });
@@ -208,7 +220,11 @@ class siteManager {
         theVue.search.mediaResult = theMediaSorter.sort(theVue.search.mediaResult)
       }
       that.medias = theMediaSorter.sort(that.medias)
-      theVue.medias = that.medias
+      if(that.currentMediaId!=0){
+        that.nextMedias = that.nextVideosList(that.currentMediaId);
+        theVue.nextvideos = that.nextMedias;
+      }
+      theVue.medias = that.getFilteredMedias()
     });
     eventBus.$on('commentCreated', json => {
       // Workaround by receive the media again.
@@ -258,11 +274,19 @@ class siteManager {
     });
 
     eventBus.$on('loadMedia', title => {
-      // Workaround by receive the media again.
-      if(theVue!=undefined){
-        that.receiveMediaByName(title)
+      // Workaround by receive the media again.d
+      that.receiveMediaByName(title, function(id){
         that.updateCSRF();
-      }
+        if(theVue!=undefined){
+          if(theVue.$route.params.currentTitle!=undefined){
+            that.currentMediaId = id;
+            that.nextMedias = that.nextVideosList(id)
+            theVue.nextvideos = that.nextMedias
+          }
+        //  theVue.alert("Media load media by title","success")
+        }
+      })
+
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
       console.log(m.comments)*/
@@ -271,7 +295,7 @@ class siteManager {
       //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
       //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
 
-      theVue.alert("Media load media by title","success")
+
     });
     eventBus.$on('videoDeleted', title => {
       theVue.alert("Video "+title+" deleted","success")
@@ -295,10 +319,10 @@ class siteManager {
       //if(theVue.$router.currentRoute.path!="/search"){
       if(tagName==''){
         if($("#specialAllTag").is(":checked")){
-          theVue.medias = that.medias;
+          theVue.medias = that.getFilteredMedias();
         } else {
           theVue.medias = [];
-          theVue.medias = that.medias;
+          theVue.medias = that.getFilteredMedias();
         }
       } else {
       if(that.catchedTagMedias.includes(tagName)==false){
@@ -322,6 +346,7 @@ class siteManager {
         if(that.maxPage>=that.currentPage){
           that.loadMorePages()
         } else {
+        //  theVue.canloadmore = false;
           console.log("no more because of link is null")
         }
 
@@ -330,6 +355,21 @@ class siteManager {
     };
     eventBus.$on('refreshSearch', title => {
       theVue.searching();
+    });
+    eventBus.$on('filterTypes', types => {
+      that.types = types;
+      theVue.medias=that.getFilteredMedias();
+      if(this.currentMediaId!=0){
+        that.nextMedias = that.nextVideosList(this.currentMediaId)
+      }
+      theVue.nextvideos = that.getFilteredMedias(that.nextMedias);
+    });
+
+    eventBus.$on('setCurrentMedia', id => {
+      console.log("set current id")
+      that.currentMediaId = id
+      that.nextMedias = that.nextVideosList(id)
+      theVue.nextvideos = that.nextMedias
     });
   //  sm.receiveUsers(true);
   // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})
@@ -382,7 +422,7 @@ class siteManager {
         }
         var so = new Search(s.toString(),that.medias,that.tags,that.users);
         theVue.search = so;
-        theVue.medias = so.mediaResult;
+        theVue.medias = that.getFilteredMedias(so.mediaResult);
         theVue.users = so.userResult;
 
       }
@@ -401,8 +441,8 @@ class siteManager {
           //this.show = false;
           if(to.params.currentTitle!=undefined){
             // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
-            if(sm.findMediaByName(to.params.currentTitle)==undefined){
-              sm.receiveMediaByName(to.params.currentTitle);
+            if(that.findMediaByName(to.params.currentTitle)==undefined){
+              that.receiveMediaByName(to.params.currentTitle);
             }else {
               this.nextvideos = that.nextVideosList(that.findMediaByName(this.$route.params.currentTitle).id)
             //  console.log("after site-change")
@@ -462,6 +502,32 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     }
   }
 
+  getFilteredMedias(myList = undefined){
+    var theMedias:Array<Media> = []
+    var origMedias;
+    if(myList==undefined){
+      origMedias = this.medias
+    } else {
+      origMedias = myList
+    }
+    let that = this;
+    $.each( origMedias, function( key, value ) {
+      $.each( that.types, function( key1, type ) {
+        if(type==value.simpleType){
+          if(theMedias.indexOf(value)==-1){
+            theMedias.push(value)
+          }
+        }
+
+      });
+      if(value.id==that.currentMediaId){
+        if(theMedias.indexOf(value)==-1){
+          theMedias.push(value)
+        }
+      }
+    });
+    return theMedias;
+  }
   fillUser(comment){
     let that = this;
     console.log("start filluser")
@@ -521,7 +587,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   nextVideosList(id){
     var nextVideos = []
     var startAdd = false;
-    $.each( this.medias, function( key, value ) {
+    $.each( this.getFilteredMedias(), function( key, value ) {
       if(startAdd){
         nextVideos.push(value)
       }
@@ -641,7 +707,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       }
       json = json.data;
       that.medias.unshift(new Media(json.id,json.title,json.description,json.source,json.poster_source,json.duration,json.simpleType,json.techType,json.type,that.getUserById(json.user_id),json.user_id,json.created_at,json.updated_at,json.created_at_readable,json.comments,that.getTagsByIdArray(json.tagsIds),json.myLike,json.likes,json.dislikes,json.tracks,json.category_id))
-      theVue.medias = that.medias
+      theVue.medias = that.getFilteredMedias();
       theVue.$router.push('/');
     });
   }
@@ -689,7 +755,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         });
         that.medias.push(m)
         that.medias = theMediaSorter.sort(that.medias)
-        theVue.medias = that.medias;
+        theVue.medias = that.getFilteredMedias();
       } else {
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
         $.each( m.comments, function( key1, value1 ) {
@@ -704,7 +770,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.medias[theKey].tracks = m.tracks;
           that.medias[theKey].updated_at = m.updated_at;
           that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          theVue.medias=that.medias
+          theVue.medias=that.getFilteredMedias();
         }
         //console.warn("If the media already existed, why this method was used?");
       }
@@ -734,7 +800,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         });
         that.medias.push(m)
         that.medias = theMediaSorter.sort(that.medias)
-        theVue.medias = that.medias;
+        theVue.medias = that.getFilteredMedias();
       } else {
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
         $.each( m.comments, function( key1, value1 ) {
@@ -749,7 +815,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.medias[theKey].tracks = m.tracks;
           that.medias[theKey].updated_at = m.updated_at;
           that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          theVue.medias=that.medias
+          theVue.medias=that.getFilteredMedias();
         }
         //console.warn("If the media already existed, why this method was used?");
       }
@@ -759,7 +825,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       });
   }
 
-  receiveMediaByName(mediaName:string,forceUpdate=false):void{
+  receiveMediaByName(mediaName:string,callback=undefined):void{
     let that = this;
     var theKey;
     var existsAlready = false;
@@ -779,7 +845,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         });
         that.medias.push(m)
         that.medias = theMediaSorter.sort(that.medias)
-        theVue.medias = that.medias;
+        theVue.medias = that.getFilteredMedias();
       } else {
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
         $.each( m.comments, function( key1, value1 ) {
@@ -794,9 +860,12 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.medias[theKey].tracks = m.tracks;
           that.medias[theKey].updated_at = m.updated_at;
           that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          theVue.medias=that.medias
+          theVue.medias=that.getFilteredMedias();
         }
         //console.warn("If the media already existed, why this method was used?");
+      }
+      if(callback!=undefined){
+        callback(data.id);
       }
       });
   }
@@ -860,7 +929,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       i++
 
     });
-    theVue.medias = that.medias;
+    theVue.medias = that.getFilteredMedias();
     theVue.$router.push('/');
   }
   receiveMedias(url="/internal-api/media"+this.getIgnoreParam(),forceUpdate=false,callback=undefined):void{
@@ -922,23 +991,30 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         theVue.categories = that.categories;
         console.log(this.categories)
         that.medias = theMediaSorter.sort(that.medias)
-        theVue.medias = that.medias;
+        theVue.medias = that.getFilteredMedias();
         theVue.categories = that.categories;
         if(theVue.$route.params.profileId != undefined){
-          theVue.user = sm.getUserById(theVue.$route.params.profileId)
-          theVue.medias = sm.getMediasByUser(theVue.$route.params.profileId)
+          theVue.user = that.getUserById(theVue.$route.params.profileId)
+          theVue.medias = that.getFilteredMedias(that.getMediasByUser(theVue.$route.params.profileId))
         }
 
         if(theVue.$route.params.currentTitle!=undefined){
           if(that.findMediaByName(theVue.$route.params.currentTitle)==undefined){
-            that.receiveMediaByName(theVue.$route.params.currentTitle);
+            that.receiveMediaByName(theVue.$route.params.currentTitle,function(id){
+              that.currentMediaId = id
+              that.nextMedias = that.nextVideosList(id)
+              theVue.nextvideos = that.nextMedias
+            });
           }else {
-            theVue.nextvideos = that.nextVideosList(that.findMediaByName(theVue.$route.params.currentTitle).id)
+            that.nextMedias = that.nextVideosList(that.findMediaByName(theVue.$route.params.currentTitle).id)
+            theVue.nextvideos = that.nextMedias
           }
         }
         if(theVue.$route.params.editTitle!=undefined){
           if(that.findMediaByName(theVue.$route.params.editTitle)==undefined){
-            that.receiveMediaByName(theVue.$route.params.editTitle);
+            that.receiveMediaByName(theVue.$route.params.editTitle,function(id){
+              that.currentMediaId = id
+            });
           }
         }
 

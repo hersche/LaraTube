@@ -246,7 +246,7 @@
         //this.fullName = val + ' ' + this.lastName
       //  console.log("route-watch")
       //  console.log(val)
-      this.inited = false;
+        this.inited = false;
       //  this.currentmedia = this.getCurrentMedia()
         this.initTorrent()
       },
@@ -260,10 +260,11 @@
 
     if((this.currentmedia!=undefined)&&(this.inited==false)){
       //this.currentmedia = this.getCurrentMedia()
+      eventBus.$emit('setCurrentMedia',this.currentmedia.id);
       this.initTorrent()
       if(this.autoplay){
         this.player.play();
-        this.player.fullscreen.enter();
+      //  this.player.fullscreen.enter();
       }
       let that = this;
       this.player.on('ended', () => {
@@ -285,8 +286,10 @@
   } });
     },
     destroyed(){
+      eventBus.$emit('setCurrentMedia',0);
       if(theTorrent!=undefined){
         //client.destroy();
+
         theTorrent.destroy(function(){
           console.log("torrent destroyed on vue-destroyed-method")
         });
@@ -295,7 +298,7 @@
     mounted(){
       let that = this;
 
-
+      eventBus.$emit('setCurrentMedia',this.currentmedia.id);
     //  this.currentmedia = this.getCurrentMedia()
       eventBus.$on('audioVisualType', visArgs => {
         that.audiovisualtype = visArgs[0];

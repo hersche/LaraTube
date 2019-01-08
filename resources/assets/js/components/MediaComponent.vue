@@ -71,12 +71,14 @@
 
       <div class="col-sm-4 col-12 float-right">
         <h4>Next videos</h4>
+        <p><sortSelect></sortSelect></p>
         <p>
           <vs-switch v-model="autoplay"/>
           <span for="">Autoplay</span></p>
             <div v-for="item in nextvideos"  class="" v-if="item.id!=currentmedia.id">
               <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
             </div>
+            <div v-if="nextvideos.length==0">No more next medias</div>
             <button class="btn btn-block btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
       </div>
       <b-modal  style="width:520px;" id="torrentmodal" title="Torrent-infos">
@@ -95,6 +97,7 @@
   import SingleGalleryField from './SingleGalleryField'
   import Comments from './Comments'
   import MediaView from './MediaView'
+  import SortSelect from './SortSelect'
   //import plyr from 'plyr'
   import { User, Media, Tag } from '../models';
 //  import butterchurn from 'butterchurn';
@@ -112,7 +115,8 @@
     components : {
         'singleField': SingleGalleryField,
         'comments': Comments,
-        'mediaView' : MediaView
+        'mediaView' : MediaView,
+        'sortSelect': SortSelect
     },
     methods: {
       nextVisual(){
