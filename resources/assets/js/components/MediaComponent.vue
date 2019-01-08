@@ -21,10 +21,13 @@
             <span class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
             <span class="btn btn-sm btn-info mr-1">{{ currentmedia.type }}</span>
             <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
-              <vs-tooltip :text="currentmedia.user.name">
+              <div id="userAvatar" :text="currentmedia.user.name">
                 <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
                 <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+currentmedia.user.avatar" alt="avatar" style="max-height: 20px;" />
-              </vs-tooltip>
+              </div>
+              <b-tooltip target="userAvatar" placement="top">
+                <h5>{{ currentmedia.user.name }}</h5>
+              </b-tooltip>
             </router-link>
 
 
