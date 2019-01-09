@@ -6,13 +6,14 @@
       <button class="btn btn-sm btn-danger" @click="emitMarkNotifications('/internal-api/notifications/delete')">Delete all notifications</button>
 
       <h4>Notifications</h4>
-      <div v-for="item in notifications"  class="row">
+      <div v-for="item in notifications"  class="text-center">
         <div v-if="item.type=='App\\Notifications\\LikeReceived'">
-          <h6>{{ item.created_at }}</h6>
-          <p v-if="item.read_at==null" class="alert alert-info" role="alert">This is unread! <button class="btn btn-sm btn-primary float-right" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)">Mark as read</button></p>
+          <vs-divider color="success">{{ item.created_at }}</vs-divider>
+           <vs-chip color="warning" class="float-right" v-if="item.read_at==null" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)" closable><vs-avatar icon="markunread" />This is unread!</vs-chip>
+
           <p> User <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link> {{ getLikeString(item.data.like) }}
             <span v-if="(item.data.media_id!=null&&item.data.media_id!=0)">
-              your <b>media</b> {{ item.data.media_id }}
+              your <b>media</b>
               <router-link class="" :to="'/media/'+encodeURIComponent(getMediaById2(item.data.media_id).title)">{{ getMediaById2(item.data.media_id).title }}</router-link>
             </span>
              <span v-if="(item.data.media_id==null||item.data.media_id==0)">
