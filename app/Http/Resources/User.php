@@ -30,7 +30,7 @@ class User extends JsonResource
           'name' => $this->name,
           'avatar' => $this->avatar(),
           'background' => $this->background(),
-          'bio' => $this->bio,
+          'bio' => nl2br($this->bio),
           'tagString' => $this->tagString(),
           'mediaIds' => $mediaIds,
           'public' => $this->public,

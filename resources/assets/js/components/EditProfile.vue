@@ -62,7 +62,7 @@
     </div>
       <div class="form-group">
           <label>Biographie:</label>
-          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" :value="currentuser.bio" name="description" cols="50" rows="10"></textarea>
+          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" :value="rmBr(currentuser.bio)" name="bio" cols="50" rows="10"></textarea>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-12">
           <div class="form-group">
@@ -109,6 +109,9 @@
     },
 
     methods: {
+      rmBr(str) {
+        return str.replace(/<br\s*\/?>/mg,"");
+      },
       avatarChange(){
         var reader = new FileReader();
         let that = this;

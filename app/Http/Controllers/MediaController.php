@@ -16,17 +16,6 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-      $data = Media::orderBy('id','DESC')->paginate(5);
-      return view('medias.index',compact('data'))
-          ->with('i', ($request->input('page', 1) - 1) * 5);
-    }
 
     public function addTrack(Request $request){
       $media_id = $request->input("media_id");
@@ -35,18 +24,14 @@ class MediaController extends Controller
       $source = $file->store('public/tracks');
       $extension = $file->getClientOriginalExtension();
       Track::create(["lang"=>$lang,"source"=>$source,"media_id"=>$media_id,"type"=>$extension]);
-      return "{}";
+      $media = Media::find($media_id);
+      return new MediaResource($media);
     }
 
     public function deleteTrack(Request $request,$trackid){
+      $media = Media::find(Track::find($trackid)->media_id);
       Track::find($trackid)->delete();
-      return "{}";
-    }
-
-
-    public function addMedia(Request $request)
-    {
-      return view('medias.create');
+      return new MediaResource($media);
     }
     /**
      * Show the form for creating a new resource.
@@ -148,64 +133,7 @@ class MediaController extends Controller
       return "OK";
     }
 
-    // DEPRECATED!!! Create can do it!
-    public function directUpload(Request $request){
 
-    //  $posterFile = $request->file('poster');
-
-      $data = $request->input('image');
-      list($type, $data) = explode(';', $data);
-      list(, $data)      = explode(',', $data);
-      $data = base64_decode($data);
-      $title = $request->input('title');
-      //Move Uploaded File
-      $file = $request->file("directMedia");
-      $extension = $file->getClientOriginalExtension();
-
-      $tagArrayExtract = explode(' ', $request->input('tags'));
-      $tagArray = array();
-      foreach($tagArrayExtract as $tag){
-        if(starts_with($tag, '#')){
-          array_push($tagArray, substr($tag,1));
-        } else {
-          array_push($tagArray, $tag);
-        }
-      }
-      $posterPath = '';
-      if(!empty($data)){
-        //$posterPath = $posterFile->store('public/media/posters');
-        Storage::put('public/media/posters/'.$title.'.png', $data);
-      }
-      if(($extension=="mp4")||($extension=="webm")){
-        $path = $file->store('public/directMedia');
-        //$posterFile = $request->file('poster');
-
-
-        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localVideo', 'description' => $request->input('description'), 'user_id' => Auth::id()]);
-
-        if(!empty($tagArray)){
-          $media->retag($tagArray);
-        }
-        return redirect()->route('media.show',$title)
-                        ->with('success','Video created successfully');
-      }
-      else if(($extension=="mp3")||($extension=="ogg")){
-        $path = $file->store('public/directMedia');
-        $media = Media::create(['title' => $title,'source' => $path,'poster_source' => 'public/media/posters/'.$title.'.png','type' => 'localAudio', 'description' => $request->input('description'), 'user_id' => Auth::id()]);
-
-        if(!empty($tagArray)){
-          $media->retag($tagArray);
-        }
-        return redirect()->route('media.show',$title)
-                        ->with('success','Audio created successfully');
-      } else {
-        return redirect()->route('medias.add')
-                        ->with('error','Media-format is wrong');
-      }
-
-
-      return view('medias.create');
-    }
     /**
      * Store a newly created resource in storage.
      *
@@ -217,18 +145,7 @@ class MediaController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-     public function show($title)
-     {
-         //$media = Media::find($id);
-         $media = Media::where('title', '=' ,$title)->firstOrFail();
-         return view('medias.show',compact('media'));
-     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -269,11 +186,6 @@ class MediaController extends Controller
         Storage::put('public/media/posters/'.$media->id.'.png', $data);
         $media->save();
         return new MediaResource($media);
-    }
-    public function editView($title)
-    {
-        $media = Media::where('title', '=' ,$title)->firstOrFail();
-        return view('medias.edit',compact('media'));
     }
 
     /**

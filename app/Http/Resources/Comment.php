@@ -16,7 +16,7 @@ class Comment extends JsonResource
     {
         return [
             'id' => $this->id,
-            'body' => $this->body,
+            'body' => nl2br($this->body),
             'media_id' => $this->media_id,
             'user_id' => $this->user_id,
             'parent_id' => $this->parent_id,

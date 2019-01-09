@@ -4,7 +4,7 @@
   <div id="profileheader" class="text-center" :style="'background-image:url('+user.background+')'">
     <img class='pl-2 pt-1 pb-1' :src='"/"+user.avatar' /><h3 class='ml-2' style=''>{{ user.name }}</h3>
   </div>
-  <div>{{ user.bio }}</div>
+  <div v-html="user.bio"></div>
 </div>
 <h3>User's medias</h3>
 <p><sortSelect></sortSelect></p>

@@ -16,7 +16,7 @@
               <span @click="openConfirm(comment.id)" v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><vs-icon icon="delete"></vs-icon></span>
           </h6>
           <div class="comment-body">
-          <p>{{ comment.body }}</p>
+          <p v-html="comment.body"></p>
           <p>
             <div class="">
             <button id="like" v-if="comment.myLike==1" type="button" @click="like(comment,0,'like')" class="btn btn-sm btn-success">

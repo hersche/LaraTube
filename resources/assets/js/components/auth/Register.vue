@@ -5,7 +5,7 @@
               <div class="card-header">Register</div>
 
               <div class="card-body">
-                  <form method="POST" action="/register" aria-label="Register">
+                  <form method="POST" id="theForm" action="/register" aria-label="Register">
                       <input type="hidden" name="_token" :value="csrf">
                       <div class="form-group row">
                           <label>Avatar</label>
@@ -58,7 +58,10 @@
                               <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
                           </div>
                       </div>
-
+                      <div class="form-group">
+                          <label>Biographie:</label>
+                          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" name="bio" cols="50" rows="10"></textarea>
+                      </div>
                       <div class="form-group row">
                           <label for="public" class="col-md-4 col-form-label text-md-right">Public</label>
 
@@ -101,13 +104,13 @@
                               <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                           </div>
                       </div>
-
+                      </form>
                       <div class="form-group row mb-0">
                           <div class="col-md-6 offset-md-4">
-                              <button type="submit" class="btn btn-primary">Register</button>
+                              <button @click="submitAction()" class="btn btn-primary">Register</button>
                           </div>
                       </div>
-                  </form>
+
               </div>
           </div>
       </div>
@@ -131,13 +134,14 @@
       this.$nextTick(function () {
         if(this.$refs.croppieRef!=undefined&this.editpicloaded==false){
           this.editpicloaded=true;
-          console.log("redo picture")
+          /*console.log("redo picture")
           this.$refs.croppieAvatarRef.bind({
             url: this.currentuser.avatar_source,
           })
           this.$refs.croppieBackgroundRef.bind({
             url: this.currentuser.background_source,
           })
+          */
         }
       })
     },
@@ -173,8 +177,10 @@
       },
       submitAction() {
         let that = this;
+        console.log("the form")
+        console.log($("#theForm")[0])
         $.ajax({
-            url: '/internal-api/media/'+this.currentmedia.title,
+            url: '/internal-api/register',
             type: 'POST',
             data: new FormData($("#theForm")[0]),
             cache: false,
@@ -183,26 +189,10 @@
             complete : function(res) {
               if(res.status==200){
               }
+              eventBus.$emit('login',res.responseJSON.data);
             //  eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
             //  eventBus.$emit('videoDeleted',that.currentmedia.title);
             //  eventBus.$emit('videoCreated',res.responseJSON);
-            }
-
-        });
-        return false;
-      },
-      deleteAction() {
-        let that = this;
-        $.ajax({
-            url: '/internal-api/media/'+this.currentmedia.title,
-            type: 'DELETE',
-            cache: false,
-            contentType: false,
-            processData: false,
-            complete : function(res) {
-              if(res.status==200){
-              }
-              eventBus.$emit('videoDeleted',that.currentmedia.title);
             }
 
         });

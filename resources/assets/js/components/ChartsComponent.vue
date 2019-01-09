@@ -2,15 +2,15 @@
     <div class="">
       <p>The numbers on this chart represent only your loaded medias. To see all medias, go to the menu -> Developer options -> Load all medias</p>
       <p>This can take a while / need performance.</p>
-      <div class="row">
-        <span class="col-6" >
+      <div class="">
+        <span class="col-6 col-sm-12" >
           <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
         </span>
-        <span class="col-6" style="">
+        <span class="col-6 col-sm-12" style="">
           <apexchart width="500" type="pie" id="chart2" :options="chartOptions2" :series="series2"></apexchart>
         </span>
       </div>
-        <span class="col-6" >
+        <span class="col-6 col-sm-12" >
           <apexchart width="500" type="bar" :options="likeOptions" :series="likeSeries"></apexchart>
         </span>
       </div>

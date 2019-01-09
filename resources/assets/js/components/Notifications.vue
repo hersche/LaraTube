@@ -4,22 +4,23 @@
       <button class="btn btn-sm btn-primary" @click="emitMarkNotifications('/internal-api/notifications/markasread')">Mark all as read</button>
       <button class="btn btn-sm btn-primary" @click="emitMarkNotifications('/internal-api/notifications')">Refresh notifications</button>
       <button class="btn btn-sm btn-danger" @click="emitMarkNotifications('/internal-api/notifications/delete')">Delete all notifications</button>
-    <div v-for="item in notifications"  class="row">
+
+      <h4>Notifications</h4>
+      <div v-for="item in notifications"  class="row">
         <div v-if="item.type=='App\\Notifications\\LikeReceived'">
           <h6>{{ item.created_at }}</h6>
-          <p v-if="item.read_at==null">This is unread! <button class="btn btn-sm btn-primary" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)">Mark as read</button></p>
-          <p>By user: <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link></p>
-          <p>Like: {{ item.data.like }}</p>
-          <p v-if="(item.data.media_id!=null&&item.data.media_id!=0)">
-            Affected <b>media</b>: {{ item.data.media_id }}
-            <br />
-            <router-link class="btn btn-sm btn-info" :to="'/media/'+encodeURIComponent(getMediaById2(item.data.media_id).title)">{{ getMediaById2(item.data.media_id).title }}</router-link>
+          <p v-if="item.read_at==null" class="alert alert-info" role="alert">This is unread! <button class="btn btn-sm btn-primary float-right" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)">Mark as read</button></p>
+          <p> User <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link> {{ getLikeString(item.data.like) }}
+            <span v-if="(item.data.media_id!=null&&item.data.media_id!=0)">
+              your <b>media</b> {{ item.data.media_id }}
+              <router-link class="" :to="'/media/'+encodeURIComponent(getMediaById2(item.data.media_id).title)">{{ getMediaById2(item.data.media_id).title }}</router-link>
+            </span>
+             <span v-if="(item.data.media_id==null||item.data.media_id==0)">
+               your <b>comment</b>: {{ getCommentById2(item.data.comment_id).body }} @ media
+               <router-link v-if="getMediaById2(getCommentById2(item.data.comment_id).media_id)!=undefined" class="" :to="'/media/'+encodeURIComponent(getMediaById2(getCommentById2(item.data.comment_id).media_id).title)">{{ getMediaById2(getCommentById2(item.data.comment_id).media_id).title }}</router-link>
+            </span>
           </p>
-           <p v-if="(item.data.media_id==null||item.data.media_id==0)">
-             Affected <b>comment</b>: {{ getCommentById2(item.data.comment_id).body }}
-             <br />
-             <router-link v-if="getMediaById2(getCommentById2(item.data.comment_id).media_id)!=undefined" class="btn btn-sm btn-info" :to="'/media/'+encodeURIComponent(getMediaById2(getCommentById2(item.data.comment_id).media_id).title)">{{ getMediaById2(getCommentById2(item.data.comment_id).media_id).title }}</router-link>
-          </p>
+
 
 
         </div>
@@ -32,8 +33,19 @@
 <script>
   import { eventBus } from '../eventBus.js';
   export default {
-    props: ['medias','notifications','users','baseUrl','canloadmore','loggeduserid'],
+    props: ['fullmedias','notifications','users','baseUrl','canloadmore','loggeduserid'],
     methods: {
+      getLikeString(nr) {
+        if(nr==-1){
+          return "disliked"
+        }
+        if(nr==0){
+          return "reseted"
+        }
+        if(nr==1){
+          return "liked"
+        }
+      },
       emitLoadMore() {
         eventBus.$emit('loadMore','');
       },
@@ -46,7 +58,7 @@
           return;
         }
         var theMedia = undefined;
-        this.medias.forEach(function(val,key){
+        this.fullmedias.forEach(function(val,key){
           if(val.id==id){
             theMedia = val;
           }
@@ -61,7 +73,7 @@
           return;
         }
         var theMedia = undefined;
-        this.medias.forEach(function(val,key){
+        this.fullmedias.forEach(function(val,key){
           val.comments.forEach(function(val2,key2){
           if(val2.id==id){
             theMedia = val2;

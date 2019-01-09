@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Storage;
+use App\UserSettings;
+use App\Http\Resources\UserSettings as UserSettingsRessource;
 
 class RegisterController extends Controller
 {
@@ -91,11 +93,12 @@ class RegisterController extends Controller
         }
         $user->avatar_source = $avatar_source;
         $user->background_source = $background_source;
+        $user->password = Hash::make($request->input('password'));
         $user->save();
         $this->guard()->login($user);
-
-        return $this->registered($request, $user)
-                       ?: redirect($this->redirectPath());
+        return new UserSettingsRessource(UserSettings::firstOrCreate(['user_id' => Auth::id()]));
+      //  return $this->registered($request, $user)
+        //               ?: redirect($this->redirectPath());
     }
 
     /**
