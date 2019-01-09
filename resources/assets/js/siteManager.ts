@@ -196,17 +196,17 @@ class siteManager {
       this.loggedUserId = settings.user_id
       theVue.loggeduserid = this.loggedUserId
       that.receiveUsers(function(){
-        that.currentUser = that.getUserById(this.loggedUserId);
+        that.currentUser = that.getUserById(that.loggedUserId);
         theVue.currentuser = that.currentUser;
       });
-      theVue.alert("Welcome back, "+that.getUserById(this.loggedUserId).name,"success","exit_to_app")
+      theVue.alert("Welcome back, "+that.getUserById(that.loggedUserId).name,"success","exit_to_app")
       theVue.$router.push('/');
       that.updateCSRF();
     });
     eventBus.$on('logout', settings => {
       this.loggedUserId = 0
       theVue.loggeduserid = this.loggedUserId
-      that.currentUser = that.getUserById(this.loggedUserId);
+      that.currentUser = that.getUserById(that.loggedUserId);
       theVue.currentuser = that.currentUser;
       theVue.alert("Logged out","danger","power_settings_new")
       theVue.$router.push('/');

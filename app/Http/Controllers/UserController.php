@@ -112,6 +112,22 @@ class UserController extends Controller
       //  return redirect()->route('users.index')
       //                  ->with('success','User created successfully');
     }
+
+    public function mkAdmin(Request $request, $id){
+      //if(\Auth::user()->can('admin')){
+        $user = User::find($id);
+        $user->syncPermissions(['admin']);
+      //}
+      return response()->json(["data"=>["msg"=>"mkAdmin!"]],200);
+    }
+
+    public function rmAdmin(Request $request, $id){
+      //if(\Auth::user()->can('admin')){
+        $user = User::find($id);
+        $user->syncPermissions([]);
+      //}
+      return response()->json(["data"=>["msg"=>"rmAdmin!"]],200);
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -121,7 +137,6 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-      echo "blaaa" . $request->input("bio");
         $this->validate($request, [
             'name' => 'required',
           //  'password' => 'same:confirm-password',

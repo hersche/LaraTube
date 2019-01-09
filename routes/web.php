@@ -84,19 +84,28 @@ Route::delete('/internal-api/media/{title}','MediaController@destroy')->name('me
 Route::post('/internal-api/media/{title}','MediaController@edit')->name('mediasiapi.edit');
 
 Route::get('/internal-api/notifications', function (Request $request) {
-  return Auth::user()->notifications->toJson();
+  if(!empty(Auth::id())){
+    return Auth::user()->notifications->toJson();
+  }
+  return response()->json(["data"=>["msg"=>"No permission"]],200);
 });
 Route::get('/internal-api/notifications/markasread', function (Request $request) {
-  Auth::user()->unreadNotifications->markAsRead();
-  return Auth::user()->notifications->toJson();
+  if(!empty(Auth::id())){
+    Auth::user()->unreadNotifications->markAsRead();
+    return Auth::user()->notifications->toJson();
+  }
+  return response()->json(["data"=>["msg"=>"No permission"]],200);
 });
 Route::get('/internal-api/notifications/markasread/{id}', function (Request $request,$id) {
-  foreach (Auth::user()->unreadNotifications as $notification) {
-    if($notification->id==$id){
-      $notification->markAsRead();
+  if(!empty(Auth::id())){
+    foreach (Auth::user()->unreadNotifications as $notification) {
+      if($notification->id==$id){
+        $notification->markAsRead();
+      }
     }
+    return Auth::user()->notifications->toJson();
   }
-  return Auth::user()->notifications->toJson();
+  return response()->json(["data"=>["msg"=>"No permission"]],200);
 });
 Route::get('/internal-api/notifications/delete', function (Request $request) {
   Auth::user()->notifications()->delete();
@@ -150,6 +159,7 @@ Route::get('/internal-api/users', function () {
   return UserResource::collection(User::all());
     //return UserResource::collection(User::where("public","=",1)->get());
 });
-
+Route::post('/internal-api/users/mkAdmin/{id}','UserController@mkAdmin');
+Route::post('/internal-api/users/rmAdmin/{id}','UserController@rmAdmin');
 Route::delete('/internal-api/user/{id}','UserController@destroy');
 Route::delete('/internal-api/comment/{id}','CommentController@destroy');

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div v-for="item in medias"  class="col-lg-4 col-md-4 col-xs-6">
-        <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
-    </div>
     <vs-table search :data="users">
           <template slot="header">
             <h3>
@@ -10,21 +7,11 @@
             </h3>
           </template>
           <template slot="thead">
-            <vs-th sort-key="name">
-              Name
-            </vs-th>
-            <vs-th sort-key="email">
-              Email
-            </vs-th>
-            <vs-th sort-key="created_at">
-              Created
-            </vs-th>
-            <vs-th sort-key="updated_at">
-              Updated
-            </vs-th>
-            <vs-th sort-key="id">
-              Id
-            </vs-th>
+            <vs-th sort-key="name">Name</vs-th>
+            <vs-th sort-key="email">Email</vs-th>
+            <vs-th sort-key="created_at">Created</vs-th>
+            <vs-th sort-key="updated_at">Updated</vs-th>
+            <vs-th sort-key="admin">Admin</vs-th>
           </template>
 
           <template slot-scope="{data}">
@@ -41,8 +28,8 @@
               <vs-td :data="data[indextr].updated_at">
                 {{data[indextr].updated_at}}
               </vs-td>
-              <vs-td :data="data[indextr].id">
-                {{data[indextr].id}}
+              <vs-td :data="data[indextr].admin">
+                {{data[indextr].admin}}
               </vs-td>
               <template class="expand-user" slot="expand">
   <div class="con-expand-users">
@@ -57,6 +44,8 @@
       <div>
         <vs-button vs-type="gradient" size="small" :to="'/profile/'+tr.id" color="success" icon="send"></vs-button>
         <vs-button vs-type="flat" @click="openConfirm(tr.id)" size="small" color="danger" icon="delete_sweep"></vs-button>
+        <vs-button v-if="tr.admin" vs-type="flat" @click="rmAdmin(tr.id)" size="small" color="danger" icon="">Unmake admin</vs-button>
+        <vs-button v-if="tr.admin==false" vs-type="flat" @click="mkAdmin(tr.id)" size="small" color="danger" icon="">Make admin</vs-button>
       </div>
     </div>
     <vs-list>
@@ -92,8 +81,37 @@
           accept:this.deleteAction
         })
       },
+      mkAdmin(id) {
+        $.ajax({
+            url: '/internal-api/users/mkAdmin/'+id,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            complete : function(res) {
+              if(res.status==200){
+                eventBus.$emit('userEdited','');
+              }
+            }
+        });
+        return false;
+      },
+      rmAdmin(id) {
+        $.ajax({
+            url: '/internal-api/users/rmAdmin/'+id,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            complete : function(res) {
+              if(res.status==200){
+                eventBus.$emit('userEdited','');
+              }
+            }
+        });
+        return false;
+      },
       deleteAction() {
-        let that = this;
         $.ajax({
             url: '/internal-api/user/'+this.tmpid,
             type: 'DELETE',
