@@ -104,7 +104,7 @@ this.medias.forEach( function(item, index) {
         });
         return [{
           name: 'Medias',
-          data: [localVideo,localAudio,directAudio,directVideo,torrentAudio,torrentVideo]
+          data: [localAudio,localVideo,directAudio,directVideo,torrentAudio,torrentVideo]
         }];
       },
       chartOptions2: function () {

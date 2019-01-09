@@ -55,7 +55,9 @@ class siteManager {
     this.usedSearchTerms=[];
     this.nextMedias=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
-    this.receiveUsers();
+    this.receiveUsers(function(){
+
+    });
     this.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
   /*  if(this.loggedUserId){
     Echo.private('App.User.' + this.loggedUserId)
@@ -128,9 +130,12 @@ class siteManager {
       theVue.alert("Look for new medias..")
       that.receiveMedias()
     });
-    eventBus.$on('userEdited', title => {
+    eventBus.$on('userEdited', id => {
       theVue.alert("Look for new users..")
       that.receiveUsers()
+      if(id!=''&&id!=undefined){
+        theVue.$router.push("/profile/"+id)
+      }
     });
     eventBus.$on('refreshMedias', title => {
       theVue.canloadmore = true;
@@ -538,11 +543,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   fillUser(comment){
     let that = this;
-    console.log("start filluser")
-    console.log(comment.childs)
     $.each( comment.childs, function( key, value ) {
-      console.log("fill the user")
-
       if(value.childs.length>0){
         comment.childs[key] = that.fillUser(value)
 
@@ -631,7 +632,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       if((that.categories==undefined)||(forceUpdate)){
         that.categories = [];
         $.each( data.data, function( key, value ) {
-          console.log("push cat "+value.title)
           that.categories.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source));
         });
       }

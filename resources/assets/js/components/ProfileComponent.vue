@@ -25,7 +25,7 @@
   },
   mounted(){
     // loadUserVideos
-    console.log("user-id for get videos"+this.user.id)
+    // console.log("user-id for get videos"+this.user.id)
     eventBus.$emit('loadUserVideos',this.user.id);
   },
   computed: {
