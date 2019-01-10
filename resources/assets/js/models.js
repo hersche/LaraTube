@@ -72,14 +72,31 @@ var Tag = /** @class */ (function () {
 }());
 export { Tag };
 var Category = /** @class */ (function () {
-    function Category(id, title, description, avatar, background) {
+    function Category(id, title, description, avatar, background, parent_id, childs) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.avatar = avatar;
         this.background = background;
         this.medias = [];
+        this.parent_id = parent_id;
+        this.children = [];
+        var that = this;
+        $.each(childs, function (key1, value) {
+            that.children.push(new Category(value.id, value.title, value.description, value.avatar_source, value.background_source, value.parent_id, value.children));
+        });
     }
+    Category.prototype.setMedias = function (medias) {
+        var that = this;
+        that.medias = [];
+        $.each(medias, function (key1, value) {
+            if (value.category_id == that.id) {
+                if (that.medias.includes(value) == false) {
+                    that.medias.push(value);
+                }
+            }
+        });
+    };
     return Category;
 }());
 export { Category };

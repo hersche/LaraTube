@@ -11,6 +11,9 @@ import Vuesax from 'vuesax';
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css'; //Vuesax styles
 import VuePlyr from 'vue-plyr';
+import Treeselect from '@riophae/vue-treeselect';
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 //import Echo from "laravel-echo"
 var app;
 var theVue;
@@ -53,6 +56,7 @@ var siteManager = /** @class */ (function () {
         Vue.use(VueApexCharts);
         Vue.use(Vuesax);
         Vue.use(VuePlyr);
+        Vue.component('treeselect', Treeselect);
         //Vue.component('plyr', VuePlyr)
         Vue.component('apexchart', VueApexCharts);
         var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
@@ -74,6 +78,8 @@ var siteManager = /** @class */ (function () {
         var uaComp = Vue.component('thesidebar', require("./components/UserAdmin.vue"));
         var myVideosComp = Vue.component('thesidebar', require("./components/MyVideos.vue"));
         var notiComp = Vue.component('thesidebar', require("./components/Notifications.vue"));
+        var ccComp = Vue.component('thesidebar', require("./components/CreateCategory.vue"));
+        var ceComp = Vue.component('thesidebar', require("./components/EditCategory.vue"));
         var that = this;
         var routes = [
             { path: '/', component: overview },
@@ -88,6 +94,8 @@ var siteManager = /** @class */ (function () {
             { path: '/search', component: searchComp },
             { path: '/charts', component: chartsComp },
             { path: '/categories', component: catComp },
+            { path: '/editcat/:catId', component: ceComp },
+            { path: '/newcat', component: ccComp },
             { path: '/about', component: aboutComp },
             { path: '/notifications', component: notiComp },
             { path: '/myvideos', component: myVideosComp },
@@ -131,7 +139,6 @@ var siteManager = /** @class */ (function () {
                 theVue.$router.push('/media/' + encodeURIComponent(tmpv[0].title));
                 that.nextMedias = that.nextVideosList(tmpv[0].id);
                 theVue.nextvideos = that.nextMedias;
-                console.log(theVue.nextvideos);
                 if (theVue.nextvideos == null || theVue.nextvideos) {
                     console.log("do load more");
                     that.loadMorePages(function () {
@@ -265,6 +272,7 @@ var siteManager = /** @class */ (function () {
         });
         eventBus.$on('videoDeleted', function (title) {
             theVue.alert("Video " + title + " deleted", "success");
+            // TODO that.fillMediasToCat(); in callback!
             that.deleteMediaByName(title);
             that.updateCSRF();
         });
@@ -272,6 +280,13 @@ var siteManager = /** @class */ (function () {
             that.receiveTagsForMedia(json);
             theVue.alert("Video " + json.data.title + " created", "success");
             that.updateCSRF();
+        });
+        eventBus.$on('categoriesRefreshed', function (json) {
+            that.receiveCategories(function () {
+                theVue.alert("Categories refreshed", "success");
+                that.updateCSRF();
+                theVue.$router.push("/categories");
+            });
         });
         eventBus.$on('videoEdited', function (json) {
             that.deleteMediaByName(json[0]);
@@ -348,6 +363,7 @@ var siteManager = /** @class */ (function () {
                 search: '',
                 nextvideos: [],
                 notifications: [],
+                originalCatJson: {},
                 fullmedias: that.medias,
                 csrf: that.csrf,
                 currentuser: that.currentUser,
@@ -571,19 +587,41 @@ var siteManager = /** @class */ (function () {
         });
         return content;
     };
-    siteManager.prototype.receiveCategories = function (forceUpdate) {
-        if (forceUpdate === void 0) { forceUpdate = false; }
+    siteManager.prototype.mkTreeCat = function (data, l) {
+        if (l === void 0) { l = 0; }
+        var result = [];
+        if (l == 0) {
+            result = [{ id: 0, label: 'None' }];
+        }
+        var that = this;
+        $.each(data, function (key, value) {
+            if (value.children.length > 0) {
+                result.push({ id: value.id, label: value.title, children: that.mkTreeCat(value.children, 1) });
+            }
+            else {
+                result.push({ id: value.id, label: value.title });
+            }
+        });
+        return result;
+    };
+    siteManager.prototype.receiveCategories = function (callback) {
+        if (callback === void 0) { callback = undefined; }
         var that = this;
         $.getJSON("/internal-api/categories", function name(data) {
-            if ((that.categories == undefined) || (forceUpdate)) {
-                that.categories = [];
-                $.each(data.data, function (key, value) {
-                    that.categories.push(new Category(value.id, value.title, value.description, value.avatar_source, value.background_source));
-                });
-            }
-            this.categories = that.categories;
+            that.categories = [];
+            $.each(data.data, function (key, value) {
+                that.categories.push(new Category(value.id, value.title, value.description, value.avatar_source, value.background_source, value.parent_id, value.children));
+            });
+            that.fillMediasToCat();
+            that.originalCatJson = that.mkTreeCat(data.data);
             if (theVue != undefined) {
-                theVue.categories = this.categories;
+                theVue.categories = that.categories;
+                console.log("set originalData");
+                theVue.originalCatJson = that.originalCatJson;
+                console.log(theVue.originalCatJson);
+            }
+            if (callback != undefined) {
+                callback();
             }
         });
     };
@@ -591,31 +629,33 @@ var siteManager = /** @class */ (function () {
         if (url === void 0) { url = '/internal-api/notifications'; }
         if (callback === void 0) { callback = undefined; }
         var that = this;
-        $.getJSON(url, function name(data) {
-            that.notifications = [];
-            $.each(data, function (key, value) {
-                if (value.data.media_id != null && value.data.media_id != 0) {
-                    that.findMediaById(value.data.media_id, function () {
-                        console.log("push media-like-notification " + value.id);
-                        that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at, value.created_at));
-                        theVue.notifications = that.notifications;
-                    });
-                }
-                if (value.data.comment_id != null && value.data.comment_id != 0) {
-                    console.log("load a comment");
-                    that.getCommentById2(value.data.comment_id, function () {
-                        console.log("push comment-like-notification " + value.id);
-                        that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at, value.created_at));
-                        theVue.notifications = that.notifications;
-                    });
+        if (this.loggedUserId != 0) {
+            $.getJSON(url, function name(data) {
+                that.notifications = [];
+                $.each(data, function (key, value) {
+                    if (value.data.media_id != null && value.data.media_id != 0) {
+                        that.findMediaById(value.data.media_id, function () {
+                            console.log("push media-like-notification " + value.id);
+                            that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at, value.created_at));
+                            theVue.notifications = that.notifications;
+                        });
+                    }
+                    if (value.data.comment_id != null && value.data.comment_id != 0) {
+                        console.log("load a comment");
+                        that.getCommentById2(value.data.comment_id, function () {
+                            console.log("push comment-like-notification " + value.id);
+                            that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at, value.created_at));
+                            theVue.notifications = that.notifications;
+                        });
+                    }
+                });
+                this.notifications = that.notifications;
+                if (theVue != undefined) {
+                    console.log("set notifications to vue");
+                    theVue.notifications = this.notifications;
                 }
             });
-            this.notifications = that.notifications;
-            if (theVue != undefined) {
-                console.log("set notifications to vue");
-                theVue.notifications = this.notifications;
-            }
-        });
+        }
     };
     siteManager.prototype.getCategoryMedias = function (category_id) {
         var ma = [];
@@ -692,7 +732,9 @@ var siteManager = /** @class */ (function () {
             that.receiveMediaByCommentId(id, callback);
         }
         else {
-            callback();
+            if (callback != undefined) {
+                callback();
+            }
         }
         return theMedia;
     };
@@ -906,6 +948,19 @@ var siteManager = /** @class */ (function () {
         theVue.medias = that.getFilteredMedias();
         theVue.$router.push('/');
     };
+    siteManager.prototype.fillMediasToCat = function (c) {
+        if (c === void 0) { c = undefined; }
+        var that = this;
+        if (c == undefined) {
+            c = that.categories;
+        }
+        $.each(c, function (key1, value) {
+            value.setMedias(that.medias);
+            if (value.children.length > 0) {
+                that.fillMediasToCat(value.children);
+            }
+        });
+    };
     siteManager.prototype.receiveMedias = function (url, forceUpdate, callback) {
         if (url === void 0) { url = "/internal-api/media" + this.getIgnoreParam(); }
         if (forceUpdate === void 0) { forceUpdate = false; }
@@ -929,9 +984,10 @@ var siteManager = /** @class */ (function () {
                     loadCount++;
                     m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
                     that.medias.push(m);
-                    if (that.getCategoryKey(m.category_id) != undefined) {
-                        that.categories[that.getCategoryKey(m.category_id)].medias.push(m);
-                    }
+                    //if(that.getCategoryKey(m.category_id)!=undefined){
+                    //that.categories[that.getCategoryKey(m.category_id)].medias.push(m)
+                    //}
+                    that.fillMediasToCat();
                 }
                 else {
                     replaceCount++;
@@ -971,6 +1027,11 @@ var siteManager = /** @class */ (function () {
             }
             theVue.users = that.users;
             theVue.categories = that.categories;
+            if (that.originalCatJson != undefined) {
+                console.log("set origi again");
+                console.log(that.originalCatJson);
+                theVue.originalCatJson = that.originalCatJson;
+            }
             console.log(this.categories);
             that.medias = theMediaSorter.sort(that.medias);
             theVue.fullmedias = that.medias;

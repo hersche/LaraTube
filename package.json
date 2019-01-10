@@ -21,6 +21,7 @@
         "typescript": "^3.2.2"
     },
     "dependencies": {
+        "@riophae/vue-treeselect": "0.0.37",
         "@types/jquery": "^3.3.29",
         "@types/node": "^10.12.18",
         "apexcharts": "^2.5.1",

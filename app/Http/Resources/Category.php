@@ -17,9 +17,12 @@ class Category extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'label' => $this->title,
             'description' => nl2br($this->description),
             'avatar' => $this->avatar,
-            'background' => $this->background
+            'background' => $this->background,
+            'parent_id' => $this->parent_id,
+            'children' => Category::collection($this->childs()),
         ];
     }
 }

@@ -16,7 +16,7 @@
               your <b>media</b>
               <router-link class="" :to="'/media/'+encodeURIComponent(getMediaById2(item.data.media_id).title)">{{ getMediaById2(item.data.media_id).title }}</router-link>
             </span>
-             <span v-if="(item.data.media_id==null||item.data.media_id==0)">
+             <span v-if="(item.data.comment_id!=null&&item.data.comment_id!=0)">
                your <b>comment</b>: {{ getCommentById2(item.data.comment_id).body }} @ media
                <router-link v-if="getMediaById2(getCommentById2(item.data.comment_id).media_id)!=undefined" class="" :to="'/media/'+encodeURIComponent(getMediaById2(getCommentById2(item.data.comment_id).media_id).title)">{{ getMediaById2(getCommentById2(item.data.comment_id).media_id).title }}</router-link>
             </span>
