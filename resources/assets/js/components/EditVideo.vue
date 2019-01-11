@@ -4,6 +4,7 @@
       <form id="theForm">
         <div class="form-group row">
           <label>Media-title</label>
+          <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
           <input placeholder="Media-title" class="form-control" :value="currentmedia.title" name="title" type="text">
         </div>
@@ -35,7 +36,7 @@
           <!-- Rotate angle is Number -->
           <button @click="rotate(-90,$event)">Rotate Left</button>
           <button @click="rotate(90,$event)">Rotate Right</button>
-          <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="poster" type="file">
+          <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="unimportant" type="file">
           <div id="poster"></div>
         </div>
         <div class="form-group row">

@@ -58,6 +58,9 @@
 
 
         </vs-table>
+        <form id="hiddenCSRFForm" class="d-none">
+          <input type="hidden" name="_token" :value="csrf">
+        </form>
   </div>
 </template>
 <script>
@@ -85,6 +88,7 @@
         $.ajax({
             url: '/internal-api/users/mkAdmin/'+id,
             type: 'POST',
+            data:new FormData($("#hiddenCSRFForm")[0]),
             cache: false,
             contentType: false,
             processData: false,
@@ -101,6 +105,7 @@
             url: '/internal-api/users/rmAdmin/'+id,
             type: 'POST',
             cache: false,
+            data:new FormData($("#hiddenCSRFForm")[0]),
             contentType: false,
             processData: false,
             complete : function(res) {
@@ -115,6 +120,7 @@
         $.ajax({
             url: '/internal-api/user/'+this.tmpid,
             type: 'DELETE',
+            data:new FormData($("#hiddenCSRFForm")[0]),
             cache: false,
             contentType: false,
             processData: false,

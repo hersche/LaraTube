@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class Media extends JsonResource
 {
 
+
     /**
      * Transform the resource into an array.
      *
@@ -32,7 +33,7 @@ class Media extends JsonResource
           'title' => $this->title,
           'source' => $this->source,
           'poster_source' => $this->poster(),
-          'duration' => $this->duration,
+          'duration' => $this->formatedDuration(),
           'type' => $this->type,
           'description' => $this->description,
           'myLike' => $this->myLike($request),

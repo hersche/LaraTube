@@ -28,27 +28,6 @@
     props: ['medias','baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser'],
     name: 'cat',
     methods: {
-      emitLoadMore() {
-        eventBus.$emit('loadMore','');
-      },
-      editAction(id) {
-        let that = this;
-        $.ajax({
-            url: '/internal-api/category/'+this.currentmedia.id,
-            type: 'POST',
-            data: new FormData($("#theForm")[0]),
-            cache: false,
-            contentType: false,
-            processData: false,
-            complete : function(res) {
-              if(res.status==200){
-              }
-              eventBus.$emit('videoEdited',[that.currentmedia.title,res.responseJSON])
-            }
-
-        });
-        return false;
-      },
       deleteAction(id) {
         let that = this;
         $.ajax({

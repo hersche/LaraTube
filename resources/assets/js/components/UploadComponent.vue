@@ -4,6 +4,7 @@
     <form id="theForm">
     <div class="form-group">
         <label>Media-type:</label>
+        <input type="hidden" name="_token" :value="csrf">
          <select v-model="mediaType" name="type"><option selected value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
     </div>
     <div v-if="mediaType=='localAudio'|mediaType=='localVideo'" class="form-group">

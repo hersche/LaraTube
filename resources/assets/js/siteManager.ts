@@ -142,6 +142,7 @@ class siteManager {
     eventBus.$on('userEdited', id => {
       theVue.alert("Look for new users..")
       that.receiveUsers()
+      that.updateCSRF();
       if(id!=''&&id!=undefined){
         theVue.$router.push("/profile/"+id)
       }
@@ -574,14 +575,16 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     comment.childs = comment.childs.sort(MediaSorter.byCreatedAtComments)
     return comment;
   }
+  /*
+  * Update the CSRF-Token from server for all forms
+  */
   updateCSRF(){
     $.get('/internal-api/refresh-csrf').done(function(data){
       this.csrf = data;
       theVue.csrf = data;
       $('meta[name="csrf-token"]').attr('content',data)
-  //  csrfToken = data; // the new token
-});
-
+      //  csrfToken = data; // the new token
+    });
   }
   receiveUsers(callback=undefined):void{
     let that = this;

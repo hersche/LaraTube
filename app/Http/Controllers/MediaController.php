@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 class MediaController extends Controller
 {
 
+
     public function addTrack(Request $request){
       $media_id = $request->input("media_id");
       $lang = $request->input("lang");
@@ -43,11 +44,6 @@ class MediaController extends Controller
         //
         $getID3 = new \getID3;
         $title = $request->input('title');
-
-        $data = $request->input('poster');
-        //var_dump($data);
-        //exit;
-
         $source = $request->input('source');
         $duration = "0";
         if(empty($source)){
@@ -70,48 +66,33 @@ class MediaController extends Controller
         }
 
         $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => '','duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id(),'category_id' =>  $request->input('category_id'),]);
-        $poster_source = 'public/media/posters/'.$media->id.'.png';
-        if(!empty($data)){
-          list($type, $data) = explode(';', $data);
-          list(, $data)      = explode(',', $data);
-          $data = base64_decode($data);
-          Storage::put('public/media/posters/'.$media->id.'.png', $data);
-        } else {
-          $poster_source = '';
-        }
-        $media->poster_source = $poster_source;
+        $media->poster_source = $this->processPoster($media->id,$request->input('poster'));
         $media->save();
         $media->retag($tagArray);
         return new MediaResource($media);
     }
-    function format_duration($duration){
 
-        // The base case is A:BB
-        if(strlen($duration) == 4){
-            return "00:0" . $duration;
-        }
-        // If AA:BB
-        else if(strlen($duration) == 5){
-            return "00:" . $duration;
-        }   // If A:BB:CC
-        else if(strlen($duration) == 7){
-            return "0" . $duration;
-        }
+
+    private function processPoster($id, $data){
+      if(!empty($data)){
+        list($type, $data) = explode(';', $data);
+        list(, $data)      = explode(',', $data);
+        $data = base64_decode($data);
+        Storage::put('public/media/posters/'.$id.'.png', $data);
+        return 'public/media/posters/'.$id.'.png';
+      } else {
+        return '';
+      }
     }
+/*
     public function tags(Request $request){
       $tags = Media::existingTags();
       return view('tags.index',compact('tags'));
     }
-
+*/
 
 
     public function like(Request $request){
-    //$like;
-      //echo "the mediaid";
-      //echo Auth::id();
-      //echo $request->input('media_id');
-      //var_dump($request);
-      //var_dump($request->all());
       $notifyId = 0;
       if(!empty($request->input('media_id'))){
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'media_id' => $request->input('media_id')]);
@@ -120,30 +101,13 @@ class MediaController extends Controller
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'comment_id' => $request->input('comment_id')]);
         $notifyId = Comment::find($request->input('comment_id'))->user_id;
       }
-
-      //if((($like->count=="1")&&($request->input('count')=="-1"))||(($like->count=="-1")&&($request->input('count')=="1"))){
-        //$like->delete();
-      //} else {
-
         $like->count = $request->input('count');
         $like->save();
         User::find($notifyId)->notify(new LikeReceived($like));
 
-      //}
       return "OK";
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
 
 
@@ -155,11 +119,6 @@ class MediaController extends Controller
      */
     public function edit(Request $request, $title)
     {
-        //
-        $data = $request->input('poster');
-        list($type, $data) = explode(';', $data);
-        list(, $data)      = explode(',', $data);
-        $data = base64_decode($data);
         $media = Media::where('id', '=' ,$title)->firstOrFail();
         $media->title = $request->input('title');
         $media->category_id = $request->input('category_id');
@@ -178,27 +137,12 @@ class MediaController extends Controller
         if(!empty($request->input('type'))){
           $media->type = $request->input('type');
         }
-
-        if(!empty($media->poster_source)){
-          Storage::delete($media->poster_source);
-        }
-        $media->poster_source = 'public/media/posters/'.$media->id.'.png';
-        Storage::put('public/media/posters/'.$media->id.'.png', $data);
+        $media->poster_source = $this->processPoster($media->id,$request->input('poster'));
         $media->save();
         return new MediaResource($media);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+/*
     public function tagsFilter(Request $request, $tags)
     {
         //
@@ -214,6 +158,9 @@ class MediaController extends Controller
         $medias = Media::withAnyTag($tagArray)->get();
         return view('tags.filter',compact('medias'));
     }
+
+    */
+    
     /**
      * Remove the specified resource from storage.
      *

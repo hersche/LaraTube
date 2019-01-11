@@ -4,8 +4,9 @@
     <form id="theForm">
       <div class="form-group">
           <label>Username</label>
+          <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
-               <input placeholder="Username" class="form-control" :value="currentuser.name" name="name" type="text">
+          <input placeholder="Username" class="form-control" :value="currentuser.name" name="name" type="text">
       </div>
 
     <div class="form-group">
