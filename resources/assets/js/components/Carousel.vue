@@ -32,7 +32,7 @@
               <div slot="footer">
                 <vs-row vs-justify="flex-end" style="flex-flow: row!important;">
                   <vs-button class="mr-1" v-if="loggeduserid==item.user.id|currentuser.admin" icon="settings" title="Edit media" :to="'/mediaedit/'+item.title"></vs-button>
-                  <vs-button icon="play_circle_filled" title="Play" :to="'/media/'+encodeURIComponent(item.title)"></vs-button>
+                  <vs-button icon="play_circle_filled" title="Play" :to="'/media/'+item.urlTitle"></vs-button>
                 </vs-row>
               </div>
             </vs-card>

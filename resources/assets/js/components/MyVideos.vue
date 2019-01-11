@@ -4,7 +4,7 @@
     <div class="row text-center text-lg-left" id="profilevideos">
     <div v-for="item in medias" v-if="item.user_id==loggeduserid"  class="col-lg-4 col-md-4 col-xs-6">
         <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
-        <router-link class="btn btn-sm btn-info float-left" :to="'/mediaedit/'+encodeURIComponent(item.title)">Edit</router-link>
+        <router-link class="btn btn-sm btn-info float-left" :to="'/mediaedit/'+item.urlTitle">Edit</router-link>
         <button class="btn btn-sm btn-danger float-right" @click="openConfirm(item.id,item.title)" >Delete</button>
     </div>
 

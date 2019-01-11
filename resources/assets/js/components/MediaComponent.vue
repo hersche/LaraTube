@@ -51,7 +51,7 @@
             </button>
 
             <span v-if="loggeduserid==currentmedia.user.id|currentuser.admin" class="">
-              <router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+encodeURIComponent(currentmedia.title)">Edit</router-link>
+              <router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.urlTitle">Edit</router-link>
             </span>
           </div>
           <div class="card-body" v-html="currentmedia.description"></div>
@@ -189,7 +189,7 @@
           let that = this;
           var theMedia = emptyMedia
           this.medias.forEach(function(val,key){
-            if(encodeURIComponent(val.title)==encodeURIComponent(that.$route.params.currentTitle)){
+            if(val.urlTitle==encodeURIComponent(that.$route.params.currentTitle)){
               theMedia = val;
             }
           });

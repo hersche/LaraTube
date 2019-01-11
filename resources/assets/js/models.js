@@ -27,6 +27,7 @@ var Media = /** @class */ (function () {
     function Media(id, title, description, source, poster_source, duration, simpleType, techType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike, likes, dislikes, tracks, category_id) {
         this.id = id;
         this.title = title;
+        this.urlTitle = encodeURIComponent(this.title);
         this.description = description;
         this.source = source;
         this.poster_source = poster_source;

@@ -52,12 +52,13 @@ export class Media {
   myLike:number;
   likes:number;
   dislikes:number;
-
+  urlTitle:string;
   tracks:any;
   category_id:number;
   constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number){
     this.id=id;
     this.title = title;
+    this.urlTitle = encodeURIComponent(this.title)
     this.description = description;
     this.source = source;
     this.poster_source = poster_source;

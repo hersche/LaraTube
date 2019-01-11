@@ -136,8 +136,7 @@ hideModal () {
         let that = this;
         var theMedia;
         this.medias.forEach(function(val,key){
-          var t = val.title;
-          if(encodeURIComponent(t)==encodeURIComponent(that.$route.params.editTitle)){
+          if(val.urlTitle==encodeURIComponent(that.$route.params.editTitle)){
             theMedia = val;
             that.mediaType=val.type;
             that.catid = val.category_id;

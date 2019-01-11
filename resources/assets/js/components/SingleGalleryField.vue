@@ -1,6 +1,6 @@
 <template>
         <div :id="item.id+'scard'" class="card hide-on-hover mb-1">
-          <router-link  :to="'/media/'+encodeURIComponent(item.title)" class="d-block h-100">
+          <router-link  :to="'/media/'+item.urlTitle" class="d-block h-100">
 
             <img class="card-img-top" :src="item.poster_source" alt="">
 
@@ -26,9 +26,6 @@
   export default {
     props: ['item','loggeduserid'],
     methods: {
-      emitRefreshMedias: function() {
-        eventBus.$emit('refreshMedias',"");
-      },
     },
     computed: {
       // a computed getter
