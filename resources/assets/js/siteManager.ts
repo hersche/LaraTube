@@ -147,6 +147,7 @@ class siteManager {
         theVue.$router.push("/profile/"+id)
       }
     });
+
     eventBus.$on('refreshMedias', title => {
       theVue.canloadmore = true;
       that.catchedTagMedias=[];
@@ -242,7 +243,7 @@ class siteManager {
     });
     eventBus.$on('commentCreated', json => {
       // Workaround by receive the media again.
-      that.receiveMediaByName(that.findMediaById(Number(json.data.media_id)).title)
+      that.receiveMediaByName(that.findMediaById(Number(json.data.media_id)).urlTitle)
       that.updateCSRF();
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
@@ -256,7 +257,7 @@ class siteManager {
     });
     eventBus.$on('refreshMedia', id => {
       // Workaround by receive the media again.
-      that.receiveMediaByName(that.findMediaById(Number(id)).title)
+      that.receiveMediaByName(that.findMediaById(Number(id)).urlTitle)
       that.updateCSRF();
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
@@ -400,7 +401,9 @@ class siteManager {
       console.log("set current id")
       that.currentMediaId = id
       that.nextMedias = that.nextVideosList(id)
-      theVue.nextvideos = that.nextMedias
+      if(theVue!=undefined){
+        theVue.nextvideos = that.nextMedias
+      }
     });
   //  sm.receiveUsers(true);
   // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})

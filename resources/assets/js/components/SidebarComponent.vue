@@ -27,7 +27,16 @@
           <router-link class="btn btn-sm btn-success" to="/myvideos">My videos</router-link>
         </span>
       </div>
-
+      <!-- The existing vs-select doesn't work here. This does, but isn't elegant (yet) -->
+      <!-- <select
+        placeholder="Types"
+        multiple
+        class="selectExample"
+        v-model="dataTypes"
+        >
+        <option value="audio" text="Audio" >Audio</option>
+        <option value="video" text="Video" >Video</option>
+      </select> -->
       <vs-navbar-item index="1">
         <router-link class="" to="/">Home</router-link>
       </vs-navbar-item>

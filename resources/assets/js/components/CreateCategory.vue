@@ -4,6 +4,7 @@
       <form id="theForm">
         <div class="form-group row">
           <label>Title</label>
+          <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
           <input placeholder="Media-title" class="form-control" name="title" type="text">
         </div>
