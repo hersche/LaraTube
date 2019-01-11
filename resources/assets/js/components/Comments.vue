@@ -38,11 +38,11 @@
             </button>
           </div>
               <vs-collapse class="">
-                <vs-collapse-item>
+                <vs-collapse-item v-if="loggeduserid!=0">
                   <div slot="header">
                     <vs-icon icon="reply"></vs-icon> Reply
                   </div>
-                  <form class="form-inline mb-1" :id="'commentForm'+comment.id" v-if="loggeduserid!=0">
+                  <form class="form-inline mb-1" :id="'commentForm'+comment.id" >
                     <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
                     <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
                     <input id="parent_id" name="parent_id" type="hidden" :value="comment.id">
