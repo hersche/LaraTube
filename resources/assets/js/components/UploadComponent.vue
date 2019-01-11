@@ -80,12 +80,12 @@
 <script>
   import { eventBus } from '../eventBus.js';
   import { User, Media, Tag } from '../models';
-  import MediaView from './MediaView'
+  import SingleMediaView from './SingleMediaView'
 
   export default {
     props: ['medias','baseUrl','csrf','treecatptions'],
     components : {
-        'mediaView' : MediaView
+        'mediaView' : SingleMediaView
     },
     mounted: function () {
       this.$refs.croppieRef.bind({

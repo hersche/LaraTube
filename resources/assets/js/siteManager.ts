@@ -435,7 +435,12 @@ class siteManager {
       alert(msg,type="dark",icon=''){
         this.$vs.notify({title:msg,text:'',icon:icon,color:type,position:'bottom-center'})
       },
-
+      openLoading(){
+        this.$vs.loading()
+        setTimeout( ()=> {
+          this.$vs.loading.close()
+        }, 2000);
+      },
       searching() {
         if(theVue.$router.currentRoute.path!="/search"){
           theVue.$router.push('/search');
@@ -508,6 +513,19 @@ class siteManager {
       }
   }
   }).$mount('#app');
+
+  theVue.$router.beforeResolve((to, from, next) => {
+//  if (to.name) {
+    //console.log("start loadng")
+    //theVue.$vs.loading()
+  //}
+  next()
+})
+
+theVue.$router.afterEach((to, from) => {
+//  console.log("stop loadng")
+//  theVue.$vs.loading.close()
+})
 if(localStorage.getItem('cookiePolicy')!="read"){
   theVue.$vs.notify({
     title:'We use cookies and the offline-storage',

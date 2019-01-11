@@ -4,9 +4,11 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-require('./bootstrap');
+//require('./bootstrap');
 //import treeNav from 'vue-tree-nav'
+window.$ = window.jQuery = require('jquery');
 
+require('bootstrap');
 var $ = require('jquery');
 
 //require("jquery-mousewheel")($);

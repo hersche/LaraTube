@@ -103,6 +103,10 @@ import { eventBus } from '../eventBus.js';
             eventBus.$emit('refreshMedia',this.currentmedia.id);
           },
           sendComment(id=''){
+            if(this.loggeduserid==0){
+              this.$vs.notify({title:'You can not comment',text:'Log in to like or comment',icon:'',color:'danger',position:'bottom-center'})
+              return
+            }
             //console.log($("#commentForm")[0])
             //console.log(new FormData($("#commentForm")[0]))
             $.ajax({
@@ -125,6 +129,10 @@ import { eventBus } from '../eventBus.js';
             });
           },
           like(comment,l,kind){
+            if(this.loggeduserid==0){
+              this.$vs.notify({title:'You can not vote',text:'Log in to like or comment',icon:'',color:'danger',position:'bottom-center'})
+              return
+            }
             let that = this;
             // TODO review this logic.. done?
             if((kind=="like")){

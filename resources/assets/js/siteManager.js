@@ -391,6 +391,13 @@ var siteManager = /** @class */ (function () {
                     if (icon === void 0) { icon = ''; }
                     this.$vs.notify({ title: msg, text: '', icon: icon, color: type, position: 'bottom-center' });
                 },
+                openLoading: function () {
+                    var _this = this;
+                    this.$vs.loading();
+                    setTimeout(function () {
+                        _this.$vs.loading.close();
+                    }, 2000);
+                },
                 searching: function () {
                     if (theVue.$router.currentRoute.path != "/search") {
                         theVue.$router.push('/search');
@@ -462,6 +469,17 @@ var siteManager = /** @class */ (function () {
                 }
             }
         }).$mount('#app');
+        theVue.$router.beforeResolve(function (to, from, next) {
+            //  if (to.name) {
+            //console.log("start loadng")
+            //theVue.$vs.loading()
+            //}
+            next();
+        });
+        theVue.$router.afterEach(function (to, from) {
+            //  console.log("stop loadng")
+            //  theVue.$vs.loading.close()
+        });
         if (localStorage.getItem('cookiePolicy') != "read") {
             theVue.$vs.notify({
                 title: 'We use cookies and the offline-storage',
