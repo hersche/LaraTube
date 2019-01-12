@@ -71,7 +71,7 @@ class siteManager {
         });
       } */
     setInterval(this.updateCSRF, 1800000);
-
+    this.loadMorePages()
   }
 
   initVue(){

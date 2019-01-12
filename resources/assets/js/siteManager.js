@@ -47,6 +47,7 @@ var siteManager = /** @class */ (function () {
               });
             } */
         setInterval(this.updateCSRF, 1800000);
+        this.loadMorePages();
     }
     siteManager.prototype.initVue = function () {
         var _this = this;
