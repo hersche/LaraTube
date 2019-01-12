@@ -76,6 +76,7 @@ var Category = /** @class */ (function () {
     function Category(id, title, description, avatar, background, parent_id, children) {
         this.id = id;
         this.title = title;
+        this.urlTitle = encodeURIComponent(this.title);
         this.description = description;
         this.avatar = avatar;
         this.background = background;

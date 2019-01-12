@@ -49,6 +49,9 @@
       <vs-navbar-item index="2">
         <router-link class="" to="/charts">Charts</router-link>
       </vs-navbar-item>
+      <vs-navbar-item index="6.1">
+        <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
+       </vs-navbar-item>
       <vs-navbar-item index="4">
         <router-link class="" to="/about">About</router-link>
       </vs-navbar-item>
@@ -68,9 +71,7 @@
          <vs-navbar-item index="6.1">
            <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
          </vs-navbar-item>
-         <vs-navbar-item index="6.1">
-           <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
-          </vs-navbar-item>
+
       </vs-sidebar-group>
 
 

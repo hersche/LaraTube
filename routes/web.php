@@ -116,7 +116,7 @@ Route::get('/internal-api/notifications/delete', function (Request $request) {
 });
 Route::get('/internal-api/media', function (Request $request) {
     // var_dump(explode(",",$request->input('i')));
-  //  return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->paginate(3));
+    //return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->skip($request->input('page')->get());
   return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));
 });
 
