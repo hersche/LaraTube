@@ -1,6 +1,6 @@
-# Welcome to LaraTube
+# Welcome to LaraTube (WIP)
 
-This project aims to be a multimedia-plattform for various scenarios, primary for video and audio.
+This project is a multimedia-plattform for various scenarios, primary for video and audio (via upload, link and webtorrent).
 
 The project is completly licensed with the GPL v3.
 
