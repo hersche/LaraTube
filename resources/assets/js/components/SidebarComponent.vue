@@ -103,6 +103,9 @@ export default {
 
 },
   methods:{
+    changeIndex(i){
+      console.log("this change index? "+i)
+    },
     searching(){
       eventBus.$emit('refreshSearch',"");
     },

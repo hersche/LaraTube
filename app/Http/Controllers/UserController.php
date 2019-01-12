@@ -54,65 +54,6 @@ class UserController extends Controller
       }
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password'
-        ]);
-
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-        $user = User::create($input);
-        $avatar_source = 'public/user/avatars/'.$user->name.'.png';
-        $data = $request->input('avatar');
-        if(!empty($data)){
-          //echo $data;
-          list($type, $data) = explode(';', $data);
-          list(, $data)      = explode(',', $data);
-          $data = base64_decode($data);
-          Storage::put('public/user/avatars/'.$user->name.'.png', $data);
-        } else {
-          $avatar_source = '';
-        }
-        $background_source = 'public/user/backgrounds/'.$user->name.'.png';
-        $data = $request->input('background');
-        if(!empty($data)){
-          list($type, $data) = explode(';', $data);
-          list(, $data)      = explode(',', $data);
-          $data = base64_decode($data);
-          Storage::put('public/user/backgrounds/'.$user->name.'.png', $data);
-        } else {
-          $background_source = '';
-        }
-        $user->avatar_source = $avatar_source;
-        $user->background_source = $background_source;
-        if(!empty($request->input('roles'))){
-          $user->assignRole($request->input('roles'));
-        }
-        $tagArrayExtract = explode(' ', $request->input('tags'));
-        $tagArray = array();
-        foreach($tagArrayExtract as $tag){
-          if(starts_with($tag, '#')){
-            array_push($tagArray, substr($tag,1));
-          } else {
-            array_push($tagArray, $tag);
-          }
-        }
-        $user->retag($tagArray);
-        return response()->json(["data"=>["msg"=>"User created"]],200);
-      //  return redirect()->route('users.index')
-      //                  ->with('success','User created successfully');
-    }
-
     public function mkAdmin(Request $request, $id){
       //if(\Auth::user()->can('admin')){
         $user = User::find($id);

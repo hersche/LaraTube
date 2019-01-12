@@ -47,9 +47,6 @@
           return "liked"
         }
       },
-      emitLoadMore() {
-        eventBus.$emit('loadMore','');
-      },
       emitMarkNotifications(url) {
         eventBus.$emit('getNotifications',url);
       },

@@ -110,26 +110,18 @@
           } else {
             that.initTorrentAfterRemove();
           }
-
-        //} else {
-        //  client.destroy(function(){
-          //  client = new WebTorrent();
-          //  that.initTorrent2();
-          //});
-
-
       },
 
       initTorrentAfterRemove(){
         let that = this;
-        if(torrentInterval!=undefined){
+        /*if(torrentInterval!=undefined){
           if(theTorrent!=undefined){
             console.log("torrent destroyed on init..")
             //theTorrent.destroy();
             //client.remove()
             //client.destroy();
           }
-        }
+        }*/
         if(this.currentmedia.techType=="video"){
           this.inited=true
         }
@@ -299,7 +291,13 @@
       let that = this;
 
       eventBus.$emit('setCurrentMedia',this.currentmedia.id);
-    //  this.currentmedia = this.getCurrentMedia()
+      //  this.currentmedia = this.getCurrentMedia()
+      eventBus.$on('playerGetDuration', title => {
+        console.log("player??")
+        console.log(that.player)
+        console.log(that.player.duration)
+        eventBus.$emit('playerSetDuration',that.player.duration);
+      });
       eventBus.$on('audioVisualType', visArgs => {
         that.audiovisualtype = visArgs[0];
         this.audioVisualChangeSeconds = visArgs[1]

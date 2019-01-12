@@ -14,12 +14,6 @@
   export default {
     props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser'],
     methods: {
-      emitRefreshMedias: function() {
-        eventBus.$emit('refreshMedias',"");
-      },
-      emitLoadAllMedias: function() {
-        eventBus.$emit('loadAllMedias',"");
-      }
     },
   components : {
       'gallery': GalleryComponent,

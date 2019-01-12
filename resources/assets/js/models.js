@@ -73,7 +73,7 @@ var Tag = /** @class */ (function () {
 }());
 export { Tag };
 var Category = /** @class */ (function () {
-    function Category(id, title, description, avatar, background, parent_id, childs) {
+    function Category(id, title, description, avatar, background, parent_id, children) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -83,7 +83,7 @@ var Category = /** @class */ (function () {
         this.parent_id = parent_id;
         this.children = [];
         var that = this;
-        $.each(childs, function (key1, value) {
+        $.each(children, function (key1, value) {
             that.children.push(new Category(value.id, value.title, value.description, value.avatar_source, value.background_source, value.parent_id, value.children));
         });
     }

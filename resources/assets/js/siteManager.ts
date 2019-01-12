@@ -40,7 +40,7 @@ class siteManager {
   catchedTagMedias:any;
   initing:boolean;
   csrf:string;
-  originalCatJson:any;
+  treecatptions:any;
   notificationTimer:any;
   types:Array<string>;
   currentMediaId:number;
@@ -171,17 +171,19 @@ class siteManager {
         that.nextMedias = that.nextVideosList(tmpv[0].id)
         theVue.nextvideos = that.nextMedias
         if(theVue.nextvideos==null||theVue.nextvideos){
-          console.log("do load more")
+          console.log("do load more cause nextvideos is empty")
           that.loadMorePages(function(){
             that.nextMedias = that.nextVideosList(id)
             theVue.nextvideos = that.nextMedias
-            console.log("received by callback")
+            that.loadMorePagesByScroll()
+            console.log("received by callback from nextvideo-empty")
             //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
           });
         }
       } else {
       //  console.log("do alternative next medias")
         that.loadMorePages(function(){
+          that.loadMorePagesByScroll()
           that.nextMedias = that.nextVideosList(id)
           theVue.nextvideos = that.nextMedias
       //    console.log("received by callback")
@@ -193,6 +195,9 @@ class siteManager {
             that.loadMorePages(function(){
               that.nextMedias = that.nextVideosList(id)
               theVue.nextvideos = that.nextMedias
+              that.loadMorePagesByScroll()
+              theVue.medias = that.getFilteredMedias()
+              theVue.fullmedias = that.medias
             //  console.log("received by callback")
               //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
             });
@@ -243,7 +248,7 @@ class siteManager {
     });
     eventBus.$on('commentCreated', json => {
       // Workaround by receive the media again.
-      that.receiveMediaByName(that.findMediaById(Number(json.data.media_id)).urlTitle)
+      that.receiveMediaById(json.data.media_id)
       that.updateCSRF();
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
@@ -257,7 +262,7 @@ class siteManager {
     });
     eventBus.$on('refreshMedia', id => {
       // Workaround by receive the media again.
-      that.receiveMediaByName(that.findMediaById(Number(id)).urlTitle)
+      that.receiveMediaById(id)
       that.updateCSRF();
       /*var m = that.findMediaById(Number(json.data.media_id))
       m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
@@ -272,11 +277,12 @@ class siteManager {
 
     eventBus.$on('loadMediaById', id => {
       // Workaround by receive the media again.
+      that.receiveMediaById(id)
+      that.updateCSRF();
       if(theVue!=undefined){
-        that.receiveMediaById(id)
-        that.updateCSRF();
+        theVue.alert("Media load by id","success")
       }
-      theVue.alert("Media load by id","success")
+
     });
 
     eventBus.$on('loadMediaByCommentId', id => {
@@ -369,13 +375,13 @@ class siteManager {
       var offset = d.scrollTop + window.innerHeight;
       var height = d.offsetHeight;
       if (offset >= height) {
-        console.log("current page");
-        console.log(that.currentPage)
+      //  console.log("current page");
+      //  console.log(that.currentPage)
         if(that.maxPage>=that.currentPage){
           that.loadMorePages()
         } else {
         //  theVue.canloadmore = false;
-          console.log("no more because of link is null")
+        //  console.log("no more because of link is null")
         }
 
       }
@@ -413,7 +419,7 @@ class siteManager {
       search:'',
       nextvideos:[],
       notifications:[],
-      originalCatJson:{},
+      treecatptions:{},
       fullmedias:that.medias,
       csrf:that.csrf,
       currentuser:that.currentUser,
@@ -445,11 +451,14 @@ class siteManager {
         }, 2000);
       },
       searching() {
-        if(theVue.$router.currentRoute.path!="/search"){
+
+        var s =  $("#theLiveSearch").val();
+        if(theVue.$router.currentRoute.path!="/search"&&s!=''){
           theVue.$router.push('/search');
         }
-        var s =  $("#theLiveSearch").val();
-
+        if(theVue.$router.currentRoute.path=="/search"&&s==''){
+          theVue.$router.go(-1)
+        }
         var m = [];
         if(that.usedSearchTerms.includes(s.toString())==false&&s.toString()!=""){
           that.usedSearchTerms.push(s);
@@ -494,8 +503,8 @@ class siteManager {
           }
           if(to.params.editTitle!=undefined){
             // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
-            if(sm.findMediaByName(to.params.editTitle)==undefined){
-              sm.receiveMediaByName(to.params.editTitle);
+            if(that.findMediaByName(to.params.editTitle)==undefined){
+              that.receiveMediaByName(to.params.editTitle);
             }
           }
           if(to.params.profileId!=undefined){
@@ -543,7 +552,18 @@ if(localStorage.getItem('cookiePolicy')!="read"){
 
   }
 
-
+  loadMorePagesByScroll(){
+    var d = document.documentElement;
+    var offset = d.scrollTop + window.innerHeight;
+    var height = d.offsetHeight;
+    if (offset >= height) {
+    //  console.log("current page");
+    //  console.log(that.currentPage)
+      if(this.maxPage>=this.currentPage){
+        this.loadMorePages()
+      }
+    }
+  }
 
   loadMorePages(callback=undefined){
     if(this.maxPage>=this.currentPage){
@@ -553,9 +573,10 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       if(this.currentPage>this.maxPage){
         console.log("end reached")
         theVue.canloadmore=false;
+      } else {
       }
-    }
   }
+}
 
   getFilteredMedias(myList = undefined){
     var theMedias:Array<Media> = []
@@ -695,12 +716,14 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.categories.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source,value.parent_id,value.children));
         });
       that.fillMediasToCat();
-      that.originalCatJson = that.mkTreeCat(data.data)
+
+      // here, we handle categorys and bring it in a format for the
+      // special tree-select-component
+      that.treecatptions = that.mkTreeCat(data.data)
       if(theVue!=undefined){
         theVue.categories = that.categories;
-        console.log("set originalData")
-        theVue.originalCatJson = that.originalCatJson;
-        console.log(theVue.originalCatJson)
+        theVue.treecatptions = that.treecatptions;
+        console.log(theVue.treecatptions)
       }
       if(callback!=undefined){
         callback();
@@ -920,7 +943,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     var existsAlready = false;
     $.getJSON("/internal-api/media/"+mediaName, function name(data) {
       $.each(that.medias, function(key,value){
-        if(value.title==mediaName){
+        if(value.urlTitle==mediaName){
           existsAlready=true;
           theKey = key;
         }
@@ -928,9 +951,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       data = data.data;
       if(that.findMediaByName(mediaName)==undefined){
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, value1 ) {
-          m.comments[key1] = that.fillUser(value1);
-          m.comments[key1].user = that.getUserById(value1.user_id)
+        $.each( m.comments, function( key1, comment ) {
+          m.comments[key1] = that.fillUser(comment);
+          m.comments[key1].user = that.getUserById(comment.user_id)
         });
         that.medias.push(m)
         that.medias = theMediaSorter.sort(that.medias)
@@ -938,13 +961,13 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         theVue.medias = that.getFilteredMedias();
       } else {
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, value1 ) {
-          m.comments[key1] = that.fillUser(value1);
-          m.comments[key1].user = that.getUserById(value1.user_id)
+        $.each( m.comments, function( key1, comment ) {
+          m.comments[key1] = that.fillUser(comment);
+          m.comments[key1].user = that.getUserById(comment.user_id)
         });
         if(m!=that.medias[theKey]){
           //console.log(JSON.parse(JSON.stringify(m.comments)))
-          //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+          m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
           that.medias[theKey].likes = m.likes;
           that.medias[theKey].dislikes = m.dislikes;
           that.medias[theKey].tracks = m.tracks;
@@ -1102,12 +1125,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         }
         theVue.users = that.users;
         theVue.categories = that.categories;
-        if(that.originalCatJson!=undefined){
-          console.log("set origi again")
-          console.log(that.originalCatJson)
-          theVue.originalCatJson = that.originalCatJson;
+        if(that.treecatptions!=undefined){
+          theVue.treecatptions = that.treecatptions;
         }
-        console.log(this.categories)
         that.medias = theMediaSorter.sort(that.medias)
         theVue.fullmedias = that.medias
         theVue.medias = that.getFilteredMedias();
@@ -1150,14 +1170,14 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           theVue.alert("Load "+loadCount+" and "+replaceCount+" medias already existed.")
         }
 
-        var d = document.documentElement;
+      /*  var d = document.documentElement;
         var offset = d.scrollTop + window.innerHeight;
         var height = d.offsetHeight;
         if(offset > height){
           if(that.maxPage>=that.currentPage){
             that.loadMorePages()
           }
-        }
+        }*/
         if(callback!=undefined){
           callback();
         }

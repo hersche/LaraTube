@@ -45,14 +45,17 @@ class MediaController extends Controller
         $getID3 = new \getID3;
         $title = $request->input('title');
         $source = $request->input('source');
-        $duration = "0";
+        $duration = 0;
+        if(!empty($request->input('duration'))){
+          $duration = $request->input('duration');
+        }
         if(empty($source)){
           $file = $request->file('directMedia');
           //
           $source = $file->store('public/directMedia');
           $id3 = $getID3->analyze($source);
           if(!empty($id3)&&!empty($id3['playtime_string'])){
-            $duration = $id3['playtime_string'];
+            $duration = $this->formatedDuration($id3['playtime_string']);
           }
         }
         $tagArrayExtract = explode(' ', $request->input('tags'));
@@ -64,7 +67,6 @@ class MediaController extends Controller
             array_push($tagArray, $tag);
           }
         }
-
         $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => '','duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id(),'category_id' =>  $request->input('category_id'),]);
         $media->poster_source = $this->processPoster($media->id,$request->input('poster'));
         $media->save();
@@ -72,7 +74,19 @@ class MediaController extends Controller
         return new MediaResource($media);
     }
 
-
+    private function formatedDuration($duration){
+            // The base case is A:BB
+            if(strlen($duration) == 4){
+                return "00:0" . $duration;
+            }
+            // If AA:BB
+            else if(strlen($duration) == 5){
+                return "00:" . $duration;
+            }   // If A:BB:CC
+            else if(strlen($duration) == 7){
+                return "0" . $duration;
+            }
+        }
     private function processPoster($id, $data){
       if(!empty($data)){
         list($type, $data) = explode(';', $data);
@@ -117,11 +131,16 @@ class MediaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $title)
+    public function edit(Request $request, $id)
     {
-        $media = Media::where('id', '=' ,$title)->firstOrFail();
+        $media = Media::where('id', '=' ,$id)->firstOrFail();
         $media->title = $request->input('title');
         $media->category_id = $request->input('category_id');
+        $duration = 0;
+        if(!empty($request->input('duration'))){
+          $duration = $request->input('duration');
+        }
+        $media->duration = $duration;
         //$media->source = $request->input('source');
         $media->description = $request->input('description');
         $tagArrayExtract = explode(' ', $request->input('tags'));
@@ -160,7 +179,7 @@ class MediaController extends Controller
     }
 
     */
-    
+
     /**
      * Remove the specified resource from storage.
      *

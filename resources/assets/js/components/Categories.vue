@@ -1,6 +1,10 @@
 <template>
   <div>
-<p v-if="catlevel==0&&currentuser.admin"><router-link to="/newcat/" class="btn btn-warning btn-sm"><vs-icon icon="create"></vs-icon>Create</router-link></p>
+    <p v-if="catlevel==0&&currentuser.admin">
+      <router-link to="/newcat/" class="btn btn-warning btn-sm">
+        <vs-icon icon="create"></vs-icon>Create
+      </router-link>
+    </p>
   <div class="row text-center text-lg-left" id="profilevideos">
     <vs-collapse>
       <vs-collapse-item v-for="cat in categories" :key="cat.id" class="">

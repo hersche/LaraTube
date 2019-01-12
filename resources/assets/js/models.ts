@@ -115,7 +115,7 @@ export class Category {
   medias:any;
   parent_id:number;
   children:any;
-  constructor(id:number,title:string,description:string,avatar:string,background:string,parent_id:number,childs:any){
+  constructor(id:number,title:string,description:string,avatar:string,background:string,parent_id:number,children:any){
     this.id=id;
     this.title=title;
     this.description=description;
@@ -125,7 +125,7 @@ export class Category {
     this.parent_id=parent_id;
     this.children = [];
     let that = this;
-    $.each( childs, function( key1, value ) {
+    $.each( children, function( key1, value ) {
       that.children.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source,value.parent_id,value.children))
     });
   }

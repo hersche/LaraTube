@@ -10,7 +10,7 @@ However, it's whished on the developers side to not use this software for:
 - Illegal or even discracing violence
 - Pro army / police / fashist / racist-sites
 
-By license, you can use the software. If i (the developer) detect this on the bugtracker or in personal contact, it can lead to deny personal help or loosing contact - this is my right.
+By license, you can use the software for anything. If i (the developer) detect this on the bugtracker or in personal contact, it can lead to deny personal help or loosing contact - this is my right.
 
 ## Features
 
@@ -26,9 +26,24 @@ By license, you can use the software. If i (the developer) detect this on the bu
 - Various filters (type, search, tags)
 - Live crop/rotate/"edit" for uploading images
 
+## TODO-features
+
+- Redo categories-view visually, this one is horrible for now
+  - Catch specific category-videos
+- Change receive-mechanism to better catch the wanted medias
+   - Sort and types should matter
+   - Need to exclude already loaded medias (tried, but not work yet)
+
+
 ## Wanted features
 
+Things i would love to implement, but where i'm either not shure how to implement it or simply doesn't have prioritised it yet.
+
 - ActivityPub!
+- More media-types (half under TODO)
+  - PDF, EPUB
+  - Pictures
+- Breakless click through a package of various medias (like a playlist, but presentation-able)
 
 ## Requirements
 
