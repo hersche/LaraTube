@@ -116,8 +116,25 @@ Route::get('/internal-api/notifications/delete', function (Request $request) {
 });
 Route::get('/internal-api/media', function (Request $request) {
     // var_dump(explode(",",$request->input('i')));
-    //return MediaResource::collection(Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->skip($request->input('page')->get());
-  return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));
+    $types = explode(",",$request->input('types'));
+    $tArr = [];
+    foreach($types as $type){
+      if($type=="audio"){
+        $tArr = array_merge($tArr,['localAudio','torrentAudio','directAudio']);
+      }
+      if($type=="video"){
+        $tArr = array_merge($tArr,['localVideo','torrentVideo','directVideo']);
+      }
+    }
+    // wheretIn('type', )
+    $res = Media::orderBy('updated_at', 'desc')->whereIn('type', $tArr)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+
+    if(empty($res->count())){
+      // Ignore the types, allows faster change. Still secondary
+      $res = Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+    }
+  return MediaResource::collection($res);
+  //return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));
 });
 
 Route::get('/internal-api/medias/all', function (Request $request) {
@@ -156,7 +173,7 @@ Route::delete('/internal-api/category/{id}','CategoryController@destroy');
 Route::post('/internal-api/medias/addTrack','MediaController@addTrack');
 Route::post('/internal-api/medias/deleteTrack/{trackid}','MediaController@deleteTrack');
 Route::get('/internal-api/refresh-csrf', function(){
-    return csrf_token();
+  return response()->json(["csrf"=>csrf_token(),"totalMedias"=>Media::count()],200);
 });
 
 Route::get('/internal-api/users', function () {

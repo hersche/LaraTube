@@ -32,11 +32,13 @@ class siteManager {
   usedSearchTerms:any;
   tags:Array<Tag>;
   maxPage:number;
+  blockScrollExecution:boolean;
   currentPage:number;
   categories:Array<Category>;
   loggedUserId:number;
   currentUser:User;
   lastLink:string;
+  totalMedias:number; // the current important variable for fetch
   catchedTagMedias:any;
   initing:boolean;
   csrf:string;
@@ -49,6 +51,7 @@ class siteManager {
     this.currentMediaId = 0;
     this.currentPage=2;
     this.initing=true;
+    this.blockScrollExecution = false;
     baseUrl = base+"/";
     if(localStorage.getItem("mediaTypes")!=''&&localStorage.getItem("mediaTypes")!=null){
       this.types = localStorage.getItem("mediaTypes").split(",")
@@ -59,6 +62,7 @@ class siteManager {
     this.usedSearchTerms=[];
     this.nextMedias=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
+    this.updateCSRF();
     this.receiveUsers(function(){
 
     });
@@ -71,7 +75,8 @@ class siteManager {
         });
       } */
     setInterval(this.updateCSRF, 1800000);
-    this.loadMorePages()
+
+    //this.loadMorePages()
   }
 
   initVue(){
@@ -185,7 +190,7 @@ class siteManager {
       } else {
       //  console.log("do alternative next medias")
         that.loadMorePages(function(){
-          that.loadMorePagesByScroll()
+          //that.loadMorePagesByScroll()
           that.nextMedias = that.nextVideosList(id)
           theVue.nextvideos = that.nextMedias
       //    console.log("received by callback")
@@ -371,24 +376,19 @@ class siteManager {
     eventBus.$on('loadMore', title => {
       that.loadMorePages();
     });
-
-    window.onscroll = function() {
-      var d = document.documentElement;
-      var offset = d.scrollTop + window.innerHeight;
-      var height = d.offsetHeight;
-      if (offset >= height) {
-      //  console.log("current page");
-      //  console.log(that.currentPage)
-        if(that.maxPage>=that.currentPage){
-          that.loadMorePages()
-        } else {
-        //  theVue.canloadmore = false;
-        //  console.log("no more because of link is null")
-        }
-
-      }
-
-    };
+    $(window).scroll(function() {
+      // Here, we load more medias if we reach the end of page
+       if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+         if(theVue.canloadmore&&that.blockScrollExecution==false){
+           console.log("near bottom, do a request and block!");
+           that.blockScrollExecution=true
+           that.loadMorePages(function(){
+             console.log("done, allow next request")
+             that.blockScrollExecution = false;
+           })
+         }
+       }
+    });
     eventBus.$on('refreshSearch', title => {
       theVue.searching();
     });
@@ -424,6 +424,7 @@ class siteManager {
       treecatptions:{},
       fullmedias:that.medias,
       csrf:that.csrf,
+      totalmedias:that.totalMedias,
       currentuser:that.currentUser,
       users:this.users,
       loggeduserid:this.loggedUserId,
@@ -555,6 +556,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
 
   loadMorePagesByScroll(){
+    console.log("loadMorePagesByScroll")
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
     var height = d.offsetHeight;
@@ -568,15 +570,17 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
 
   loadMorePages(callback=undefined){
-    if(this.maxPage>=this.currentPage){
+    console.log("load more pages")
+    console.log(this.totalMedias)
+    console.log("vs")
+    console.log(this.medias.length)
+    if(this.totalMedias>this.medias.length){
 
       this.receiveMedias('/internal-api/media?page='+this.currentPage+this.getIgnoreParam(false),false,callback)
-      this.currentPage++;
-      if(this.currentPage>this.maxPage){
-        console.log("end reached")
-        theVue.canloadmore=false;
-      } else {
-      }
+      theVue.canloadmore=true;
+  } else {
+    console.log("end reached")
+    theVue.canloadmore=false;
   }
 }
 
@@ -620,13 +624,31 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     return comment;
   }
   /*
-  * Update the CSRF-Token from server for all forms
+  * Old: Update the CSRF-Token from server for all forms
+  * New: Refresh CSRF AND totalMedias, which is needed to get medias.
+  * Within this, we can react if there are new videos since initial.
   */
   updateCSRF(){
-    $.get('/internal-api/refresh-csrf').done(function(data){
-      this.csrf = data;
-      theVue.csrf = data;
-      $('meta[name="csrf-token"]').attr('content',data)
+    let that = this;
+    $.getJSON('/internal-api/refresh-csrf').done(function(data){
+      that.csrf = data.csrf;
+      that.totalMedias = data.totalMedias;
+      if(theVue!=undefined){
+        console.log("update the vue total medias"+data.totalMedias)
+        theVue.csrf = data.csrf;
+        theVue.totalmedias = data.totalMedias
+        if(that.totalMedias>that.medias.length){
+          theVue.canloadmore=true
+        }
+      }
+
+
+      //that.loadMorePagesByScroll();
+      $('meta[name="csrf-token"]').attr('content',data.csrf)
+      $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': data.csrf
+      }});
       //  csrfToken = data; // the new token
     });
   }
@@ -690,7 +712,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     $.each( this.medias, function( key, value ) {
       content += ","+value.id
     });
-    return content
+    return content+"&types="+this.types.join()
   }
 
   mkTreeCat(data,l=0){
@@ -1117,6 +1139,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         if(theVue==undefined){
           that.initVue();
           that.receiveNotifications();
+
           if(that.notificationTimer!=undefined){
             clearInterval(that.notificationTimer);
           }
@@ -1124,9 +1147,10 @@ if(localStorage.getItem('cookiePolicy')!="read"){
             console.log("check for new notifications")
             that.receiveNotifications();
           }, 120000);
+          that.updateCSRF()
         }
+
         theVue.users = that.users;
-        theVue.categories = that.categories;
         if(that.treecatptions!=undefined){
           theVue.treecatptions = that.treecatptions;
         }
@@ -1162,10 +1186,8 @@ if(localStorage.getItem('cookiePolicy')!="read"){
 
         if((theVue.$router.currentRoute.path=="/search")) {
           theVue.searching();
-        /*  if($("#theLiveSearch").val()==''){
-            theVue.medias = [];
-          }*/
         }
+        //that.loadMorePagesByScroll()
         if(loadCount==0&&replaceCount==0){
           theVue.alert("All medias are loaded","warning")
         } else {

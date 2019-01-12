@@ -49,9 +49,7 @@
       <vs-navbar-item index="2">
         <router-link class="" to="/charts">Charts</router-link>
       </vs-navbar-item>
-      <vs-navbar-item index="6.1">
-        <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
-       </vs-navbar-item>
+
       <vs-navbar-item index="4">
         <router-link class="" to="/about">About</router-link>
       </vs-navbar-item>
@@ -65,12 +63,16 @@
         </vs-navbar-item>
      </vs-sidebar-group>
        <vs-sidebar-group title="Dev options">
+         <vs-navbar-item index="6.1">
+           <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
+          </vs-navbar-item>
+         <vs-navbar-item index="6.2">
+           <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
+         </vs-navbar-item>
          <p>Medias loaded: {{ medias.length }}</p>
          <p>Users loaded: {{ users.length }}</p>
          <p>Tags loaded: {{ tags.length }}</p>
-         <vs-navbar-item index="6.1">
-           <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
-         </vs-navbar-item>
+
 
       </vs-sidebar-group>
 
@@ -138,7 +140,7 @@ export default {
       eventBus.$emit('loadAllMedias',"");
     },
   },
-  props:['notifications','currentuser','medias','users','tags','csrf'],
+  props:['notifications','currentuser','medias','users','tags','csrf','totalmedias'],
   computed:{
   },
   watch:{
