@@ -19,11 +19,17 @@
             </audio>
           </vue-plyr>
         </div>
-        <vue-plyr ref="player" v-if="currentmedia.techType=='video'">
+        <vue-plyr ref="player" v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'">
           <video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
             <source :src="currentmedia.source" type="video/mp4"></source>
             <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </video>
+        </vue-plyr>
+        <vue-plyr ref="player" v-if="currentmedia.type=='youtube'">
+          <div data-plyr-provider="youtube" :data-plyr-embed-id="currentmedia.source"></div>
+        </vue-plyr>
+        <vue-plyr ref="player" v-if="currentmedia.type=='vimeo'">
+          <div data-plyr-provider="vimeo" :data-plyr-embed-id="currentmedia.source"></div>
         </vue-plyr>
         <vue-plyr ref="player" v-if="currentmedia.techType=='torrent'" >
           <video class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">

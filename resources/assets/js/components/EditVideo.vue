@@ -10,7 +10,16 @@
         </div>
         <div class="form-group row">
           <label>Media-type (only for restore):</label>
-          <select name="type" v-model="mediaType"><option value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
+          <select name="type" v-model="mediaType">
+            <option value="localAudio">Local audio</option>
+            <option value="localVideo">Local video</option>
+            <option value="directVideo">Direct video</option>
+            <option value="directAudio">Direct audio</option>
+            <option value="torrentAudio">Torrent audio</option>
+            <option value="torrentVideo">Torrent video</option>
+            <option value="youtube">Youtube</option>
+            <option value="vimeo">Vimeo</option>
+          </select>
         </div>
         <div class="form-group row">
           <label>Category</label>

@@ -5,7 +5,16 @@
     <div class="form-group">
         <label>Media-type:</label>
         <input type="hidden" name="_token" :value="csrf">
-         <select v-model="mediaType" name="type"><option selected value="localAudio">Local audio</option><option value="localVideo">Local video</option><option value="directVideo">Direct video</option><option value="directAudio">Direct audio</option><option value="torrentAudio">Torrent audio</option><option value="torrentVideo">Torrent video</option></select>
+         <select v-model="mediaType" name="type">
+           <option selected value="localAudio">Local audio</option>
+           <option value="localVideo">Local video</option>
+           <option value="directVideo">Direct video</option>
+           <option value="directAudio">Direct audio</option>
+           <option value="torrentAudio">Torrent audio</option>
+           <option value="torrentVideo">Torrent video</option>
+           <option value="youtube">Youtube</option>
+           <option value="vimeo">Vimeo</option>
+         </select>
     </div>
     <div v-if="mediaType=='localAudio'|mediaType=='localVideo'" class="form-group">
         <label>Media-file:</label>
@@ -24,6 +33,14 @@
         <label>Torrent (magnet-link)</label>
         <p>A webtorrent magnet-link, for example from peertube-videos</p>
          <input placeholder="magnet://" class="form-control" id="source" name="source" type="text">
+         <span class="btn btn-primary" @click="testMedia()">Test link and extend infos</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
+    </div>
+    <div v-if="mediaType=='youtube'|mediaType=='vimeo'" class="form-group">
+        <label>Youtube or vimeo</label>
+        <p>Add the id only</p>
+         <input placeholder="Like bTqVqk7FSmY or 76979871" class="form-control" id="source" name="source" type="text">
          <span class="btn btn-primary" @click="testMedia()">Test link and extend infos</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>

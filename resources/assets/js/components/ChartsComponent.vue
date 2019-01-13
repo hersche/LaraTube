@@ -39,25 +39,9 @@ this.medias.forEach( function(item, index) {
       };
     },
       likeSeries: function () {
-        var localVideo=0,localAudio=0,directAudio=0,directVideo=0,torrentAudio=0,torrentVideo=0;
         var likeArray = []
         var dislikeArray = []
         this.medias.forEach( function(item, index) {
-          if(item.type=="localVideo"){
-            localVideo++;
-          } else if (item.type=="localAudio"){
-            localAudio++;
-          } else if (item.type=="directAudio"){
-            directAudio++;
-          } else if (item.type=="directVideo"){
-            directVideo++;
-          } else if (item.type=="torrentAudio"){
-            torrentAudio++;
-          } else if (item.type=="torrentVideo"){
-            torrentVideo++;
-          } else {
-            console.warn("Weird type? "+item.type)
-          }
           likeArray.push(item.likes)
           dislikeArray.push(item.dislikes)
         });
@@ -79,12 +63,12 @@ this.medias.forEach( function(item, index) {
             id: 'vuechart-example'
           },
           xaxis: {
-            categories: ["Local audio", "Local video", "Direct audio", "Direct Video","Torrent audio", "Torrent video"]
+            categories: ["Local audio", "Local video", "Direct audio", "Direct Video","Torrent audio", "Torrent video","Youtube","Vimeo"]
           }
       };
     },
       series: function () {
-        var localVideo=0,localAudio=0,directAudio=0,directVideo=0,torrentAudio=0,torrentVideo=0;
+        var localVideo=0,localAudio=0,directAudio=0,directVideo=0,torrentAudio=0,torrentVideo=0,youtube=0,vimeo=0;
         this.medias.forEach( function(item, index) {
           if(item.type=="localVideo"){
             localVideo++;
@@ -98,13 +82,17 @@ this.medias.forEach( function(item, index) {
             torrentAudio++;
           } else if (item.type=="torrentVideo"){
             torrentVideo++;
+          }else if (item.type=="youtube"){
+            youtube++;
+          } else if (item.type=="vimeo"){
+            vimeo++;
           } else {
             console.warn("Weird type? "+item.type)
           }
         });
         return [{
           name: 'Medias',
-          data: [localAudio,localVideo,directAudio,directVideo,torrentAudio,torrentVideo]
+          data: [localAudio,localVideo,directAudio,directVideo,torrentAudio,torrentVideo,youtube,vimeo]
         }];
       },
       chartOptions2: function () {
