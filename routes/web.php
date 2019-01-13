@@ -170,12 +170,14 @@ Route::get('/internal-api/medias/all', function (Request $request) {
 });
 
 Route::get('/internal-api/medias/search/{title}', function (Request $request,$title) {
+  $title = urldecode($title);
     return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')->orWhere('description', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('description', 'LIKE' ,'%'.strtolower($title).'%')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 Route::get('/internal-api/categories', function (Request $request) {
     return CategoryResource::collection(Category::where("parent_id",0)->get());
 });
 Route::get('/internal-api/media/{title}', function ($title) {
+  $title = urldecode($title);
     return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
 Route::get('/internal-api/medias/byId/{id}', function ($id) {
