@@ -303,7 +303,7 @@ class siteManager {
 
     eventBus.$on('loadMedia', title => {
       // Workaround by receive the media again.d
-      that.receiveMediaByName(title, function(id){
+      that.receiveMediaByName(encodeURIComponent(title), function(id){
         that.updateCSRF();
         if(theVue!=undefined){
           if(theVue.$route.params.currentTitle!=undefined){
@@ -1063,7 +1063,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     var returnMedia = undefined;
     let that = this;
     $.each(that.medias, function(key,value){
-      if(value.title==mediaName){
+      if(value.urlTitle==mediaName){
         returnMedia=value;
       }
     });
@@ -1212,7 +1212,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         }
         if(theVue.$route.params.editTitle!=undefined){
           if(that.findMediaByName(theVue.$route.params.editTitle)==undefined){
-            that.receiveMediaByName(theVue.$route.params.editTitle,function(id){
+            that.receiveMediaByName(encodeURIComponent(theVue.$route.params.editTitle),function(id){
               that.currentMediaId = id
             });
           }
