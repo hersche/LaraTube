@@ -127,11 +127,39 @@ Route::get('/internal-api/media', function (Request $request) {
       }
     }
     // wheretIn('type', )
-    $res = Media::orderBy('updated_at', 'desc')->whereIn('type', $tArr)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+    $ascDesc = 'desc';
+    $sortBy = 'updated_at';
+    $sortByInput = $request->input('sortBy');
+    if($sortByInput=="title"){
+      $ascDesc = 'asc';
+      $sortBy = 'title';
+    } else if($sortByInput=="title_reverse"){
+      $ascDesc = 'desc';
+      $sortBy = 'title';
+    }else if($sortByInput=="created_at"){
+      $ascDesc = 'asc';
+      $sortBy = 'created_at';
+    }else if($sortByInput=="created_at_reverse"){
+      $ascDesc = 'desc';
+      $sortBy = 'created_at';
+    }else if($sortByInput=="updated_at"){
+      $ascDesc = 'asc';
+      $sortBy = 'updated_at';
+    }else if($sortByInput=="updated_at_reverse"){
+      $ascDesc = 'desc';
+      $sortBy = 'updated_at';
+    }else if($sortByInput=="type"){
+      $ascDesc = 'asc';
+      $sortBy = 'type';
+    }else if($sortByInput=="type_reverse"){
+      $ascDesc = 'desc';
+      $sortBy = 'type';
+    }
+    $res = Media::orderBy($sortBy, $ascDesc)->whereIn('type', $tArr)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
 
     if(empty($res->count())){
       // Ignore the types, allows faster change. Still secondary
-      $res = Media::orderBy('updated_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+      $res = Media::orderBy($sortBy, $ascDesc)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
     }
   return MediaResource::collection($res);
   //return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));

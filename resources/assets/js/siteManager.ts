@@ -712,7 +712,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     $.each( this.medias, function( key, value ) {
       content += ","+value.id
     });
-    return content+"&types="+this.types.join()
+    return content+"&types="+this.types.join()+"&sortBy="+theMediaSorter.sortBy
   }
 
   mkTreeCat(data,l=0){
