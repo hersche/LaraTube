@@ -950,7 +950,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         }
       });
       data = data.data;
-      if(that.findMediaById(mediaName)==undefined){
+      if(that.findMediaById(mediaName,undefined,false)==undefined){
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
         $.each( m.comments, function( key1, value1 ) {
           m.comments[key1] = that.fillUser(value1);
