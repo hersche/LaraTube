@@ -254,11 +254,20 @@
       //this.currentmedia = this.getCurrentMedia()
       eventBus.$emit('setCurrentMedia',this.currentmedia.id);
       this.initTorrent()
-      if(this.autoplay){
-        this.player.play();
-      //  this.player.fullscreen.enter();
-      }
       let that = this;
+
+      if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
+        setTimeout(function(){
+          if(that.autoplay){
+            that.player.play();
+            //  this.player.fullscreen.enter();
+          }
+        }, 3000);
+      } else {
+        if(that.autoplay){
+          that.player.play();
+        }
+      }
       this.player.on('ended', () => {
         if(that.autoplay){
           console.log('movie ended')
