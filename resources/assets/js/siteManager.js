@@ -21,9 +21,7 @@ var searchDelay;
 var theMediaSorter = new MediaSorter();
 var siteManager = /** @class */ (function () {
     function siteManager(base) {
-        this.maxPage = -1;
         this.currentMediaId = 0;
-        this.currentPage = 2;
         this.initing = true;
         this.blockScrollExecution = false;
         baseUrl = base + "/";
@@ -35,6 +33,7 @@ var siteManager = /** @class */ (function () {
         }
         this.catchedTagMedias = [];
         this.usedSearchTerms = [];
+        this.usedCatRequests = [];
         this.nextMedias = [];
         this.loggedUserId = Number($("#loggedUserId").attr("content"));
         this.updateCSRF();
@@ -127,6 +126,7 @@ var siteManager = /** @class */ (function () {
             theVue.canloadmore = true;
             that.catchedTagMedias = [];
             _this.usedSearchTerms = [];
+            _this.usedCatRequests = [];
             that.receiveMedias("/internal-api/media" + _this.getIgnoreParam(), true);
             that.updateCSRF();
         });
@@ -150,7 +150,7 @@ var siteManager = /** @class */ (function () {
                     that.loadMorePages(function () {
                         that.nextMedias = that.nextVideosList(id);
                         theVue.nextvideos = that.nextMedias;
-                        that.loadMorePagesByScroll();
+                        that.loadMorePages();
                         console.log("received by callback from nextvideo-empty");
                         //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
                     });
@@ -159,7 +159,6 @@ var siteManager = /** @class */ (function () {
             else {
                 //  console.log("do alternative next medias")
                 that.loadMorePages(function () {
-                    //that.loadMorePagesByScroll()
                     that.nextMedias = that.nextVideosList(id);
                     theVue.nextvideos = that.nextMedias;
                     //    console.log("received by callback")
@@ -171,7 +170,7 @@ var siteManager = /** @class */ (function () {
                         that.loadMorePages(function () {
                             that.nextMedias = that.nextVideosList(id);
                             theVue.nextvideos = that.nextMedias;
-                            that.loadMorePagesByScroll();
+                            that.loadMorePages();
                             theVue.medias = that.getFilteredMedias();
                             theVue.fullmedias = that.medias;
                             //  console.log("received by callback")
@@ -333,17 +332,25 @@ var siteManager = /** @class */ (function () {
             // Here, we load more medias if we reach the end of page
             if ($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
                 if (theVue.canloadmore && that.blockScrollExecution == false) {
-                    console.log("near bottom, do a request and block!");
-                    that.blockScrollExecution = true;
-                    that.loadMorePages(function () {
-                        console.log("done, allow next request");
-                        that.blockScrollExecution = false;
-                    });
+                    if (theVue.$router.currentRoute.path == "/" || theVue.$router.currentRoute.path == "/tags") {
+                        console.log("near bottom, do a request and block!");
+                        that.blockScrollExecution = true;
+                        that.loadMorePages(function () {
+                            console.log("done, allow next request");
+                            that.blockScrollExecution = false;
+                        });
+                    }
                 }
             }
         });
         eventBus.$on('refreshSearch', function (title) {
             theVue.searching();
+        });
+        eventBus.$on('getMediasByCatId', function (id) {
+            if (that.usedCatRequests.includes(id) == false) {
+                that.usedCatRequests.push(id);
+                that.receiveMedias("/internal-api/medias/byCatId/" + id + that.getIgnoreParam());
+            }
         });
         eventBus.$on('filterTypes', function (types) {
             that.types = types;
@@ -418,11 +425,11 @@ var siteManager = /** @class */ (function () {
                     }
                     var m = [];
                     if (that.usedSearchTerms.includes(s.toString()) == false && s.toString() != "") {
-                        that.usedSearchTerms.push(s);
                         if (searchDelay != undefined) {
                             clearTimeout(searchDelay);
                         }
                         searchDelay = setTimeout(function () {
+                            that.usedSearchTerms.push(s);
                             that.receiveMedias("/internal-api/medias/search/" + s + that.getIgnoreParam());
                         }, 300);
                     }
@@ -504,19 +511,6 @@ var siteManager = /** @class */ (function () {
             });
         }
     };
-    siteManager.prototype.loadMorePagesByScroll = function () {
-        console.log("loadMorePagesByScroll");
-        var d = document.documentElement;
-        var offset = d.scrollTop + window.innerHeight;
-        var height = d.offsetHeight;
-        if (offset >= height) {
-            //  console.log("current page");
-            //  console.log(that.currentPage)
-            if (this.maxPage >= this.currentPage) {
-                this.loadMorePages();
-            }
-        }
-    };
     siteManager.prototype.loadMorePages = function (callback) {
         if (callback === void 0) { callback = undefined; }
         console.log("load more pages");
@@ -524,7 +518,7 @@ var siteManager = /** @class */ (function () {
         console.log("vs");
         console.log(this.medias.length);
         if (this.totalMedias > this.medias.length) {
-            this.receiveMedias('/internal-api/media?page=' + this.currentPage + this.getIgnoreParam(false), false, callback);
+            this.receiveMedias('/internal-api/media?' + this.getIgnoreParam(false), false, callback);
             theVue.canloadmore = true;
         }
         else {
@@ -588,7 +582,6 @@ var siteManager = /** @class */ (function () {
                     theVue.canloadmore = true;
                 }
             }
-            //that.loadMorePagesByScroll();
             $('meta[name="csrf-token"]').attr('content', data.csrf);
             $.ajaxSetup({
                 headers: {
@@ -1016,8 +1009,9 @@ var siteManager = /** @class */ (function () {
         });
         return returnMedia;
     };
-    siteManager.prototype.findMediaById = function (id, callback) {
+    siteManager.prototype.findMediaById = function (id, callback, getIfUndefined) {
         if (callback === void 0) { callback = undefined; }
+        if (getIfUndefined === void 0) { getIfUndefined = true; }
         var returnMedia = undefined;
         var that = this;
         $.each(that.medias, function (key, value) {
@@ -1027,7 +1021,9 @@ var siteManager = /** @class */ (function () {
             }
         });
         if (returnMedia == undefined) {
-            that.receiveMediaById(id, callback);
+            if (getIfUndefined) {
+                that.receiveMediaById(id, callback);
+            }
         }
         else {
             if (callback != undefined) {
@@ -1072,120 +1068,108 @@ var siteManager = /** @class */ (function () {
         if (callback === void 0) { callback = undefined; }
         var that = this;
         var loadCount = 0, replaceCount = 0;
-        $.getJSON(url, function name(data) {
-            if ((forceUpdate) || (that.medias == undefined)) {
-                that.medias = [];
-            }
-            $.each(data.data, function (key, value) {
-                //console.log(that.findMediaById(value.id))
-                if (that.findMediaById(value.id) == undefined) {
-                    var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes, value.tracks, value.category_id);
-                    $.each(m.comments, function (key1, value1) {
-                        m.comments[key1] = that.fillUser(value1);
-                        //console.log(that.fillUser(value1))
-                        m.comments[key1].user = that.getUserById(value1.user_id);
-                    });
-                    //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
-                    loadCount++;
-                    m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-                    that.medias.push(m);
-                    //if(that.getCategoryKey(m.category_id)!=undefined){
-                    //that.categories[that.getCategoryKey(m.category_id)].medias.push(m)
-                    //}
-                    that.fillMediasToCat();
+        if ((forceUpdate) || (that.medias == undefined)) {
+            that.medias = [];
+        }
+        if (this.totalMedias > this.medias.length) {
+            $.getJSON(url, function name(data) {
+                $.each(data.data, function (key, value) {
+                    //console.log(that.findMediaById(value.id))
+                    if (that.findMediaById(value.id, undefined, false) == undefined) {
+                        var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, that.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, that.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes, value.tracks, value.category_id);
+                        $.each(m.comments, function (key1, value1) {
+                            m.comments[key1] = that.fillUser(value1);
+                            //console.log(that.fillUser(value1))
+                            m.comments[key1].user = that.getUserById(value1.user_id);
+                        });
+                        //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
+                        loadCount++;
+                        m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+                        that.medias.push(m);
+                        //if(that.getCategoryKey(m.category_id)!=undefined){
+                        //that.categories[that.getCategoryKey(m.category_id)].medias.push(m)
+                        //}
+                        that.fillMediasToCat();
+                    }
+                    else {
+                        replaceCount++;
+                        /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
+                          $.each( m.comments, function( key1, value1 ) {
+                            m.comments[key1] = that.fillUser(value1);
+                            //console.log(that.fillUser(value1))
+                            m.comments[key1].user = that.getUserById(value1.user_id)
+              
+                          });
+                          m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+                          if(m!=value){
+                            replaceCount++;
+                            console.log("Media replaced "+value.title+" with "+m.title)
+                            m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
+                            that.medias[key] = m;
+                          }*/
+                    }
+                });
+                if (theVue == undefined) {
+                    that.initVue();
+                    that.receiveNotifications();
+                    if (that.notificationTimer != undefined) {
+                        clearInterval(that.notificationTimer);
+                    }
+                    that.notificationTimer = setInterval(function () {
+                        console.log("check for new notifications");
+                        that.receiveNotifications();
+                    }, 120000);
+                    that.updateCSRF();
+                }
+                theVue.users = that.users;
+                if (that.treecatptions != undefined) {
+                    theVue.treecatptions = that.treecatptions;
+                }
+                that.medias = theMediaSorter.sort(that.medias);
+                theVue.fullmedias = that.medias;
+                theVue.medias = that.getFilteredMedias();
+                theVue.categories = that.categories;
+                if (theVue.$route.params.profileId != undefined) {
+                    theVue.user = that.getUserById(theVue.$route.params.profileId);
+                    theVue.fullmedias = that.medias;
+                    theVue.medias = that.getFilteredMedias(that.getMediasByUser(theVue.$route.params.profileId));
+                }
+                if (theVue.$route.params.currentTitle != undefined) {
+                    if (that.findMediaByName(theVue.$route.params.currentTitle) == undefined) {
+                        that.receiveMediaByName(theVue.$route.params.currentTitle, function (id) {
+                            that.currentMediaId = id;
+                            that.nextMedias = that.nextVideosList(id);
+                            theVue.nextvideos = that.nextMedias;
+                        });
+                    }
+                    else {
+                        that.nextMedias = that.nextVideosList(that.findMediaByName(theVue.$route.params.currentTitle).id);
+                        theVue.nextvideos = that.nextMedias;
+                    }
+                }
+                if (theVue.$route.params.editTitle != undefined) {
+                    if (that.findMediaByName(theVue.$route.params.editTitle) == undefined) {
+                        that.receiveMediaByName(encodeURIComponent(theVue.$route.params.editTitle), function (id) {
+                            that.currentMediaId = id;
+                        });
+                    }
+                }
+                if ((theVue.$router.currentRoute.path == "/search")) {
+                    theVue.searching();
+                }
+                if (loadCount == 0 && replaceCount == 0) {
+                    if (that.totalMedias == that.medias.length) {
+                        theVue.alert("All medias are loaded", "warning");
+                    }
                 }
                 else {
-                    replaceCount++;
-                    /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
-                      $.each( m.comments, function( key1, value1 ) {
-                        m.comments[key1] = that.fillUser(value1);
-                        //console.log(that.fillUser(value1))
-                        m.comments[key1].user = that.getUserById(value1.user_id)
-          
-                      });
-                      m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-                      if(m!=value){
-                        replaceCount++;
-                        console.log("Media replaced "+value.title+" with "+m.title)
-                        m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
-                        that.medias[key] = m;
-                      }*/
+                    theVue.alert("Load " + loadCount + " and " + replaceCount + " medias already existed.");
+                }
+                if (callback != undefined) {
+                    callback();
                 }
             });
-            if (data.meta != undefined && that.maxPage == -1) {
-                if (data.meta.last_page != null) {
-                    console.log("set maxPage");
-                    console.log(data.meta.last_page);
-                    that.maxPage = data.meta.last_page;
-                }
-            }
-            if (theVue == undefined) {
-                that.initVue();
-                that.receiveNotifications();
-                if (that.notificationTimer != undefined) {
-                    clearInterval(that.notificationTimer);
-                }
-                that.notificationTimer = setInterval(function () {
-                    console.log("check for new notifications");
-                    that.receiveNotifications();
-                }, 120000);
-                that.updateCSRF();
-            }
-            theVue.users = that.users;
-            if (that.treecatptions != undefined) {
-                theVue.treecatptions = that.treecatptions;
-            }
-            that.medias = theMediaSorter.sort(that.medias);
-            theVue.fullmedias = that.medias;
-            theVue.medias = that.getFilteredMedias();
-            theVue.categories = that.categories;
-            if (theVue.$route.params.profileId != undefined) {
-                theVue.user = that.getUserById(theVue.$route.params.profileId);
-                theVue.fullmedias = that.medias;
-                theVue.medias = that.getFilteredMedias(that.getMediasByUser(theVue.$route.params.profileId));
-            }
-            if (theVue.$route.params.currentTitle != undefined) {
-                if (that.findMediaByName(theVue.$route.params.currentTitle) == undefined) {
-                    that.receiveMediaByName(theVue.$route.params.currentTitle, function (id) {
-                        that.currentMediaId = id;
-                        that.nextMedias = that.nextVideosList(id);
-                        theVue.nextvideos = that.nextMedias;
-                    });
-                }
-                else {
-                    that.nextMedias = that.nextVideosList(that.findMediaByName(theVue.$route.params.currentTitle).id);
-                    theVue.nextvideos = that.nextMedias;
-                }
-            }
-            if (theVue.$route.params.editTitle != undefined) {
-                if (that.findMediaByName(theVue.$route.params.editTitle) == undefined) {
-                    that.receiveMediaByName(encodeURIComponent(theVue.$route.params.editTitle), function (id) {
-                        that.currentMediaId = id;
-                    });
-                }
-            }
-            if ((theVue.$router.currentRoute.path == "/search")) {
-                theVue.searching();
-            }
-            //that.loadMorePagesByScroll()
-            if (loadCount == 0 && replaceCount == 0) {
-                theVue.alert("All medias are loaded", "warning");
-            }
-            else {
-                theVue.alert("Load " + loadCount + " and " + replaceCount + " medias already existed.");
-            }
-            /*  var d = document.documentElement;
-              var offset = d.scrollTop + window.innerHeight;
-              var height = d.offsetHeight;
-              if(offset > height){
-                if(that.maxPage>=that.currentPage){
-                  that.loadMorePages()
-                }
-              }*/
-            if (callback != undefined) {
-                callback();
-            }
-        });
+        }
     };
     siteManager.prototype.getUserById = function (id) {
         var search = new User(0, "None", "/img/404/avatar.png", "/img/404/background.png", "None-profile", {}, "", false);

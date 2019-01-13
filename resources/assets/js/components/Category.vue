@@ -43,10 +43,12 @@ export default {
           var tmpResult = that.getCurrentCategory(val.children)
           if(tmpResult!=undefined){
             theC = tmpResult
+            eventBus.$emit('getMediasByCatId',theC.id);
           }
         }
         if(val.urlTitle==encodeURIComponent(that.$route.params.currentCat)){
           theC = val;
+          eventBus.$emit('getMediasByCatId',theC.id);
         }
       });
       return theC;

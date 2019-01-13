@@ -18,6 +18,39 @@ use App\Http\Resources\User as UserResource;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+function getMediaOrder($sortByInput){
+  $ascDesc = 'desc';
+  $sortBy = 'updated_at';
+  //$sortByInput = $request->input('sortBy');
+  if($sortByInput=="title"){
+    $ascDesc = 'asc';
+    $sortBy = 'title';
+  } else if($sortByInput=="title_reverse"){
+    $ascDesc = 'desc';
+    $sortBy = 'title';
+  }else if($sortByInput=="created_at"){
+    $ascDesc = 'asc';
+    $sortBy = 'created_at';
+  }else if($sortByInput=="created_at_reverse"){
+    $ascDesc = 'desc';
+    $sortBy = 'created_at';
+  }else if($sortByInput=="updated_at"){
+    $ascDesc = 'asc';
+    $sortBy = 'updated_at';
+  }else if($sortByInput=="updated_at_reverse"){
+    $ascDesc = 'desc';
+    $sortBy = 'updated_at';
+  }else if($sortByInput=="type"){
+    $ascDesc = 'asc';
+    $sortBy = 'type';
+  }else if($sortByInput=="type_reverse"){
+    $ascDesc = 'desc';
+    $sortBy = 'type';
+  }
+  return [$ascDesc,$sortBy];
+}
+
 Auth::routes();
 Route::get('/', function () {
     return view('base');
@@ -127,61 +160,41 @@ Route::get('/internal-api/media', function (Request $request) {
       }
     }
     // wheretIn('type', )
-    $ascDesc = 'desc';
-    $sortBy = 'updated_at';
-    $sortByInput = $request->input('sortBy');
-    if($sortByInput=="title"){
-      $ascDesc = 'asc';
-      $sortBy = 'title';
-    } else if($sortByInput=="title_reverse"){
-      $ascDesc = 'desc';
-      $sortBy = 'title';
-    }else if($sortByInput=="created_at"){
-      $ascDesc = 'asc';
-      $sortBy = 'created_at';
-    }else if($sortByInput=="created_at_reverse"){
-      $ascDesc = 'desc';
-      $sortBy = 'created_at';
-    }else if($sortByInput=="updated_at"){
-      $ascDesc = 'asc';
-      $sortBy = 'updated_at';
-    }else if($sortByInput=="updated_at_reverse"){
-      $ascDesc = 'desc';
-      $sortBy = 'updated_at';
-    }else if($sortByInput=="type"){
-      $ascDesc = 'asc';
-      $sortBy = 'type';
-    }else if($sortByInput=="type_reverse"){
-      $ascDesc = 'desc';
-      $sortBy = 'type';
-    }
-    $res = Media::orderBy($sortBy, $ascDesc)->whereIn('type', $tArr)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+    $sortBy = getMediaOrder($request->input('sortBy'));
+    $res = Media::orderBy($sortBy[1], $sortBy[0])->whereIn('type', $tArr)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
 
     if(empty($res->count())){
       // Ignore the types, allows faster change. Still secondary
-      $res = Media::orderBy($sortBy, $ascDesc)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+      $res = Media::orderBy($sortBy[1], $sortBy[0])->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
     }
   return MediaResource::collection($res);
   //return MediaResource::collection(Media::orderBy('updated_at', 'desc')->paginate(3));
 });
 
 Route::get('/internal-api/medias/all', function (Request $request) {
-    return MediaResource::collection(Media::orderBy('created_at', 'desc')->whereNotIn('id', explode(",",$request->input('i')))->get());
+    $sortBy = getMediaOrder($request->input('sortBy'));
+    return MediaResource::collection(Media::orderBy($sortBy[1], $sortBy[0])->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 
 Route::get('/internal-api/medias/search/{title}', function (Request $request,$title) {
   $title = urldecode($title);
-    return MediaResource::collection(Media::where('title', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')->orWhere('description', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('description', 'LIKE' ,'%'.strtolower($title).'%')->whereNotIn('id', explode(",",$request->input('i')))->get());
+  $sortBy = getMediaOrder($request->input('sortBy'));
+  return MediaResource::collection(Media::orderBy($sortBy[1], $sortBy[0])->where('title', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')->orWhere('description', 'LIKE' ,'%'.strtoupper($title).'%')->orWhere('description', 'LIKE' ,'%'.strtolower($title).'%')->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 Route::get('/internal-api/categories', function (Request $request) {
     return CategoryResource::collection(Category::where("parent_id",0)->get());
 });
 Route::get('/internal-api/media/{title}', function ($title) {
   $title = urldecode($title);
-    return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
+  return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
 });
 Route::get('/internal-api/medias/byId/{id}', function ($id) {
     return new MediaResource(Media::where('id', '=' ,$id)->firstOrFail());
+});
+
+Route::get('/internal-api/medias/byCatId/{id}', function (Request $request,$id) {
+  $sortBy = getMediaOrder($request->input('sortBy'));
+  return MediaResource::collection(Media::orderBy($sortBy[1], $sortBy[0])->where('category_id', '=' ,$id)->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 Route::get('/internal-api/medias/byCommentId/{id}', function ($id) {
 //  echo Comment::find($id)->media_id;
