@@ -1,38 +1,34 @@
 <template>
   <div>
-    <p v-if="catlevel==0&&currentuser.admin">
-      <router-link to="/newcat/" class="btn btn-warning btn-sm">
+
+
+
+    <p v-if="catlevel==0" class="float-left col-4">
+      <router-link v-if="currentuser.admin" to="/newcat/" class="btn btn-warning btn-sm">
         <vs-icon icon="create"></vs-icon>Create
       </router-link>
-    </p>
-  <!-- <div class="row text-center text-lg-left" id="profilevideos"> -->
-    <!-- <vs-collapse>
-      <vs-collapse-item v-for="cat in categories" :key="cat.id" class=""> -->
-      <ul>
-        <li v-for="cat in categories">
-          <router-link :to="'/category/'+cat.urlTitle">{{ cat.title }}</router-link>
-           <p v-if="currentuser.admin"><router-link :to="'/editcat/'+cat.id" class="btn btn-warning btn-sm mr-1"><vs-icon icon="edit"></vs-icon>Edit</router-link>
-          <button @click="deleteAction(cat.id)" class="btn btn-danger btn-sm"><vs-icon icon="delete"></vs-icon>Delete</button></p>
-          <div class="ml-3">
-            <p v-if="cat.children.length>0">Subs</p>
-          <cat v-bind:catlevel="Number(catlevel)+1" v-bind:currentuser="currentuser" v-bind:categories="cat.children" v-if="cat.children.length>0"></cat>
-        </div>
-        </li>
-      </ul>
-      <!--  <div slot="header">
-          {{ cat.title }}
-        </div>
-        <p>{{ cat.description }}</p>
-        <p v-if="currentuser.admin"><router-link :to="'/editcat/'+cat.id" class="btn btn-warning btn-sm mr-1"><vs-icon icon="edit"></vs-icon>Edit</router-link>
-        <button @click="deleteAction(cat.id)" class="btn btn-danger btn-sm"><vs-icon icon="delete"></vs-icon>Delete</button></p>-->
+      <treeselect v-if="treecatptions!=undefined" :multiple="true" :always-open="true" v-model="catids" name="parent_id"  :options="treecatptions" />
 
-        <!-- <div class="row text-center">
-          <div v-for="media in cat.medias"  class="col-lg-3 col-md-3 col-xs-6">
-            <singleField v-bind:item="media" v-bind:loggeduserid="loggeduserid"></singleField>
-          </div>
-        </div>
-      </vs-collapse-item>
-    </vs-collapse> -->
+    </p>
+
+    <p class="float-right col-8">
+      <div class="float-right col-8" v-for="cat in categories" v-if="isIdIncluded(cat.id)">
+        <span class="text-right float-right" v-if="currentuser.admin"><router-link :to="'/editcat/'+cat.id" class="btn btn-warning btn-sm mr-1"><vs-icon icon="edit"></vs-icon>Edit</router-link>
+          <button @click="deleteAction(cat.id)" class="btn btn-danger btn-sm"><vs-icon icon="delete"></vs-icon>Delete</button></span>
+        <h5><router-link :to="'/category/'+cat.urlTitle">{{ cat.title }}</router-link></h5>
+        <p>{{ cat.description }}</p>
+         <p v-if="cat.children.length>0">Subcategories</p>
+         <p v-for="subcat in cat.children" v-if="cat.children.length>0"><router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link></p>
+         <div class="row text-center">
+            <div v-for="media in cat.medias"  class="col-lg-6 col-md-6 col-xs-6">
+               <singleField v-bind:item="media" v-bind:loggeduserid="loggeduserid"></singleField>
+            </div>
+         </div>
+         <vs-divider color="primary" icon=""></vs-divider>
+       </div>
+       <p class="float-right col-8 btn-block btn-sm btn btn-info" @click="emitLoadMore()" v-if="canloadmore">Scroll down or click to load more</p>
+    </p>
+
   </div>
   </div>
 </template>
@@ -40,9 +36,26 @@
   import { eventBus } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['medias','baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser'],
-    name: 'cat',
+    props: ['medias','baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser','treecatptions'],
+    name: 'categoriesTag',
+    watch: {
+      catids:function(val){
+
+      }
+    },
     methods: {
+      emitLoadMore() {
+        eventBus.$emit('loadMore','');
+      },
+      isIdIncluded(id){
+        var ret = false;
+        this.catids.forEach(function(val,key){
+          if(val==id){
+            ret = true;
+          }
+        });
+        return ret;
+      },
       deleteAction(id) {
         let that = this;
         $.ajax({
@@ -65,6 +78,11 @@
     },
     components : {
         'singleField': SingleGalleryField
+    },
+    data(){
+      return {
+        catids:[],
+      }
     }
   }
 </script>
