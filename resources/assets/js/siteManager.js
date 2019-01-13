@@ -673,6 +673,8 @@ var siteManager = /** @class */ (function () {
         });
         return result;
     };
+    siteManager.prototype.resolveMediaCategorys = function () {
+    };
     siteManager.prototype.receiveCategories = function (callback) {
         if (callback === void 0) { callback = undefined; }
         var that = this;
@@ -736,11 +738,44 @@ var siteManager = /** @class */ (function () {
         });
         return ma;
     };
-    siteManager.prototype.getCategoryKey = function (category_id) {
+    siteManager.prototype.getCategoryKey = function (category_id, data) {
+        if (data === void 0) { data = undefined; }
         var res;
-        $.each(this.categories, function (key, value) {
+        var that = this;
+        var idata = this.categories;
+        if (data != undefined) {
+            idata = data;
+        }
+        $.each(idata, function (key, value) {
+            if (value.children.length > 0) {
+                var t = that.getCategoryKey(category_id, value.children);
+                if (t != undefined) {
+                    res = t;
+                }
+            }
             if (value.id == category_id) {
                 res = key;
+            }
+        });
+        return res;
+    };
+    siteManager.prototype.getCategoryById = function (category_id, data) {
+        if (data === void 0) { data = undefined; }
+        var res;
+        var that = this;
+        var idata = this.categories;
+        if (data != undefined) {
+            idata = data;
+        }
+        $.each(idata, function (key, value) {
+            if (value.children.length > 0) {
+                var t = that.getCategoryById(category_id, value.children);
+                if (t != undefined) {
+                    res = t;
+                }
+            }
+            if (value.id == category_id) {
+                res = value;
             }
         });
         return res;

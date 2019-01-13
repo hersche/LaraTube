@@ -732,6 +732,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       return result;
   }
 
+  resolveMediaCategorys(){
+  }
+
   receiveCategories(callback=undefined):void{
     let that = this;
     $.getJSON("/internal-api/categories", function name(data) {
@@ -795,11 +798,42 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
     return ma;
   }
-  getCategoryKey(category_id:number){
+  getCategoryKey(category_id:number,data=undefined){
     var res;
-    $.each( this.categories, function( key, value ) {
+    let that = this;
+    var idata = this.categories
+    if(data!=undefined){
+      idata = data
+    }
+    $.each( idata, function( key, value ) {
+      if(value.children.length>0){
+        var t = that.getCategoryKey(category_id,value.children)
+        if(t!=undefined){
+          res = t;
+        }
+      }
       if(value.id==category_id){
         res = key;
+      }
+    });
+    return res;
+  }
+  getCategoryById(category_id:number,data=undefined){
+    var res;
+    let that = this;
+    var idata = this.categories
+    if(data!=undefined){
+      idata = data
+    }
+    $.each( idata, function( key, value ) {
+      if(value.children.length>0){
+        var t = that.getCategoryById(category_id,value.children)
+        if(t!=undefined){
+          res = t;
+        }
+      }
+      if(value.id==category_id){
+        res = value;
       }
     });
     return res;

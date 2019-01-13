@@ -55,6 +55,7 @@ export class Media {
   urlTitle:string;
   tracks:any;
   category_id:number;
+  category:Category;
   constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number){
     this.id=id;
     this.title = title;
@@ -79,6 +80,7 @@ export class Media {
     this.tagString = this.tagStringing();
     this.tracks = tracks;
     this.category_id = category_id;
+  //  this.category = category;
   }
   tagStringing(){
     var theTagString = ""

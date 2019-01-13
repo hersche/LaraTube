@@ -6,11 +6,11 @@
   </ul>
   <div class="carousel-inner" id="carouselInnerBody">
     <div v-for="(item,index) in medias" :class="{ 'active': index === 0 }" class="carousel-item bg-dark">
-      <div class="text-center"><img :src="item.poster_source" class="" :alt="item.title"></div>
+      <div class="text-center"><img style="width:100%;" :src="item.poster_source" class="" :alt="item.title"></div>
       <div class="carousel-caption" style="color:black; opacity:0.9;">
 
         <vs-row vs-justify="center">
-          <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
+          <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="10">
             <vs-card>
               <div slot="header">
                 <h3>{{ item.title }}</h3>

@@ -48,6 +48,7 @@ var Media = /** @class */ (function () {
         this.tagString = this.tagStringing();
         this.tracks = tracks;
         this.category_id = category_id;
+        //  this.category = category;
     }
     Media.prototype.tagStringing = function () {
         var theTagString = "";
