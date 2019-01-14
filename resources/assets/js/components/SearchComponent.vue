@@ -1,9 +1,9 @@
 <template>
 <div >
-  <span class="btn btn-success"  @click='emitRefreshSearch("Users")' ><input id="theLiveSearchUsers" checked="checked" type="checkbox" class="d-none" />Users</span>
-  <span class="btn btn-success" @click='emitRefreshSearch("MediaTitle")' ><input id="theLiveSearchMediaTitle" checked="checked" type="checkbox" class="d-none" />Media-title</span>
-  <span class="btn btn-primary" @click='emitRefreshSearch("MediaDescription")' ><input id="theLiveSearchMediaDescription" type="checkbox" class="d-none" />Media-description</span>
-  <span class="btn btn-primary" @click='emitRefreshSearch("Tags")' ><input id="theLiveSearchTags" type="checkbox" class="d-none" />Tags</span>
+  <span class="btn btn-success"  @click='emitRefreshSearch("Users")' ><input id="theLiveSearchUsers" checked="checked" type="checkbox" class="d-none" />{{ $t('Users') }}</span>
+  <span class="btn btn-success" @click='emitRefreshSearch("MediaTitle")' ><input id="theLiveSearchMediaTitle" checked="checked" type="checkbox" class="d-none" />{{ $t('Media') }} {{ $t('Title') }}</span>
+  <span class="btn btn-primary" @click='emitRefreshSearch("MediaDescription")' ><input id="theLiveSearchMediaDescription" type="checkbox" class="d-none" />{{ $t('Media') }} {{ $t('Description') }}</span>
+  <span class="btn btn-primary" @click='emitRefreshSearch("Tags")' ><input id="theLiveSearchTags" type="checkbox" class="d-none" />{{ $t('Tags') }}</span>
   <h3>{{ $t("Media") }}-{{ $t("results") }}</h3>
   <div >
     <gallery v-bind:tagenabled="tagsen" v-bind:medias="search.mediaResult" v-bind:tags="tags" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></gallery>

@@ -1,11 +1,11 @@
 <template>
   <select @change="sortBy()" id="sortBy" value="created_at" v-model="selectVal">
-    <option value="created_at">Created at</option>
-    <option value="created_at_reverse">Created at (reverse)</option>
-    <option value="updated_at">Updated at</option>
-    <option value="updated_at_reverse">Updated at (reverse)</option>
-    <option value="title">By title</option>
-    <option value="title_reverse">By title (reverse)</option>
+    <option value="created_at">{{ $t('Created at') }}</option>
+    <option value="created_at_reverse">{{ $t('Created at') }} (reverse)</option>
+    <option value="updated_at">{{ $t('Updated at') }}</option>
+    <option value="updated_at_reverse">{{ $t('Updated at') }} (reverse)</option>
+    <option value="title">{{ $t('Title') }}</option>
+    <option value="title_reverse">{{ $t('Title') }} (reverse)</option>
     <option value="type">By type</option>
     <option value="type_reverse">By type (reverse)</option>
     <option value="simpleType">By simpletype</option>

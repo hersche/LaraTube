@@ -9,8 +9,8 @@
           <template slot="thead">
             <vs-th sort-key="name">Name</vs-th>
             <vs-th sort-key="email">Email</vs-th>
-            <vs-th sort-key="created_at">Created</vs-th>
-            <vs-th sort-key="updated_at">Updated</vs-th>
+            <vs-th sort-key="created_at">{{ $t('Created at') }}</vs-th>
+            <vs-th sort-key="updated_at">{{ $t('Updated at') }}</vs-th>
             <vs-th sort-key="admin">Admin</vs-th>
           </template>
 

@@ -1,7 +1,7 @@
 <template>
 <div class="">
     <div class="card">
-        <div class="card-header">Login</div>
+        <div class="card-header">{{ $t('Login') }}</div>
 
         <div class="card-body">
             <form method="POST" action="/login" id="loginForm" aria-label="The Login">
@@ -37,7 +37,7 @@
                 <div class="form-group row mb-0">
                     <div class="col-md-8 offset-md-4">
                       <button @click="submitLogin()" class="btn btn-primary">
-                          Login
+                          {{ $t('Login') }}
                       </button>
 
                         <a class="btn btn-link" href="">

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h3>My Videos</h3>
+    <h3>{{ $t("My") }} {{ $t("medias") }}</h3>
     <div class="row text-center text-lg-left" id="profilevideos">
     <div v-for="item in medias" v-if="item.user_id==loggeduserid"  class="col-lg-4 col-md-4 col-xs-6">
         <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
-        <router-link class="btn btn-sm btn-info float-left" :to="'/mediaedit/'+item.urlTitle">Edit</router-link>
-        <button class="btn btn-sm btn-danger float-right" @click="openConfirm(item.id,item.title)" >Delete</button>
+        <router-link class="btn btn-sm btn-info float-left" :to="'/mediaedit/'+item.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t("Edit") }}</router-link>
+        <button class="btn btn-sm btn-danger float-right" @click="openConfirm(item.id,item.title)" ><vs-icon icon="delete"></vs-icon>{{ $t("Delete") }}</button>
     </div>
 
     </div>

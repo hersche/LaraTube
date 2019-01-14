@@ -14,10 +14,10 @@
         <vs-select-item value="audio" text="Audio" />
         <vs-select-item value="video" text="Video" />
       </vs-select>
-      <input icon="search" :placeholder="$t('Search')" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
+      <input icon="search" :placeholder="$t('Search')+'...'" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
     <vs-sidebar parent="body" default-index="0"  color="primary" class="sidebarx" spacer v-model="active">
-      <div class="row col-10">
+      <div class="row col-12">
       <label class="custom-control-label col-7" for="langSelect">Language</label>
       <select id="langSelect" class="col-5 custom-select custom-select-sm" v-model="lang" >
         <option value="en">EN</option>
@@ -45,16 +45,16 @@
         <option value="video" text="Video" >Video</option>
       </select> -->
       <vs-navbar-item index="1">
-        <router-link class="" to="/">Home</router-link>
+        <router-link class="" to="/"><vs-icon icon="home"></vs-icon>Home</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="9">
-        <router-link class="" to="/categories">{{ $t('Categories') }}</router-link>
+        <router-link class="" to="/categories"><vs-icon icon="view_list"></vs-icon>{{ $t('Categories') }}</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="3">
-        <router-link class="" to="/tags">{{ $t('Tags') }}</router-link>
+        <router-link class="" to="/tags"><vs-icon icon="tag"></vs-icon>{{ $t('Tags') }}</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="2">
-        <router-link class="" to="/charts">Charts</router-link>
+        <router-link class="" to="/charts"><vs-icon icon="multiline_chart"></vs-icon>Charts</router-link>
       </vs-navbar-item>
 
       <vs-navbar-item index="4">
@@ -66,19 +66,19 @@
 
       <vs-sidebar-group v-if="currentuser.admin" title="Admin">
         <vs-navbar-item index="7.1">
-          <router-link class="" to="/admin/users">Users</router-link>
+          <router-link class="" to="/admin/users">{{ $t('Users') }}</router-link>
         </vs-navbar-item>
      </vs-sidebar-group>
        <vs-sidebar-group title="Dev options">
          <vs-navbar-item index="6.1">
-           <a @click="emitLoadAllMedias()"  style="cursor: pointer;" class="">Load all medias</a>
+           <a @click="emitLoadAllMedias()"  style="cursor: pointer;" class="">Load all {{ $t('medias') }}</a>
           </vs-navbar-item>
          <vs-navbar-item index="6.2">
            <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
          </vs-navbar-item>
-         <p>Medias loaded: {{ medias.length }}</p>
-         <p>Users loaded: {{ users.length }}</p>
-         <p>Tags loaded: {{ tags.length }}</p>
+         <p>{{ $t('Medias') }} {{ $t('loaded') }}: {{ medias.length }}</p>
+         <p>{{ $t('Users') }} {{ $t('loaded') }}: {{ users.length }}</p>
+         <p>{{ $t('Tags') }} {{ $t('loaded') }}: {{ tags.length }}</p>
 
 
       </vs-sidebar-group>

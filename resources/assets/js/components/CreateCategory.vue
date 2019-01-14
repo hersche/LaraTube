@@ -3,25 +3,25 @@
       <h4>Create category</h4>
       <form id="theForm">
         <div class="form-group row">
-          <label>Title</label>
+          <label>{{ $('Title') }}</label>
           <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
           <input placeholder="Media-title" class="form-control" name="title" type="text">
         </div>
         <div class="form-group row">
-          <label>Description</label>
+          <label>{{ $('Description') }}</label>
           <p>
             <textarea placeholder="Media-description" id="description" class="form-control" name="description" cols="50" rows="10"></textarea>
           </p>
         </div>
         <div class="form-group row">
-          <label>Parent-Category</label>
+          <label>{{ $t('Parent') }}-{{ $t('category') }}</label>
           <treeselect v-model="catid" name="parent_id" :multiple="false" :options="treecatptions" />
         </div>
 
       </form>
 
-      <button @click="submitAction();" class="btn btn-success" >Save</button> <button @click="openConfirm();" class="btn btn-danger float-right" >Delete</button>
+      <button @click="submitAction();" class="btn btn-success" ><vs-icon icon="save"></vs-icon>{{ $t('Save') }}</button> <button @click="openConfirm();" class="btn btn-danger float-right" ><vs-icon icon="delete"></vs-icon>{{ $t('Delete') }}</button>
     </div>
 </template>
 <script>

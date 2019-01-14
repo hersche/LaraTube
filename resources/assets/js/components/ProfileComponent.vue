@@ -9,7 +9,7 @@
 <h3>{{ $t("User") }}'s {{ $t("medias") }}</h3>
 <p><sortSelect></sortSelect></p>
 <overview v-bind:currentuser="currentuser" v-bind:medias="usermedias" v-if="usermedias.length>0"></overview>
-<h5 v-else>{{ $t("User") }} got no medias</h5>
+<h5 v-else>{{ $t("User") }} got no {{ $t('medias') }}</h5>
 </div>
 </template>
 

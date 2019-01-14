@@ -1,12 +1,12 @@
 <template>
       <div class="">
           <div class="card">
-              <div class="card-header">Register</div>
+              <div class="card-header">{{ $t('Register') }}</div>
 
               <div class="card-body">
                   <form method="POST" id="theForm" action="/register" aria-label="Register">
                     <div class="form-group row">
-                        <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
+                        <label for="name" class="col-md-4 col-form-label text-md-right">{{ $t('Username') }}</label>
                         <div class="col-md-6">
                             <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
                         </div>
@@ -112,7 +112,7 @@
                       </form>
                       <div class="form-group row mb-0">
                           <div class="col-md-6 offset-md-4">
-                              <button @click="submitAction()" class="btn btn-primary">Register</button>
+                              <button @click="submitAction()" class="btn btn-primary">{{ $t('Register') }}</button>
                           </div>
                       </div>
 
