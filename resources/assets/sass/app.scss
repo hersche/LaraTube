@@ -53,9 +53,19 @@
 }
 .hide-on-hover > a:hover{
   div {
-    display:none;
+    visibility: hidden;
+    opacity:0;
+    //transition: visibility 0s, opacity 5.5s linear;
   }
 }
+.hide-on-hover > a{
+  div {
+    visibility: visible;
+    opacity:1;
+    transition: visibility 0s, opacity 0.25s linear;
+  }
+}
+
 .max-h-90 {
   max-height: 90px;
 }

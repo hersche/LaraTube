@@ -7,7 +7,7 @@
       <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
       <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
       <input id="parent_id" name="parent_id" type="hidden" value="0">
-      <input placeholder="Comment..." class="col-9" id="comment_body" name="body" type="text">
+      <input :placeholder="$t('Comment')+'...'" class="col-9" id="comment_body" name="body" type="text">
       <input type="button" class="ml-1" value="Send comment!" @click="sendComment();" />
     </form>
   </div>
@@ -41,14 +41,14 @@
               <vs-collapse class="">
                 <vs-collapse-item v-if="loggeduserid!=0">
                   <div slot="header">
-                    <vs-icon icon="reply"></vs-icon> Reply
+                    <vs-icon icon="reply"></vs-icon>{{ $t("Reply") }}
                   </div>
                   <form class="form-inline mb-1" :id="'commentForm'+comment.id" >
                     <input type="hidden" name="_token" :value="csrf">
                     <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
                     <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
                     <input id="parent_id" name="parent_id" type="hidden" :value="comment.id">
-                    <input placeholder="Comment..." class="col-9" :id="'comment_body'+comment.id" name="body" type="text">
+                    <input :placeholder="$t('Comment')+'...'" class="col-9" :id="'comment_body'+comment.id" name="body" type="text">
                     <input type="button" class="ml-1" value="Send comment!" @click="sendComment(comment.id);" />
                   </form>
 

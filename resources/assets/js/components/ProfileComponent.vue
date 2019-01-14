@@ -6,10 +6,10 @@
   </div>
   <div v-html="user.bio"></div>
 </div>
-<h3>User's medias</h3>
+<h3>{{ $t("User") }}'s {{ $t("medias") }}</h3>
 <p><sortSelect></sortSelect></p>
 <overview v-bind:currentuser="currentuser" v-bind:medias="usermedias" v-if="usermedias.length>0"></overview>
-<h5 v-else>User got no medias</h5>
+<h5 v-else>{{ $t("User") }} got no medias</h5>
 </div>
 </template>
 

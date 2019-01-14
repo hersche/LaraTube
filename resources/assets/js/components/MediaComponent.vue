@@ -17,11 +17,11 @@
               <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
             </span>
             <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
-            <b-btn v-b-modal.torrentmodal class="mr-1" v-if="currentmedia.techType=='torrent'" >Torrent-info</b-btn>
+            <b-btn v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'" >Torrent-info</b-btn>
             <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
             <span class="btn btn-sm btn-info mr-1">{{ currentmedia.type }}</span>
             <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
-            <span v-else class="btn btn-sm btn-warning mr-1">No category</span>
+            <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
             <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
               <div id="userAvatar" :text="currentmedia.user.name">
                 <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
@@ -32,8 +32,8 @@
               <p>Uploaded by {{ currentmedia.user.name }}</p>
             </b-tooltip>
             <b-tooltip target="created_at" placement="top">
-              <p>Created at {{ currentmedia.created_at.date }}</p>
-              <p>Updated at {{ currentmedia.updated_at.date }}</p>
+              <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
+              <p>{{ $t('Updated at') }} {{ $d(new Date(currentmedia.updated_at.date),'short') }}</p>
             </b-tooltip>
             <b-tooltip target="category" v-if="currentCat!=undefined" placement="top">
               <h5>{{ currentCat.title }}</h5>
@@ -61,7 +61,7 @@
             </button>
 
             <span v-if="loggeduserid==currentmedia.user.id|currentuser.admin" class="">
-              <router-link class="btn btn-sm btn-info float-right" :to="'/mediaedit/'+currentmedia.urlTitle">Edit</router-link>
+              <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
             </span>
           </div>
           <div class="card-body" v-html="currentmedia.description"></div>
@@ -83,8 +83,8 @@
       </div>
 
       <div class="col-sm-4 col-12 float-right">
-        <h4>Next videos</h4>
-        <p><sortSelect></sortSelect></p>
+        <h4>{{ $t('Next') }} {{ $t('medias') }}</h4>
+        <p>{{ $t('Sort by') }} <sortSelect></sortSelect></p>
         <p>
           <vs-switch v-model="autoplay"/>
           <span for="">Autoplay</span></p>
@@ -129,8 +129,6 @@
         var res;
         let that = this;
         var idata = this.categories
-        console.log("search for id")
-        console.log(category_id)
         if(data!=undefined){
           idata = data
         }

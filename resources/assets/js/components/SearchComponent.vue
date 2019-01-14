@@ -4,16 +4,16 @@
   <span class="btn btn-success" @click='emitRefreshSearch("MediaTitle")' ><input id="theLiveSearchMediaTitle" checked="checked" type="checkbox" class="d-none" />Media-title</span>
   <span class="btn btn-primary" @click='emitRefreshSearch("MediaDescription")' ><input id="theLiveSearchMediaDescription" type="checkbox" class="d-none" />Media-description</span>
   <span class="btn btn-primary" @click='emitRefreshSearch("Tags")' ><input id="theLiveSearchTags" type="checkbox" class="d-none" />Tags</span>
-  <h3>Media-results</h3>
+  <h3>{{ $t("Media") }}-{{ $t("results") }}</h3>
   <div >
     <gallery v-bind:tagenabled="tagsen" v-bind:medias="search.mediaResult" v-bind:tags="tags" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></gallery>
   </div>
-    <h3>User-results</h3>
+    <h3>{{ $t("User") }}-{{ $t("results") }}</h3>
     <div v-if="users.length>0" >
       <userlist v-bind:medias="medias" v-bind:users="search.userResult" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></userlist>
     </div>
       <div v-else>
-        No user-results
+        {{ $t("No user-results") }}
       </div>
 </div>
 </template>

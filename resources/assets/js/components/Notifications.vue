@@ -5,19 +5,19 @@
       <button class="btn btn-sm btn-primary" @click="emitMarkNotifications('/internal-api/notifications')">Refresh notifications</button>
       <button class="btn btn-sm btn-danger" @click="emitMarkNotifications('/internal-api/notifications/delete')">Delete all notifications</button>
 
-      <h4>Notifications</h4>
+      <h4>{{ $t("Notifications") }}</h4>
       <div v-for="item in notifications"  class="text-center">
         <div v-if="item.type=='App\\Notifications\\LikeReceived'">
           <vs-divider color="success">{{ item.created_at }}</vs-divider>
            <vs-chip color="warning" class="float-right" v-if="item.read_at==null" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)" closable><vs-avatar icon="markunread" />This is unread!</vs-chip>
 
-          <p> User <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link> {{ getLikeString(item.data.like) }}
+          <p>{{ $t("User") }} <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link> {{ getLikeString(item.data.like) }}
             <span v-if="(item.data.media_id!=null&&item.data.media_id!=0)">
-              your <b>media</b>
+              your <b>{{ $t("media") }}</b>
               <router-link class="" :to="'/media/'+getMediaById2(item.data.media_id).urlTitle">{{ getMediaById2(item.data.media_id).title }}</router-link>
             </span>
              <span v-if="(item.data.comment_id!=null&&item.data.comment_id!=0)">
-               your <b>comment</b>: {{ getCommentById2(item.data.comment_id).body }} @ media
+               your <b>{{ $t("comment") }}</b>: {{ getCommentById2(item.data.comment_id).body }} @ {{ $t("media") }}
                <router-link v-if="getMediaById2(getCommentById2(item.data.comment_id).media_id)!=undefined" class="" :to="'/media/'+getMediaById2(getCommentById2(item.data.comment_id).media_id).urlTitle">{{ getMediaById2(getCommentById2(item.data.comment_id).media_id).title }}</router-link>
             </span>
           </p>

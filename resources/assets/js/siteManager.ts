@@ -4,6 +4,8 @@ import Router from 'vue-router';
 import BootstrapVue from 'bootstrap-vue'
 import VueCroppie from 'vue-croppie';
 import { eventBus } from './eventBus';
+import translation from './translation';
+import dateTranslation from './dateTranslation';
 import { MediaSorter, Search } from './tools';
 import { User, Media, Tag, Category, Notification } from './models';
 import VueApexCharts from 'vue-apexcharts'
@@ -11,6 +13,7 @@ import Vuesax from 'vuesax'
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import VuePlyr from 'vue-plyr'
+import VueI18n from 'vue-i18n'
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -22,7 +25,7 @@ var theVue;
 var searchDelay;
 
 var theMediaSorter = new MediaSorter();
-
+var i18n;
 
 class siteManager {
   medias:Array<Media>;
@@ -48,6 +51,7 @@ class siteManager {
   constructor(base:string){
     this.currentMediaId = 0;
     this.initing=true;
+
     this.blockScrollExecution = false;
     baseUrl = base+"/";
     if(localStorage.getItem("mediaTypes")!=''&&localStorage.getItem("mediaTypes")!=null){
@@ -84,6 +88,7 @@ class siteManager {
     Vue.use(VueApexCharts)
     Vue.use(Vuesax)
     Vue.use(VuePlyr)
+    Vue.use(VueI18n)
     Vue.component('treeselect', Treeselect)
 //Vue.component('plyr', VuePlyr)
     Vue.component('apexchart', VueApexCharts)
@@ -112,6 +117,7 @@ class siteManager {
     var ceComp = Vue.component('thesidebar', require("./components/EditCategory.vue"));
     var singleCatComp = Vue.component('thesidebar', require("./components/Category.vue"));
 
+
     let that = this;
     const routes = [
       { path: '/', component: overview },
@@ -139,10 +145,13 @@ class siteManager {
       theVue.alert("Look for new notifications")
       that.receiveNotifications(url)
     });
-
     eventBus.$on('getNewMedias', title => {
       theVue.alert("Look for new medias..")
       that.receiveMedias()
+    });
+    eventBus.$on('languageChange', lang => {
+      console.log("change language to "+lang)
+      i18n.locale = lang
     });
     eventBus.$on('userEdited', id => {
       theVue.alert("Look for new users..")
@@ -419,9 +428,20 @@ class siteManager {
         theVue.nextvideos = that.nextMedias
       }
     });
+    var lang = "en"
+    if(localStorage.getItem("language")!=''&&localStorage.getItem("language")!=undefined){
+      lang = localStorage.getItem("language");
+    }
+    i18n = new VueI18n({
+      locale: lang,
+      fallbackLocale: 'en',
+      messages:translation,
+      dateTimeFormats:dateTranslation
+    })
   //  sm.receiveUsers(true);
   // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})
    theVue = new Vue({
+    i18n,
     data : {
       title : "Overview",
       search:'',

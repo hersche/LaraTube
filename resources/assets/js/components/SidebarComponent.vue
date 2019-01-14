@@ -14,17 +14,24 @@
         <vs-select-item value="audio" text="Audio" />
         <vs-select-item value="video" text="Video" />
       </vs-select>
-      <input icon="search" placeholder="Search" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
+      <input icon="search" :placeholder="$t('Search')" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
     <vs-sidebar parent="body" default-index="0"  color="primary" class="sidebarx" spacer v-model="active">
+      <div class="row col-10">
+      <label class="custom-control-label col-7" for="langSelect">Language</label>
+      <select id="langSelect" class="col-5 custom-select custom-select-sm" v-model="lang" >
+        <option value="en">EN</option>
+        <option value="de">DE</option>
+      </select>
+    </div>
       <div v-if="currentuser.id!=0" class="header-sidebar" slot="header" :style="'background-image:url('+currentuser.background+');'">
         <router-link class="" to="/notifications">
           <vs-avatar :badge="n" to="/notifications" size="70px" :src="currentuser.avatar"/>
         </router-link>
         <h4><router-link class="btn btn-sm btn-success" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link></h4>
         <span>
-          <router-link class="btn btn-sm btn-success" to="/upload">Upload</router-link>
-          <router-link class="btn btn-sm btn-success" to="/myvideos">My videos</router-link>
+          <router-link class="btn btn-sm btn-success" to="/upload">{{ $t("Upload") }}</router-link>
+          <router-link class="btn btn-sm btn-success" to="/myvideos">{{ $t("My") }} {{ $t("medias") }}</router-link>
         </span>
       </div>
       <!-- The existing vs-select doesn't work here. This does, but isn't elegant (yet) -->
@@ -41,20 +48,20 @@
         <router-link class="" to="/">Home</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="9">
-        <router-link class="" to="/categories">Categories</router-link>
+        <router-link class="" to="/categories">{{ $t('Categories') }}</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="3">
-        <router-link class="" to="/tags">Tags</router-link>
+        <router-link class="" to="/tags">{{ $t('Tags') }}</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="2">
         <router-link class="" to="/charts">Charts</router-link>
       </vs-navbar-item>
 
       <vs-navbar-item index="4">
-        <router-link class="" to="/about">About</router-link>
+        <router-link class="" to="/about">{{ $t('About') }}</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="5">
-        <a @click="emitGetNewMedias()" style="cursor: pointer;" class="">Check 4 new medias</a>
+        <a @click="emitGetNewMedias()" index="5.1" style="cursor: pointer;" class="">Check 4 new medias</a>
       </vs-navbar-item>
 
       <vs-sidebar-group v-if="currentuser.admin" title="Admin">
@@ -64,7 +71,7 @@
      </vs-sidebar-group>
        <vs-sidebar-group title="Dev options">
          <vs-navbar-item index="6.1">
-           <a @click="emitLoadAllMedias()" style="cursor: pointer;" class="">Load all medias</a>
+           <a @click="emitLoadAllMedias()"  style="cursor: pointer;" class="">Load all medias</a>
           </vs-navbar-item>
          <vs-navbar-item index="6.2">
            <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
@@ -79,9 +86,9 @@
 
 
       <div class="footer-sidebar" slot="footer">
-        <vs-button v-if="currentuser.id==0" to="/login" icon="exit_to_app" color="success" type="flat">Login</vs-button>
-        <vs-button v-if="currentuser.id==0" to="/register" icon="person_add" color="success" type="flat">Register</vs-button>
-        <vs-button v-if="currentuser.id!=0" @click="emitLogout()" icon="power_settings_new" color="danger" type="flat">Logout</vs-button>
+        <vs-button v-if="currentuser.id==0" to="/login" icon="exit_to_app" color="success" type="flat">{{ $t("Login") }}</vs-button>
+        <vs-button v-if="currentuser.id==0" to="/register" icon="person_add" color="success" type="flat">{{ $t("Register") }}</vs-button>
+        <vs-button v-if="currentuser.id!=0" @click="emitLogout()" icon="power_settings_new" color="danger" type="flat">{{ $t("Logout") }}</vs-button>
         <form v-if="currentuser.id!=0" id="logoutForm" action="/logout" method="POST" style="display: none;">
             <input type="hidden" name="_token" :value="csrf">
         </form>
@@ -102,6 +109,10 @@ export default {
       this.dataTypes = localStorage.getItem("mediaTypes").split(",")
     } else {
       this.dataTypes = ["audio","video"]
+    }
+
+    if(localStorage.getItem("language")!=''&&localStorage.getItem("language")!=undefined){
+      this.lang = localStorage.getItem("language");
     }
 
 },
@@ -144,6 +155,10 @@ export default {
   computed:{
   },
   watch:{
+    lang:function(val){
+      localStorage.setItem("language",val);
+      eventBus.$emit('languageChange',val);
+    },
     dataTypes:function(val){
       localStorage.setItem("mediaTypes",val.join())
       eventBus.$emit('filterTypes',val);
@@ -163,6 +178,7 @@ export default {
   data:()=>({
     active:false,
     activeItem:0,
+    lang:'en',
     dataTypes: ["audio","video"],
     n:0,
 

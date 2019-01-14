@@ -11494,7 +11494,15 @@ a.text-dark:focus {
 }
 
 .hide-on-hover > a:hover div {
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.hide-on-hover > a div {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transition: visibility 0s, opacity 0.25s linear;
+  transition: visibility 0s, opacity 0.25s linear;
 }
 
 .max-h-90 {
