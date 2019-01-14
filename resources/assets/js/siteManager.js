@@ -443,21 +443,23 @@ var siteManager = /** @class */ (function () {
                     if (theVue.$router.currentRoute.path == "/search" && s == '') {
                         theVue.$router.go(-1);
                     }
-                    var m = [];
-                    if (that.usedSearchTerms.includes(s.toString()) == false && s.toString() != "") {
-                        if (searchDelay != undefined) {
-                            clearTimeout(searchDelay);
+                    if (s != '') {
+                        var m = [];
+                        if (that.usedSearchTerms.includes(s.toString()) == false && s.toString() != "") {
+                            if (searchDelay != undefined) {
+                                clearTimeout(searchDelay);
+                            }
+                            searchDelay = setTimeout(function () {
+                                that.usedSearchTerms.push(s);
+                                that.receiveMedias("/internal-api/medias/search/" + s + that.getIgnoreParam());
+                            }, 300);
                         }
-                        searchDelay = setTimeout(function () {
-                            that.usedSearchTerms.push(s);
-                            that.receiveMedias("/internal-api/medias/search/" + s + that.getIgnoreParam());
-                        }, 300);
+                        var so = new Search(s.toString(), that.getFilteredMedias(), that.tags, that.users);
+                        theVue.search = so;
+                        theVue.fullmedias = that.medias;
+                        theVue.medias = that.getFilteredMedias(so.mediaResult);
+                        theVue.users = so.userResult;
                     }
-                    var so = new Search(s.toString(), that.getFilteredMedias(), that.tags, that.users);
-                    theVue.search = so;
-                    theVue.fullmedias = that.medias;
-                    theVue.medias = that.getFilteredMedias(so.mediaResult);
-                    theVue.users = so.userResult;
                 }
             },
             mounted: function () {
