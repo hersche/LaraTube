@@ -43,9 +43,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
         swiperOption: {
           slidesPerView: 2,
           spaceBetween: 10,
-          effect: 'coverflow',
           grabCursor: true,
-          centeredSlides: true,
           loop: true,
           pagination: {
             el: '.swiper-pagination',

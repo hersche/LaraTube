@@ -18,11 +18,15 @@
         <h5><router-link :to="'/category/'+currentcat.urlTitle">{{ currentcat.title }}</router-link></h5>
         <p>{{ currentcat.description }}</p>
          <p v-if="currentcat.children.length>0">Subcategories</p>
-         <p v-for="subcat in currentcat.children" v-if="currentcat.children.length>0"><router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link></p>
-         <div class="row text-center">
-            <div v-for="media in currentcat.medias"  class="col-lg-6 col-md-6 col-xs-6">
+         <p v-for="subcat in currentcat.children" v-if="currentcat.children.length>0">
+           <router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }} ({{ subcat.medias.length }} medias)</router-link>
+         </p>
+         <div class="">
+            <!-- <div v-for="media in currentcat.medias"  class="col-lg-6 col-md-6 col-xs-6">
                <singleField v-bind:item="media" v-bind:loggeduserid="loggeduserid"></singleField>
-            </div>
+            </div>-->
+            <h5>{{ currentcat.medias.length }} {{ $t("medias") }}</h5>
+                <SwiperView class="" v-bind:medias="currentcat.medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></SwiperView>
          </div>
        </div>
     </p>
@@ -33,6 +37,7 @@
 <script>
   import { eventBus } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
+  import SwiperView from './SingleSwiperView'
   export default {
     props: ['medias','baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser','treecatptions'],
     name: 'categoriesTag',
@@ -65,22 +70,20 @@
           }
           if(val.id==id){
             eventBus.$emit('getMediasByCatId',id);
-            theC = val;
+            theC = val
           }
         });
+        if(theC!=undefined){
+          if(theC.children.length>0){
+            theC.children.forEach(function(val,key){
+              eventBus.$emit('getMediasByCatId',val.id);
+            });
+          }
+        }
         return theC;
       },
       emitLoadMore() {
         eventBus.$emit('loadMore','');
-      },
-      isIdIncluded(id){
-        var ret = false;
-        this.catids.forEach(function(val,key){
-          if(val==id){
-            ret = true;
-          }
-        });
-        return ret;
       },
       deleteAction(id) {
         let that = this;
@@ -103,12 +106,14 @@
       },
     },
     components : {
-        'singleField': SingleGalleryField
+        'singleField': SingleGalleryField,
+        SwiperView
     },
     data(){
       return {
         catids:0,
-        currentcat:undefined
+        currentcat:undefined,
+        currentmedias:[]
       }
     }
   }
