@@ -3,7 +3,7 @@
 
 
 
-    <p v-if="catlevel==0" class="float-left col-3">
+    <p v-if="catlevel==0" class="float-left col-3 col-sm-5">
       <router-link v-if="currentuser.admin" to="/newcat/" class="btn btn-block btn-warning btn-sm">
         <vs-icon icon="create"></vs-icon>{{ $t("Create") }} {{ $t("category") }}
       </router-link>
@@ -11,8 +11,8 @@
 
     </p>
 
-    <p class="float-right col-9">
-      <div class="float-right col-9" v-if="currentcat!=undefined">
+    <p class="float-right col-9 col-sm-7">
+      <div class="float-right col-9 col-sm-7" v-if="currentcat!=undefined">
         <span class="text-right float-right" v-if="currentuser.admin"><router-link :to="'/editcat/'+currentcat.id" class="btn btn-warning btn-sm mr-1"><vs-icon icon="edit"></vs-icon>{{ $t("Edit") }}</router-link>
           <button @click="deleteAction(currentcat.id)" class="btn btn-danger btn-sm"><vs-icon icon="delete"></vs-icon>{{ $t("Delete") }}</button></span>
         <h5><router-link :to="'/category/'+currentcat.urlTitle">{{ currentcat.title }}</router-link></h5>
