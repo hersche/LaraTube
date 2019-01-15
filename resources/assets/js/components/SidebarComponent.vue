@@ -58,7 +58,7 @@
       </vs-navbar-item>
 
       <vs-navbar-item index="4">
-        <router-link class="" to="/about">{{ $t('About') }}</router-link>
+        <router-link class="" to="/about"><vs-icon icon="multiline_chart"></vs-icon>{{ $t('About') }}</router-link>
       </vs-navbar-item>
       <vs-navbar-item index="5">
         <a @click="emitGetNewMedias()" index="5.1" style="cursor: pointer;" class="">Check 4 new medias</a>

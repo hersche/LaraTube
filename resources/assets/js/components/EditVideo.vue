@@ -47,14 +47,14 @@
           </vue-croppie>
           <input type="hidden" id="posterBase" name="poster" :value="cropped" />
           <!-- Rotate angle is Number -->
-          <button @click="rotate(-90,$event)">Rotate Left</button>
-          <button @click="rotate(90,$event)">Rotate Right</button>
+          <button @click="rotate(-90,$event)">{{ $("Rotate") }} {{ $("left") }}</button>
+          <button @click="rotate(90,$event)">{{ $("Rotate") }} {{ $("right") }}</button>
           <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="unimportant" type="file">
           <div id="poster"></div>
         </div>
         <div class="form-group row">
           <label>{{ $t('Description') }}</label>
-          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" :value="rmBr(currentmedia.description)" name="description" cols="50" rows="10"></textarea>
+          <textarea :placeholder="$t('Description')+'...'" id="addMediaDescription" class="form-control" :value="rmBr(currentmedia.description)" name="description" cols="50" rows="10"></textarea>
         </div>
         <div class="form-group row">
           <label>Tags (separate with spaces):</label>

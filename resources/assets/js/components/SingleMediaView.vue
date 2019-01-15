@@ -7,36 +7,36 @@
             <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
           <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
-          <vue-plyr ref="player" v-if="currentmedia.type=='localAudio'">
+          <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='localAudio'">
             <audio class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
               <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
             </audio>
           </vue-plyr>
           <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary col-1 float-right" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
-          <vue-plyr ref="player" v-if="currentmedia.type=='directAudio'">
+          <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='directAudio'">
             <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
               <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
             </audio>
           </vue-plyr>
         </div>
-        <vue-plyr ref="player" v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'">
+        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'">
           <video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
             <source :src="currentmedia.source" type="video/mp4"></source>
             <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </video>
         </vue-plyr>
-        <vue-plyr ref="player" v-if="currentmedia.type=='youtube'">
+        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='youtube'">
           <div data-plyr-provider="youtube" :data-plyr-embed-id="currentmedia.source"></div>
         </vue-plyr>
-        <vue-plyr ref="player" v-if="currentmedia.type=='vimeo'">
+        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='vimeo'">
           <div data-plyr-provider="vimeo" :data-plyr-embed-id="currentmedia.source"></div>
         </vue-plyr>
-        <vue-plyr ref="player" v-if="currentmedia.type=='torrentVideo'" >
+        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='torrentVideo'" >
           <video class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
             <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
           </video>
         </vue-plyr>
-        <vue-plyr ref="player" v-if="currentmedia.type=='torrentAudio'" >
+        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='torrentAudio'" >
           <audio class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
             <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
           </audio>
@@ -346,6 +346,7 @@
       torrentdownloadurl:'',
       downloadpercent: '',
       uploadspeed: '',
+      playerConfig:{ keyboard: { focused: false, global: true } }
     }
   }
   }

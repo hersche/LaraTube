@@ -1,5 +1,8 @@
 var translation = {
   en: {
+    Rotate:'Rotate',
+    left:'Left',
+    right:'Right',
     Play:'Play',
     Parent:'Parent',
     title:'title',
@@ -44,6 +47,9 @@ var translation = {
     'Sort by':'Sort by',
   },
   de: {
+    Rotate:'Rotiere',
+    left:'links',
+    right:'rechts',
     Play:'Spiele',
     Parent:'Eltern',
     title:'Titel',

@@ -58,7 +58,11 @@ class MediaController extends Controller
             $duration = $this->formatedDuration($id3['playtime_string']);
           }
         }
-        $tagArrayExtract = explode(' ', $request->input('tags'));
+        $tagArrayExtract = array();
+        if(!empty($request->input('tags'))){
+          $tagArrayExtract = explode(' ', $request->input('tags'));
+        }
+
         $tagArray = array();
         foreach($tagArrayExtract as $tag){
           if(starts_with($tag, '#')){

@@ -25,7 +25,9 @@ class Media extends JsonResource
       }
       $tagIds = array();
       foreach($this->tags as $tag){
-        array_push($tagIds, $tag->id);
+        if(!empty($tag)){
+          array_push($tagIds, $tag->id);
+        }
       }
       $comments = $this->comments()->sortBy('created_at');
       return [
