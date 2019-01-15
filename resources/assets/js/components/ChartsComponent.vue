@@ -4,14 +4,14 @@
       <p>This can take a while / need performance.</p>
       <div class="">
         <span class="col-6 col-sm-12" >
-          <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
+          <apexchart width="100%" type="bar" :options="chartOptions" :series="series"></apexchart>
         </span>
         <span class="col-6 col-sm-12" style="">
-          <apexchart width="500" type="pie" id="chart2" :options="chartOptions2" :series="series2"></apexchart>
+          <apexchart width="100%" type="pie" id="chart2" :options="chartOptions2" :series="series2"></apexchart>
         </span>
       </div>
         <span class="col-6 col-sm-12" >
-          <apexchart width="500" type="bar" :options="likeOptions" :series="likeSeries"></apexchart>
+          <apexchart width="100%" type="bar" :options="likeOptions" :series="likeSeries"></apexchart>
         </span>
       </div>
 </template>
