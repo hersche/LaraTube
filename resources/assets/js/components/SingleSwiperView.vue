@@ -17,7 +17,7 @@
 import 'swiper/dist/css/swiper.css'
 import { eventBus } from '../eventBus.js';
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
-  import SingleGalleryField from './SingleGalleryField'
+  import SingleGalleryField from './SingleCarouselField'
   export default {
     props: ['medias','baseUrl','loggeduserid','canloadmore'],
     components: {
