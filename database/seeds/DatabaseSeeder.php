@@ -86,7 +86,7 @@ class DatabaseSeeder extends Seeder
      $m1->tag('Torrent');
      $m1->tag('Movie');
 
-     $m1 = Media::create(['title' => '35C3 ChaosWest - wirtschaft hacken! (Youtube-test)','poster_source' => 'testing/media/posters/6.png','category_id' => $c31->id, 'source' => 'Xch63n9VTyQ', 'type' => 'torrentVideo','description' => 'Via youtube','user_id' => 1]);
+     $m1 = Media::create(['title' => '35C3 ChaosWest - wirtschaft hacken! (Youtube-test)','poster_source' => 'testing/media/posters/6.png','category_id' => $c31->id, 'source' => 'Xch63n9VTyQ', 'type' => 'youtube','description' => 'Via youtube','user_id' => 1]);
      $m1->tag('35C3');
      $m1->tag('Torrent');
      $m1->tag('Movie');

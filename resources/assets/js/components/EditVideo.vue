@@ -47,8 +47,8 @@
           </vue-croppie>
           <input type="hidden" id="posterBase" name="poster" :value="cropped" />
           <!-- Rotate angle is Number -->
-          <button @click="rotate(-90,$event)">{{ $("Rotate") }} {{ $("left") }}</button>
-          <button @click="rotate(90,$event)">{{ $("Rotate") }} {{ $("right") }}</button>
+          <button @click="rotate(-90,$event)">{{ $t("Rotate") }} {{ $t("left") }}</button>
+          <button @click="rotate(90,$event)">{{ $t("Rotate") }} {{ $t("right") }}</button>
           <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="unimportant" type="file">
           <div id="poster"></div>
         </div>
@@ -153,12 +153,16 @@
             theMedia = val;
             that.mediaType=val.type;
             that.catid = val.category_id;
+            that.blockGetRequest=false
             //console.log(val.tracks)
           }
         });
         if(theMedia==undefined){
           console.log("media not there for edit yet, want it!");
-          eventBus.$emit('loadMedia',encodeURIComponent(that.$route.params.editTitle));
+          if(this.blockGetRequest==false){
+            this.blockGetRequest=true
+            eventBus.$emit('loadMedia',encodeURIComponent(that.$route.params.editTitle));
+          }
         }
         return theMedia;
       },
@@ -280,6 +284,7 @@ rotate(rotationAngle,event) {
         editpicloaded:false,
         showdismissiblealert: false,
         cropped: null,
+        blockGetRequest:false
       }
     }
   }

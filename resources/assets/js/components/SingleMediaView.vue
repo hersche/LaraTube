@@ -79,7 +79,6 @@
             document.msExitFullscreen();
           }
           if(visualizer!=undefined){
-            console.log("exit set visual")
             visualizer.setRendererSize(400, 400);
           }
         } else {
@@ -94,7 +93,6 @@
             element.msRequestFullscreen();
           }
           if(visualizer!=undefined){
-            console.log("fs set visual")
             visualizer.setRendererSize($(window).width(), $(window).height());
           }
         }
@@ -109,9 +107,6 @@
           if(client.torrents.length>0){
             //client.remove(client.torrents[0].magnetURI,function(err){
               theTorrent.destroy(function(){
-                  console.log("remove and recheck");
-              //  console.log(err)
-            // client = new WebTorrent();
                 that.initTorrent();
               })
 
@@ -124,110 +119,80 @@
 
       initTorrentAfterRemove(){
         let that = this;
-        /*if(torrentInterval!=undefined){
-          if(theTorrent!=undefined){
-            console.log("torrent destroyed on init..")
-            //theTorrent.destroy();
-            //client.remove()
-            //client.destroy();
-          }
-        }*/
         if(this.currentmedia.techType=="video"){
           this.inited=true
         }
         else if(this.currentmedia.techType=="torrent"){
           this.inited=true
-          console.log("run init for torrent")
-              let that = this;
-
-            //  var player = new plyr('#torrentPlayer');
-              client.add(this.currentmedia.source, function (torrent) {
-                theTorrent = torrent;
-                  // Torrents can contain many files. Let's use the .mp4 file
-                  var file = theTorrent.files.find(function (file) {
-                    that.lasttorrentid = theTorrent.magnetURI;
-                    currsrc = theTorrent.magnetURI;
-                    if(that.currentmedia.type=='torrentVideo'){
-                      return file.name.endsWith('.mp4')
-                    }
-                    if(that.currentmedia.type=='torrentAudio'){
-                      return file.name.endsWith('.mp3')
-                    }
-                  })
-
-                    theTorrent.on('done', onDone);
-                    torrentInterval = setInterval(onProgress, 500);
-                    onProgress();
-                    file.getBlobURL(function (err, url) {
-                      if (err){
-                        console.log(err.message);
-                      }
-
-
-                      //$("#downloadButton").attr("href",url);
-                    });
-                    //$("#torrentDL").html("<a href='"+torrent.torrentFileBlobURL+"' download='Stimulate....torrent'>Torrent-file</a>");
-                    function onProgress () {
-                      // Peers
-                      that.peers = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers');
-                      if(that.lasttorrentid == theTorrent.magnetURI&&torrent.numPeers>0){
-
-                      // Progress
-                      var percent = Math.round(torrent.progress * 100 * 100) / 100;
-                      var datetime = new Date();
-                      datetime = datetime.getTime();
-                      var ds = torrent.downloadSpeed/1000000;
-                      var us = torrent.uploadSpeed/1000000;
-                      that.downloadpercent = that.prettyBytes(torrent.downloaded) + " / " + that.prettyBytes(torrent.length) + " ("+percent+"%)";
-                      that.downloadspeed = that.prettyBytes(torrent.downloadSpeed) + '/s (down)';
-                      that.uploadspeed = that.prettyBytes(torrent.uploadSpeed) + '/s (up)';
-                      eventBus.$emit('torrentChartData',[[that.peers,that.downloadpercent,that.downloadspeed,that.uploadspeed],{x:datetime,y:percent},{x:datetime,y:ds},{x:datetime,y:us}]);
-                      // Speed rates
-                      }
-
-                    }
-                    function onDone () {
-                      onProgress();
-                    //  console.log(url)
-                      //console.log(torrent.torrentFileBlobURL)
-                      that.torrentdownloadurl = torrent.torrentFileBlobURL
-                    }
-
-                  file.renderTo('video#torrentPlayer');
-                });
-            } else if(this.currentmedia.type=='localAudio'&this.audiovisualtype!='Poster'){
-              this.inited=true
-              $('#audioPlayer')[0].crossOrigin = 'Anonymous'
-              audioCtx = new AudioContext();
-              //console.log($('#audioPlayer')[0])
-              audioNode = audioCtx.createMediaElementSource($('#audioPlayer')[0]);
-              gainNode = audioCtx.createGain();
-              //console.log(audioNode)
-
-              visualizer = butterchurn.createVisualizer(audioCtx, $('#audioVisual')[0], {
-                width: 400,
-                height: 400
-              });
-
-              // get audioNode from audio source or microphone
-              audioNode.connect(gainNode);
-              gainNode.connect(audioCtx.destination);
-              // load a preset
-              visualizer.connectAudio(gainNode);
-              var preset = presets[this.audiovisualtype];
-              //console.log(butterchurnPresets.getPresets())
-              visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
-
-              // resize visualizer
-
-              visualizer.setRendererSize(400, 400);
-
-              // render a frame
-              torrentInterval = setInterval(function(){
-                visualizer.render();
-              }, 100);
-
+          let that = this;
+          //  var player = new plyr('#torrentPlayer');
+          client.add(this.currentmedia.source, function (torrent) {
+            theTorrent = torrent;
+            // Torrents can contain many files. Let's use the .mp4 file
+            var file = theTorrent.files.find(function (file) {
+            that.lasttorrentid = theTorrent.magnetURI;
+            currsrc = theTorrent.magnetURI;
+            if(that.currentmedia.type=='torrentVideo'){
+              return file.name.endsWith('.mp4')
             }
+            if(that.currentmedia.type=='torrentAudio'){
+              return file.name.endsWith('.mp3')
+            }
+          })
+
+          theTorrent.on('done', onDone);
+            torrentInterval = setInterval(onProgress, 500);
+            onProgress();
+            file.getBlobURL(function (err, url) {
+              if (err){
+                console.log(err.message);
+              }
+              //$("#downloadButton").attr("href",url);
+            });
+            //$("#torrentDL").html("<a href='"+torrent.torrentFileBlobURL+"' download='Stimulate....torrent'>Torrent-file</a>");
+            function onProgress () {
+              // Peers
+              that.peers = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers');
+              if(that.lasttorrentid == theTorrent.magnetURI&&torrent.numPeers>0){
+                var percent = Math.round(torrent.progress * 100 * 100) / 100;
+                var datetime = new Date();
+                datetime = datetime.getTime();
+                var ds = torrent.downloadSpeed/1000000;
+                var us = torrent.uploadSpeed/1000000;
+                that.downloadpercent = that.prettyBytes(torrent.downloaded) + " / " + that.prettyBytes(torrent.length) + " ("+percent+"%)";
+                that.downloadspeed = that.prettyBytes(torrent.downloadSpeed) + '/s (down)';
+                that.uploadspeed = that.prettyBytes(torrent.uploadSpeed) + '/s (up)';
+                eventBus.$emit('torrentChartData',[[that.peers,that.downloadpercent,that.downloadspeed,that.uploadspeed],{x:datetime,y:percent},{x:datetime,y:ds},{x:datetime,y:us}]);
+              }
+            }
+            function onDone () {
+              onProgress();
+              //  console.log(url)
+              //console.log(torrent.torrentFileBlobURL)
+              that.torrentdownloadurl = torrent.torrentFileBlobURL
+            }
+            file.renderTo('video#torrentPlayer');
+          });
+      } else if(this.currentmedia.type=='localAudio'&this.audiovisualtype!='Poster'){
+          this.inited=true
+          $('#audioPlayer')[0].crossOrigin = 'Anonymous'
+          audioCtx = new AudioContext();
+          audioNode = audioCtx.createMediaElementSource($('#audioPlayer')[0]);
+          gainNode = audioCtx.createGain();
+          visualizer = butterchurn.createVisualizer(audioCtx, $('#audioVisual')[0], {
+            width: 400,
+            height: 400
+          });
+          // get audioNode from audio source or microphone
+          audioNode.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          visualizer.connectAudio(gainNode);
+          visualizer.loadPreset(presets[this.audiovisualtype], this.audioVisualChangeSeconds); // 2nd argument is the number of seconds to blend presets
+          visualizer.setRendererSize(400, 400);
+          torrentInterval = setInterval(function(){
+            visualizer.render();
+          }, 100);
+        }
       },
       prettyBytes(num,label=true) {
         var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -245,32 +210,47 @@
       emitBackClicked(title) {
         eventBus.$emit('playerBackClick',title);
       },
-
-
     },
-    watch: {
+  /*  watch: {
       '$route.params.currentTitle': function (val) {
         //this.fullName = val + ' ' + this.lastName
       //  console.log("route-watch")
       //  console.log(val)
-        this.inited = false;
+        //this.inited = false;
       //  this.currentmedia = this.getCurrentMedia()
-        this.initTorrent()
+      //  this.initTorrent()
       },
-    },
+    },*/
     computed: {
-      // a computed getter
           player () { return this.$refs.player.player }
     },
-    updated: function () {
+    /*updated: function () {
       this.$nextTick(function () {
-
-    if((this.currentmedia!=undefined)&&(this.inited==false)){
-      //this.currentmedia = this.getCurrentMedia()
-      eventBus.$emit('setCurrentMedia',this.currentmedia.id);
-      this.initTorrent()
+        this.currentmedia = this.getCurrentMedia()
+      });
+    },*/
+    destroyed(){
+      eventBus.$emit('setCurrentMedia',0);
+      if(theTorrent!=undefined){
+        theTorrent.destroy(function(){
+          console.log("torrent destroyed on vue-destroyed-method")
+        });
+      }
+    },
+    mounted(){
       let that = this;
-
+      this.initTorrent()
+      eventBus.$emit('setCurrentMedia',this.currentmedia.id);
+      eventBus.$on('playerGetDuration', title => {
+        eventBus.$emit('playerSetDuration',that.player.duration);
+      });
+      eventBus.$on('audioVisualType', visArgs => {
+        that.audiovisualtype = visArgs[0];
+        this.audioVisualChangeSeconds = visArgs[1]
+        if(visualizer!=undefined){
+          visualizer.loadPreset(presets[this.audiovisualtype], this.audioVisualChangeSeconds);
+        }
+      });
       if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
         setTimeout(function(){
           if(that.autoplay){
@@ -290,48 +270,6 @@
           eventBus.$emit('autoplayNextVideo',that.currentmedia.id);
         }
       })
-      //this.initTorrent();
-      this.mylike = Number(this.currentmedia.myLike);
-      this.likes = this.currentmedia.likes;
-      this.dislikes = this.currentmedia.dislikes;
-
-      if(this.currentmedia.techType=="audio"){
-      //  console.log("init visualizer")
-      }
-
-  } });
-    },
-    destroyed(){
-      eventBus.$emit('setCurrentMedia',0);
-      if(theTorrent!=undefined){
-        //client.destroy();
-
-        theTorrent.destroy(function(){
-          console.log("torrent destroyed on vue-destroyed-method")
-        });
-      }
-    },
-    mounted(){
-      let that = this;
-
-      eventBus.$emit('setCurrentMedia',this.currentmedia.id);
-      //  this.currentmedia = this.getCurrentMedia()
-      eventBus.$on('playerGetDuration', title => {
-        console.log("player??")
-        console.log(that.player)
-        console.log(that.player.duration)
-        eventBus.$emit('playerSetDuration',that.player.duration);
-      });
-      eventBus.$on('audioVisualType', visArgs => {
-        that.audiovisualtype = visArgs[0];
-        this.audioVisualChangeSeconds = visArgs[1]
-        if(visualizer!=undefined){
-          console.log("change preeset")
-          visualizer.loadPreset(presets[this.audiovisualtype], this.audioVisualChangeSeconds);
-        }
-      });
-      //this.currentmedia = this.getCurrentMedia()
-     ///this.initTorrent()
   },
   data(){
     return {
