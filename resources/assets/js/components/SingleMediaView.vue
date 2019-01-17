@@ -188,6 +188,25 @@
             visualizer.render();
           }, 100);
         }
+        if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
+          setTimeout(function(){
+            if(that.autoplay){
+              that.player.play();
+              //  this.player.fullscreen.enter();
+            }
+          }, 3000);
+        } else {
+          if(this.autoplay){
+            this.player.play();
+          }
+        }
+        this.player.on('ended', () => {
+          if(that.autoplay){
+            console.log('movie ended')
+            //console.log(that.medias.indexOf(that.currentmedia))
+            eventBus.$emit('autoplayNextVideo',that.currentmedia.id);
+          }
+        })
       },
       prettyBytes(num,label=true) {
         var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -251,25 +270,7 @@
           visualizer.loadPreset(presets[this.audiovisualtype], this.audioVisualChangeSeconds);
         }
       });
-      if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
-        setTimeout(function(){
-          if(that.autoplay){
-            that.player.play();
-            //  this.player.fullscreen.enter();
-          }
-        }, 3000);
-      } else {
-        if(that.autoplay){
-          that.player.play();
-        }
-      }
-      this.player.on('ended', () => {
-        if(that.autoplay){
-          console.log('movie ended')
-          //console.log(that.medias.indexOf(that.currentmedia))
-          eventBus.$emit('autoplayNextVideo',that.currentmedia.id);
-        }
-      })
+
 
   },
   data(){

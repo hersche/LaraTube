@@ -1,7 +1,7 @@
 <template>
   <div class="card mb-1">
           <router-link  :to="'/media/'+item.urlTitle" class="d-block h-100">
-            <b-card :id="item.id+'scard'" :title="item.title"
+            <b-card :title="item.title"
                     :img-src="item.poster_source"
                     :img-alt="item.title"
                     img-top
