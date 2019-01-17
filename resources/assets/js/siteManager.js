@@ -223,6 +223,7 @@ var siteManager = /** @class */ (function () {
             }
             that.medias = theMediaSorter.sort(that.medias);
             if (that.currentMediaId != 0) {
+                console.log("nextMedias set by sort");
                 that.nextMedias = that.nextVideosList(that.currentMediaId);
                 theVue.nextvideos = that.nextMedias;
             }
@@ -231,27 +232,29 @@ var siteManager = /** @class */ (function () {
         });
         eventBus.$on('commentCreated', function (json) {
             // Workaround by receive the media again.
-            that.receiveMediaById(json.data.media_id);
-            that.updateCSRF();
+            that.receiveMediaById(json.data.media_id, function () {
+                that.updateCSRF();
+                theVue.alert(theVue.$t("Comment") + " " + theVue.$t("created"), "success");
+            });
             /*var m = that.findMediaById(Number(json.data.media_id))
             m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
             console.log(m.comments)*/
             //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
             //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
             //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-            theVue.alert("Comment created", "success");
         });
         eventBus.$on('refreshMedia', function (id) {
             // Workaround by receive the media again.
-            that.receiveMediaById(id);
-            that.updateCSRF();
+            that.receiveMediaById(id, function () {
+                that.updateCSRF();
+                theVue.alert(theVue.$t("Media") + " " + theVue.$t("refreshed"), "success");
+            });
             /*var m = that.findMediaById(Number(json.data.media_id))
             m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
             console.log(m.comments)*/
             //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
             //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
             //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-            theVue.alert("Media refreshed", "success");
         });
         eventBus.$on('loadMediaById', function (id) {
             // Workaround by receive the media again.
@@ -262,18 +265,19 @@ var siteManager = /** @class */ (function () {
             }
         });
         eventBus.$on('loadMediaByCommentId', function (id) {
-            // Workaround by receive the media again.
-            if (theVue != undefined) {
-                that.receiveMediaByCommentId(id);
+            that.receiveMediaByCommentId(id, function () {
                 that.updateCSRF();
-            }
-            theVue.alert("Media load by comment", "success");
+                if (theVue != undefined) {
+                    theVue.alert("Media load by comment", "success");
+                }
+            });
         });
         eventBus.$on('loadMedia', function (title) {
             // Workaround by receive the media again.d
             that.receiveMediaByName(encodeURIComponent(title), function (id) {
                 that.updateCSRF();
                 if (theVue != undefined) {
+                    console.log("[loadMedia] update the vue after receive media");
                     theVue.fullmedias = that.medias;
                     theVue.medias = that.getFilteredMedias(that.medias);
                     if (theVue.$route.params.currentTitle != undefined) {
@@ -344,7 +348,7 @@ var siteManager = /** @class */ (function () {
             if ($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
                 if (theVue.canloadmore && that.blockScrollExecution == false) {
                     if (theVue.$router.currentRoute.path == "/" || theVue.$router.currentRoute.path == "/tags") {
-                        console.log("near bottom, do a request and block!");
+                        console.log("near bottom, do a request and block until request done!");
                         that.blockScrollExecution = true;
                         that.loadMorePages(function () {
                             console.log("done, allow next request");
@@ -361,6 +365,7 @@ var siteManager = /** @class */ (function () {
             if (that.usedCatRequests.includes(id) == false) {
                 that.usedCatRequests.push(id);
                 that.receiveMedias("/internal-api/medias/byCatId/" + id + that.getIgnoreParam(), false, function () {
+                    that.fillMediasToCat();
                     eventBus.$emit('mediasByCatIdReceived', id);
                 });
             }
@@ -477,24 +482,6 @@ var siteManager = /** @class */ (function () {
             },
             watch: {
                 $route: function (to, from) {
-                    //this.show = false;
-                    /*if(to.params.currentTitle!=undefined){
-                      // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
-                      if(that.findMediaByName(to.params.currentTitle)==undefined){
-                        that.receiveMediaByName(to.params.currentTitle);
-                      }else {
-                        this.nextvideos = that.nextVideosList(that.findMediaByName(this.$route.params.currentTitle).id)
-                      //  console.log("after site-change")
-                      //  console.log(this.nextvideos)
-                      //  console.log(that.findMediaByName(this.$route.params.currentTitle).id)
-                      }
-                    }*/
-                    /*  if(to.params.editTitle!=undefined){
-                        // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
-                        if(that.findMediaByName(to.params.editTitle)==undefined){
-                          that.receiveMediaByName(to.params.editTitle);
-                        }
-                      }*/
                     if (to.params.profileId != undefined) {
                         this.user = sm.getUserById(to.params.profileId);
                         this.medias = sm.getMediasByUser(to.params.profileId);
@@ -502,9 +489,9 @@ var siteManager = /** @class */ (function () {
                     else {
                         this.medias = sm.medias;
                     }
-                    if (to.path == "/search") {
-                        //this.searching();
-                    }
+                    //if(to.path=="/search"){
+                    //this.searching();
+                    //}
                     if (to.path == "/login" || to.path == "/register") {
                         if (that.loggedUserId != 0) {
                             // Redirect if already logged in
@@ -538,16 +525,13 @@ var siteManager = /** @class */ (function () {
     };
     siteManager.prototype.loadMorePages = function (callback) {
         if (callback === void 0) { callback = undefined; }
-        console.log("load more pages");
-        console.log(this.totalMedias);
-        console.log("vs");
-        console.log(this.medias.length);
         if (this.totalMedias > this.medias.length) {
+            console.log("loadMorePages go for");
             this.receiveMedias('/internal-api/media?' + this.getIgnoreParam(false), false, callback);
             theVue.canloadmore = true;
         }
         else {
-            console.log("end reached");
+            console.log("loadMorePages end reached");
             theVue.canloadmore = false;
         }
     };
@@ -600,7 +584,6 @@ var siteManager = /** @class */ (function () {
             that.csrf = data.csrf;
             that.totalMedias = data.totalMedias;
             if (theVue != undefined) {
-                console.log("update the vue total medias" + data.totalMedias);
                 theVue.csrf = data.csrf;
                 theVue.totalmedias = data.totalMedias;
                 if (that.totalMedias > that.medias.length) {

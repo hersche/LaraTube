@@ -2,10 +2,12 @@
 <template>
   <div>
       <!-- swiper -->
-      <swiper refs="mySwiper" :options="swiperOption">
+      <swiper refs="catSwiper" :options="swiperOption">
+        <swiper-wrapper>
         <swiper-slide v-for="(item,index) in medias" :key="index">
           <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
         </swiper-slide>
+      </swiper-wrapper>
         <div class="swiper-pagination" slot="pagination"></div>
         <div class="swiper-button-prev" style="" slot="button-prev"></div>
         <div class="swiper-button-next" slot="button-next"></div>
@@ -32,11 +34,13 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
         var tmpCatId = that.catid;
         that.catid=0;
         that.catid=tmpCatId;
+        console.log("do swiper update 222")
+        that.swiper.update()
       });
     },
     computed: {
       swiper() {
-        return this.$refs.mySwiper.swiper
+        return this.$refs.catSwiper.swiper
       }
     },
     data() {

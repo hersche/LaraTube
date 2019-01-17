@@ -25,12 +25,20 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
       swiperSlide,
       'singleField': SingleGalleryField
     },
+    watch:{
+      medias:function(val){
+      //  console.log("do swiper update")
+      //  this.swiper.update()
+      }
+    },
     mounted(){
       let that = this;
       eventBus.$on('mediasByCatIdReceived', id => {
         var tmpCatId = that.catid;
         that.catid=0;
         that.catid=tmpCatId;
+        console.log("do swiper update 111")
+      //  that.swiper.update()
       });
     },
     computed: {
@@ -41,6 +49,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
     data() {
       return {
         swiperOption: {
+          initial:0,
           slidesPerView: 2,
           spaceBetween: 10,
           effect: 'coverflow',

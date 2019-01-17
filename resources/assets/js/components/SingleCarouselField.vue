@@ -1,8 +1,5 @@
 <template>
-
-
-
-        <div :id="item.id+'scard'" class="card mb-1">
+  <div class="card mb-1">
           <router-link  :to="'/media/'+item.urlTitle" class="d-block h-100">
             <b-card :id="item.id+'scard'" :title="item.title"
                     :img-src="item.poster_source"
@@ -31,7 +28,16 @@
         return item.description;
       },
     },
+    watch:{
+      medias:function(val){
+        console.log("do swiper update")
+        this.swiper.update()
+      }
+    },
     computed: {
+      swiper() {
+        return this.$refs.mySwiper.swiper
+      },
       shortenedtags: function () {
         if(this.item.tagString.length>60){
           return this.item.tagString.substring(0,57)+"..."

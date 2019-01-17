@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="level==0">
-    <h4>Comments <a class="btn btn-sm" @click="refreshMedia()"><vs-icon icon="refresh"></vs-icon></a></h4>
+    <h4>{{ $t('Comments') }} <a class="btn btn-sm" @click="refreshMedia()"><vs-icon icon="refresh"></vs-icon></a></h4>
     <form class="form-inline mb-1" id="commentForm" v-if="loggeduserid!=0">
       <input type="hidden" name="_token" :value="csrf">
       <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
@@ -78,7 +78,7 @@ import { eventBus } from '../eventBus.js';
             this.$vs.dialog({
               type:'confirm',
               color: 'danger',
-              title: `Delete comment?`,
+              title: this.$t('Delete')+' '+this.$t('comment')+'?',
               text: 'Delete a comment can not be reverted. Are you shure?',
               accept:this.deleteComment
             })

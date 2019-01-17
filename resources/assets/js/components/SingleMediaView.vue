@@ -2,45 +2,39 @@
   <div v-if="currentmedia!=undefined">
     <div class="row" >
       <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="text-center" v-if="currentmedia.techType=='audio'">
+        <div class="text-center">
           <p>
             <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
           <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
-          <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='localAudio'">
-            <audio class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
+          <vue-plyr v-if="currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" :options="playerConfig" ref="player">
+            <audio v-if="currentmedia.type=='localAudio'" class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
               <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
             </audio>
+            <audio v-if="currentmedia.type=='directAudio'" class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer controls :poster="currentmedia.poster_source">
+              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
+            </audio>
+            <video v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
+              <source :src="currentmedia.source" type="video/mp4"></source>
+              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+            </video>
+            <div data-plyr-provider="youtube" v-if="currentmedia.type=='youtube'" :data-plyr-embed-id="currentmedia.source"></div>
+            <div data-plyr-provider="vimeo" v-if="currentmedia.type=='vimeo'" :data-plyr-embed-id="currentmedia.source"></div>
+
+            <video class="col-12" id="torrentPlayer" v-if="currentmedia.type=='torrentVideo'" controls :poster="currentmedia.poster_source">
+              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+            </video>
+            <audio class="col-12" id="torrentPlayer" v-if="currentmedia.type=='torrentAudio'" controls :poster="currentmedia.poster_source">
+              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+            </audio>
+          </vue-plyr>
+          <vue-plyr v-if="currentmedia.type=='youtube'||currentmedia.type=='vimeo'" :options="playerConfig" ref="player">
+            <div data-plyr-provider="youtube" v-if="currentmedia.type=='youtube'" :data-plyr-embed-id="currentmedia.source"></div>
+            <div data-plyr-provider="vimeo" v-if="currentmedia.type=='vimeo'" :data-plyr-embed-id="currentmedia.source"></div>
           </vue-plyr>
           <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary col-1 float-right" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
-          <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='directAudio'">
-            <audio class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer v-if="currentmedia.type=='directAudio'"   controls :poster="currentmedia.poster_source">
-              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
-            </audio>
-          </vue-plyr>
+
         </div>
-        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'">
-          <video controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
-            <source :src="currentmedia.source" type="video/mp4"></source>
-            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
-            </video>
-        </vue-plyr>
-        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='youtube'">
-          <div data-plyr-provider="youtube" :data-plyr-embed-id="currentmedia.source"></div>
-        </vue-plyr>
-        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='vimeo'">
-          <div data-plyr-provider="vimeo" :data-plyr-embed-id="currentmedia.source"></div>
-        </vue-plyr>
-        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='torrentVideo'" >
-          <video class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
-            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
-          </video>
-        </vue-plyr>
-        <vue-plyr :options="playerConfig" ref="player" v-if="currentmedia.type=='torrentAudio'" >
-          <audio class="col-12" id="torrentPlayer" controls :poster="currentmedia.poster_source">
-            <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
-          </audio>
-        </vue-plyr>
 
       </div>
     </div>
@@ -123,6 +117,7 @@
           this.inited=true
         }
         else if(this.currentmedia.techType=="torrent"){
+          console.log("start to setup torrent")
           this.inited=true
           let that = this;
           //  var player = new plyr('#torrentPlayer');
@@ -180,7 +175,7 @@
           audioNode = audioCtx.createMediaElementSource($('#audioPlayer')[0]);
           gainNode = audioCtx.createGain();
           visualizer = butterchurn.createVisualizer(audioCtx, $('#audioVisual')[0], {
-            width: 400,
+            width: '100%',
             height: 400
           });
           // get audioNode from audio source or microphone
@@ -211,24 +206,28 @@
         eventBus.$emit('playerBackClick',title);
       },
     },
-  /*  watch: {
+    watch: {
       '$route.params.currentTitle': function (val) {
         //this.fullName = val + ' ' + this.lastName
       //  console.log("route-watch")
       //  console.log(val)
-        //this.inited = false;
+      //  this.inited = false;
       //  this.currentmedia = this.getCurrentMedia()
       //  this.initTorrent()
       },
-    },*/
+    },
     computed: {
           player () { return this.$refs.player.player }
     },
-    /*updated: function () {
+    updated: function () {
+      let that = this
       this.$nextTick(function () {
-        this.currentmedia = this.getCurrentMedia()
+        if(that.inited==false){
+          console.log("#updated")
+          that.initTorrent()
+        }
       });
-    },*/
+    },
     destroyed(){
       eventBus.$emit('setCurrentMedia',0);
       if(theTorrent!=undefined){
@@ -240,6 +239,7 @@
     mounted(){
       let that = this;
       this.initTorrent()
+
       eventBus.$emit('setCurrentMedia',this.currentmedia.id);
       eventBus.$on('playerGetDuration', title => {
         eventBus.$emit('playerSetDuration',that.player.duration);
@@ -270,6 +270,7 @@
           eventBus.$emit('autoplayNextVideo',that.currentmedia.id);
         }
       })
+
   },
   data(){
     return {

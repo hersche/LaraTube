@@ -6,12 +6,12 @@
         <label>Media-type:</label>
         <input type="hidden" name="_token" :value="csrf">
          <select v-model="mediaType" name="type">
-           <option selected value="localAudio">Local audio</option>
-           <option value="localVideo">Local video</option>
-           <option value="directVideo">Direct video</option>
-           <option value="directAudio">Direct audio</option>
-           <option value="torrentAudio">Torrent audio</option>
-           <option value="torrentVideo">Torrent video</option>
+           <option selected value="localAudio">{{ $t('Local') }} {{ $t('audio') }}</option>
+           <option value="directAudio">{{ $t('Direct') }} {{ $t('audio') }}</option>
+           <option value="torrentAudio">Torrent {{ $t('audio') }}</option>
+           <option value="localVideo">{{ $t('Local') }} {{ $t('video') }}</option>
+           <option value="directVideo">{{ $t('Direct') }} {{ $t('video') }}</option>
+           <option value="torrentVideo">Torrent {{ $t('video') }}</option>
            <option value="youtube">Youtube</option>
            <option value="vimeo">Vimeo</option>
          </select>

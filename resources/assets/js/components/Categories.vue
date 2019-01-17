@@ -21,12 +21,14 @@
          <p v-for="subcat in currentcat.children" v-if="currentcat.children.length>0">
            <router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }} ({{ subcat.medias.length }} medias)</router-link>
          </p>
-         <div class="">
-            <!-- <div v-for="media in currentcat.medias"  class="col-lg-6 col-md-6 col-xs-6">
+
+             <h5>{{ currentmedias.length }} {{ $t("medias") }}</h5>
+          <div class="row">
+            <div v-for="media in currentmedias"  class="col-lg-6 col-md-6 col-xs-6">
                <singleField v-bind:item="media" v-bind:loggeduserid="loggeduserid"></singleField>
-            </div>-->
-            <h5>{{ currentcat.medias.length }} {{ $t("medias") }}</h5>
-                <SwiperView class="" v-bind:medias="currentcat.medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></SwiperView>
+            </div>
+
+              <!--  <SwiperView class="" v-if="currentmedias.length>0" v-bind:medias="currentmedias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></SwiperView> -->
          </div>
        </div>
     </p>
@@ -38,25 +40,60 @@
   import { eventBus } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   import SwiperView from './SingleSwiperView'
+  import { User, Media, Tag, Category } from '../models';
   export default {
     props: ['medias','baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser','treecatptions'],
     name: 'categoriesTag',
     mounted: function () {
+      let that = this
       if(localStorage.getItem("categories_remember")!=undefined&&localStorage.getItem("categories_remember")!=null){
         this.catids = localStorage.getItem("categories_remember")
       }
+      eventBus.$on('mediasByCatIdReceived', id => {
+        if(id==this.currentcat.id){
+          //this.currentmedias=this.currentcat.medias
+        }
+        var tmpMedias = []
+        this.medias.forEach(function(val,key){
+          if(val.category_id==that.catids){
+            tmpMedias.push(val)
+          }
+        });
+        this.currentmedias = tmpMedias
+      });
     },
     watch: {
       catids:function(val){
+        let that = this
         this.currentcat = this.getCurrentCategory(val)
         localStorage.setItem("categories_remember",val)
+        var tmpMedias = []
+        this.medias.forEach(function(val,key){
+          if(val.category_id==that.catids){
+            tmpMedias.push(val)
+          }
+        });
+        this.currentmedias = tmpMedias
+      },
+      medias:function(val){
+        var tmpMedias = []
+        let that = this
+        this.medias.forEach(function(val,key){
+          if(val.category_id==that.catids){
+            tmpMedias.push(val)
+          }
+        });
+        this.currentmedias = tmpMedias
       }
     },
     methods: {
       getCurrentCategory(id,data=undefined) {
         // `this` points to the vm instance
         let that = this;
-        var theC = undefined
+        var theC = new Category(0,"None","All medias which are in no category","","")
+        if(id==0){
+          eventBus.$emit('getMediasByCatId',0);
+        }
         var idata = this.categories
         if(data!=undefined){
           idata = data
@@ -73,7 +110,7 @@
             theC = val
           }
         });
-        if(theC!=undefined){
+        if(theC.id!=0){
           if(theC.children.length>0){
             theC.children.forEach(function(val,key){
               eventBus.$emit('getMediasByCatId',val.id);
