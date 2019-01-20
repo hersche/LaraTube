@@ -47,6 +47,11 @@ export class MediaSorter {
     return medias
   }
 
+  setSortBy(sortBy){
+    localStorage.setItem("choosenSort",sortBy)
+    this.sortBy = sortBy
+  }
+
   static byType(a,b) {
     if (a.type < b.type)
       return -1;
@@ -202,7 +207,6 @@ export class Search{
     let that = this;
     if($("#theLiveSearchUsers").is(':checked')){
       $.each( users, function( key, value ) {
-
         if(value.name.toLowerCase().indexOf(that.search.toLowerCase()) > -1){
           if(that.userResult.includes(value)==false){
             that.userResult.push(value);

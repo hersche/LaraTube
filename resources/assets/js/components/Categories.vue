@@ -3,16 +3,16 @@
 
 
 
-    <p v-if="catlevel==0" class="float-left col-md-3 col-sm-6">
+    <p v-if="catlevel==0" class="float-left col-md-3 col-sm-6 ">
       <router-link v-if="currentuser.admin" to="/newcat/" class="btn btn-block btn-warning btn-sm">
         <vs-icon icon="create"></vs-icon>{{ $t("Create") }} {{ $t("category") }}
       </router-link>
-      <treeselect v-if="treecatptions!=undefined" :multiple="false" :always-open="true" v-model="catids" name="parent_id"  :options="treecatptions" />
+      <treeselect instanceId="catoverviewtree" v-if="treecatptions!=undefined" :multiple="false" :append-to-body="false" :always-open="true" v-model="catids" name="parent_id"  :options="treecatptions" />
 
     </p>
 
-    <p class="float-right col-md-9 col-sm-6">
-      <div class="float-right col-md-9 col-sm-6" v-if="currentcat!=undefined">
+    <div class="float-right col-md-9 col-sm-6 mt-sm-5 mt-md-0 pt-sm-5 pt-md-0">
+      <div class="" v-if="currentcat!=undefined">
         <span class="text-right float-right" v-if="currentuser.admin"><router-link :to="'/editcat/'+currentcat.id" class="btn btn-warning btn-sm mr-1"><vs-icon icon="edit"></vs-icon>{{ $t("Edit") }}</router-link>
           <button @click="deleteAction(currentcat.id)" class="btn btn-danger btn-sm"><vs-icon icon="delete"></vs-icon>{{ $t("Delete") }}</button></span>
         <h5><router-link :to="'/category/'+currentcat.urlTitle">{{ currentcat.title }}</router-link></h5>
@@ -31,7 +31,7 @@
               <!--  <SwiperView class="" v-if="currentmedias.length>0" v-bind:medias="currentmedias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></SwiperView> -->
          </div>
        </div>
-    </p>
+    </div>
 
   </div>
   </div>
@@ -155,3 +155,10 @@
     }
   }
 </script>
+
+
+<style lang="stylus">
+.vue-treeselect__menu
+  position:relative !important;
+
+</style>

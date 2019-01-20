@@ -1,12 +1,12 @@
-var MediaSorter = /** @class */ (function () {
-    function MediaSorter() {
+export class MediaSorter {
+    constructor() {
         this.sortBy = localStorage.getItem("choosenSort");
         if (this.sortBy == "" || this.sortBy == undefined) {
             this.sortBy = "created_at";
             localStorage.setItem("choosenSort", "created_at");
         }
     }
-    MediaSorter.prototype.sort = function (medias) {
+    sort(medias) {
         if (this.sortBy == "title") {
             medias.sort(MediaSorter.byTitle);
         }
@@ -56,131 +56,133 @@ var MediaSorter = /** @class */ (function () {
             medias.sort(MediaSorter.byDislikesReverse);
         }
         return medias;
-    };
-    MediaSorter.byType = function (a, b) {
+    }
+    setSortBy(sortBy) {
+        localStorage.setItem("choosenSort", sortBy);
+        this.sortBy = sortBy;
+    }
+    static byType(a, b) {
         if (a.type < b.type)
             return -1;
         if (a.type > b.type)
             return 1;
         return 0;
-    };
-    MediaSorter.byTypeReverse = function (a, b) {
+    }
+    static byTypeReverse(a, b) {
         if (a.type < b.type)
             return 1;
         if (a.type > b.type)
             return -1;
         return 0;
-    };
-    MediaSorter.byComments = function (a, b) {
+    }
+    static byComments(a, b) {
         if (a.comments.length < b.comments.length)
             return -1;
         if (a.comments.length > b.comments.length)
             return 1;
         return 0;
-    };
-    MediaSorter.byCommentsReverse = function (a, b) {
+    }
+    static byCommentsReverse(a, b) {
         if (a.comments.length < b.comments.length)
             return 1;
         if (a.comments.length > b.comments.length)
             return -1;
         return 0;
-    };
-    MediaSorter.bySimpleType = function (a, b) {
+    }
+    static bySimpleType(a, b) {
         if (a.simpleType < b.simpleType)
             return -1;
         if (a.simpleType > b.simpleType)
             return 1;
         return 0;
-    };
-    MediaSorter.bySimpleTypeReverse = function (a, b) {
+    }
+    static bySimpleTypeReverse(a, b) {
         if (a.simpleType < b.simpleType)
             return 1;
         if (a.simpleType > b.simpleType)
             return -1;
         return 0;
-    };
-    MediaSorter.byTitle = function (a, b) {
+    }
+    static byTitle(a, b) {
         if (a.title < b.title)
             return -1;
         if (a.title > b.title)
             return 1;
         return 0;
-    };
-    MediaSorter.byTitleReverse = function (a, b) {
+    }
+    static byTitleReverse(a, b) {
         if (a.title < b.title)
             return 1;
         if (a.title > b.title)
             return -1;
         return 0;
-    };
-    MediaSorter.byLikes = function (a, b) {
+    }
+    static byLikes(a, b) {
         if (a.likes < b.likes)
             return -1;
         if (a.likes > b.likes)
             return 1;
         return 0;
-    };
-    MediaSorter.byLikesReverse = function (a, b) {
+    }
+    static byLikesReverse(a, b) {
         if (a.likes < b.likes)
             return 1;
         if (a.likes > b.likes)
             return -1;
         return 0;
-    };
-    MediaSorter.byDislikes = function (a, b) {
+    }
+    static byDislikes(a, b) {
         if (a.dislikes < b.dislikes)
             return -1;
         if (a.dislikes > b.dislikes)
             return 1;
         return 0;
-    };
-    MediaSorter.byDislikesReverse = function (a, b) {
+    }
+    static byDislikesReverse(a, b) {
         if (a.dislikes < b.dislikes)
             return 1;
         if (a.dislikes > b.dislikes)
             return -1;
         return 0;
-    };
-    MediaSorter.byCreatedAt = function (a, b) {
+    }
+    static byCreatedAt(a, b) {
         if (a.created_at.date < b.created_at.date)
             return 1;
         if (a.created_at.date > b.created_at.date)
             return -1;
         return 0;
-    };
-    MediaSorter.byCreatedAtComments = function (a, b) {
+    }
+    static byCreatedAtComments(a, b) {
         if (a.created_at.date < b.created_at.date)
             return 1;
         if (a.created_at.date > b.created_at.date)
             return -1;
         return 0;
-    };
-    MediaSorter.byUpdatedAtReverse = function (a, b) {
+    }
+    static byUpdatedAtReverse(a, b) {
         if (a.updated_at.date < b.updated_at.date)
             return -1;
         if (a.updated_at.date > b.updated_at.date)
             return 1;
         return 0;
-    };
-    MediaSorter.byUpdatedAt = function (a, b) {
+    }
+    static byUpdatedAt(a, b) {
         if (a.updated_at.date < b.updated_at.date)
             return 1;
         if (a.updated_at.date > b.updated_at.date)
             return -1;
         return 0;
-    };
-    MediaSorter.byCreatedAtReverse = function (a, b) {
+    }
+    static byCreatedAtReverse(a, b) {
         if (a.created_at.date < b.created_at.date)
             return -1;
         if (a.created_at.date > b.created_at.date)
             return 1;
         return 0;
-    };
-    return MediaSorter;
-}());
-export { MediaSorter };
-var Search = /** @class */ (function () {
-    function Search(search, medias, tags, users) {
+    }
+}
+export class Search {
+    constructor(search, medias, tags, users) {
         this.search = search;
         this.tagResult = [];
         this.userResult = [];
@@ -189,18 +191,18 @@ var Search = /** @class */ (function () {
             var mediaTitle = $("#theLiveSearchMediaTitle").is(':checked');
             var mediaDescription = $("#theLiveSearchMediaDescription").is(':checked');
             var tagsEnabled = $("#theLiveSearchTags").is(':checked');
-            var that_1 = this;
+            let that = this;
             if ($("#theLiveSearchUsers").is(':checked')) {
                 $.each(users, function (key, value) {
-                    if (value.name.toLowerCase().indexOf(that_1.search.toLowerCase()) > -1) {
-                        if (that_1.userResult.includes(value) == false) {
-                            that_1.userResult.push(value);
+                    if (value.name.toLowerCase().indexOf(that.search.toLowerCase()) > -1) {
+                        if (that.userResult.includes(value) == false) {
+                            that.userResult.push(value);
                         }
                     }
                     if (value.bio != null) {
-                        if (value.bio.toLowerCase().indexOf(that_1.search.toLowerCase()) > -1) {
-                            if (that_1.userResult.includes(value) == false) {
-                                that_1.userResult.push(value);
+                        if (value.bio.toLowerCase().indexOf(that.search.toLowerCase()) > -1) {
+                            if (that.userResult.includes(value) == false) {
+                                that.userResult.push(value);
                             }
                         }
                     }
@@ -209,21 +211,21 @@ var Search = /** @class */ (function () {
             if (mediaTitle || mediaDescription) {
                 $.each(medias, function (key, value) {
                     if (mediaTitle) {
-                        if (value.title.toLowerCase().indexOf(that_1.search.toLowerCase()) > -1) {
-                            if (that_1.mediaResult.includes(value) == false) {
-                                that_1.mediaResult.push(value);
+                        if (value.title.toLowerCase().indexOf(that.search.toLowerCase()) > -1) {
+                            if (that.mediaResult.includes(value) == false) {
+                                that.mediaResult.push(value);
                             }
                         }
                     }
                     if (mediaDescription) {
                         if (value.description.toLowerCase().indexOf(search.toLowerCase()) > -1) {
-                            if (that_1.mediaResult.includes(value) == false) {
-                                that_1.mediaResult.push(value);
+                            if (that.mediaResult.includes(value) == false) {
+                                that.mediaResult.push(value);
                             }
                         }
                     }
                     var tms = new MediaSorter();
-                    that_1.mediaResult = tms.sort(that_1.mediaResult);
+                    that.mediaResult = tms.sort(that.mediaResult);
                     /*  if(tagsEnabled){
                         if(that.mediaResult.includes(value)==false){
                           that.mediaResult.push(value);
@@ -236,6 +238,4 @@ var Search = /** @class */ (function () {
             }
         }
     }
-    return Search;
-}());
-export { Search };
+}

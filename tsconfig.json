@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "paths": { "*": ["types/*"] },
     "module": "es2015",
-    "target": "es5",
+    "target": "es6",
     "noImplicitAny": false,
     "sourceMap": false,
     "typeRoots" : ["./node_modules/@types/"],

@@ -106,7 +106,7 @@
   </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   import Comments from './Comments'
   import SingleMediaView from './SingleMediaView'
@@ -204,22 +204,19 @@
           eventBus.$emit('loadMore','');
         },
         getCurrentMedia() {
-          let that = this;
+          /* let that = this;
           var theMedia = undefined
-          this.medias.forEach(function(val,key){
+          store.state.medias.forEach(function(val,key){
             if(val.urlTitle==encodeURIComponent(that.$route.params.currentTitle)){
               theMedia = val;
               that.blockGetRequest=false
               that.currentCat = that.getCategoryById(val.category_id,that.categories)
             }
           });
-          if(theMedia==undefined){
-            console.log("media not there yet, want it!");
-            if(this.blockGetRequest==false){
-              this.blockGetRequest=true
-              eventBus.$emit('loadMedia',encodeURIComponent(that.$route.params.currentTitle));
-            }
-          }
+          */
+           let that = this;
+          var theMedia = store.getters.getMediaByTitle(this.$route.params.currentTitle)
+
           return theMedia;
         }
 

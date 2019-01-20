@@ -9,8 +9,8 @@ export class User{
   publicState:boolean;
   admin:boolean;
   email:string;
-  created_at;
-  updated_at;
+  created_at:any;
+  updated_at:any;
   constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean,admin:boolean=false,email:string='',created_at='',updated_at=''){
     this.id=id;
     this.name = name;
@@ -133,7 +133,7 @@ export class Category {
       that.children.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source,value.parent_id,value.children))
     });
   }
-  setMedias(medias){
+  setMedias(medias:any){
     let that = this;
     that.medias=[]
     $.each( medias, function( key1, value ) {
@@ -151,8 +151,8 @@ export class Notification {
   type:string;
   data:any;
   read_at:string
-  created_at
-  constructor(id:number,type:string,data:any,read_at:string,created_at){
+  created_at:any
+  constructor(id:number,type:string,data:any,read_at:string,created_at:any){
     this.id=id;
     this.type=type;
     this.data=data;
