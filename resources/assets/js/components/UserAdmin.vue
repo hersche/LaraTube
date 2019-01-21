@@ -5,11 +5,10 @@
             <h3>{{ $t('Users') }}</h3>
           </template>
           <template slot="thead">
-            <vs-th sort-key="name">Name</vs-th>
-            <vs-th sort-key="email">Email</vs-th>
+            <vs-th sort-key="name">{{ $t('Username') }}</vs-th>
+            <vs-th sort-key="email">{{ $t('Email') }}</vs-th>
             <vs-th sort-key="created_at">{{ $t('Created at') }}</vs-th>
             <vs-th sort-key="updated_at">{{ $t('Updated at') }}</vs-th>
-            <vs-th sort-key="admin">Admin</vs-th>
           </template>
 
           <template slot-scope="{data}">
@@ -21,13 +20,10 @@
                 {{data[indextr].email}}
               </vs-td>
               <vs-td :data="data[indextr].created_at">
-                {{data[indextr].created_at}}
+                {{ $d(new Date(data[indextr].created_at),'short') }}
               </vs-td>
               <vs-td :data="data[indextr].updated_at">
-                {{data[indextr].updated_at}}
-              </vs-td>
-              <vs-td :data="data[indextr].admin">
-                {{data[indextr].admin}}
+                {{ $d(new Date(data[indextr].updated_at),'short') }}
               </vs-td>
               <template class="expand-user" slot="expand">
                 <div class="con-expand-users">
@@ -37,13 +33,14 @@
                       <span>
                         {{ tr.name }}
                       </span>
+                      <p> {{ data[indextr].bio }} </p>
                     </div>
 
                     <div>
                       <vs-button vs-type="gradient" size="small" :to="'/profile/'+tr.id" color="success" icon="send"></vs-button>
                       <vs-button vs-type="flat" @click="openConfirm(tr.id)" size="small" color="danger" icon="delete_sweep"></vs-button>
-                      <vs-button v-if="tr.admin" vs-type="flat" @click="rmAdmin(tr.id)" size="small" color="danger" icon="">Unmake admin</vs-button>
-                      <vs-button v-if="tr.admin==false" vs-type="flat" @click="mkAdmin(tr.id)" size="small" color="danger" icon="">Make admin</vs-button>
+                      <vs-button v-if="data[indextr].admin" vs-type="flat" @click="rmAdmin(tr.id)" size="small" color="danger" icon="">Unmake admin</vs-button>
+                      <vs-button v-if="data[indextr].admin==false" vs-type="flat" @click="mkAdmin(tr.id)" size="small" color="danger" icon="">Make admin</vs-button>
                     </div>
                   </div>
                   <vs-list>
@@ -64,7 +61,7 @@
   import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['baseUrl','canloadmore','loggeduserid'],
+    props: ['baseUrl','canloadmore','loggeduserid','csrf'],
     data(){
       return {
         tmpid: 0
