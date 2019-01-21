@@ -204,20 +204,7 @@
           eventBus.$emit('loadMore','');
         },
         getCurrentMedia() {
-          /* let that = this;
-          var theMedia = undefined
-          store.state.medias.forEach(function(val,key){
-            if(val.urlTitle==encodeURIComponent(that.$route.params.currentTitle)){
-              theMedia = val;
-              that.blockGetRequest=false
-              that.currentCat = that.getCategoryById(val.category_id,that.categories)
-            }
-          });
-          */
-           let that = this;
-          var theMedia = store.getters.getMediaByTitle(this.$route.params.currentTitle)
-
-          return theMedia;
+          return store.getters.getMediaByTitle(this.$route.params.currentTitle)
         }
 
     },
@@ -230,7 +217,7 @@
       },
       '$route.params.currentTitle': function (val) {
         this.inited = false;
-        this.currentmedia = this.getCurrentMedia()
+        //this.currentmedia = this.getCurrentMedia()
       },
       audiovisualtype: function(val){
         localStorage.setItem('audioVisualType',this.audiovisualtype);
@@ -238,7 +225,7 @@
   },
   medias: function(val){
     console.log("medias change")
-    this.currentmedia = this.getCurrentMedia();
+  //  this.currentmedia = this.getCurrentMedia();
     if(this.currentmedia!=undefined){
       this.mylike = Number(this.currentmedia.myLike);
       this.likes = this.currentmedia.likes;
@@ -254,15 +241,20 @@
       series2: function () {
         return this.chartData;
       },
+      currentmedia: function () {
+        var theMedia = store.getters.getMediaByTitle(this.$route.params.currentTitle)
+        return theMedia;
+      },
     },
     updated: function () {
       this.$nextTick(function () {
 
       });
     },
+
     mounted(){
       let that = this;
-      this.currentmedia = this.getCurrentMedia()
+    //  this.currentmedia = this.getCurrentMedia()
       if(localStorage.getItem("autoplay")=='true'){
         this.autoplay=true;
       }
@@ -301,7 +293,6 @@
       visualPresets:butterchurnPresets.getPresets(),
       currentCat: undefined,
       data:'',
-      currentmedia:undefined,
       originalLikes: 0,
       originalDislikes: 0,
       audioVisualChangeSeconds:0.0,

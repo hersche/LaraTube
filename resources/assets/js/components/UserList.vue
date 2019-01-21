@@ -22,8 +22,13 @@
         </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
   export default {
-    props: ['users']
+    props: [],
+    computed: {
+      users:function(){
+        return store.state.users
+      },
+    },
   }
 </script>

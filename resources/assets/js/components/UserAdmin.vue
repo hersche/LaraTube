@@ -2,9 +2,7 @@
   <div>
     <vs-table search :data="users">
           <template slot="header">
-            <h3>
-              Users
-            </h3>
+            <h3>{{ $t('Users') }}</h3>
           </template>
           <template slot="thead">
             <vs-th sort-key="name">Name</vs-th>
@@ -32,46 +30,50 @@
                 {{data[indextr].admin}}
               </vs-td>
               <template class="expand-user" slot="expand">
-  <div class="con-expand-users">
-    <div class="con-btns-user">
-      <div class="con-userx">
-        <vs-avatar :badge="tr.id" size="45px" :src="data[indextr].avatar"/>
-        <span>
-          {{ tr.name }}
-        </span>
-      </div>
+                <div class="con-expand-users">
+                  <div class="con-btns-user">
+                    <div class="con-userx">
+                      <vs-avatar size="45px" :src="data[indextr].avatar"/>
+                      <span>
+                        {{ tr.name }}
+                      </span>
+                    </div>
 
-      <div>
-        <vs-button vs-type="gradient" size="small" :to="'/profile/'+tr.id" color="success" icon="send"></vs-button>
-        <vs-button vs-type="flat" @click="openConfirm(tr.id)" size="small" color="danger" icon="delete_sweep"></vs-button>
-        <vs-button v-if="tr.admin" vs-type="flat" @click="rmAdmin(tr.id)" size="small" color="danger" icon="">Unmake admin</vs-button>
-        <vs-button v-if="tr.admin==false" vs-type="flat" @click="mkAdmin(tr.id)" size="small" color="danger" icon="">Make admin</vs-button>
-      </div>
-    </div>
-    <vs-list>
-      <vs-list-item icon="mail" title="Email" :subtitle="tr.email"></vs-list-item>
-    </vs-list>
-  </div>
-</template>
-            </vs-tr>
-          </template>
-
-
-        </vs-table>
-        <form id="hiddenCSRFForm" class="d-none">
-          <input type="hidden" name="_token" :value="csrf">
-        </form>
+                    <div>
+                      <vs-button vs-type="gradient" size="small" :to="'/profile/'+tr.id" color="success" icon="send"></vs-button>
+                      <vs-button vs-type="flat" @click="openConfirm(tr.id)" size="small" color="danger" icon="delete_sweep"></vs-button>
+                      <vs-button v-if="tr.admin" vs-type="flat" @click="rmAdmin(tr.id)" size="small" color="danger" icon="">Unmake admin</vs-button>
+                      <vs-button v-if="tr.admin==false" vs-type="flat" @click="mkAdmin(tr.id)" size="small" color="danger" icon="">Make admin</vs-button>
+                    </div>
+                  </div>
+                  <vs-list>
+                    <vs-list-item icon="mail" title="Email" :subtitle="tr.email">
+                  </vs-list-item>
+                </vs-list>
+              </div>
+            </template>
+          </vs-tr>
+        </template>
+      </vs-table>
+      <form id="hiddenCSRFForm" class="d-none">
+        <input type="hidden" name="_token" :value="csrf">
+      </form>
   </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['users','baseUrl','canloadmore','loggeduserid'],
+    props: ['baseUrl','canloadmore','loggeduserid'],
     data(){
       return {
         tmpid: 0
       }
+    },
+    computed: {
+      users:function(){
+        return store.state.users
+      },
     },
     methods: {
       openConfirm(id){

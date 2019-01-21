@@ -7,13 +7,7 @@
             <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
           <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
-          <vue-plyr v-if="currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" :options="playerConfig" ref="player">
-            <audio v-if="currentmedia.type=='localAudio'" class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
-              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
-            </audio>
-            <audio v-if="currentmedia.type=='directAudio'" class="text-center" :src="currentmedia.source" id="audioPlayer222"  preload autobuffer controls :poster="currentmedia.poster_source">
-              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
-            </audio>
+          <vue-plyr v-if="(currentmedia.type!='youtube'&&currentmedia.type!='vimeo'&&currentmedia.simpleType!='audio')" :options="playerConfig" ref="player">
             <video v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
               <source :src="currentmedia.source" type="video/mp4"></source>
               <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
@@ -26,6 +20,11 @@
             </video>
             <audio class="col-12" id="torrentPlayer" v-if="currentmedia.type=='torrentAudio'" controls :poster="currentmedia.poster_source">
               <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+            </audio>
+          </vue-plyr>
+          <vue-plyr v-if="currentmedia.type=='directAudio'||currentmedia.type=='localAudio'" :options="playerConfig" ref="player">
+            <audio v-if="currentmedia.type=='localAudio'" class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
+              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
             </audio>
           </vue-plyr>
           <vue-plyr v-if="currentmedia.type=='youtube'||currentmedia.type=='vimeo'" :options="playerConfig" ref="player">

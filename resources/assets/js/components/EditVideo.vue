@@ -96,7 +96,7 @@
     </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
   import { Media }  from '../models';
   export default {
     props: ['medias','baseUrl','categories','csrf','treecatptions'],
@@ -145,35 +145,17 @@
         this.submitTrack();
         this.$refs.myModalRef.hide()
       },
-      getCurrentMedia(){
-        let that = this;
-        var theMedia;
-        this.medias.forEach(function(val,key){
-          if(val.urlTitle==encodeURIComponent(that.$route.params.editTitle)){
-            theMedia = val;
-            that.mediaType=val.type;
-            that.catid = val.category_id;
-            that.blockGetRequest=false
-            //console.log(val.tracks)
-          }
-        });
-        if(theMedia==undefined){
-          console.log("media not there for edit yet, want it!");
-          if(this.blockGetRequest==false){
-            this.blockGetRequest=true
-            eventBus.$emit('loadMedia',encodeURIComponent(that.$route.params.editTitle));
-          }
-        }
-        return theMedia;
+      getCurrentMedia() {
+        return store.getters.getMediaByTitle(this.$route.params.currentTitle)
       },
 
       posterChange(){
         var reader = new FileReader();
         let that = this;
-       reader.onload = function (e) {
-         that.$refs.croppieRef.bind({
+        reader.onload = function (e) {
+          that.$refs.croppieRef.bind({
              url: e.target.result,
-         });
+           });
         }
         reader.readAsDataURL($("#posterUpload")[0].files[0]);
 

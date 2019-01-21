@@ -30,8 +30,8 @@
         this.$vs.dialog({
           type:'confirm',
           color: 'danger',
-          title: `Delete media?`,
-          text: 'Delete a media can not be reverted. Are you shure?',
+          title: $t('Delete')+' '+$t('media')+'?',
+          text: $t('Delete')+' a media can not be reverted. Are you shure?',
           accept:this.deleteAction
         })
       },

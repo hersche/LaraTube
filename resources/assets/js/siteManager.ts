@@ -13,6 +13,7 @@ import { User, Media, Tag, Category, Notification } from './models';
 import VueApexCharts from 'vue-apexcharts'
 import Vuesax from 'vuesax'
 import 'material-icons/iconfont/material-icons.css';
+import 'plyr/dist/plyr.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import VuePlyr from 'vue-plyr'
 import VueI18n from 'vue-i18n'
@@ -539,12 +540,12 @@ class siteManager {
     },
     watch:{
       $route (to, from){
-          if(to.params.profileId!=undefined){
+        /*  if(to.params.profileId!=undefined){
             this.user = sm.getUserById(to.params.profileId)
             this.medias = sm.getMediasByUser(to.params.profileId)
           } else {
             this.medias = sm.medias;
-          }
+          }*/
           //if(to.path=="/search"){
             //this.searching();
           //}
@@ -647,6 +648,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       if(theVue!=undefined){
         theVue.csrf = data.csrf;
         theVue.totalmedias = data.totalMedias
+        store.commit("setTotalMedias",data.totalMedias)
         if(that.totalMedias>that.medias.length){
           theVue.canloadmore=true
         }
@@ -683,6 +685,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.users.push(u);
 
         });
+        store.commit("setUsers", that.users)
         if(that.initing){
           that.receiveTags(function(){
             that.receiveCategories();
@@ -931,7 +934,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           m.comments[key1].user = that.getUserById(value1.user_id)
         });
         that.medias.push(m)
-        store.commit("addMedia",m)
+        store.commit("updateOrAddMedia",m)
         that.medias = theMediaSorter.sort(that.medias)
         theVue.fullmedias = that.medias
         theVue.medias = that.getFilteredMedias();
@@ -950,6 +953,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.medias[theKey].updated_at = m.updated_at;
           that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
           theVue.fullmedias = that.medias
+          store.commit("updateOrAddMedia",m)
           theVue.medias=that.getFilteredMedias();
         }
         //console.warn("If the media already existed, why this method was used?");
@@ -969,7 +973,12 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           theKey = key;
         }
       });
+
+
       data = data.data;
+
+
+
       if(that.findMediaById(mediaName,undefined,false)==undefined){
         var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
         $.each( m.comments, function( key1, value1 ) {
@@ -977,7 +986,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           m.comments[key1].user = that.getUserById(value1.user_id)
         });
         that.medias.push(m)
-        store.commit("addMedia",m)
+        store.commit("updateOrAddMedia",m)
         that.medias = theMediaSorter.sort(that.medias)
         theVue.fullmedias = that.medias
         theVue.medias = that.getFilteredMedias();
@@ -995,6 +1004,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.medias[theKey].tracks = m.tracks;
           that.medias[theKey].updated_at = m.updated_at;
           that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+          store.commit("updateOrAddMedia",m)
           theVue.fullmedias = that.medias
           theVue.medias=that.getFilteredMedias();
         }
@@ -1026,9 +1036,10 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           m.comments[key1] = that.fillUser(comment);
           m.comments[key1].user = that.getUserById(comment.user_id)
         });
+        store.commit("updateOrAddMedia",m)
         if(that.medias.indexOf(m)==-1){
           that.medias.push(m)
-          store.commit("addMedia",m)
+        //  store.commit("addMedia",m)
         }
         that.medias = theMediaSorter.sort(that.medias)
       } else if(theKey!=undefined) {
@@ -1047,6 +1058,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           that.medias[theKey].updated_at = m.updated_at;
         }
         that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+        store.commit("updateOrAddMedia",m)
         //console.warn("If the media already existed, why this method was used?");
       }
 
