@@ -10,8 +10,8 @@
         </div>
         <div class="form-group row">
           <label>{{ $t('Description') }}</label>
-          <p>
-            <textarea :placeholder="$t('Description')+'...'" id="description" :value="currentcat.description" class="form-control" name="description" cols="50" rows="10"></textarea>
+          <p class="col-8">
+            <MarkdownCreator :theText="currentcat.description" theId="description" theTitle="Description" ></MarkdownCreator>
           </p>
         </div>
         <div class="form-group row">
@@ -27,8 +27,12 @@
 <script>
   import { eventBus } from '../eventBus.js';
   import { Media }  from '../models';
+  import MarkdownCreator from './MarkdownCreator'
   export default {
-    props: ['medias','baseUrl','categories','csrf','treecatptions'],
+    props: ['baseUrl','categories','csrf','treecatptions'],
+    components: {
+      MarkdownCreator
+    },
     mounted: function () {
     //  this.$refs.croppieRef.bind({
     //    url: '/img/404/poster.png',

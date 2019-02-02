@@ -1,7 +1,7 @@
 <template>
 <div v-if="theCat!=undefined" >
 <h2>{{ theCat.title }}</h2>
-<p>{{ theCat.description }}</p>
+<p><VueMarkdown>{{ theCat.description }}</VueMarkdown></p>
 <p v-if="theCat.children.length>0">Subcategories</p>
 <p v-for="subcat in theCat.children" v-if="theCat.children.length>0"><router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link></p>
 <h5>{{ $t("Medias") }}</h5>
@@ -17,6 +17,7 @@
 import { eventBus } from '../eventBus.js';
 import SingleGalleryField from './SingleGalleryField'
 import Categories from './Categories'
+import VueMarkdown from 'vue-markdown'
 export default {
   props: ['medias','baseUrl','canloadmore','loggeduserid','categories','currentuser'],
   name: 'cat',
@@ -56,7 +57,8 @@ export default {
   },
   components : {
       'singleField': SingleGalleryField,
-      'cat' : Categories
+      'cat' : Categories,
+      VueMarkdown
   }
 }
 </script>
