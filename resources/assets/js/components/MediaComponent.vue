@@ -64,7 +64,7 @@
               <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
             </span>
           </div>
-          <div class="card-body" v-html="currentmedia.description"></div>
+          <div class="card-body"><VueMarkdown>{{ currentmedia.description }}</VueMarkdown></div>
           <div class="card-footer">
             <span v-for="tag in currentmedia.tags">
               <router-link class=""  :to="'/tags/'+tag.name" >
@@ -111,6 +111,7 @@
   import Comments from './Comments'
   import SingleMediaView from './SingleMediaView'
   import SortSelect from './SortSelect'
+  import VueMarkdown from 'vue-markdown'
   import { User, Media, Tag } from '../models';
   import butterchurnPresets from 'butterchurn-presets';
   var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
@@ -122,7 +123,8 @@
         'singleField': SingleGalleryField,
         'comments': Comments,
         'mediaView' : SingleMediaView,
-        'sortSelect': SortSelect
+        'sortSelect': SortSelect,
+        VueMarkdown
     },
     methods: {
       getCategoryById(category_id,data=undefined){

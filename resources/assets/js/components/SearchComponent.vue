@@ -18,14 +18,15 @@
 </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus,store } from '../eventBus.js';
   import TagComponent from './TagComponent'
   import UserList from './UserList'
   export default {
-    props: ['item','loggeduserid','search','medias','canloadmore','loggeduserid','tags','users'],
+    props: ['item','loggeduserid','search','canloadmore','loggeduserid','tags','users'],
     data(){
       return {
-        tagsen:false
+        tagsen:false,
+        medias:store.state.medias
       }
     },
     components : {

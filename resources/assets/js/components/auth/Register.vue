@@ -64,7 +64,7 @@
                       <div class="form-group">
                           <label class="col-md-4 col-form-label text-md-right">Biographie:</label>
                           <div>
-                            <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" name="bio" cols="50" rows="10"></textarea>
+                            <MarkdownCreator theText="" theId="bio" theTitle="Bio" ></MarkdownCreator>
                           </div>
                       </div>
                       <div class="form-group row">
@@ -124,8 +124,12 @@
 
 <script>
   import { eventBus } from '../../eventBus.js';
+    import MarkdownCreator from '../MarkdownCreator'
   export default {
-    props: ['medias','baseUrl','user','tags','csrf'],
+    components: {
+      MarkdownCreator
+    },
+    props: ['baseUrl','csrf'],
     mounted: function () {
       this.$refs.croppieAvatarRef.bind({
         url: '/img/404/avatar.png',
@@ -154,6 +158,7 @@
         avatarCropped: null,
         backgroundCropped: null,
         public: false,
+        tmpBio:''
       }
     },
     methods: {

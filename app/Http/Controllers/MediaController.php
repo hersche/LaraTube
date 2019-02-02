@@ -139,7 +139,11 @@ class MediaController extends Controller
     {
         $media = Media::where('id', '=' ,$id)->firstOrFail();
         $media->title = $request->input('title');
-        $media->category_id = $request->input('category_id');
+        $category_id = $request->input('category_id');
+        if(empty($category_id)){
+          $category_id = 0;
+        }
+        $media->category_id = $category_id;
         $duration = 0;
         if(!empty($request->input('duration'))){
           $duration = $request->input('duration');

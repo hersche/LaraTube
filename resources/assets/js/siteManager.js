@@ -17,6 +17,7 @@ import 'vuesax/dist/vuesax.css'; //Vuesax styles
 import VuePlyr from 'vue-plyr';
 import VueI18n from 'vue-i18n';
 import Treeselect from '@riophae/vue-treeselect';
+// import VueMarkdown from 'vue-markdown'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 //import Echo from "laravel-echo"
@@ -28,6 +29,7 @@ Vue.use(VueApexCharts);
 Vue.use(Vuesax);
 Vue.use(VuePlyr);
 Vue.use(VueI18n);
+// Vue.use(VueMarkdown)
 Vue.component('treeselect', Treeselect);
 //Vue.component('plyr', VuePlyr)
 Vue.component('apexchart', VueApexCharts);
@@ -301,7 +303,8 @@ class siteManager {
         eventBus.$on('videoDeleted', title => {
             theVue.alert("Video " + title + " deleted", "success");
             // TODO that.fillMediasToCat(); in callback!
-            that.deleteMediaByName(title);
+            store.commit("deleteMediaByTitle", title);
+            theVue.$router.push('/');
             that.updateCSRF();
         });
         eventBus.$on('videoCreated', json => {
@@ -317,8 +320,10 @@ class siteManager {
             });
         });
         eventBus.$on('videoEdited', json => {
-            that.deleteMediaByName(json[0]);
-            that.receiveTagsForMedia(json[1]);
+            //that.deleteMediaByName(json[0]);
+            //that.receiveTagsForMedia(json[1]);
+            store.commit("updateOrAddMedia", this.jsonToMedia(json[1].data));
+            theVue.$router.push('/media/' + json[0]);
             theVue.alert("Video " + json[1].data.title + " edited", "success");
             that.updateCSRF();
         });
@@ -422,7 +427,7 @@ class siteManager {
                 loggeduserid: this.loggedUserId,
                 tags: this.tags,
                 canloadmore: true,
-                medias: this.getFilteredMedias(),
+                //  medias:this.getFilteredMedias(),
                 user: that.currentUser,
                 categories: that.categories,
                 baseUrl: baseUrl
@@ -920,6 +925,7 @@ class siteManager {
                     //console.log(JSON.parse(JSON.stringify(m.comments)))
                     //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
                     that.medias[theKey].likes = m.likes;
+                    that.medias[theKey].description = m.description;
                     that.medias[theKey].dislikes = m.dislikes;
                     that.medias[theKey].tracks = m.tracks;
                     that.medias[theKey].updated_at = m.updated_at;
@@ -1064,6 +1070,18 @@ class siteManager {
                 that.fillMediasToCat(value.children);
             }
         });
+    }
+    jsonToMedia(value) {
+        let that = this;
+        var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, this.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, this.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes, value.tracks, value.category_id);
+        $.each(m.comments, function (key1, value1) {
+            m.comments[key1] = that.fillUser(value1);
+            //console.log(that.fillUser(value1))
+            m.comments[key1].user = that.getUserById(value1.user_id);
+        });
+        //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
+        //m.comments.sort(MediaSorter.byCreatedAtComments);
+        return m;
     }
     receiveMedias(url = "/internal-api/media" + this.getIgnoreParam(), forceUpdate = false, callback = undefined) {
         let that = this;

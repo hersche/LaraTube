@@ -12,14 +12,15 @@
   </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['medias','baseUrl','canloadmore','loggeduserid'],
+    props: ['baseUrl','canloadmore','loggeduserid'],
     data(){
       return {
         tmpid: 0,
-        tmptitle:''
+        tmptitle:'',
+        medias:store.state.medias
 
       }
     },

@@ -15,11 +15,12 @@
 
 <script>
 import 'swiper/dist/css/swiper.css'
-import { eventBus } from '../eventBus.js';
+import { eventBus, store } from '../eventBus.js';
+
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
   import SingleGalleryField from './SingleCarouselField'
   export default {
-    props: ['medias','baseUrl','loggeduserid','canloadmore'],
+    props: ['baseUrl','loggeduserid','canloadmore'],
     components: {
       swiper,
       swiperSlide,
@@ -48,6 +49,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
     },
     data() {
       return {
+        medias:store.state.medias,
         swiperOption: {
           initial:0,
           slidesPerView: 2,

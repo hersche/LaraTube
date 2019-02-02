@@ -37,12 +37,12 @@
   </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus,store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   import SwiperView from './SingleSwiperView'
   import { User, Media, Tag, Category } from '../models';
   export default {
-    props: ['medias','baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser','treecatptions'],
+    props: ['baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser','treecatptions'],
     name: 'categoriesTag',
     mounted: function () {
       let that = this
@@ -65,7 +65,7 @@
     watch: {
       catids:function(val){
         let that = this
-        this.currentcat = this.getCurrentCategory(val)
+        that.currentcat = this.getCurrentCategory(val)
         localStorage.setItem("categories_remember",val)
         var tmpMedias = []
         this.medias.forEach(function(val,key){
@@ -76,21 +76,22 @@
         this.currentmedias = tmpMedias
       },
       medias:function(val){
-        var tmpMedias = []
+      /*  var tmpMedias = []
         let that = this
         this.medias.forEach(function(val,key){
           if(val.category_id==that.catids){
             tmpMedias.push(val)
           }
         });
-        this.currentmedias = tmpMedias
+        this.currentmedias = tmpMedias*/
       }
     },
     methods: {
       getCurrentCategory(id,data=undefined) {
         // `this` points to the vm instance
         let that = this;
-        var theC = new Category(0,"None","All medias which are in no category","","")
+        var emptyCat = new Category(0,"None","All medias which are in no category","","");
+        var theC = emptyCat
         if(id==0){
           eventBus.$emit('getMediasByCatId',0);
         }
@@ -101,7 +102,7 @@
         idata.forEach(function(val,key){
           if(val.children.length>0){
             var tmpResult = that.getCurrentCategory(id,val.children)
-            if(tmpResult!=undefined){
+            if(tmpResult.id!=0){
               theC = tmpResult
             }
           }
@@ -150,7 +151,8 @@
       return {
         catids:0,
         currentcat:undefined,
-        currentmedias:[]
+        currentmedias:[],
+        medias:store.state.medias
       }
     }
   }

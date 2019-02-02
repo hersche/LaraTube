@@ -18,7 +18,7 @@ class Category extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'label' => $this->title,
-            'description' => nl2br($this->description),
+            'description' => $this->description,
             'avatar' => $this->avatar,
             'background' => $this->background,
             'parent_id' => $this->parent_id,

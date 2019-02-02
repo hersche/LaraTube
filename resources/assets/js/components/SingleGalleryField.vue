@@ -17,15 +17,19 @@
           </div>
           </router-link>
           <b-tooltip :target="item.id+'scard'" placement="top">
-            <h5>{{ item.title}}</h5> <p>{{ item.description }}</p>
+            <h5>{{ item.title}}</h5> <p><VueMarkdown>{{ item.description }}</VueMarkdown></p>
           </b-tooltip>
         </div>
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
+    import VueMarkdown from 'vue-markdown'
   export default {
     props: ['item','loggeduserid'],
     methods: {
+    },
+    components : {
+        VueMarkdown
     },
     computed: {
       // a computed getter

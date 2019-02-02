@@ -21,17 +21,18 @@
 </template>
 
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   import SortSelect from './SortSelect'
   export default {
     name: 'tags',
-    props: ['medias','baseUrl','user','tags','canloadmore','tagenabled'],
+    props: ['baseUrl','user','tags','canloadmore','tagenabled'],
     data(){
       return {
         selectedTags:[],
         filterTags:'',
-        selectVal:"created_at"
+        selectVal:"created_at",
+        medias:store.state.medias
       }
     },
     mounted(){

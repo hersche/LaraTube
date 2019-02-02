@@ -6,7 +6,7 @@
       <img class='pl-2 pt-1 pb-1' :src='"/"+currentuser.avatar' />
       <h3 class='ml-2' style=''>{{ currentuser.name }}</h3>
     </div>
-    <div v-html="currentuser.bio"></div>
+    <VueMarkdown> {{ currentuser.bio }}</VueMarkdown>
   </div>
   <h3>{{ $t("User") }}'s {{ $t("medias") }}</h3>
   <p>
@@ -20,12 +20,16 @@
 <script>
   import { eventBus, store } from '../eventBus.js';
   import GalleryComponent from './GalleryComponent'
+
   import SortSelect from './SortSelect'
+  import VueMarkdown from 'vue-markdown'
   export default {
     props: ['medias','baseUrl'],
   components : {
       'overview': GalleryComponent,
-      'sortSelect': SortSelect
+      'sortSelect': SortSelect,
+      VueMarkdown,
+      
   },
   mounted(){
     // loadUserVideos

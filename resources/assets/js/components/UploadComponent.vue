@@ -82,7 +82,7 @@
 
       <div class="form-group">
           <label>Media-description:</label>
-          <textarea placeholder="Media-description" id="addMediaDescription" class="form-control" name="description" cols="50" rows="10"></textarea>
+          <MarkdownCreator theText="" theId="description" theTitle="Description" ></MarkdownCreator>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-12">
           <div class="form-group">
@@ -102,11 +102,12 @@
   import { eventBus } from '../eventBus.js';
   import { User, Media, Tag } from '../models';
   import SingleMediaView from './SingleMediaView'
-
+  import MarkdownCreator from './MarkdownCreator'
   export default {
     props: ['medias','baseUrl','csrf','treecatptions'],
     components : {
-        'mediaView' : SingleMediaView
+        'mediaView' : SingleMediaView,
+        MarkdownCreator
     },
     mounted: function () {
       let that = this;

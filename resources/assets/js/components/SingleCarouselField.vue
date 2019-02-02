@@ -9,7 +9,7 @@
                     style=""
                     class="mb-2">
               <p class="card-text">
-                {{ shorteneddescription(item) }}
+                <VueMarkdown>{{ shorteneddescription(item) }}</VueMarkdown>
               </p>
               <p>{{ item.simpleType }}</p>
             </b-card>
@@ -18,8 +18,12 @@
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
+  import VueMarkdown from 'vue-markdown'
   export default {
     props: ['item','loggeduserid'],
+    components : {
+        VueMarkdown
+    },
     methods: {
       shorteneddescription: function (item) {
         if(item.description.length>83){

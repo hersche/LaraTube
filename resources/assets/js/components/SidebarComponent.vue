@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus, store } from '../eventBus.js';
 export default {
   mounted(){
     let that = this;
@@ -151,7 +151,7 @@ export default {
       eventBus.$emit('loadAllMedias',"");
     },
   },
-  props:['notifications','currentuser','medias','users','tags','csrf','totalmedias'],
+  props:['notifications','currentuser','users','tags','csrf','totalmedias'],
   computed:{
   },
   watch:{
@@ -181,6 +181,7 @@ export default {
     lang:'en',
     dataTypes: ["audio","video"],
     n:0,
+    medias:store.state.medias
 
   })
 }
