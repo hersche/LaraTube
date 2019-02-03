@@ -26,7 +26,7 @@
     data(){
       return {
         tagsen:false,
-        medias:store.state.medias
+        
       }
     },
     components : {
@@ -34,13 +34,15 @@
         'gallery': TagComponent
     },
     mounted(){
-      //searching('');
-      console.log(this)
       this.$parent.$nextTick(function () {
-  // DOM updated
-  eventBus.$emit('refreshSearch','');
+        eventBus.$emit('refreshSearch','');
       })
 
+    },
+    computed:{
+      medias:function(){
+        return store.state.medias
+      }
     },
     methods: {
       emitRefreshSearch(id) {

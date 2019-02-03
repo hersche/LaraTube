@@ -26,13 +26,12 @@
   import SortSelect from './SortSelect'
   export default {
     name: 'tags',
-    props: ['baseUrl','user','tags','canloadmore','tagenabled'],
+    props: ['medias','baseUrl','user','tags','canloadmore','tagenabled'],
     data(){
       return {
         selectedTags:[],
         filterTags:'',
         selectVal:"created_at",
-        medias:store.state.medias
       }
     },
     mounted(){
