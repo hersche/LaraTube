@@ -59,6 +59,7 @@ class siteManager {
   catchedTagMedias:any;
   initing:boolean;
   csrf:string;
+  loadedLangs:any;
   treecatptions:any;
   notificationTimer:any;
   types:Array<string>;
@@ -77,6 +78,7 @@ class siteManager {
     this.catchedTagMedias=[];
     this.usedSearchTerms=[];
     this.usedCatRequests=[];
+    this.loadedLangs=['en'];
     this.nextMedias=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
     this.updateCSRF();
@@ -158,8 +160,7 @@ class siteManager {
       that.receiveMedias()
     });
     eventBus.$on('languageChange', lang => {
-      console.log("change language to "+lang)
-      i18n.locale = lang
+      that.getLang(lang)
     });
     eventBus.$on('userEdited', id => {
       theVue.alert("Look for new users..")
@@ -218,8 +219,6 @@ class siteManager {
               that.nextMedias = that.nextVideosList(id)
               theVue.nextvideos = that.nextMedias
               that.loadMorePages()
-              theVue.medias = that.getFilteredMedias()
-              theVue.fullmedias = that.medias
             //  console.log("received by callback")
               //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
             });
@@ -267,8 +266,6 @@ class siteManager {
         that.nextMedias = that.nextVideosList(that.currentMediaId);
         theVue.nextvideos = that.nextMedias;
       }
-      theVue.fullmedias = that.medias
-      theVue.medias = that.getFilteredMedias()
     });
     eventBus.$on('commentCreated', json => {
       // Workaround by receive the media again.
@@ -331,8 +328,6 @@ class siteManager {
         store.commit("disableBlockRequest")
         if(theVue!=undefined){
           console.log("[loadMedia] update the vue after receive media")
-          theVue.fullmedias = that.medias
-          theVue.medias = that.getFilteredMedias(that.medias)
           if(theVue.$route.params.currentTitle!=undefined){
             that.currentMediaId = id;
             that.nextMedias = that.nextVideosList(id)
@@ -387,17 +382,11 @@ class siteManager {
       //if(theVue.$router.currentRoute.path!="/search"){
 
       if(tagName==''){
-        if($("#specialAllTag").is(":checked")){
-          theVue.medias = that.getFilteredMedias();
-        } else {
-          theVue.medias = [];
-          theVue.medias = that.getFilteredMedias();
-        }
+
       } else {
       if(that.catchedTagMedias.includes(tagName)==false){
         that.catchedTagMedias.push(tagName);
         that.receiveMedias("/api/tags/"+tagName,false,function(){
-          theVue.fullmedias = that.medias
         });
       }
     }
@@ -437,8 +426,6 @@ class siteManager {
     eventBus.$on('filterTypes', types => {
       that.types = types;
       store.commit("setFilterTypes",types)
-      theVue.fullmedias = that.medias
-      theVue.medias=that.getFilteredMedias();
       if(this.currentMediaId!=0){
         that.nextMedias = that.nextVideosList(this.currentMediaId)
       }
@@ -460,12 +447,16 @@ class siteManager {
     if(localStorage.getItem("language")!=''&&localStorage.getItem("language")!=undefined){
       lang = localStorage.getItem("language");
     }
+
     i18n = new VueI18n({
       locale: lang,
       fallbackLocale: 'en',
       messages:translation,
       dateTimeFormats:dateTranslation
     })
+    if(lang!="en"){
+      this.getLang(lang)
+    }
   //  sm.receiveUsers(true);
   // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})
    theVue = new Vue({
@@ -526,10 +517,8 @@ class siteManager {
               that.receiveMedias("/internal-api/medias/search/"+s+that.getIgnoreParam());
             }, 300);
           }
-          var so = new Search(s.toString(),that.getFilteredMedias(),that.tags,that.users);
+          var so = new Search(s.toString(),that.getFilteredMedias(),store.state.tags,store.state.users);
           theVue.search = so;
-          theVue.fullmedias = that.medias
-          theVue.medias = that.getFilteredMedias(so.mediaResult);
           theVue.users = so.userResult;
         }
       }
@@ -605,7 +594,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     var theMedias:Array<Media> = []
     var origMedias:Array<Media>;
     if(myList==undefined){
-      origMedias = this.medias
+      origMedias = store.state.medias
     } else {
       origMedias = myList
     }
@@ -640,6 +629,22 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     comment.childs = comment.childs.sort(MediaSorter.byCreatedAtComments)
     return comment;
   }
+  
+  
+  getLang(lang){
+    let that = this;
+    if(this.loadedLangs.includes(lang)==false){
+      this.loadedLangs.push(lang)
+      $.getJSON('/lang/'+lang+".json").done(function(data){
+        i18n.setLocaleMessage(lang, data.default)
+        i18n.locale = lang
+      });
+    } else {
+      i18n.locale = lang
+    }
+  }
+  
+  
   /*
   * Old: Update the CSRF-Token from server for all forms
   * New: Refresh CSRF AND totalMedias, which is needed to get medias.
@@ -918,51 +923,17 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     return theMedia
   }
 
-  receiveMediaByCommentId(mediaName:number,callback=undefined):void{
+  receiveMediaByCommentId(cid:number,callback=undefined):void{
     let that = this;
     var theKey;
     var existsAlready = false;
-    $.getJSON("/internal-api/medias/byCommentId/"+mediaName, function name(data) {
+    $.getJSON("/internal-api/medias/byCommentId/"+cid, function name(data) {
       data = data.data;
-      $.each(that.medias, function(key,value){
-        $.each(value.comments, function(key2,comment){
-        if(comment.id==mediaName){
-          existsAlready=true;
-          theKey = key;
-        }
-        });
-      });
-      if(existsAlready==false){
-        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, value1 ) {
-          m.comments[key1] = that.fillUser(value1);
-          m.comments[key1].user = that.getUserById(value1.user_id)
-        });
-        that.medias.push(m)
-        store.commit("updateOrAddMedia",m)
-        that.medias = theMediaSorter.sort(that.medias)
-        theVue.fullmedias = that.medias
-        theVue.medias = that.getFilteredMedias();
-      } else {
-        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, value1 ) {
-          m.comments[key1] = that.fillUser(value1);
-          m.comments[key1].user = that.getUserById(value1.user_id)
-        });
-        if(m!=that.medias[theKey]){
-          //console.log(JSON.parse(JSON.stringify(m.comments)))
-          //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          that.medias[theKey].likes = m.likes;
-          that.medias[theKey].dislikes = m.dislikes;
-          that.medias[theKey].tracks = m.tracks;
-          that.medias[theKey].updated_at = m.updated_at;
-          that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          theVue.fullmedias = that.medias
-          store.commit("updateOrAddMedia",m)
-          theVue.medias=that.getFilteredMedias();
-        }
-        //console.warn("If the media already existed, why this method was used?");
-      }
+      var m = that.jsonToMedia(data)
+      that.medias.push(m)
+      store.commit("updateOrAddMedia",m)
+      that.medias = theMediaSorter.sort(that.medias)
+
       if(callback!=undefined){
         callback();
       }
@@ -971,51 +942,12 @@ if(localStorage.getItem('cookiePolicy')!="read"){
 
   receiveMediaById(mediaName:number,callback=undefined):void{
     let that = this;
-    var theKey:any;
     $.getJSON("/internal-api/medias/byId/"+mediaName, function name(data) {
-      $.each(that.medias, function(key,value){
-        if(value.id==mediaName){
-          theKey = key;
-        }
-      });
-
-
       data = data.data;
-
-
-
-      if(that.findMediaById(mediaName,undefined,false)==undefined){
-        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, value1 ) {
-          m.comments[key1] = that.fillUser(value1);
-          m.comments[key1].user = that.getUserById(value1.user_id)
-        });
-        that.medias.push(m)
-        store.commit("updateOrAddMedia",m)
-        that.medias = theMediaSorter.sort(that.medias)
-        theVue.fullmedias = that.medias
-        theVue.medias = that.getFilteredMedias();
-      } else {
-        var m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, value1 ) {
-          m.comments[key1] = that.fillUser(value1);
-          m.comments[key1].user = that.getUserById(value1.user_id)
-        });
-        if(m!=that.medias[theKey]){
-          //console.log(JSON.parse(JSON.stringify(m.comments)))
-          //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          that.medias[theKey].likes = m.likes;
-          that.medias[theKey].description = m.description;
-          that.medias[theKey].dislikes = m.dislikes;
-          that.medias[theKey].tracks = m.tracks;
-          that.medias[theKey].updated_at = m.updated_at;
-          that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          store.commit("updateOrAddMedia",m)
-          theVue.fullmedias = that.medias
-          theVue.medias=that.getFilteredMedias();
-        }
-        //console.warn("If the media already existed, why this method was used?");
-      }
+      var m = that.jsonToMedia(data)
+      that.medias.push(m)
+      store.commit("updateOrAddMedia",m)
+      that.medias = theMediaSorter.sort(that.medias)
       if(callback!=undefined){
         callback();
       }
@@ -1035,41 +967,10 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
     $.getJSON("/internal-api/media/"+mediaName, function name(data) {
       data = data.data;
-      if(that.findMediaByName(mediaName)==undefined){
-        console.log("receiveMediaByName; seems undefined")
-        m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, comment ) {
-          m.comments[key1] = that.fillUser(comment);
-          m.comments[key1].user = that.getUserById(comment.user_id)
-        });
-        store.commit("updateOrAddMedia",m)
-        if(that.medias.indexOf(m)==-1){
-          that.medias.push(m)
-        //  store.commit("addMedia",m)
-        }
-        that.medias = theMediaSorter.sort(that.medias)
-      } else if(theKey!=undefined) {
-        console.log("receiveMediaByName; seems already exist")
-        m = new Media(data.id,data.title, data.description, data.source, data.poster_source,data.duration, data.simpleType,data.techType, data.type, that.getUserById(data.user_id),data.user_id,data.created_at,data.updated_at,data.created_at_readable,data.comments,that.getTagsByIdArray(data.tagsIds),data.myLike,data.likes,data.dislikes,data.tracks,data.category_id);
-        $.each( m.comments, function( key1, comment ) {
-          m.comments[key1] = that.fillUser(comment);
-          m.comments[key1].user = that.getUserById(comment.user_id)
-        });
-        if(m!=that.medias[theKey]){
-          //console.log(JSON.parse(JSON.stringify(m.comments)))
-          m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-          that.medias[theKey].likes = m.likes;
-          that.medias[theKey].dislikes = m.dislikes;
-          that.medias[theKey].tracks = m.tracks;
-          that.medias[theKey].updated_at = m.updated_at;
-        }
-        that.medias[theKey].comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-        store.commit("updateOrAddMedia",m)
-        //console.warn("If the media already existed, why this method was used?");
-      }
-
-      theVue.fullmedias = that.medias
-      theVue.medias=that.getFilteredMedias();
+      var m = that.jsonToMedia(data)
+      that.medias.push(m)
+      store.commit("updateOrAddMedia",m)
+      that.medias = theMediaSorter.sort(that.medias)
       if(callback!=undefined){
         callback(data.id);
       }
@@ -1138,8 +1039,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       i++
 
     });
-    theVue.fullmedias = that.medias
-    theVue.medias = that.getFilteredMedias();
     theVue.$router.push('/');
   }
 
@@ -1164,8 +1063,8 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       //console.log(that.fillUser(value1))
       m.comments[key1].user = that.getUserById(value1.user_id)
     });
-    //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
-    //m.comments.sort(MediaSorter.byCreatedAtComments);
+    m.comments = m.comments.sort(MediaSorter.byCreatedAt)
+    m.comments.sort(MediaSorter.byCreatedAtComments);
     return m
   }
   
@@ -1182,8 +1081,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
 
         $.each( data.data, function( key, value ) {
           //console.log(that.findMediaById(value.id))
-         if(that.findMediaById(value.id,undefined,false)==undefined){
-            var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes,value.tracks,value.category_id)
+            /*var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes,value.tracks,value.category_id)
             $.each( m.comments, function( key1, value1 ) {
               m.comments[key1] = that.fillUser(value1);
               //console.log(that.fillUser(value1))
@@ -1192,31 +1090,15 @@ if(localStorage.getItem('cookiePolicy')!="read"){
             //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
             loadCount++;
             m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
+            */
+            var m = that.jsonToMedia(value)
             that.medias.push(m);
-            store.commit("addMedia",m)
+            store.commit("updateOrAddMedia",m)
             //if(that.getCategoryKey(m.category_id)!=undefined){
               //that.categories[that.getCategoryKey(m.category_id)].medias.push(m)
             //}
             that.fillMediasToCat()
 
-
-          } else {
-            replaceCount++;
-          /*  var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes)
-            $.each( m.comments, function( key1, value1 ) {
-              m.comments[key1] = that.fillUser(value1);
-              //console.log(that.fillUser(value1))
-              m.comments[key1].user = that.getUserById(value1.user_id)
-
-            });
-            m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-            if(m!=value){
-              replaceCount++;
-              console.log("Media replaced "+value.title+" with "+m.title)
-              m.comments = JSON.parse(JSON.stringify(m.comments)).sort(MediaSorter.byCreatedAtComments);
-              that.medias[key] = m;
-            }*/
-          }
 
         });
 
@@ -1239,13 +1121,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           theVue.treecatptions = that.treecatptions;
         }
         that.medias = theMediaSorter.sort(that.medias)
-        theVue.fullmedias = that.medias
-        theVue.medias = that.getFilteredMedias();
         theVue.categories = that.categories;
         if(theVue.$route.params.profileId != undefined){
           theVue.user = that.getUserById(theVue.$route.params.profileId)
-          theVue.fullmedias = that.medias
-          theVue.medias = that.getFilteredMedias(that.getMediasByUser(theVue.$route.params.profileId))
         }
 
         /*if(theVue.$route.params.currentTitle!=undefined){

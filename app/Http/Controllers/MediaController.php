@@ -19,6 +19,7 @@ class MediaController extends Controller
 
 
     public function addTrack(Request $request){
+      if(empty(Auth::id())){
       $media_id = $request->input("media_id");
       $lang = $request->input("lang");
       $file = $request->file('track');
@@ -28,11 +29,14 @@ class MediaController extends Controller
       $media = Media::find($media_id);
       return new MediaResource($media);
     }
+    }
 
     public function deleteTrack(Request $request,$trackid){
+      if(empty(Auth::id())){
       $media = Media::find(Track::find($trackid)->media_id);
       Track::find($trackid)->delete();
       return new MediaResource($media);
+    }
     }
     /**
      * Show the form for creating a new resource.
@@ -41,7 +45,7 @@ class MediaController extends Controller
      */
     public function create(Request $request)
     {
-        //
+      if(empty(Auth::id())){
         $getID3 = new \getID3;
         $title = $request->input('title');
         $source = $request->input('source');
@@ -76,6 +80,7 @@ class MediaController extends Controller
         $media->save();
         $media->retag($tagArray);
         return new MediaResource($media);
+      }
     }
 
     private function formatedDuration($duration){
@@ -111,6 +116,7 @@ class MediaController extends Controller
 
 
     public function like(Request $request){
+      if(empty(Auth::id())){
       $notifyId = 0;
       if(!empty($request->input('media_id'))){
         $like = Like::firstOrCreate(['user_id' => Auth::id(),'media_id' => $request->input('media_id')]);
@@ -122,8 +128,10 @@ class MediaController extends Controller
         $like->count = $request->input('count');
         $like->save();
         User::find($notifyId)->notify(new LikeReceived($like));
-
-      return "OK";
+        return response()->json(["data"=>["msg"=>"OK"]],200);
+      } else {
+        return response()->json(["data"=>["msg"=>"Permission denied"]],403);
+      }
     }
 
 
@@ -137,7 +145,8 @@ class MediaController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        $media = Media::where('id', '=' ,$id)->firstOrFail();
+      $media = Media::where('id', '=' ,$id)->firstOrFail();
+      if((Auth::id()==$media->user_id)||(Auth::user()->can('admin'))){
         $media->title = $request->input('title');
         $category_id = $request->input('category_id');
         if(empty($category_id)){
@@ -167,26 +176,9 @@ class MediaController extends Controller
         $media->poster_source = $this->processPoster($media->id,$request->input('poster'));
         $media->save();
         return new MediaResource($media);
+      }
     }
 
-/*
-    public function tagsFilter(Request $request, $tags)
-    {
-        //
-        $tagArrayExtract = explode(' ', $tags);
-        $tagArray = array();
-        foreach($tagArrayExtract as $tag){
-          if(starts_with($tag, '#')){
-            array_push($tagArray, substr($tag,1));
-          } else {
-            array_push($tagArray, $tag);
-          }
-        }
-        $medias = Media::withAnyTag($tagArray)->get();
-        return view('tags.filter',compact('medias'));
-    }
-
-    */
 
     /**
      * Remove the specified resource from storage.
@@ -197,7 +189,9 @@ class MediaController extends Controller
     public function destroy($id)
     {
         //
+        
         $media = Media::where('id', '=' ,$id)->firstOrFail();
+        if((Auth::id()==$media->user_id)||(Auth::user()->can('admin'))){
         $extension = pathinfo($media->source);
         if(!empty($extension['extension'])){
           $extension = $extension['extension'];
@@ -217,6 +211,7 @@ class MediaController extends Controller
         }
         Storage::delete($media->poster_source);
         $media->delete();
+      }
         return response()->json(["data"=>["msg"=>"Media deleted"]],200);
     }
 }

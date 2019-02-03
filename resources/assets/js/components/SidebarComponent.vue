@@ -76,7 +76,7 @@
          <vs-navbar-item index="6.2">
            <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
          </vs-navbar-item>
-         <p>{{ $t('Medias') }} {{ $t('loaded') }}: {{ medias.length }}</p>
+         <p>{{ $t('Medias') }} {{ $t('loaded') }}: {{ medias.length }} / {{ tm }}</p>
          <p>{{ $t('Users') }} {{ $t('loaded') }}: {{ users.length }}</p>
          <p>{{ $t('Tags') }} {{ $t('loaded') }}: {{ tags.length }}</p>
 
@@ -153,6 +153,9 @@ export default {
   },
   props:['notifications','currentuser','users','tags','csrf','totalmedias'],
   computed:{
+    tm: function(){ 
+      return store.state.totalMedias
+     } 
   },
   watch:{
     lang:function(val){
@@ -181,7 +184,8 @@ export default {
     lang:'en',
     dataTypes: ["audio","video"],
     n:0,
-    medias:store.state.medias
+    medias:store.state.medias,
+    
 
   })
 }

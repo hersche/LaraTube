@@ -23,9 +23,14 @@ class CommentController extends Controller
         //
         $comment = Comment::where('id', '=' ,$id)->firstOrFail();
         $mid = $comment->media_id;
-        if((Auth::id()==$comment->users_id)||(Auth::user()->can('admin'))){
+        if((Auth::id()==$comment->user_id)||(Auth::user()->can('admin'))){
+          foreach($comment->childs() as $c){
+            $c->delete();
+          }
           $comment->delete();
+          
           return response()->json(["data"=>["media_id" => $mid,"msg"=>"Commented deleted"]],200);
         }
+        return response()->json(["data"=>["media_id" => $mid,"msg"=>"Commented delete-fail"]],403);
     }
 }
