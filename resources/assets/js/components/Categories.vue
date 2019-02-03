@@ -1,8 +1,5 @@
 <template>
   <div>
-
-
-
     <p v-if="catlevel==0" class="float-left col-md-3 col-sm-6 ">
       <router-link v-if="currentuser.admin" to="/newcat/" class="btn btn-block btn-warning btn-sm">
         <vs-icon icon="create"></vs-icon>{{ $t("Create") }} {{ $t("category") }}
@@ -43,7 +40,7 @@
   import VueMarkdown from 'vue-markdown'
   import { User, Media, Tag, Category } from '../models';
   export default {
-    props: ['baseUrl','canloadmore','loggeduserid','categories','catlevel','currentuser','treecatptions'],
+    props: ['baseUrl','canloadmore','loggeduserid','catlevel','currentuser','treecatptions'],
     name: 'categoriesTag',
     mounted: function () {
       let that = this
@@ -91,6 +88,9 @@
     computed:{
       medias:function(){
         return store.getters.getMediasByTypes()
+      },
+      categories:function(){
+        return store.state.categories
       }
     },
     methods: {

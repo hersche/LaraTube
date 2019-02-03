@@ -6,7 +6,7 @@
 <p v-for="subcat in theCat.children" v-if="theCat.children.length>0"><router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link></p>
 <h5>{{ $t("Medias") }}</h5>
 <div class="row text-center">
-  <div v-for="media in theCat.medias"  class="col-lg-3 col-md-3 col-xs-6">
+  <div v-for="media in currentmedias"  class="col-lg-3 col-md-3 col-xs-6">
     <singleField v-bind:item="media" v-bind:loggeduserid="loggeduserid"></singleField>
   </div>
 </div>
@@ -19,7 +19,7 @@ import SingleGalleryField from './SingleGalleryField'
 import Categories from './Categories'
 import VueMarkdown from 'vue-markdown'
 export default {
-  props: ['baseUrl','canloadmore','loggeduserid','categories','currentuser'],
+  props: ['baseUrl','canloadmore','loggeduserid','currentuser'],
   name: 'cat',
   mounted(){
     this.theCat = this.getCurrentCategory();
@@ -27,12 +27,25 @@ export default {
   computed:{
     medias:function(){
       return store.getters.getMediasByTypes()
+    },
+    categories:function(){
+      return store.state.categories
+    },
+    currentmedias:function(){
+      var tmpMedias = []
+      let that = this;
+      this.medias.forEach(function(val,key){
+        if(val.category_id==that.theCat.id){
+          tmpMedias.push(val)
+        }
+      });
+      return tmpMedias
     }
   },
   data(){
     return {
       theCat:undefined,
-      catlevel:0
+      catlevel:0,
     }
   },
   methods: {

@@ -29,7 +29,7 @@
   import { Media }  from '../models';
   import MarkdownCreator from './MarkdownCreator'
   export default {
-    props: ['baseUrl','categories','csrf','treecatptions'],
+    props: ['baseUrl','csrf','treecatptions'],
     components: {
       MarkdownCreator
     },
@@ -54,6 +54,9 @@
     },
     computed: {
       // a computed getter
+      categories:function(){
+        return store.state.categories
+      }
     },
     watch:{
       categories: function(val){
