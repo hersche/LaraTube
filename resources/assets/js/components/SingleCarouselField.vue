@@ -8,7 +8,7 @@
                     tag="article"
                     style=""
                     class="mb-2">
-              <p class="card-text">
+              <p class="card-text" style="max-height: 100px; overflow-x: auto;">
                 <VueMarkdown :source="shorteneddescription(item)"></VueMarkdown>
               </p>
               <p>{{ item.simpleType }}</p>

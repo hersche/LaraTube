@@ -262,6 +262,15 @@
       eventBus.$on('playerGetDuration', title => {
         eventBus.$emit('playerSetDuration',that.player.duration);
       });
+      eventBus.$on('playerGetPosition', type => {
+        if(type=="intro"){
+          eventBus.$emit('playerSetIntro',that.player.currentTime);
+        } else if(type=="outro") {
+          eventBus.$emit('playerSetOutro',that.player.currentTime);
+        }else {
+          eventBus.$emit('playerSetPosition',that.player.currentTime);
+        }
+      })
       eventBus.$on('audioVisualType', visArgs => {
         that.audiovisualtype = visArgs[0];
         this.audioVisualChangeSeconds = visArgs[1]

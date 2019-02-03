@@ -27,6 +27,8 @@
          <input placeholder="https://server/file.mp4.mp3" class="form-control" id="source" name="source" type="text">
          <span class="btn btn-primary" @click="testMedia()">Test link</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     </div>
     <div v-if="mediaType=='torrentAudio'|mediaType=='torrentVideo'" class="form-group">
@@ -35,6 +37,8 @@
          <input placeholder="magnet://" class="form-control" id="source" name="source" type="text">
          <span class="btn btn-primary" @click="testMedia()">Test link and extend infos</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     </div>
     <div v-if="mediaType=='youtube'|mediaType=='vimeo'" class="form-group">
@@ -43,6 +47,8 @@
          <input placeholder="Like bTqVqk7FSmY or 76979871" class="form-control" id="source" name="source" type="text">
          <span class="btn btn-primary" @click="testMedia()">Test link and extend infos</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
+         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
          <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     </div>
 
@@ -125,6 +131,12 @@
         console.log("receive duration: "+this.secondsToHms(duration))
         $("#duration").val(this.secondsToHms(duration))
       });
+      eventBus.$on('playerSetIntro', duration => {
+        $("#intro").val(duration)
+      });
+      eventBus.$on('playerSetOutro', duration => {
+        $("#outro").val(duration)
+      });
     },
 
     methods: {
@@ -154,6 +166,9 @@
       },
       durationTestMedia(){
         eventBus.$emit('playerGetDuration','');
+      },
+      positionTestMedia(type){
+        eventBus.$emit('playerGetPosition',type);
       },
       posterChange(){
         var reader = new FileReader();

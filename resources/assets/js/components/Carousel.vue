@@ -17,7 +17,7 @@
                 <h5>({{ item.created_at_readable }})</h5>
               </div>
               <div>
-                <div><VueMarkdown>{{ item.description }}</VueMarkdown></div>
+                <div style="max-height: 100px; overflow-x: auto;"><VueMarkdown>{{ item.description }}</VueMarkdown></div>
                 <div>
                   <span v-for="tag in item.tags" >
                     <router-link class="" :to="'/tags/'+tag.name" >
