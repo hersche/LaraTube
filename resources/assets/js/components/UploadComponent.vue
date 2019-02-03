@@ -51,7 +51,14 @@
         <label>Duration:</label>
         <input placeholder="00:00:00" class="form-control" id="duration" name="duration" type="text">
     </div>
-
+    <div class="form-group row">
+        <label>{{ $t('Intro') }}</label>
+        <input placeholder="Time in seconds" class="form-control" :value="currentmedia.intro" id="intro" name="intro" type="text">
+    </div>
+    <div class="form-group row">
+        <label>{{ $t('Outro') }}</label>
+        <input placeholder="Time in seconds" class="form-control" :value="currentmedia.outro" id="outro" name="outro" type="text">
+    </div>
     <div class="form-group">
         <label>Media-poster:</label>
         <!-- the result -->

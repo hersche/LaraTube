@@ -388,7 +388,7 @@ class siteManager {
             lang = localStorage.getItem("language");
         }
         i18n = new VueI18n({
-            locale: lang,
+            locale: 'en',
             fallbackLocale: 'en',
             messages: translation,
             dateTimeFormats: dateTranslation
@@ -412,7 +412,6 @@ class siteManager {
                 loggeduserid: this.loggedUserId,
                 tags: this.tags,
                 canloadmore: true,
-                //  medias:this.getFilteredMedias(),
                 user: that.currentUser,
                 categories: that.categories,
                 baseUrl: baseUrl
@@ -982,7 +981,7 @@ class siteManager {
     }
     jsonToMedia(value) {
         let that = this;
-        var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, this.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, this.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes, value.tracks, value.category_id);
+        var m = new Media(value.id, value.title, value.description, value.source, value.poster_source, value.duration, value.simpleType, value.techType, value.type, this.getUserById(value.user_id), value.user_id, value.created_at, value.updated_at, value.created_at_readable, value.comments, this.getTagsByIdArray(value.tagsIds), value.myLike, value.likes, value.dislikes, value.tracks, value.category_id, value.intro, value.outro);
         $.each(m.comments, function (key1, value1) {
             m.comments[key1] = that.fillUser(value1);
             //console.log(that.fillUser(value1))
@@ -1002,17 +1001,6 @@ class siteManager {
         if (this.totalMedias > this.medias.length) {
             $.getJSON(url, function name(data) {
                 $.each(data.data, function (key, value) {
-                    //console.log(that.findMediaById(value.id))
-                    /*var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, that.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,that.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes,value.tracks,value.category_id)
-                    $.each( m.comments, function( key1, value1 ) {
-                      m.comments[key1] = that.fillUser(value1);
-                      //console.log(that.fillUser(value1))
-                      m.comments[key1].user = that.getUserById(value1.user_id)
-                    });
-                    //m.comments = m.comments.sort(MediaSorter.byCreatedAt)
-                    loadCount++;
-                    m.comments = m.comments.sort(MediaSorter.byCreatedAtComments);
-                    */
                     var m = that.jsonToMedia(value);
                     that.medias.push(m);
                     store.commit("updateOrAddMedia", m);

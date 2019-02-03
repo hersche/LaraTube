@@ -17,7 +17,7 @@
   </vs-tab>
   <vs-tab vs-label="Preview">
     <div>
-      <VueMarkdown v-if="tmptexts[0]!=''"> {{ tmptexts[0] }}</VueMarkdown>
+      <VueMarkdown v-if="tmptexts[0]!=''" :source="tmptexts[0]"></VueMarkdown>
       <h1 v-if="tmptexts[0]==''||tmptexts[0]==null">No text for preview</h1>
     </div>
   </vs-tab>
@@ -52,7 +52,7 @@
               </vs-tab>
               <vs-tab vs-label="Preview">
                 <div>
-                  <VueMarkdown v-if="tmptexts[comment.title]!=''"> {{ tmptexts[comment.title] }}</VueMarkdown>
+                  <VueMarkdown v-if="tmptexts[comment.title]!=''" :source="tmptexts[comment.title]"></VueMarkdown>
                   <h1 v-if="tmptexts[comment.title]==''||tmptexts[comment.title]==null">No text for preview</h1>
                 </div>
               </vs-tab>

@@ -9,7 +9,7 @@
                     style=""
                     class="mb-2">
               <p class="card-text">
-                <VueMarkdown>{{ shorteneddescription(item) }}</VueMarkdown>
+                <VueMarkdown :source="shorteneddescription(item)"></VueMarkdown>
               </p>
               <p>{{ item.simpleType }}</p>
             </b-card>

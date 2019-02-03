@@ -2,7 +2,7 @@
 
   <div id="parentx" class=" fixed-top bg-light">
     <vs-navbar class="nabarx" style="">
-      <vs-button @click="active=!active" type="flat" icon="menu"></vs-button>
+      <vs-button @click="active=true" type="flat" icon="menu"></vs-button>
       <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
       <vs-spacer></vs-spacer>
       <vs-select
@@ -16,13 +16,14 @@
       </vs-select>
       <input icon="search" :placeholder="$t('Search')+'...'" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
-    <vs-sidebar parent="body" default-index="0"  color="primary" class="sidebarx" spacer v-model="active">
+    <vs-sidebar parent="body" default-index="1" :reduce="false" :reduce-not-hover-expand="false"  color="primary" class="sidebarx" spacer v-model="active">
       <div class="row col-12">
       <label class="custom-control-label col-7" for="langSelect">Language</label>
-      <select id="langSelect" class="col-5 custom-select custom-select-sm" v-model="lang" >
+      <select id="langSelect" class="col-3 custom-select custom-select-sm" v-model="lang" >
         <option value="en">EN</option>
         <option value="de">DE</option>
       </select>
+      <vs-button @click="active=false" class="col-2" size="small" radius color="danger" type="gradient" icon="close"></vs-button>
     </div>
       <div v-if="currentuser.id!=0" class="header-sidebar" slot="header" :style="'background-image:url('+currentuser.background+');'">
         <router-link class="" to="/notifications">
@@ -44,41 +45,41 @@
         <option value="audio" text="Audio" >Audio</option>
         <option value="video" text="Video" >Video</option>
       </select> -->
-      <vs-navbar-item index="1">
-        <router-link class="" to="/"><vs-icon icon="home"></vs-icon>Home</router-link>
-      </vs-navbar-item>
-      <vs-navbar-item index="9">
-        <router-link class="" to="/categories"><vs-icon icon="view_list"></vs-icon>{{ $t('Categories') }}</router-link>
-      </vs-navbar-item>
-      <vs-navbar-item index="3">
-        <router-link class="" to="/tags"><vs-icon icon="tag"></vs-icon>{{ $t('Tags') }}</router-link>
-      </vs-navbar-item>
-      <vs-navbar-item index="2">
-        <router-link class="" to="/charts"><vs-icon icon="multiline_chart"></vs-icon>Charts</router-link>
-      </vs-navbar-item>
+      <vs-sidebar-item index="1" icon="home" to="/">
+        Home
+      </vs-sidebar-item>
+      <vs-sidebar-item index="9" to="/categories" icon="view_list">
+        {{ $t('Categories') }}
+      </vs-sidebar-item>
+      <vs-sidebar-item index="3" icon="tag" to="/tags">
+        {{ $t('Tags') }}
+      </vs-sidebar-item>
+      <vs-sidebar-item index="2" icon="multiline_chart" to="/charts" >
+        Charts
+      </vs-sidebar-item>
 
-      <vs-navbar-item index="4">
-        <router-link class="" to="/about"><vs-icon icon="multiline_chart"></vs-icon>{{ $t('About') }}</router-link>
-      </vs-navbar-item>
-      <vs-navbar-item index="5">
-        <a @click="emitGetNewMedias()" index="5.1" style="cursor: pointer;" class="">Check 4 new medias</a>
-      </vs-navbar-item>
+      <vs-sidebar-item index="4" to="/about" icon="multiline_chart">
+        {{ $t('About') }}
+      </vs-sidebar-item>
+      <vs-sidebar-item index="5" @click="emitGetNewMedias()">
+        Check 4 new medias
+      </vs-sidebar-item>
 
       <vs-sidebar-group v-if="currentuser.admin" title="Admin">
-        <vs-navbar-item index="7.1">
-          <router-link class="" to="/admin/users">{{ $t('Users') }}</router-link>
-        </vs-navbar-item>
+        <vs-sidebar-item index="7.1" to="/admin/users">
+          {{ $t('Users') }}
+        </vs-sidebar-item>
      </vs-sidebar-group>
        <vs-sidebar-group title="Dev options">
-         <vs-navbar-item index="6.1">
-           <a @click="emitLoadAllMedias()"  style="cursor: pointer;" class="">Load all {{ $t('medias') }}</a>
-          </vs-navbar-item>
-         <vs-navbar-item index="6.2">
-           <a @click="emitRefreshMedias()" style="cursor: pointer;" class="">Reset data</a>
-         </vs-navbar-item>
-         <p>{{ $t('Medias') }} {{ $t('loaded') }}: {{ medias.length }} / {{ tm }}</p>
-         <p>{{ $t('Users') }} {{ $t('loaded') }}: {{ users.length }}</p>
-         <p>{{ $t('Tags') }} {{ $t('loaded') }}: {{ tags.length }}</p>
+         <vs-sidebar-item index="6.1" @click="emitLoadAllMedias()">
+           Load all {{ $t('medias') }}
+          </vs-sidebar-item>
+         <vs-sidebar-item index="6.2" @click="emitRefreshMedias()">
+           Reset data
+         </vs-sidebar-item>
+         <vs-sidebar-item>{{ $t('Medias') }} {{ $t('loaded') }}: {{ medias.length }} / {{ tm }}</vs-sidebar-item>
+         <vs-sidebar-item>{{ $t('Users') }} {{ $t('loaded') }}: {{ users.length }}</vs-sidebar-item>
+         <vs-sidebar-item>{{ $t('Tags') }} {{ $t('loaded') }}: {{ tags.length }}</vs-sidebar-item>
 
 
       </vs-sidebar-group>

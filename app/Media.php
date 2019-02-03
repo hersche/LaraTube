@@ -15,7 +15,7 @@ class Media extends Model
     use Searchable;
     //
     protected $fillable = [
-        'id', 'title', 'source','duration','poster_source', 'type', 'description', 'user_id','category_id','comments', 'category_id','next_id'
+        'id', 'title', 'source','duration','poster_source','intro','outro', 'type', 'description', 'user_id','category_id','comments', 'category_id','next_id'
     ];
     protected $hidden = [
 

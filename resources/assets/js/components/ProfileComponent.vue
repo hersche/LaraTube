@@ -6,7 +6,7 @@
       <img class='pl-2 pt-1 pb-1' :src='"/"+currentuser.avatar' />
       <h3 class='ml-2' style=''>{{ currentuser.name }}</h3>
     </div>
-    <VueMarkdown> {{ currentuser.bio }}</VueMarkdown>
+    <VueMarkdown :source="currentuser.bio"></VueMarkdown>
   </div>
   <h3>{{ $t("User") }}'s {{ $t("medias") }}</h3>
   <p>

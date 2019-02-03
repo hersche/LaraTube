@@ -1,7 +1,7 @@
 <template>
 <div v-if="theCat!=undefined" >
 <h2>{{ theCat.title }}</h2>
-<p><VueMarkdown>{{ theCat.description }}</VueMarkdown></p>
+<p><VueMarkdown :source="theCat.description"></VueMarkdown></p>
 <p v-if="theCat.children.length>0">Subcategories</p>
 <p v-for="subcat in theCat.children" v-if="theCat.children.length>0"><router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link></p>
 <h5>{{ $t("Medias") }}</h5>

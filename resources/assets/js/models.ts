@@ -9,6 +9,7 @@ export class User{
   publicState:boolean;
   admin:boolean;
   email:string;
+
   created_at:any;
   updated_at:any;
   constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean,admin:boolean=false,email:string='',created_at='',updated_at=''){
@@ -22,6 +23,7 @@ export class User{
     this.publicState = publicState;
     this.admin = admin;
     this.email = email;
+
     this.created_at = created_at;
     this.updated_at = updated_at;
 
@@ -56,7 +58,9 @@ export class Media {
   tracks:any;
   category_id:number;
   category:Category;
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number){
+  intro:number;
+  outro:number;
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number,intro=0,outro=0,){
     this.id=id;
     this.title = title;
     this.urlTitle = encodeURIComponent(this.title)
@@ -80,6 +84,8 @@ export class Media {
     this.tagString = this.tagStringing();
     this.tracks = tracks;
     this.category_id = category_id;
+    this.intro = intro;
+    this.outro = outro;
   //  this.category = category;
   }
   tagStringing(){
