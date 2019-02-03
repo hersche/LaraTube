@@ -483,7 +483,7 @@ class siteManager {
     },
     computed:{
         medias:function(){
-          return store.state.medias;
+          return store.getters.getMediasByTypes()
         }
     },
     router:new Router({ routes,

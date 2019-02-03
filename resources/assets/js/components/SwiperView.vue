@@ -45,11 +45,13 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
     computed: {
       swiper() {
         return this.$refs.mySwiper.swiper
+      },
+      medias() {
+        return store.getters.getMediasByTypes()
       }
     },
     data() {
       return {
-        medias:store.state.medias,
         swiperOption: {
           initial:0,
           slidesPerView: 2,

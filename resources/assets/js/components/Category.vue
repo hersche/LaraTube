@@ -14,15 +14,20 @@
 </template>
 
 <script>
-import { eventBus } from '../eventBus.js';
+import { eventBus,store } from '../eventBus.js';
 import SingleGalleryField from './SingleGalleryField'
 import Categories from './Categories'
 import VueMarkdown from 'vue-markdown'
 export default {
-  props: ['medias','baseUrl','canloadmore','loggeduserid','categories','currentuser'],
+  props: ['baseUrl','canloadmore','loggeduserid','categories','currentuser'],
   name: 'cat',
   mounted(){
     this.theCat = this.getCurrentCategory();
+  },
+  computed:{
+    medias:function(){
+      return store.getters.getMediasByTypes()
+    }
   },
   data(){
     return {

@@ -16,11 +16,15 @@
   import SingleGalleryField from './SingleGalleryField'
   export default {
     props: ['baseUrl','canloadmore','loggeduserid'],
+    computed:{
+      medias:function(){
+        return store.getters.getMediasByTypes()
+      }
+    },
     data(){
       return {
         tmpid: 0,
-        tmptitle:'',
-        medias:store.state.medias
+        tmptitle:''
 
       }
     },

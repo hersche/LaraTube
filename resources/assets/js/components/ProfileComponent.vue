@@ -24,7 +24,7 @@
   import SortSelect from './SortSelect'
   import VueMarkdown from 'vue-markdown'
   export default {
-    props: ['medias','baseUrl'],
+    props: ['baseUrl'],
   components : {
       'overview': GalleryComponent,
       'sortSelect': SortSelect,
@@ -47,7 +47,7 @@
     usermedias: function () {
       var filteredMedias = [];
       let that = this;
-      $.each( this.medias, function( key, value ) {
+      $.each( store.getters.getMediasByTypes(), function( key, value ) {
         if(value.user.id==that.currentuser.id){
           filteredMedias.push(value);
         }
