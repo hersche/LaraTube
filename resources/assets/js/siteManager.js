@@ -457,15 +457,20 @@ class siteManager {
                             searchDelay = setTimeout(function () {
                                 that.usedSearchTerms.push(s);
                                 that.receiveMedias("/internal-api/medias/search/" + s + that.getIgnoreParam(), false, function () {
+                                    var so = new Search(s.toString(), that.getFilteredMedias(), store.state.tags, store.state.users);
+                                    console.log("the media-result");
+                                    console.log(so.mediaResult);
+                                    theVue.search = so;
+                                    theVue.users = so.userResult;
                                 });
                             }, 300);
                         }
-                        //console.log(that.getFilteredMedias())
                         var so = new Search(s.toString(), that.getFilteredMedias(), store.state.tags, store.state.users);
                         console.log("the media-result");
                         console.log(so.mediaResult);
                         theVue.search = so;
                         theVue.users = so.userResult;
+                        //console.log(that.getFilteredMedias())
                     }
                 }
             },

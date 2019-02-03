@@ -1,5 +1,5 @@
 <template>
-<div >
+<div v-if="search!=undefined">
   <span class="btn btn-success"  @click='emitRefreshSearch("Users")' ><input id="theLiveSearchUsers" checked="checked" type="checkbox" class="d-none" />{{ $t('Users') }}</span>
   <span class="btn btn-success" @click='emitRefreshSearch("MediaTitle")' ><input id="theLiveSearchMediaTitle" checked="checked" type="checkbox" class="d-none" />{{ $t('Media') }} {{ $t('Title') }}</span>
   <span class="btn btn-primary" @click='emitRefreshSearch("MediaDescription")' ><input id="theLiveSearchMediaDescription" type="checkbox" class="d-none" />{{ $t('Media') }} {{ $t('Description') }}</span>
