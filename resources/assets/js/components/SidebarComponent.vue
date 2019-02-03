@@ -5,21 +5,14 @@
       <vs-button @click="active=true" type="flat" icon="menu"></vs-button>
       <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
       <vs-spacer></vs-spacer>
-      <vs-select
-        placeholder="Types"
-        multiple
-        class="selectExample"
-        v-model="dataTypes"
-        >
-        <vs-select-item value="audio" text="Audio" />
-        <vs-select-item value="video" text="Video" />
-      </vs-select>
+      <treeselect class="col-2 col-sm-4 col-md-2" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="true" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
+
       <input icon="search" :placeholder="$t('Search')+'...'" id="theLiveSearch" class="" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
     <vs-sidebar parent="body" default-index="1" :reduce="false" :reduce-not-hover-expand="false"  color="primary" class="sidebarx" spacer v-model="active">
       <div class="row col-12">
-      <label class="custom-control-label col-7" for="langSelect">Language</label>
-      <select id="langSelect" class="col-3 custom-select custom-select-sm" v-model="lang" >
+      <label class="custom-control-label col-6" for="langSelect">Language</label>
+      <select id="langSelect" class="col-4 custom-select custom-select-sm" v-model="lang" >
         <option value="en">EN</option>
         <option value="de">DE</option>
       </select>
@@ -118,9 +111,6 @@ export default {
 
 },
   methods:{
-    changeIndex(i){
-      console.log("this change index? "+i)
-    },
     searching(){
       eventBus.$emit('refreshSearch',"");
     },
@@ -164,6 +154,7 @@ export default {
       eventBus.$emit('languageChange',val);
     },
     dataTypes:function(val){
+      console.log(val)
       localStorage.setItem("mediaTypes",val.join())
       eventBus.$emit('filterTypes',val);
     },
@@ -186,6 +177,7 @@ export default {
     dataTypes: ["audio","video"],
     n:0,
     medias:store.state.medias,
+    treeTypes: [{id:'audio',label:'Audio'},{id:'video',label:'Video'}]
     
 
   })
@@ -193,6 +185,8 @@ export default {
 </script>
 
 <style lang="stylus">
+.vue-treeselect__multi-value
+  display inline-flex
 .header-sidebar
   display flex
   align-items center
