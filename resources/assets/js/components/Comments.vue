@@ -29,7 +29,7 @@
               <span @click="openConfirm(comment.id)" v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><vs-icon icon="delete"></vs-icon></span>
           </h6>
           <div class="comment-body">
-          <p><VueMarkdown> {{ comment.body }}</VueMarkdown></p>
+          <p><VueMarkdown :source="comment.body"></VueMarkdown></p>
           <p class="row">
 
               <vs-collapse class="col-8 col-md-8 col-sm-12 float-left" v-if="loggeduserid!=0">

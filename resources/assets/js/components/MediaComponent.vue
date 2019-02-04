@@ -64,7 +64,7 @@
               <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
             </span>
           </div>
-          <div class="card-body"><VueMarkdown>{{ currentmedia.description }}</VueMarkdown></div>
+          <div class="card-body"><VueMarkdown :source="currentmedia.description"></VueMarkdown></div>
           <div class="card-footer">
             <span v-for="tag in currentmedia.tags">
               <router-link class=""  :to="'/tags/'+tag.name" >

@@ -4,21 +4,26 @@
     <vs-navbar class="nabarx" style="">
       <vs-button @click="active=true" type="flat" icon="menu"></vs-button>
       <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
-      <vs-spacer></vs-spacer>
-      <treeselect class="col-2 col-md-2 col-sm-4 mr-3" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
-
+      
+      
+<vs-spacer></vs-spacer>
       <input icon="search" :placeholder="$t('Search')+'...'" id="theLiveSearch" class="col-3 col-md-3" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
     <vs-sidebar parent="body" default-index="1" :reduce="false" :reduce-not-hover-expand="false"  color="primary" class="sidebarx" spacer v-model="active">
-      <div class="row col-12">
+      <div slot="header" class="header-sidebar">
+        <div class="row">
+      <treeselect class="col-10" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
+      <vs-button @click="active=false" class="" size="small" radius color="danger" type="gradient" icon="close"></vs-button>
+    </div>
+      <div class="col-12 pl-0 pr-0">
       <label class="custom-control-label col-6" for="langSelect">Language</label>
-      <select id="langSelect" class="col-4 custom-select custom-select-sm" v-model="lang" >
+      <select id="langSelect" class="col-6 float-right custom-select custom-select-sm" v-model="lang" >
         <option value="en">EN</option>
         <option value="de">DE</option>
       </select>
-      <vs-button @click="active=false" class="col-2" size="small" radius color="danger" type="gradient" icon="close"></vs-button>
+
     </div>
-      <div v-if="currentuser.id!=0" class="header-sidebar" slot="header" :style="'background-image:url('+currentuser.background+');'">
+      <div v-if="currentuser.id!=0" class="col-12 text-center"  :style="'background-image:url('+currentuser.background+');'">
         <router-link class="" to="/notifications">
           <vs-avatar :badge="n" to="/notifications" size="70px" :src="currentuser.avatar"/>
         </router-link>
@@ -28,6 +33,7 @@
           <router-link class="btn btn-sm btn-success" to="/myvideos">{{ $t("My") }} {{ $t("medias") }}</router-link>
         </span>
       </div>
+    </div>
       <!-- The existing vs-select doesn't work here. This does, but isn't elegant (yet) -->
       <!-- <select
         placeholder="Types"
@@ -188,8 +194,11 @@ export default {
 .vue-treeselect__multi-value
   display inline-flex
   overflow hidden
-.vue-treeselect__menu
+vs-navbar >>> .vue-treeselect__menu
   width 100px
+  padding-left 15px
+  padding-bottom 15px
+  z-index 999999
 .header-sidebar
   display flex
   align-items center

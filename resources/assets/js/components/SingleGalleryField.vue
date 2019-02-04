@@ -17,7 +17,7 @@
           </div>
           </router-link>
           <b-tooltip :target="item.id+'scard'" placement="top">
-            <h5>{{ item.title}}</h5> <p><VueMarkdown>{{ item.description }}</VueMarkdown></p>
+            <h5>{{ item.title}}</h5> <p><VueMarkdown :source="item.description"></VueMarkdown></p>
           </b-tooltip>
         </div>
 </template>
