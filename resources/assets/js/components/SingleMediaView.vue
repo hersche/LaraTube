@@ -7,18 +7,19 @@
             <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
           <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
-          <vue-plyr v-if="(currentmedia.type!='youtube'&&currentmedia.type!='vimeo'&&currentmedia.simpleType!='audio')" :options="playerConfig" ref="player">
-            <video v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
+          <vue-plyr v-if="currentmedia.type=='torrentVideo'" :options="playerConfig" ref="player">
+            <video class="col-12" id="torrentPlayer"  controls :poster="currentmedia.poster_source">
+              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+            </video>
+          </vue-plyr>
+          <vue-plyr v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" :options="playerConfig" ref="player">
+            <video  controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
               <source :src="currentmedia.source" type="video/mp4"></source>
               <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </video>
-            <div data-plyr-provider="youtube" v-if="currentmedia.type=='youtube'" :data-plyr-embed-id="currentmedia.source"></div>
-            <div data-plyr-provider="vimeo" v-if="currentmedia.type=='vimeo'" :data-plyr-embed-id="currentmedia.source"></div>
-
-            <video class="col-12" id="torrentPlayer" v-if="currentmedia.type=='torrentVideo'" controls :poster="currentmedia.poster_source">
-              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
-            </video>
-            <audio class="col-12" id="torrentPlayer" v-if="currentmedia.type=='torrentAudio'" controls :poster="currentmedia.poster_source">
+          </vue-plyr>
+          <vue-plyr v-if="currentmedia.type=='torrentAudio'" :options="playerConfig" ref="player">
+            <audio class="col-12" id="torrentPlayer2"  controls :poster="currentmedia.poster_source">
               <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </audio>
           </vue-plyr>
