@@ -29,7 +29,7 @@
   import { Media }  from '../models';
   import MarkdownCreator from './MarkdownCreator'
   export default {
-    props: ['baseUrl','csrf','treecatptions'],
+    props: ['baseUrl','treecatptions'],
     components: {
       MarkdownCreator
     },
@@ -53,7 +53,9 @@
       })
     },
     computed: {
-      // a computed getter
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
       categories:function(){
         return store.state.categories
       }

@@ -83,7 +83,7 @@
   import { Media }  from '../models';
   import MarkdownCreator from './MarkdownCreator'
   export default {
-    props: ['medias','baseUrl','csrf','loggeduserid'],
+    props: ['baseUrl','loggeduserid'],
     components: {
       MarkdownCreator
     },
@@ -111,6 +111,9 @@
       })
     },
     computed: {
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
       currentuser: function(){
         var u = store.getters.getUserById(this.loggeduserid)
         if(u!=undefined){

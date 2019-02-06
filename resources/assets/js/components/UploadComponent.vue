@@ -112,15 +112,20 @@
     </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus,store } from '../eventBus.js';
   import { User, Media, Tag } from '../models';
   import SingleMediaView from './SingleMediaView'
   import MarkdownCreator from './MarkdownCreator'
   export default {
-    props: ['medias','baseUrl','csrf','treecatptions'],
+    props: ['medias','baseUrl','treecatptions'],
     components : {
         'mediaView' : SingleMediaView,
         MarkdownCreator
+    },
+    computed: {
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
     },
     mounted: function () {
       let that = this;

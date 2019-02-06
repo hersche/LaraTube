@@ -1,19 +1,37 @@
 <template>
-  <div class="card mb-1">
-          <router-link  :to="'/media/'+item.urlTitle" class="d-block h-100">
-            <b-card :title="item.title"
-                    :img-src="item.poster_source"
-                    :img-alt="item.title"
-                    img-top
-                    tag="article"
-                    style=""
-                    class="mb-2">
-              <p class="card-text" style="max-height: 100px; overflow-x: auto;">
-                <VueMarkdown :source="shorteneddescription(item)"></VueMarkdown>
-              </p>
-              <p>{{ item.simpleType }}</p>
-            </b-card>
-          </router-link>
+  <div :style="'background-image:url(\''+item.poster_source+'\');'">
+
+                <vs-row vs-justify="center">
+                  <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="10">
+                    <vs-card style="opacity: 0.75; "  >
+                      <div style="height: 35vh; overflow-x: auto;">
+                    <div slot="header">
+                        <h3>{{ item.title }}</h3>
+                        <h5>({{ item.created_at_readable }})</h5>
+                      </div>
+                      <div>
+                        <div style=""><VueMarkdown :source="item.description"></VueMarkdown></div>
+                        <div>
+                          <span v-for="tag in item.tags" >
+                            <router-link class="" :to="'/tags/'+tag.name" >
+                              <vs-chip color="primary">
+                                <vs-avatar icon="tag" />
+                                {{ tag.name }}
+                              </vs-chip>
+                            </router-link>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                      <div slot="footer">
+                        <vs-row vs-justify="flex-end" style="flex-flow: row!important;">
+                          <vs-button class="mr-1" v-if="loggeduserid==item.user.id" icon="settings" :title="$t('Edit')+' '+$t('media')" :to="'/mediaedit/'+item.title"></vs-button>
+                          <vs-button icon="play_circle_filled" :title="$t('Play')+' '+$t('media')" :to="'/media/'+item.urlTitle"></vs-button>
+                        </vs-row>
+                      </div>
+                    </vs-card>
+                  </vs-col>
+                </vs-row>
         </div>
 </template>
 <script>

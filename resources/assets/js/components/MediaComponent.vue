@@ -16,10 +16,26 @@
               </select>
               <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
             </span>
-            <a :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
-            <b-btn v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'" >Torrent-info</b-btn>
+            <vs-dropdown vs-trigger-click class="btn-sm"  >
+  <a href.prevent class="btn btn-sm btn-primary">
+    More
+
+  </a>
+
+  <vs-dropdown-menu class="">
+    <vs-dropdown-item v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'">
+      Torrent-info
+    </vs-dropdown-item>
+    <vs-dropdown-item>
+      {{ currentmedia.type }}
+    </vs-dropdown-item>
+  </vs-dropdown-menu>
+</vs-dropdown>
+            <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
+            <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro)" v-if="currentmedia.intro!=0">
+              Skip intro ({{ currentmedia.intro }}s)
+            </button>          
             <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
-            <span class="btn btn-sm btn-info mr-1">{{ currentmedia.type }}</span>
             <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
             <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
             <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
@@ -112,6 +128,7 @@
   import SingleMediaView from './SingleMediaView'
   import SortSelect from './SortSelect'
   import VueMarkdown from 'vue-markdown'
+  
   import { User, Media, Tag } from '../models';
   import butterchurnPresets from 'butterchurn-presets';
   var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
@@ -127,6 +144,9 @@
         VueMarkdown
     },
     methods: {
+      skipIntro(s){
+        eventBus.$emit('playerJumpTo',s);
+      },
       getCategoryById(category_id,data=undefined){
         var res;
         let that = this;
@@ -229,6 +249,7 @@
     console.log("medias change")
   //  this.currentmedia = this.getCurrentMedia();
     if(this.currentmedia!=undefined){
+
       this.mylike = Number(this.currentmedia.myLike);
       this.likes = this.currentmedia.likes;
       this.dislikes = this.currentmedia.dislikes;
@@ -250,7 +271,7 @@
     },
     updated: function () {
       this.$nextTick(function () {
-
+        
       });
     },
 
@@ -272,6 +293,7 @@
         this.likes = this.currentmedia.likes;
         this.dislikes = this.currentmedia.dislikes;
       }
+      
       eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
       eventBus.$on('torrentChartData', chartData => {
         // [that.peers,that.downloadpercent,that.downloadspeed,that.uploadspeed],{x:datetime,y:percent},{x:datetime,y:ds},{x:datetime,y:us}]
@@ -288,6 +310,7 @@
     return {
       blockGetRequest:false,
       mylike:0,
+      savedPosition:0,
       likes:0,
       dislikes:0,
       inited: false,

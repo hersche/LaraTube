@@ -1,8 +1,8 @@
 
 <template>
-  <div>
+  <div v-if="medias.length>0">
       <!-- swiper -->
-      <swiper refs="mySwiper" :options="swiperOption">
+      <swiper refs="mySwiper" id="theSwiper" :options="swiperOption">
         <swiper-slide v-for="(item,index) in medias" :key="index">
           <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
         </swiper-slide>
@@ -29,7 +29,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
     watch:{
       medias:function(val){
       //  console.log("do swiper update")
-      //  this.swiper.update()
+      this.swiper.update()
       }
     },
     mounted(){
@@ -47,6 +47,8 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
         return this.$refs.mySwiper.swiper
       },
       medias() {
+        //this.swiper.destroy();
+        //this.$refs.mySwiper.swiper = new Swiper('#theSwiper', this.swiperOption)
         return store.getters.getMediasByTypes()
       }
     },

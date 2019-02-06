@@ -40,7 +40,7 @@
   </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus,controls } from '../eventBus.js';
   //import plyr from 'plyr'
   import { User, Media, Tag } from '../models';
   import butterchurn from 'butterchurn';
@@ -257,8 +257,35 @@
     mounted(){
       let that = this;
       this.initTorrent()
-
+      
+      if(this.currentmedia.intro==0){
+        $("#skipIntroBtn").hide()
+      } else {
+        $("#skipIntroBtn").on('click',function(){
+          that.player.currentTime = Number(that.currentmedia.intro)
+        })
+      }
+      
+      if(localStorage.getItem("mediaPosition"+this.currentmedia.id)!=undefined&localStorage.getItem("mediaPosition"+this.currentmedia.id)!=''){
+        $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+localStorage.getItem("mediaPosition"+this.currentmedia.id)+"s")
+      } else {
+        $("#jumpToSavedPositionBtnTooltip").html("No position set yet - set one under More")
+      }  
+      
+      $("#jumpToSavedPositionBtn").on('click',function(){
+        if(localStorage.getItem("mediaPosition"+that.currentmedia.id)!=undefined&localStorage.getItem("mediaPosition"+that.currentmedia.id)!=''){
+          that.player.currentTime = Number(localStorage.getItem("mediaPosition"+that.currentmedia.id))
+        }    
+      })
+      $("#savePositionBtn").on('click',function(){
+        $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+that.player.currentTime+"s")
+        localStorage.setItem("mediaPosition"+that.currentmedia.id,that.player.currentTime)
+        that.$vs.notify({title:'Position saved',text:'at '+that.player.currentTime.toFixed(2)+'s',icon:'save',color:'success',position:'bottom-center'})   
+      })
       eventBus.$emit('setCurrentMedia',this.currentmedia.id);
+      eventBus.$on('playerJumpTo', seconds => {
+        that.player.currentTime = Number(seconds)
+      });
       eventBus.$on('playerGetDuration', title => {
         eventBus.$emit('playerSetDuration',that.player.duration);
       });
@@ -294,7 +321,7 @@
       torrentdownloadurl:'',
       downloadpercent: '',
       uploadspeed: '',
-      playerConfig:{ keyboard: { focused: false, global: true } }
+      playerConfig:{ keyboard: { focused: false, global: true },controls }
     }
   }
   }

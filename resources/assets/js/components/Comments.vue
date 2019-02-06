@@ -96,10 +96,15 @@
 import { eventBus, store } from '../eventBus.js';
 import VueMarkdown from 'vue-markdown'
   export default {
-    props: [ 'commentlist','loggeduserid','currentmedia','level','csrf'],
+    props: [ 'commentlist','loggeduserid','currentmedia','level'],
     name: 'comments',
     components: {
       VueMarkdown
+    },
+    computed: {
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
     },
         methods: {
           openConfirm(id){

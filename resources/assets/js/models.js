@@ -42,8 +42,8 @@ export class Media {
         this.tagString = this.tagStringing();
         this.tracks = tracks;
         this.category_id = category_id;
-        this.intro = intro;
-        this.outro = outro;
+        this.intro = Number(intro);
+        this.outro = Number(outro);
         //  this.category = category;
     }
     tagStringing() {
@@ -73,23 +73,11 @@ export class Category {
         this.description = description;
         this.avatar = avatar;
         this.background = background;
-        this.medias = [];
         this.parent_id = parent_id;
         this.children = [];
         let that = this;
         $.each(children, function (key1, value) {
             that.children.push(new Category(value.id, value.title, value.description, value.avatar_source, value.background_source, value.parent_id, value.children));
-        });
-    }
-    setMedias(medias) {
-        let that = this;
-        that.medias = [];
-        $.each(medias, function (key1, value) {
-            if (value.category_id == that.id) {
-                if (that.medias.includes(value) == false) {
-                    that.medias.push(value);
-                }
-            }
         });
     }
 }
