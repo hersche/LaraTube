@@ -45,11 +45,9 @@ var i18n:VueI18n;
 class siteManager {
   medias:Array<Media>;
   nextMedias:Array<Media>;
-  users:Array<User>;
   notifications:Array<Notification>;
   usedSearchTerms:any;
   usedCatRequests:any;
-  tags:Array<Tag>;
   blockScrollExecution:boolean;
   categories:Array<Category>;
   loggedUserId:number;
@@ -82,10 +80,25 @@ class siteManager {
     this.nextMedias=[];
     this.loggedUserId = Number($("#loggedUserId").attr("content"));
     this.updateCSRF();
+    let that = this;
     this.receiveUsers(function(){
-
+      that.receiveTags(function(){
+        that.receiveCategories(function(){
+          that.receiveMedias();
+          store.commit("setCSRF", document.querySelector('meta[name="csrf-token"]').getAttribute('content'))
+          that.initVue();
+          that.receiveNotifications();
+          if(that.notificationTimer!=undefined){
+            clearInterval(that.notificationTimer);
+          }
+          that.notificationTimer = setInterval(function(){
+            console.log("check for new notifications")
+            that.receiveNotifications();
+          }, 120000);
+        });
+      });
     });
-    this.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    
   /*  if(this.loggedUserId){
     Echo.private('App.User.' + this.loggedUserId)
         .notification((notification) => {
@@ -186,18 +199,18 @@ class siteManager {
     });
     eventBus.$on('autoplayNextVideo', id => {
       console.log("received autoplay")
-      var tmpv = that.nextVideosList(id)
+      var tmpv = store.getters.nextMediasList(id)
       //console.log(theVue.nextvideos)
       if(tmpv.length>0){
         console.log("got values!" + tmpv[0].title)
         theVue.currentmedia = tmpv[0];
         theVue.$router.push('/media/'+tmpv[0].urlTitle);
-        that.nextMedias = that.nextVideosList(tmpv[0].id)
+        that.nextMedias = store.getters.nextMediasList(tmpv[0].id)
         theVue.nextvideos = that.nextMedias
         if(theVue.nextvideos==null||theVue.nextvideos){
           console.log("do load more cause nextvideos is empty")
           that.loadMorePages(function(){
-            that.nextMedias = that.nextVideosList(id)
+            that.nextMedias = store.getters.nextMediasList(id)
             theVue.nextvideos = that.nextMedias
             that.loadMorePages()
             console.log("received by callback from nextvideo-empty")
@@ -464,9 +477,7 @@ class siteManager {
       treecatptions:undefined,
       csrf:that.csrf,
       currentuser:that.currentUser,
-      users:this.users,
       loggeduserid:this.loggedUserId,
-      tags:this.tags,
       canloadmore:true,
       user:that.currentUser,
       categories:that.categories,
@@ -682,7 +693,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   receiveUsers(callback=undefined):void{
     let that = this;
     $.getJSON("/internal-api/users", function name(data) {
-      that.users = [];
+      var tmpUsers = [];
       if(that.loggedUserId==0){
         that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "","","",false);
         if(theVue!=undefined){
@@ -700,17 +711,10 @@ if(localStorage.getItem('cookiePolicy')!="read"){
             }
           }
 
-          that.users.push(u);
+          tmpUsers.push(u);
 
         });
-        store.commit("setUsers", that.users)
-        if(that.initing){
-          that.receiveTags(function(){
-            that.receiveCategories(function(){
-              that.receiveMedias();
-            });
-          });
-        }
+        store.commit("setUsers", tmpUsers)
         if(callback!=undefined){
           callback();
         }
@@ -769,17 +773,16 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   receiveCategories(callback=undefined):void{
     let that = this;
     $.getJSON("/internal-api/categories", function name(data) {
-        that.categories = [];
+        var tmpCategories = [];
         $.each( data.data, function( key, value ) {
-          that.categories.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source,value.parent_id,value.children));
+          tmpCategories.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source,value.parent_id,value.children));
         });
 
       // here, we handle categorys and bring it in a format for the
       // special tree-select-component
       that.treecatptions = that.mkTreeCat(data.data)
-      store.commit("setCategories",that.categories)
+      store.commit("setCategories",tmpCategories)
       if(theVue!=undefined){
-        theVue.categories = that.categories;
         theVue.treecatptions = that.treecatptions;
       }
       if(callback!=undefined){
@@ -817,16 +820,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       }
     });
   }
-  }
-  getCategoryMedias(category_id:number){
-    var ma = []
-    $.each( store.state.medias, function( key, value ) {
-      if(value.category_id==category_id){
-        ma.push(value);
-      }
-
-    });
-    return ma;
   }
   getCategoryKey(category_id:number,data=undefined){
     var res:any;
@@ -871,37 +864,25 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   receiveTags(callback=undefined):void{
     let that = this;
     $.getJSON("/api/tags", function name(data) {
-      that.tags = [];
+      var tmpTags = [];
         $.each( data.data, function( key, value ) {
-          that.tags.push(new Tag(value.id, value.name, value.slug, value.count));
+          tmpTags.push(new Tag(value.id, value.name, value.slug, value.count));
         });
-      this.tags = that.tags;
-      store.commit("setTags",that.tags)
-      if(theVue!=undefined){
-        theVue.tags = this.tags;
-      }
+      store.commit("setTags",tmpTags)
       if(callback!=undefined){
         callback()
       }
-        that.receiveMedias();
     });
   }
 
   receiveTagsForMedia(json,forceUpdate=true):void{
     let that = this;
     $.getJSON("/api/tags", function name(data) {
-      if((that.tags==undefined)||(forceUpdate)){
-      that.tags = [];
+      var tmpTags = [];
         $.each( data.data, function( key, value ) {
-          that.tags.push(new Tag(value.id, value.name, value.slug, value.count));
+          tmpTags.push(new Tag(value.id, value.name, value.slug, value.count));
         });
-      }
-      this.tags = that.tags;
-      store.commit("setTags",that.tags)
-      if(theVue!=undefined){
-        theVue.tags = this.tags;
-      }
-      json = json.data;
+      store.commit("setTags",tmpTags)
     });
   }
   getCommentById2(id:number,callback=undefined){
@@ -977,7 +958,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   findTagById(id:number){
     var returner:Tag=undefined;
-    $.each(this.tags, function(key,value){
+    $.each(store.state.tags, function(key,value){
       if(value.id==id){
         returner=value;
       }
@@ -1045,24 +1026,11 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         });
 
         if(theVue==undefined){
-          that.initVue();
-          that.receiveNotifications();
 
-          if(that.notificationTimer!=undefined){
-            clearInterval(that.notificationTimer);
-          }
-          that.notificationTimer = setInterval(function(){
-            console.log("check for new notifications")
-            that.receiveNotifications();
-          }, 120000);
-          that.updateCSRF()
         }
-
-        theVue.users = that.users;
         if(that.treecatptions!=undefined){
           theVue.treecatptions = that.treecatptions;
         }
-        theVue.categories = that.categories;
         if(theVue.$route.params.profileId != undefined){
           theVue.user = that.getUserById(theVue.$route.params.profileId)
         }
@@ -1106,7 +1074,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
 
   getUserById(id:number):User{
     var search:User = new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{},"",false)
-    $.each( this.users, function( key, value ) {
+    $.each( store.state.users, function( key, value ) {
       if(value.id == id){
         search = value;
       }

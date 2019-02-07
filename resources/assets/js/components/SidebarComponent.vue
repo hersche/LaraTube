@@ -148,8 +148,14 @@ export default {
       eventBus.$emit('loadAllMedias',"");
     },
   },
-  props:['notifications','currentuser','users','tags','csrf','totalmedias'],
+  props:['notifications','currentuser','csrf','totalmedias'],
   computed:{
+    tags: function(){ 
+      return store.state.tags
+    },
+    users: function(){ 
+      return store.state.users
+    },
     tm: function(){ 
       return store.state.totalMedias
      } 
@@ -160,15 +166,12 @@ export default {
       eventBus.$emit('languageChange',val);
     },
     dataTypes:function(val){
-      console.log(val)
       localStorage.setItem("mediaTypes",val.join())
       eventBus.$emit('filterTypes',val);
     },
     notifications:function(val){
       var tmpArray = []
       this.notifications.forEach(function(val,key){
-        console.log("go for notifications")
-        console.log(val.read_at)
         if(val.read_at==null||val.read_at==0||val.read_at==undefined){
           tmpArray.push(val)
         }

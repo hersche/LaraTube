@@ -28,9 +28,14 @@
         </div>
         <div class="form-group row">
           <label>{{ $t('Source') }}</label>
-          <input readonly class="form-control" :value="currentmedia.source" id="duration" name="duration" type="text">
+          <input readonly class="form-control" :value="currentmedia.source" id="" name="" type="text">
         </div>
-        <div v-if="currentmedia.type!='localAudio'&currentmedia.type!='localVideo'" class="form-group row">
+        <mediaView v-bind:currentmedia="currentmedia" v-if="currentmedia!=undefined" v-bind:autoplay="false"></mediaView>
+        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="durationTestMedia()">Set duration</span>
+        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
+        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
+
+        <div class="form-group row">
             <label>{{ $t('Duration') }}</label>
             <input placeholder="00:00:00" class="form-control" :value="currentmedia.duration" id="duration" name="duration" type="text">
         </div>
@@ -107,21 +112,33 @@
   import { eventBus, store } from '../eventBus.js';
   import { Media }  from '../models';
   import MarkdownCreator from './MarkdownCreator'
+  import SingleMediaView from './SingleMediaView'
   export default {
     props: ['baseUrl','categories','csrf','treecatptions'],
     mounted: function () {
     //  this.$refs.croppieRef.bind({
     //    url: '/img/404/poster.png',
     //  })
-    this.currentmedia=this.getCurrentMedia();
+    //this.currentmedia=this.getCurrentMedia();
+    eventBus.$on('playerSetDuration', duration => {
+      console.log("receive duration: "+this.secondsToHms(duration))
+      $("#duration").val(this.secondsToHms(duration))
+    });
+    eventBus.$on('playerSetIntro', duration => {
+      $("#intro").val(duration)
+    });
+    eventBus.$on('playerSetOutro', duration => {
+      $("#outro").val(duration)
+    });
     },
     components: {
+      'mediaView' : SingleMediaView,
       MarkdownCreator
     },
     updated: function () {
       this.$nextTick(function () {
         if(this.$refs.croppieRef!=undefined&this.editpicloaded==false){
-          this.currentmedia=this.getCurrentMedia();
+        //  this.currentmedia=this.getCurrentMedia();
           this.editpicloaded=true;
           this.$refs.croppieRef.bind({
             url: this.currentmedia.poster_source,
@@ -131,13 +148,30 @@
     },
     computed: {
       // a computed getter
+      currentmedia: function(){
+        return this.getCurrentMedia()
+      }
     },
     watch:{
       medias: function(val){
-        this.currentmedia = this.getCurrentMedia();
+        //this.currentmedia = this.getCurrentMedia();
       },
     },
     methods: {
+      secondsToHms(d) {
+        // THX stackoverflow! i'm lazy ;)
+        d = Number(d);
+        var h = Math.floor(d / 3600);
+        var m = Math.floor(d % 3600 / 60);
+        var s = Math.floor(d % 3600 % 60);
+        return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
+      },
+      durationTestMedia(){
+        eventBus.$emit('playerGetDuration','');
+      },
+      positionTestMedia(type){
+        eventBus.$emit('playerGetPosition',type);
+      },
       rmBr(str) {
         return str.replace(/<br\s*\/?>/mg,"");
       },
@@ -276,7 +310,6 @@ rotate(rotationAngle,event) {
     data(){
       return {
         mediaType: '',
-        currentmedia:undefined,
         catid:0,
         tmpid:0,
         editpicloaded:false,

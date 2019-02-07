@@ -104,10 +104,10 @@
         <p>
           <vs-switch v-model="autoplay"/>
           <span for="">Autoplay</span></p>
-            <div v-for="item in nextvideos"  class="" v-if="item.id!=currentmedia.id">
+            <div v-for="item in nextMedias"  class="" v-if="item.id!=currentmedia.id">
               <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
             </div>
-            <div v-if="nextvideos.length==0">No more next medias</div>
+            <div v-if="nextMedias.length==0">No more next medias</div>
             <button class="btn btn-block btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
       </div>
       <b-modal  style="width:520px;" id="torrentmodal" title="Torrent-infos">
@@ -135,7 +135,7 @@
   const presets = butterchurnPresets.getPresets();
 
   export default {
-    props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser','nextvideos','csrf','categories'],
+    props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser','csrf'],
     components : {
         'singleField': SingleGalleryField,
         'comments': Comments,
@@ -231,9 +231,6 @@
 
     },
     watch: {
-      categories:function(val){
-
-      },
       autoplay:function(val){
         localStorage.setItem('autoplay',String(this.autoplay));
       },
@@ -261,6 +258,9 @@
   }
     },
     computed: {
+      nextMedias: function() {
+        return store.getters.nextMediasList(this.currentmedia.id)
+      },
       series2: function () {
         return this.chartData;
       },

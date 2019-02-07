@@ -25,34 +25,26 @@
         <label>Media-source:</label>
         <p>Direct mean you put a link from another server here. It needs to be a link, where you get the media, no html.</p>
          <input placeholder="https://server/file.mp4.mp3" class="form-control" id="source" name="source" type="text">
-         <span class="btn btn-primary" @click="testMedia()">Test link</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     </div>
     <div v-if="mediaType=='torrentAudio'|mediaType=='torrentVideo'" class="form-group">
         <label>Torrent (magnet-link)</label>
         <p>A webtorrent magnet-link, for example from peertube-videos</p>
          <input placeholder="magnet://" class="form-control" id="source" name="source" type="text">
-         <span class="btn btn-primary" @click="testMedia()">Test link and extend infos</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     </div>
     <div v-if="mediaType=='youtube'|mediaType=='vimeo'" class="form-group">
         <label>Youtube or vimeo</label>
         <p>Add the id only</p>
          <input placeholder="Like bTqVqk7FSmY or 76979871" class="form-control" id="source" name="source" type="text">
-         <span class="btn btn-primary" @click="testMedia()">Test link and extend infos</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
-         <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
+
     </div>
 
     <mediaView v-bind:currentmedia="theTestMedia" v-if="theTestMedia!=undefined" v-bind:autoplay="false"></mediaView>
+    <span class="btn btn-primary" v-if="theTestMedia==undefined" @click="testMedia()">Test link and extend infos</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro')">Set intro</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro')">Set outro</span>
+    
     <div v-if="mediaType!='localAudio'&mediaType!='localVideo'" class="form-group">
         <label>Duration:</label>
         <input placeholder="00:00:00" class="form-control" id="duration" name="duration" type="text">

@@ -3,7 +3,9 @@
 <h2>{{ theCat.title }}</h2>
 <p><VueMarkdown :source="theCat.description"></VueMarkdown></p>
 <p v-if="theCat.children.length>0">Subcategories</p>
-<p v-for="subcat in theCat.children" v-if="theCat.children.length>0"><router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link></p>
+<p v-for="subcat in theCat.children" v-if="theCat.children.length>0">
+  <router-link :to="'/category/'+subcat.urlTitle">{{ subcat.title }}</router-link>
+</p>
 <h5>{{ $t("Medias") }}</h5>
 <div class="row text-center">
   <div v-for="media in currentmedias"  class="col-lg-3 col-md-3 col-xs-6">
