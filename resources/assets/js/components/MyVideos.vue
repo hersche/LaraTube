@@ -15,10 +15,13 @@
   import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['baseUrl','canloadmore','loggeduserid'],
+    props: ['baseUrl','canloadmore'],
     computed:{
       medias:function(){
-        return store.getters.getMediasByTypes()
+        return store.getters.getMediasByUserId(store.state.loginId)
+      },
+      loggeduserid: function(){
+        return store.state.loginId
       }
     },
     data(){

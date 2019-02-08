@@ -18,7 +18,7 @@ export class User {
     }
 }
 export class Media {
-    constructor(id, title, description, source, poster_source, duration, simpleType, techType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike, likes, dislikes, tracks, category_id, intro = 0, outro = 0) {
+    constructor(id, title, description, source, poster_source, duration, simpleType, techType, type, user, user_id, created_at, updated_at, created_at_readable, comments, tags, myLike, likes, dislikes, tracks, category_id, intro_start = 0, outro_start = 0, intro_end = 0, outro_end = 0) {
         this.id = id;
         this.title = title;
         this.urlTitle = encodeURIComponent(this.title);
@@ -42,8 +42,10 @@ export class Media {
         this.tagString = this.tagStringing();
         this.tracks = tracks;
         this.category_id = category_id;
-        this.intro = Number(intro);
-        this.outro = Number(outro);
+        this.intro_start = Number(intro_start);
+        this.outro_start = Number(outro_start);
+        this.intro_end = Number(intro_end);
+        this.outro_end = Number(outro_end);
         //  this.category = category;
     }
     tagStringing() {

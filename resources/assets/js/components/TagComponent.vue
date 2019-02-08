@@ -26,7 +26,7 @@
   import SortSelect from './SortSelect'
   export default {
     name: 'tags',
-    props: ['medias','baseUrl','user','canloadmore','tagenabled'],
+    props: ['medias','baseUrl','canloadmore','tagenabled'],
     data(){
       return {
         selectedTags:[],
@@ -34,7 +34,13 @@
         selectVal:"created_at",
       }
     },
-    computed:{
+    computed: {
+      currentuser(){
+        return store.getters.getUserById(store.state.loginId)
+      },
+      loggeduserid(){
+        return store.state.loginId
+      },
       tags:function(){
         return store.state.tags
       }

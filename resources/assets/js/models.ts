@@ -58,9 +58,11 @@ export class Media {
   tracks:any;
   category_id:number;
   category:Category;
-  intro:number;
-  outro:number;
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number,intro=0,outro=0,){
+  intro_start:number;
+  outro_start:number;
+  intro_end:number;
+  outro_end:number;
+  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number,intro_start=0,outro_start=0,intro_end=0,outro_end=0,){
     this.id=id;
     this.title = title;
     this.urlTitle = encodeURIComponent(this.title)
@@ -84,8 +86,10 @@ export class Media {
     this.tagString = this.tagStringing();
     this.tracks = tracks;
     this.category_id = category_id;
-    this.intro = Number(intro);
-    this.outro = Number(outro);
+    this.intro_start = Number(intro_start);
+    this.outro_start = Number(outro_start);
+    this.intro_end = Number(intro_end);
+    this.outro_end = Number(outro_end);
   //  this.category = category;
   }
   tagStringing(){

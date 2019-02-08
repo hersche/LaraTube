@@ -61,13 +61,19 @@
   import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
   export default {
-    props: ['baseUrl','canloadmore','loggeduserid','csrf'],
+    props: ['baseUrl','canloadmore','csrf'],
     data(){
       return {
         tmpid: 0
       }
     },
     computed: {
+      currentuser(){
+        return store.getters.getUserById(store.state.loginId)
+      },
+      loggeduserid(){
+        return store.state.loginId
+      },
       users:function(){
         return store.state.users
       },

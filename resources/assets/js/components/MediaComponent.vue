@@ -32,8 +32,8 @@
   </vs-dropdown-menu>
 </vs-dropdown>
             <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
-            <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro)" v-if="currentmedia.intro!=0">
-              Skip intro ({{ currentmedia.intro }}s)
+            <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">
+              Skip intro ({{ currentmedia.intro_end }}s)
             </button>          
             <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
             <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
@@ -135,7 +135,7 @@
   const presets = butterchurnPresets.getPresets();
 
   export default {
-    props: ['medias','baseUrl','loggeduserid','canloadmore','currentuser','csrf'],
+    props: ['medias','baseUrl','canloadmore','csrf'],
     components : {
         'singleField': SingleGalleryField,
         'comments': Comments,
@@ -258,6 +258,12 @@
   }
     },
     computed: {
+      currentuser(){
+        return store.getters.getUserById(store.state.loginId)
+      },
+      loggeduserid(){
+        return store.state.loginId
+      },
       nextMedias: function() {
         return store.getters.nextMediasList(this.currentmedia.id)
       },

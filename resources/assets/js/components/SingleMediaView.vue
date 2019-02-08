@@ -259,11 +259,11 @@
       let that = this;
       this.initTorrent()
       
-      if(this.currentmedia.intro==0){
+      if(this.currentmedia.intro_end==0){
         $("#skipIntroBtn").hide()
       } else {
         $("#skipIntroBtn").on('click',function(){
-          that.player.currentTime = Number(that.currentmedia.intro)
+          that.player.currentTime = Number(that.currentmedia.intro_end)
         })
       }
       
@@ -291,11 +291,15 @@
         eventBus.$emit('playerSetDuration',that.player.duration);
       });
       eventBus.$on('playerGetPosition', type => {
-        if(type=="intro"){
-          eventBus.$emit('playerSetIntro',that.player.currentTime);
-        } else if(type=="outro") {
-          eventBus.$emit('playerSetOutro',that.player.currentTime);
-        }else {
+        if(type=="intro_start"){
+          eventBus.$emit('playerSetIntroStart',that.player.currentTime);
+        } else if(type=="outro_start") {
+          eventBus.$emit('playerSetOutroStart',that.player.currentTime);
+        } else if(type=="intro_end"){
+          eventBus.$emit('playerSetIntroEnd',that.player.currentTime);
+        } else if(type=="outro_end") {
+          eventBus.$emit('playerSetOutroEnd',that.player.currentTime);
+        } else {
           eventBus.$emit('playerSetPosition',that.player.currentTime);
         }
       })

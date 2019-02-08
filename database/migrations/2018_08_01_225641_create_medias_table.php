@@ -25,8 +25,10 @@ class CreateMediasTable extends Migration
             $table->integer('category_id')->references('id')->on('categories')->default(0);
             $table->integer('next_id')->nullable()->references('id')->on('medias')->default(0);
             $table->integer('views')->default(0);
-            $table->integer('intro')->default(0);
-            $table->integer('outro')->default(0);
+            $table->integer('intro_start')->default(0);
+            $table->integer('intro_end')->default(0);
+            $table->integer('outro_start')->default(0);
+            $table->integer('outro_end')->default(0);
             $table->enum('allowed_group', ['public', 'family', 'acquaintances', 'close_friends'])->default('public');
             $table->timestamps();
         });

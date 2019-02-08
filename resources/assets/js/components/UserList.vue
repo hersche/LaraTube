@@ -26,6 +26,12 @@
   export default {
     props: [],
     computed: {
+      currentuser(){
+        return store.getters.getUserById(store.state.loginId)
+      },
+      loggeduserid(){
+        return store.state.loginId
+      },
       users:function(){
         return store.state.users
       },

@@ -7,8 +7,7 @@
       <div>
     <form class="form-inline mb-1" id="commentForm" >
       <input type="hidden" name="_token" :value="csrf">
-      <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
-      <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
+      <input id="media_id" name="media_id" type="hidden" :value="currentmedia.id">
       <input id="parent_id" name="parent_id" type="hidden" value="0">
       <p class="col-12"><vs-textarea :label="$t('Comment')" :placeholder="$t('Comment')+'...'" v-model="tmptexts[0]" id="comment_body" name="body" /></p>
       <input type="button" class="ml-1 btn btn-sm btn-success float-right" :value="$t('Send')+' '+$t('comment')" @click="sendComment();" />
@@ -42,8 +41,7 @@
                       <div>
                   <form class="form-inline mb-1" :id="'commentForm'+comment.id" >
                     <input type="hidden" name="_token" :value="csrf">
-                    <input id="medias_id" name="medias_id" type="hidden" :value="currentmedia.id">
-                    <input id="medias_title" name="medias_title" type="hidden" :value="currentmedia.title">
+                    <input id="media_id" name="media_id" type="hidden" :value="currentmedia.id">
                     <input id="parent_id" name="parent_id" type="hidden" :value="comment.id">
                     <p class="col-12"><vs-textarea :label="$t('Comment')" :placeholder="$t('Comment')+'...'" v-model="tmptexts[comment.title]"  :id="'comment_body'+comment.id" name="body" /></p>
                     <input type="button" class="ml-1 btn btn-sm btn-success float-right" :value="$t('Send')+' '+$t('comment')" @click="sendComment(comment.id);" />
@@ -96,7 +94,7 @@
 import { eventBus, store } from '../eventBus.js';
 import VueMarkdown from 'vue-markdown'
   export default {
-    props: [ 'commentlist','loggeduserid','currentmedia','level'],
+    props: [ 'commentlist','currentmedia','level'],
     name: 'comments',
     components: {
       VueMarkdown
@@ -104,6 +102,9 @@ import VueMarkdown from 'vue-markdown'
     computed: {
       csrf: function(){
         return store.getters.getCSRF()
+      },
+      loggeduserid: function(){
+        return store.state.loginId
       },
     },
         methods: {
@@ -127,7 +128,8 @@ import VueMarkdown from 'vue-markdown'
                 processData: false,
                 complete : function(res) {
                   if(res.status==200){
-                    eventBus.$emit('commentCreated',res.responseJSON);
+                    that.$vs.notify({title:that.$t("Comment") + " " + that.$t("deleted"),text:'',icon:'',color:'success',position:'bottom-center'})
+                    eventBus.$emit('refreshMedia',that.currentmedia.id);
                   }
                 }
 
@@ -135,6 +137,7 @@ import VueMarkdown from 'vue-markdown'
             return false;
           },
           refreshMedia(id=''){
+            this.$vs.notify({title:this.$t("Media")+" "+this.$t("refreshed"),text:'',icon:'',color:'success',position:'bottom-center'})
             eventBus.$emit('refreshMedia',this.currentmedia.id);
           },
           sendComment(id=''){
@@ -142,6 +145,7 @@ import VueMarkdown from 'vue-markdown'
               this.$vs.notify({title:'You can not comment',text:'Log in to like or comment',icon:'',color:'danger',position:'bottom-center'})
               return
             }
+            let that = this
             //console.log($("#commentForm")[0])
             //console.log(new FormData($("#commentForm")[0]))
             $.ajax({
@@ -158,7 +162,8 @@ import VueMarkdown from 'vue-markdown'
                   if(res.status==200){
                   }
                   $("#comment_body"+id).val("")
-                  eventBus.$emit('commentCreated',res.responseJSON);
+                  that.$vs.notify({title:that.$t("Comment") + " " + that.$t("created"),text:'',icon:'',color:'success',position:'bottom-center'})
+                  eventBus.$emit('refreshMedia',that.currentmedia.id);
                 }
 
             });
