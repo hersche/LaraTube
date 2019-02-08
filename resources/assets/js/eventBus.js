@@ -2,6 +2,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex'
 import { MediaSorter } from './tools'
+import { User } from './models'
 Vue.use(Vuex)
 export const eventBus = new Vue();
 var mediaSorter=new MediaSorter()
