@@ -22,19 +22,19 @@
     methods: {
     },
     computed:{
-      loggeduserid(){
+      loggeduserid:function(){
         return store.state.loginId
       },
-      currentuser(){
+      currentuser:function(){
         return store.getters.getUserById(store.state.loginId)
       },
-      medias(){
+      medias:function(){
         return store.getters.getMediasByTypes()
       },
-      filter(){
+      filter:function(){
         return store.state.filterTypes.join()
       },  
-      totalMedias(){
+      totalMedias:function(){
         return store.state.totalMedias
       },     
     },

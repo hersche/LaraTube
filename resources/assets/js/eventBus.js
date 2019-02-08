@@ -82,7 +82,11 @@ export const store = new Vuex.Store({
         },
         getUserById: (state) => (id) => {
           eventBus.$emit('loadUserVideos',id);
-          return state.users.find(u => u.id == id)
+          var u = state.users.find(u => u.id == id)
+          if(u==undefined){
+            u=new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{},"",false)
+          }
+          return u
         },
         getCSRF: (state) => () => {
           let that = this
