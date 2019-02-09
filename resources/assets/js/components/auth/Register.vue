@@ -123,13 +123,13 @@
 
 
 <script>
-  import { eventBus } from '../../eventBus.js';
-    import MarkdownCreator from '../MarkdownCreator'
+  import { eventBus,store } from '../../eventBus.js';
+  import MarkdownCreator from '../MarkdownCreator'
   export default {
     components: {
       MarkdownCreator
     },
-    props: ['baseUrl','csrf'],
+    props: ['baseUrl'],
     mounted: function () {
       this.$refs.croppieAvatarRef.bind({
         url: '/img/404/avatar.png',
@@ -137,6 +137,11 @@
       this.$refs.croppieBackgroundRef.bind({
         url: '/img/404/background.png',
       })
+    },
+    computed: {
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
     },
     updated: function () {
       this.$nextTick(function () {

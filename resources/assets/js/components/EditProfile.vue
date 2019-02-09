@@ -118,7 +118,7 @@
         return store.getters.getCSRF()
       },
       currentuser: function(){
-        var u = store.getters.getUserById(this.loggeduserid)
+        var u = store.getters.getUserById(store.state.loginId)
         if(u!=undefined){
           this.tmpBio = u.bio
         }

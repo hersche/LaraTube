@@ -32,14 +32,13 @@
       
   },
   mounted(){
-    // loadUserVideos
-    // console.log("user-id for get videos"+this.user.id)
+    eventBus.$emit("loadUserVideos",this.currentuser.id)
   },
   computed: {
     currentuser: function(){
       var u = store.getters.getUserById(Number(this.$route.params.profileId))
       if(u!=undefined){
-
+        
       }
       return u
     },

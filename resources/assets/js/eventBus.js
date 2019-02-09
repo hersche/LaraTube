@@ -82,7 +82,6 @@ export const store = new Vuex.Store({
           return m
         },
         getUserById: (state) => (id) => {
-          eventBus.$emit('loadUserVideos',id);
           var u = state.users.find(u => u.id == id)
           if(u==undefined){
             u=new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{},"",false)
@@ -182,6 +181,7 @@ export const store = new Vuex.Store({
         },
         setCSRF(state,CSRF){
           $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': CSRF }});
+          $('meta[name="csrf-token"]').attr('content',CSRF)
           state.CSRF = CSRF;
         },
         setTotalMedias(state,totalMedias){

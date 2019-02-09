@@ -41,26 +41,21 @@
   </div>
 </template>
 <script>
-  import { eventBus,controls } from '../eventBus.js';
+  import { eventBus,controls,store } from '../eventBus.js';
   //import plyr from 'plyr'
   import { User, Media, Tag } from '../models';
   import butterchurn from 'butterchurn';
   import butterchurnPresets from 'butterchurn-presets';
-  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
   var WebTorrent = require('webtorrent')
   var client = new WebTorrent();
   let theTorrent;
-  var currsrc;
   var torrentInterval;
   var audioCtx, audioNode, gainNode, visualizer;
   const presets = butterchurnPresets.getPresets();
 
   export default {
-    props: ['autoplay','medias','baseUrl','loggeduserid','canloadmore','currentuser','currentmedia'],
-
-
+    props: ['autoplay','baseUrl','canloadmore','currentmedia'],
     methods: {
-
       visualFullScreen(){
         if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
           if (document.exitFullscreen) {
@@ -87,7 +82,7 @@
             element.msRequestFullscreen();
           }
           if(visualizer!=undefined){
-            visualizer.setRendererSize($(window).width(), $(window).height());
+            visualizer.setRendererSize("100%", "100%");
           }
         }
       },
@@ -96,16 +91,10 @@
       // i did this as proper as possible, but it's still in the client's array :/
       initTorrent(){
         let that = this;
-        //if(client==undefined){
-
           if(client.torrents.length>0){
-            //client.remove(client.torrents[0].magnetURI,function(err){
               theTorrent.destroy(function(){
                 that.initTorrent();
               })
-
-            //});
-
           } else {
             that.initTorrentAfterRemove();
           }
@@ -126,7 +115,6 @@
             // Torrents can contain many files. Let's use the .mp4 file
             var file = theTorrent.files.find(function (file) {
             that.lasttorrentid = theTorrent.magnetURI;
-            currsrc = theTorrent.magnetURI;
             if(that.currentmedia.type=='torrentVideo'){
               return file.name.endsWith('.mp4')
             }
@@ -203,7 +191,6 @@
         this.player.on('ended', () => {
           if(that.autoplay){
             console.log('movie ended')
-            //console.log(that.medias.indexOf(that.currentmedia))
             eventBus.$emit('autoplayNextVideo',that.currentmedia.id);
           }
         })
@@ -236,7 +223,10 @@
       },
     },
     computed: {
-          player () { return this.$refs.player.player }
+      loggeduserid: function(){
+        return store.state.loginId
+      },
+      player () { return this.$refs.player.player }
     },
     updated: function () {
       let that = this

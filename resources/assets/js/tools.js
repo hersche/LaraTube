@@ -233,9 +233,9 @@ export class Search {
                       }*/
                 });
             }
-            if ($("#theLiveSearchMedias").is(':checked')) {
-                this.userResult = medias;
-            }
+            //if($("#theLiveSearchMedias").is(':checked')){
+            //  this.userResult=medias
+            //}
         }
     }
 }

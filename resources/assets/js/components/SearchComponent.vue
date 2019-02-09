@@ -10,7 +10,7 @@
   </div>
     <h3>{{ $t("User") }}-{{ $t("results") }}</h3>
     <div v-if="search.userResult.length>0" >
-      <userlist v-bind:medias="medias" v-bind:users="search.userResult" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></userlist>
+      <userlist v-bind:users="search.userResult" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></userlist>
     </div>
       <div v-else>
         {{ $t("No user-results") }}
@@ -42,9 +42,6 @@
     computed: {
       currentuser:function(){
         return store.getters.getUserById(store.state.loginId)
-      },
-      tags:function(){
-        return store.state.tags
       },
       loggeduserid:function(){
         return store.state.loginId

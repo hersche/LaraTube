@@ -73,7 +73,7 @@ class siteManager {
         that.receiveTags(function(){
           that.receiveCategories(function(){
             that.initVue();
-            that.receiveMedias(undefined,false,function(){
+            that.receiveMedias("/internal-api/media"+that.getIgnoreParam(),false,function(){
               that.receiveNotifications();
             });
             
@@ -145,23 +145,27 @@ class siteManager {
       { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
     eventBus.$on('getNotifications', url => {
-      theVue.alert("Look for new notifications")
-      that.receiveNotifications(url)
+      that.receiveNotifications(url,function(){
+        theVue.alert(theVue.$t("New")+" "+theVue.$t("notifications")+" "+theVue.$t("received"))
+      })
     });
     eventBus.$on('getNewMedias', title => {
-      theVue.alert("Look for new medias..")
-      that.receiveMedias()
+      that.receiveMedias("/internal-api/media"+that.getIgnoreParam(),false,function(){
+        theVue.alert(theVue.$t("New")+" "+theVue.$t("medias")+" "+theVue.$t("received"))
+      })
     });
     eventBus.$on('languageChange', lang => {
       that.getLang(lang)
     });
     eventBus.$on('userEdited', id => {
-      theVue.alert("Look for new users..")
-      that.receiveUsers()
-      that.updateCSRF();
-      if(id!=''&&id!=undefined){
-        theVue.$router.push("/profile/"+id)
-      }
+      that.receiveUsers(function(){
+        that.updateCSRF();
+        theVue.alert(theVue.$t("User")+" "+theVue.$t("edited"))
+        if(id!=''&&id!=undefined){
+          theVue.$router.push("/profile/"+id)
+        }    
+      })
+
     });
 
     eventBus.$on('refreshMedias', title => {
@@ -169,11 +173,12 @@ class siteManager {
       that.catchedTagMedias=[];
       this.usedSearchTerms=[];
       this.usedCatRequests=[];
-      that.receiveMedias("/internal-api/media"+this.getIgnoreParam(),true)
-      that.updateCSRF();
+      that.receiveMedias("/internal-api/media"+that.getIgnoreParam(),true,function(){
+        that.updateCSRF();
+      })
     });
     eventBus.$on('loadAllMedias', title => {
-      that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam(),false,function(){
+      that.receiveMedias("/internal-api/medias/all"+that.getIgnoreParam(),false,function(){
         theVue.canloadmore=false
         that.updateCSRF();      
       })
@@ -230,7 +235,12 @@ class siteManager {
       theVue.alert("Login failed","danger","error")
     });
     eventBus.$on('loadUserVideos', userid => {
-      that.receiveMedias("/internal-api/medias/by/"+userid+this.getIgnoreParam())
+        if(userid!=0){
+          that.receiveMedias("/internal-api/medias/by/"+userid+this.getIgnoreParam())
+        } else {
+          console.warn("[event loadUserVideos] userid was 0")
+        }
+      
     });
     eventBus.$on('sortBy', sortBy => {
       theMediaSorter.setSortBy(sortBy)
@@ -419,15 +429,15 @@ class siteManager {
               that.usedSearchTerms.push(s);
               that.receiveMedias("/internal-api/medias/search/"+s+that.getIgnoreParam(), false, function(){
                 var so = new Search(s.toString(),store.getters.getMediasByTypes(),store.state.tags,store.state.users);
-                console.log("the media-result")
-                console.log(so.mediaResult)
                 theVue.search = so;
-                theVue.users = so.userResult;
+                theVue.userResult = so.userResult
               });
             }, 300);
           } 
             var so = new Search(s.toString(),store.getters.getMediasByTypes(),store.state.tags,store.state.users);
             theVue.search = so;
+            console.log(so.userResult)
+            theVue.userResult = so.userResult
           
 
         }
@@ -504,8 +514,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   
   
-  getLang(lang){
-    let that = this;
+  getLang(lang:string){
     if(this.loadedLangs.includes(lang)==false){
       this.loadedLangs.push(lang)
       $.getJSON('/lang/'+lang+".json").done(function(data){
@@ -533,11 +542,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           theVue.canloadmore=true
         }
       }
-      $('meta[name="csrf-token"]').attr('content',data.csrf)
-      $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': data.csrf
-      }});
       if(callback!=undefined){
         callback();
       }
@@ -734,8 +738,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       if(callback!=undefined){
         callback(data.id);
       }
-      });
-
+    });
   }
 
   getTagsByIdArray(arr:Array<number>){
@@ -799,31 +802,32 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       store.commit("clearMedias")
     }
     if(store.state.totalMedias>store.state.medias.length){
-    $.getJSON(url, function name(data) {
-        $.each( data.data, function( key, value ) {
+      $.getJSON(url, function name(data) {
+        console.log("[receiveMedias]",url,data)
+          $.each( data.data, function( key, value ) {
             var m = that.jsonToMedia(value)
             store.commit("updateOrAddMedia",m)
-        });
+          });
 
-        if(that.treecatptions!=undefined){
-          theVue.treecatptions = that.treecatptions;
-        }
-
-        if((theVue.$router.currentRoute.path=="/search")) {
-          theVue.searching();
-        }
-        if(loadCount==0&&replaceCount==0){
-          if(store.state.totalMedias==store.state.medias.length){
-            theVue.alert("All medias are loaded","info")
+          if(that.treecatptions!=undefined){
+            theVue.treecatptions = that.treecatptions;
           }
-        } else {
-          theVue.alert("Load "+loadCount+" and "+replaceCount+" medias already existed.")
-        }
-        if(callback!=undefined){
-          callback();
-        }
-    });
-  }
+
+          if((theVue.$router.currentRoute.path=="/search")) {
+            theVue.searching();
+          }
+          if(loadCount==0&&replaceCount==0){
+            if(store.state.totalMedias==store.state.medias.length){
+              theVue.alert("All medias are loaded","info")
+            }
+          } else {
+            theVue.alert("Load "+loadCount+" and "+replaceCount+" medias already existed.")
+          }
+          if(callback!=undefined){
+            callback();
+          }
+        });
+      }
   }
 
 
