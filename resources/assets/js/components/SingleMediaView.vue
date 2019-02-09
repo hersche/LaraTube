@@ -6,7 +6,7 @@
           <p>
             <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
-          <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" height="400" style="height: 400px; width:100%;" id="audioVisual"></canvas>
+          <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" id="audioVisual"></canvas>
           <vue-plyr v-if="currentmedia.type=='torrentVideo'" :options="playerConfig" ref="player">
             <video class="col-12" id="torrentPlayer"  controls :poster="currentmedia.poster_source">
               <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
@@ -68,6 +68,8 @@
             document.msExitFullscreen();
           }
           if(visualizer!=undefined){
+            $('#audioVisual').css("height","400px")
+            $('#audioVisual').css("width","100%")
             visualizer.setRendererSize(400, 400);
           }
         } else {
@@ -82,7 +84,9 @@
             element.msRequestFullscreen();
           }
           if(visualizer!=undefined){
-            visualizer.setRendererSize("100%", "100%");
+            $('#audioVisual').css("height","100vh")
+            $('#audioVisual').css("width","100vw")
+            visualizer.setRendererSize($(window).width(), $(window).height());
           }
         }
       },
