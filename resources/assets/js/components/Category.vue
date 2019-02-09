@@ -21,12 +21,18 @@ import SingleGalleryField from './SingleGalleryField'
 import Categories from './Categories'
 import VueMarkdown from 'vue-markdown'
 export default {
-  props: ['baseUrl','canloadmore','loggeduserid','currentuser'],
+  props: ['baseUrl','canloadmore'],
   name: 'cat',
   mounted(){
     this.theCat = this.getCurrentCategory();
   },
   computed:{
+    currentuser:function(){
+      return store.getters.getUserById(store.state.loginId)
+    },
+    loggeduserid:function(){
+      return store.state.loginId
+    },
     medias:function(){
       return store.getters.getMediasByTypes()
     },

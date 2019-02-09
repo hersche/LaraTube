@@ -135,7 +135,7 @@
   const presets = butterchurnPresets.getPresets();
 
   export default {
-    props: ['medias','baseUrl','canloadmore','csrf'],
+    props: ['medias','baseUrl','canloadmore'],
     components : {
         'singleField': SingleGalleryField,
         'comments': Comments,
@@ -258,10 +258,13 @@
   }
     },
     computed: {
-      currentuser(){
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
+      currentuser: function(){
         return store.getters.getUserById(store.state.loginId)
       },
-      loggeduserid(){
+      loggeduserid: function(){
         return store.state.loginId
       },
       nextMedias: function() {

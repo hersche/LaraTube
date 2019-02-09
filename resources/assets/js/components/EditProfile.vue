@@ -83,7 +83,7 @@
   import { Media }  from '../models';
   import MarkdownCreator from './MarkdownCreator'
   export default {
-    props: ['baseUrl','loggeduserid'],
+    props: ['baseUrl'],
     components: {
       MarkdownCreator
     },

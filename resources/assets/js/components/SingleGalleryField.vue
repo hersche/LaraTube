@@ -22,17 +22,19 @@
         </div>
 </template>
 <script>
-  import { eventBus } from '../eventBus.js';
+  import { eventBus,store } from '../eventBus.js';
     import VueMarkdown from 'vue-markdown'
   export default {
-    props: ['item','loggeduserid'],
+    props: ['item'],
     methods: {
     },
     components : {
         VueMarkdown
     },
     computed: {
-      // a computed getter
+      loggeduserid: function(){
+        return store.state.loginId
+      },
       shorteneddescription: function () {
         if(this.item.description.length>83){
           return this.item.description.substring(0,80)+"..."

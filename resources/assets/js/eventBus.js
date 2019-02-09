@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
       state: {
         filterTypes:["video","audio"],
         medias:[],
-        loginId:0,
+        loginId:Number($("#loggedUserId").attr("content")),
         categories:[],
         users:[],
         tags:[],
@@ -103,6 +103,21 @@ export const store = new Vuex.Store({
         }
       },
       mutations: {
+        reset (state) {
+          state.disableBlockRequest=false
+          if(localStorage.getItem("mediaTypes")!=''&&localStorage.getItem("mediaTypes")!=null){
+            state.filterTypes = localStorage.getItem("mediaTypes").split(",")
+          } else {
+            state.filterTypes = ["audio","video"]
+          }
+          state.medias=[]
+          state.loginId=Number($("#loggedUserId").attr("content"))
+          state.categories=[]
+          state.users=[]
+          state.tags=[]
+          state.notifications=[]
+          state.totalMedias=0
+        },
         disableBlockRequest (state) {
           state.disableBlockRequest=false
         },

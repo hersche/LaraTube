@@ -9,7 +9,7 @@
     <gallery v-bind:tagenabled="tagsen" v-bind:medias="search.mediaResult" v-bind:tags="tags" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></gallery>
   </div>
     <h3>{{ $t("User") }}-{{ $t("results") }}</h3>
-    <div v-if="users.length>0" >
+    <div v-if="search.userResult.length>0" >
       <userlist v-bind:medias="medias" v-bind:users="search.userResult" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></userlist>
     </div>
       <div v-else>
@@ -22,7 +22,7 @@
   import TagComponent from './TagComponent'
   import UserList from './UserList'
   export default {
-    props: ['item','search','canloadmore','tags','users'],
+    props: ['item','search','canloadmore'],
     data(){
       return {
         tagsen:false,
@@ -40,13 +40,16 @@
 
     },
     computed: {
-      currentuser(){
+      currentuser:function(){
         return store.getters.getUserById(store.state.loginId)
       },
-      loggeduserid(){
+      tags:function(){
+        return store.state.tags
+      },
+      loggeduserid:function(){
         return store.state.loginId
       },
-      tags(){
+      tags:function(){
         return store.state.tags
       },
       medias:function(){

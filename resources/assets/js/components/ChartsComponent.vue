@@ -18,11 +18,14 @@
 <script>
   import { eventBus,store } from '../eventBus.js';
   export default {
-    props: ['loggeduserid'],
+    props: [],
     methods:{
 
     },
     computed: {
+      loggeduserid:function(){
+        return store.state.loginId
+      },
       medias:function(){
         return store.getters.getMediasByTypes()
       },

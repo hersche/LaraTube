@@ -14,13 +14,12 @@
 </template>
 
 <script>
-import 'swiper/dist/css/swiper.css'
-import { eventBus, store } from '../eventBus.js';
-
-import { swiper, swiperSlide } from 'vue-awesome-swiper'
+  import 'swiper/dist/css/swiper.css'
+  import { eventBus, store } from '../eventBus.js';
+  import { swiper, swiperSlide } from 'vue-awesome-swiper'
   import SingleGalleryField from './SingleCarouselField'
   export default {
-    props: ['baseUrl','loggeduserid','canloadmore'],
+    props: ['baseUrl','canloadmore'],
     components: {
       swiper,
       swiperSlide,
@@ -45,6 +44,9 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
       });
     },
     computed: {
+      loggeduserid: function(){
+        return store.state.loginId
+      },
       swiper() {
         return this.$refs.mySwiper.swiper
       },

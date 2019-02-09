@@ -248,7 +248,6 @@
       });
     },
     destroyed(){
-      eventBus.$emit('setCurrentMedia',0);
       if(theTorrent!=undefined){
         theTorrent.destroy(function(){
           console.log("torrent destroyed on vue-destroyed-method")
@@ -283,7 +282,6 @@
         localStorage.setItem("mediaPosition"+that.currentmedia.id,that.player.currentTime)
         that.$vs.notify({title:'Position saved',text:'at '+that.player.currentTime.toFixed(2)+'s',icon:'save',color:'success',position:'bottom-center'})   
       })
-      eventBus.$emit('setCurrentMedia',this.currentmedia.id);
       eventBus.$on('playerJumpTo', seconds => {
         that.player.currentTime = Number(seconds)
       });

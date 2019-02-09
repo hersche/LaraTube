@@ -53,12 +53,17 @@
 
 
 <script>
-  import { eventBus } from '../../eventBus.js';
+  import { eventBus,store } from '../../eventBus.js';
   export default {
-    props: ['medias','baseUrl','user','tags','csrf'],
+    props: ['baseUrl'],
     data(){
       return {
       }
+    },
+    computed: {
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
     },
     methods:{
       submitLogin() {

@@ -43,75 +43,54 @@ var i18n:VueI18n;
 
 
 class siteManager {
-  medias:Array<Media>;
   nextMedias:Array<Media>;
-  notifications:Array<Notification>;
   usedSearchTerms:any;
   usedCatRequests:any;
   blockScrollExecution:boolean;
-  categories:Array<Category>;
-  loggedUserId:number;
-  currentUser:User;
-  lastLink:string;
-  totalMedias:number; // the current important variable for fetch
   catchedTagMedias:any;
-  initing:boolean;
-  csrf:string;
   loadedLangs:any;
   treecatptions:any;
   notificationTimer:any;
-  types:Array<string>;
-  currentMediaId:number;
   constructor(base:string){
-    this.currentMediaId = 0;
-    this.initing=true;
-
+    this.init()
+  }
+  
+  init(){
+    store.commit("reset")
     this.blockScrollExecution = false;
-    baseUrl = base+"/";
-    if(localStorage.getItem("mediaTypes")!=''&&localStorage.getItem("mediaTypes")!=null){
-      this.types = localStorage.getItem("mediaTypes").split(",")
-    } else {
-      this.types = ["audio","video"]
-    }
     this.catchedTagMedias=[];
     this.usedSearchTerms=[];
     this.usedCatRequests=[];
     this.loadedLangs=['en'];
     this.nextMedias=[];
-    store.commit("setLoginId", Number($("#loggedUserId").attr("content")))
-    this.loggedUserId = Number($("#loggedUserId").attr("content"));
-    this.updateCSRF();
-    let that = this;
-    this.receiveUsers(function(){
-      that.receiveTags(function(){
-        that.receiveCategories(function(){
-          that.receiveMedias();
-          store.commit("setCSRF", document.querySelector('meta[name="csrf-token"]').getAttribute('content'))
-          that.initVue();
-          that.receiveNotifications();
-          if(that.notificationTimer!=undefined){
-            clearInterval(that.notificationTimer);
-          }
-          that.notificationTimer = setInterval(function(){
-            console.log("check for new notifications")
-            that.receiveNotifications();
-          }, 120000);
+    this.initReceive()
+  }
+  
+  initReceive(){
+    let that = this
+    this.updateCSRF(function(){
+      that.receiveUsers(function(){
+        that.receiveTags(function(){
+          that.receiveCategories(function(){
+            that.initVue();
+            that.receiveMedias(undefined,false,function(){
+              that.receiveNotifications();
+            });
+            
+          
+            
+            if(that.notificationTimer!=undefined){
+              clearInterval(that.notificationTimer);
+            }
+            that.notificationTimer = setInterval(function(){
+              console.log("check for new notifications")
+              that.receiveNotifications();
+            }, 120000);
+          });
         });
       });
     });
-    
-  /*  if(this.loggedUserId){
-    Echo.private('App.User.' + this.loggedUserId)
-        .notification((notification) => {
-            console.log("wow, that worked!")
-            console.log(notification.type);
-        });
-      } */
-    //setInterval(this.updateCSRF, 1800000);
-
-    //this.loadMorePages()
   }
-
   initVue(){
 
     var overview = Vue.component('overview', require("./components/OverviewComponent.vue"));
@@ -194,9 +173,11 @@ class siteManager {
       that.updateCSRF();
     });
     eventBus.$on('loadAllMedias', title => {
-      that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam())
-      theVue.canloadmore=false
-      that.updateCSRF();
+      that.receiveMedias("/internal-api/medias/all"+this.getIgnoreParam(),false,function(){
+        theVue.canloadmore=false
+        that.updateCSRF();      
+      })
+
     });
     eventBus.$on('autoplayNextVideo', id => {
       console.log("received autoplay")
@@ -204,15 +185,11 @@ class siteManager {
       //console.log(theVue.nextvideos)
       if(tmpv.length>0){
         console.log("got values!" + tmpv[0].title)
-        theVue.currentmedia = tmpv[0];
         theVue.$router.push('/media/'+tmpv[0].urlTitle);
         that.nextMedias = store.getters.nextMediasList(tmpv[0].id)
-        theVue.nextvideos = that.nextMedias
-        if(theVue.nextvideos==null||theVue.nextvideos){
+        if(that.nextMedias==null||that.nextMedias==undefined){
           console.log("do load more cause nextvideos is empty")
           that.loadMorePages(function(){
-            that.nextMedias = store.getters.nextMediasList(id)
-            theVue.nextvideos = that.nextMedias
             that.loadMorePages()
             console.log("received by callback from nextvideo-empty")
             //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
@@ -221,17 +198,10 @@ class siteManager {
       } else {
       //  console.log("do alternative next medias")
         that.loadMorePages(function(){
-          that.nextMedias = that.nextVideosList(id)
-          theVue.nextvideos = that.nextMedias
-      //    console.log("received by callback")
-          theVue.$router.push('/media/'+theVue.nextvideos[0].urlTitle);
-          theVue.currentmedia = theVue.nextvideos[0];
-          theVue.nextvideos = that.nextVideosList(theVue.nextvideos[0].id)
-          if(theVue.nextvideos==null||theVue.nextvideos){
+          theVue.$router.push('/media/'+that.nextMedias[0].urlTitle);
+          if(that.nextMedias==null||that.nextMedias==undefined){
           //  console.log("do load more")
             that.loadMorePages(function(){
-              that.nextMedias = that.nextVideosList(id)
-              theVue.nextvideos = that.nextMedias
               that.loadMorePages()
             //  console.log("received by callback")
               //theVue.$router.push('/media/'+encodeURIComponent(theVue.nextvideos[0].title));
@@ -239,27 +209,19 @@ class siteManager {
           }
         });
       }
-
     });
     eventBus.$on('login', settings => {
-      this.initing = false;
-      this.loggedUserId = settings.user_id
-      theVue.loggeduserid = this.loggedUserId
       store.commit("setLoginId", settings.user_id)
       that.receiveUsers(function(){
-        that.currentUser = that.getUserById(that.loggedUserId);
-        theVue.currentuser = that.currentUser;
+        theVue.$router.push('/');
+        that.updateCSRF();
+        theVue.alert("Welcome back, "+store.getters.getUserById(store.state.loginId).name,"success","exit_to_app")
       });
-      theVue.alert("Welcome back, "+that.getUserById(that.loggedUserId).name,"success","exit_to_app")
-      theVue.$router.push('/');
-      that.updateCSRF();
+      
+      
     });
     eventBus.$on('logout', settings => {
-      this.loggedUserId = 0
       store.commit("setLoginId", 0)
-      theVue.loggeduserid = this.loggedUserId
-      that.currentUser = that.getUserById(that.loggedUserId);
-      theVue.currentuser = that.currentUser;
       theVue.alert("Logged out","danger","power_settings_new")
       theVue.$router.push('/');
       that.updateCSRF();
@@ -276,11 +238,6 @@ class siteManager {
       if(theVue.$router.currentRoute.path=="/search"){
         theVue.search.mediaResult = theMediaSorter.sort(theVue.search.mediaResult)
       }
-      if(that.currentMediaId!=0){
-        console.log("nextMedias set by sort")
-        that.nextMedias = that.nextVideosList(that.currentMediaId);
-        theVue.nextvideos = that.nextMedias;
-      }
     });
     eventBus.$on('commentCreated', json => {
       // Workaround by receive the media again.
@@ -289,31 +246,12 @@ class siteManager {
         theVue.alert(theVue.$t("Comment")+" "+theVue.$t("created"),"success")
       })
 
-      /*var m = that.findMediaById(Number(json.data.media_id))
-      m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
-      console.log(m.comments)*/
-
-      //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
-      //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
-      //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-
-
     });
     eventBus.$on('refreshMedia', id => {
       // Workaround by receive the media again.
       that.receiveMediaById(id,function(){
         that.updateCSRF();
       })
-
-      /*var m = that.findMediaById(Number(json.data.media_id))
-      m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
-      console.log(m.comments)*/
-
-      //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
-      //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
-      //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-
-
     });
 
     eventBus.$on('loadMediaById', id => {
@@ -342,24 +280,9 @@ class siteManager {
         store.commit("disableBlockRequest")
         if(theVue!=undefined){
           console.log("[loadMedia] update the vue after receive media")
-          if(theVue.$route.params.currentTitle!=undefined){
-            that.currentMediaId = id;
-            that.nextMedias = that.nextVideosList(id)
-            theVue.nextvideos = that.nextMedias
-          }
         //  theVue.alert("Media load media by title","success")
         }
       })
-
-      /*var m = that.findMediaById(Number(json.data.media_id))
-      m.comments = JSON.parse(JSON.stringify(m.comments)).push(json.data)
-      console.log(m.comments)*/
-
-      //m.comments = m.comments.sort(MediaSorter.byCreatedAtComments)
-      //console.log(JSON.parse(that.findMediaById(Number(json.data.media_id)).comments))
-      //that.findMediaById(Number(json.data.media_id)).comments = JSON.parse(that.findMediaById(Number(json.data.media_id)).comments).unshift(json.data)
-
-
     });
     eventBus.$on('videoDeleted', title => {
       theVue.alert("Video "+title+" deleted","success")
@@ -368,7 +291,7 @@ class siteManager {
       that.updateCSRF();
     });
     eventBus.$on('videoCreated', json => {
-      that.receiveTagsForMedia(json);
+      that.receiveTags();
       theVue.alert("Video "+json.data.title+" created","success")
       that.updateCSRF();
 
@@ -383,25 +306,19 @@ class siteManager {
     });
 
     eventBus.$on('videoEdited', json => {
-      //that.receiveTagsForMedia(json[1]);
       store.commit("updateOrAddMedia",this.jsonToMedia(json[1].data))
       theVue.$router.push('/media/'+json[0]);
       theVue.alert("Video "+json[1].data.title+" edited","success")
       that.updateCSRF();
     });
     eventBus.$on('checkTag', tagName => {
-      //if(theVue.$router.currentRoute.path!="/search"){
-
-      if(tagName==''){
-
-      } else {
-      if(that.catchedTagMedias.includes(tagName)==false){
-        that.catchedTagMedias.push(tagName);
-        that.receiveMedias("/api/tags/"+tagName,false,function(){
-        });
+      if(tagName!=''){
+        if(that.catchedTagMedias.includes(tagName)==false){
+          that.catchedTagMedias.push(tagName);
+          that.receiveMedias("/api/tags/"+tagName,false,function(){
+          });
+        }
       }
-    }
-    //}
     });
     eventBus.$on('loadMore', title => {
       that.loadMorePages();
@@ -434,25 +351,12 @@ class siteManager {
       }
     });
     eventBus.$on('filterTypes', types => {
-      that.types = types;
       store.commit("setFilterTypes",types)
-      if(this.currentMediaId!=0){
-        that.nextMedias = that.nextVideosList(this.currentMediaId)
-      }
-      theVue.nextvideos = that.getFilteredMedias(that.nextMedias);
       if(theVue.$router.currentRoute.path=="/search"){
         theVue.searching();
       }
     });
 
-    eventBus.$on('setCurrentMedia', id => {
-      console.log("set current id")
-      that.currentMediaId = id
-      that.nextMedias = that.nextVideosList(id)
-      if(theVue!=undefined){
-        theVue.nextvideos = that.nextMedias
-      }
-    });
     var lang = "en"
     if(localStorage.getItem("language")!=''&&localStorage.getItem("language")!=undefined){
       lang = localStorage.getItem("language");
@@ -467,22 +371,12 @@ class siteManager {
     if(lang!="en"){
       this.getLang(lang)
     }
-  //  sm.receiveUsers(true);
-  // new User(0,"None","img/404/avatar.png","img/404/background.png", "None-user", {})
    theVue = new Vue({
     i18n,
     data : {
-      title : "Overview",
       search:undefined,
-      nextvideos:[],
-      notifications:[],
       treecatptions:undefined,
-      csrf:that.csrf,
-      currentuser:that.currentUser,
-      loggeduserid:this.loggedUserId,
       canloadmore:true,
-      user:that.currentUser,
-      categories:that.categories,
       baseUrl:baseUrl
     },
     components : {
@@ -517,7 +411,6 @@ class siteManager {
           theVue.$router.go(-1)
         }
         if(s!=''){
-          var m = [];
           if(that.usedSearchTerms.includes(s.toString())==false&&s.toString()!=""){
             if(searchDelay!=undefined){
               clearTimeout(searchDelay);
@@ -525,7 +418,7 @@ class siteManager {
             searchDelay = setTimeout(function(){
               that.usedSearchTerms.push(s);
               that.receiveMedias("/internal-api/medias/search/"+s+that.getIgnoreParam(), false, function(){
-                var so = new Search(s.toString(),that.getFilteredMedias(),store.state.tags,store.state.users);
+                var so = new Search(s.toString(),store.getters.getMediasByTypes(),store.state.tags,store.state.users);
                 console.log("the media-result")
                 console.log(so.mediaResult)
                 theVue.search = so;
@@ -533,26 +426,14 @@ class siteManager {
               });
             }, 300);
           } 
-            var so = new Search(s.toString(),that.getFilteredMedias(),store.state.tags,store.state.users);
-            console.log("the media-result")
-            console.log(so.mediaResult)
+            var so = new Search(s.toString(),store.getters.getMediasByTypes(),store.state.tags,store.state.users);
             theVue.search = so;
-            theVue.users = so.userResult;
-          
-          //console.log(that.getFilteredMedias())
           
 
         }
       }
     },
     mounted(){
-    //  $("#moremodal").show();
-    //  if(sm.params.currentTitle!=undefined){
-        // PLACEHOLDER FOR LOAD THE EXTENDED VIDEO (include comments n'stuff)
-      //  if(sm.findMediaByName(sm.params.currentTitle)==undefined){
-        //  sm.receiveMediaByName(sm.params.currentTitle);
-        //}
-      //}
     },
     watch:{
       $route (to, from){
@@ -560,7 +441,7 @@ class siteManager {
             $("#theLiveSearch").val('');
           }
           if(to.path=="/login"||to.path=="/register"){
-            if(that.loggedUserId!=0){
+            if(store.state.loginId!=0){
               // Redirect if already logged in
               theVue.$router.push('/');
             }
@@ -596,7 +477,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
 
   loadMorePages(callback=undefined){
-    if(this.totalMedias>store.state.medias.length){
+    if(store.state.totalMedias>store.state.medias.length){
       console.log("loadMorePages go for")
       this.receiveMedias('/internal-api/media?'+this.getIgnoreParam(false),false,callback)
       theVue.canloadmore=true;
@@ -605,33 +486,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     theVue.canloadmore=false;
   }
 }
-  
-  getFilteredMedias(myList = undefined){
-    var theMedias:Array<Media> = []
-    var origMedias:Array<Media>;
-    if(myList==undefined){
-      origMedias = store.state.medias
-    } else {
-      origMedias = myList
-    }
-    let that = this;
-    $.each( origMedias, function( key, value ) {
-      $.each( that.types, function( key1, type ) {
-        if(type==value.simpleType){
-          if(theMedias.indexOf(value)==-1){
-            theMedias.push(value)
-          }
-        }
 
-      });
-      if(value.id==that.currentMediaId){
-        if(theMedias.indexOf(value)==-1){
-          theMedias.push(value)
-        }
-      }
-    });
-    return theMedias;
-  }
   
   /*
   * 
@@ -641,10 +496,8 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     $.each( comment.childs, function( key, value ) {
       if(value.childs.length>0){
         comment.childs[key] = that.fillUser(value)
-
       }
-     comment.childs[key].user = that.getUserById(value.user_id)
-
+     comment.childs[key].user = store.getters.getUserById(value.user_id)
     });
     comment.childs = comment.childs.sort(MediaSorter.byCreatedAtComments)
     return comment;
@@ -670,18 +523,13 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   * New: Refresh CSRF AND totalMedias, which is needed to get medias.
   * Within this, we can react if there are new videos since initial.
   */
-  updateCSRF(){
+  updateCSRF(callback=undefined){
     let that = this;
     $.getJSON('/internal-api/refresh-csrf').done(function(data){
-      that.csrf = data.csrf;
       store.commit("setCSRF",data.csrf)
       store.commit("setTotalMedias",data.totalMedias)
-      that.totalMedias = data.totalMedias;
       if(theVue!=undefined){
-        theVue.csrf = data.csrf;
-        theVue.totalmedias = data.totalMedias
-        
-        if(that.totalMedias>store.state.medias.length){
+        if(store.state.totalMedias>store.state.medias.length){
           theVue.canloadmore=true
         }
       }
@@ -690,32 +538,18 @@ if(localStorage.getItem('cookiePolicy')!="read"){
           headers: {
               'X-CSRF-TOKEN': data.csrf
       }});
+      if(callback!=undefined){
+        callback();
+      }
       //  csrfToken = data; // the new token
     });
   }
   receiveUsers(callback=undefined):void{
-    let that = this;
     $.getJSON("/internal-api/users", function name(data) {
       var tmpUsers = [];
-      if(that.loggedUserId==0){
-        that.currentUser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "","","",false);
-        if(theVue!=undefined){
-          theVue.currentuser = that.currentUser
-        }
-      }
         $.each( data.data, function( key, value ) {
           var u = new User(value.id, value.name, value.avatar, value.background, value.bio, value.mediaIds,value.tagString,value.public,value.admin,value.email,value.created_at.date,value.updated_at.date);
-          if(u.id==that.loggedUserId){
-            that.currentUser=u;
-            if(theVue!=undefined){
-              // workaround since url doesn't change
-              // theVue.currentuser = new User(0, "Guest", "/img/404/avatar.png", "/img/404/background.png", "","");
-              theVue.currentuser = u;
-            }
-          }
-
           tmpUsers.push(u);
-
         });
         store.commit("setUsers", tmpUsers)
         if(callback!=undefined){
@@ -726,20 +560,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
   }
 
-  nextVideosList(id){
-    var nextVideos = []
-    var startAdd = false;
-    $.each( this.getFilteredMedias(), function( key, value ) {
-      if(startAdd){
-        nextVideos.push(value)
-      }
-      if(value.id==id){
-        startAdd=true;
-      }
-
-    });
-    return nextVideos;
-  }
   // This method is for telling the server, which medias we don't need to redownload.
   getIgnoreParam(first=true){
     // id 0 is fake, but by it, we can alway attach ,:id
@@ -750,7 +570,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     $.each( store.state.medias, function( key, value ) {
       content += ","+value.id
     });
-    return content+"&types="+this.types.join()+"&sortBy="+theMediaSorter.sortBy
+    return content+"&types="+store.state.filterTypes.join()+"&sortBy="+theMediaSorter.sortBy
   }
 
   mkTreeCat(data,l=0){
@@ -768,9 +588,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
 
       });
       return result;
-  }
-
-  resolveMediaCategorys(){
   }
 
   receiveCategories(callback=undefined):void{
@@ -795,62 +612,42 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   receiveNotifications(url='/internal-api/notifications',callback=undefined):void{
     let that = this;
-    if(this.loggedUserId!=0){
-    $.getJSON(url, function name(data) {
-        that.notifications = [];
-        $.each( data, function( key, value ) {
-          if(value.data.media_id!=null&&value.data.media_id!=0){
-            that.findMediaById(value.data.media_id,function(){
-              console.log("push media-like-notification "+value.id)
-              that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
-              theVue.notifications = that.notifications
-              store.commit("setNotifications",that.notifications)
-            });
-          }
-          if(value.data.comment_id!=null&&value.data.comment_id!=0){
-            console.log("load a comment")
-            that.getCommentById2(value.data.comment_id,function(){
-              console.log("push comment-like-notification "+value.id)
-              that.notifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
-              theVue.notifications = that.notifications
-              store.commit("setNotifications",that.notifications)
-            });
+    if(store.state.loginId!=0){
+      $.getJSON(url, function name(data) {
+          var theNotifications = [];
+          $.each( data, function( key, value ) {
+            if(value.data!=undefined){
+              if(value.data.media_id!=null&&value.data.media_id!=0){
+                that.findMediaById(value.data.media_id,function(){
+                  console.log("push media-like-notification "+value.id)
+                  theNotifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
+                });
+              }
+              else if(value.data.comment_id!=null&&value.data.comment_id!=0){
+                console.log("load a comment")
+                that.getCommentById2(value.data.comment_id,function(){
+                  console.log("push comment-like-notification "+value.id)
+                  theNotifications.push(new Notification(value.id, value.type, value.data, value.read_at,value.created_at));
+                });
+              }
+            }
+          });
+
+          store.commit("setNotifications",theNotifications)
+          if(callback!=undefined){
+            callback()
           }
         });
-
-      this.notifications = that.notifications;
-      store.commit("setNotifications",that.notifications)
-      if(theVue!=undefined){
-        console.log("set notifications to vue")
-        theVue.notifications = this.notifications;
-      }
-    });
-  }
-  }
-  getCategoryKey(category_id:number,data=undefined){
-    var res:any;
-    let that = this;
-    var idata = this.categories
-    if(data!=undefined){
-      idata = data
-    }
-    $.each( idata, function( key, value ) {
-      if(value.children.length>0){
-        var t = that.getCategoryKey(category_id,value.children)
-        if(t!=undefined){
-          res = t;
+      } else {
+        if(callback!=undefined){
+          callback()
         }
       }
-      if(value.id==category_id){
-        res = key;
-      }
-    });
-    return res;
   }
   getCategoryById(category_id:number,data=undefined){
-    var res;
+    var res:any;
     let that = this;
-    var idata = this.categories
+    var idata = store.state.categories
     if(data!=undefined){
       idata = data
     }
@@ -868,7 +665,6 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     return res;
   }
   receiveTags(callback=undefined):void{
-    let that = this;
     $.getJSON("/api/tags", function name(data) {
       var tmpTags = [];
         $.each( data.data, function( key, value ) {
@@ -881,30 +677,20 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
   }
 
-  receiveTagsForMedia(json,forceUpdate=true):void{
-    let that = this;
-    $.getJSON("/api/tags", function name(data) {
-      var tmpTags = [];
-        $.each( data.data, function( key, value ) {
-          tmpTags.push(new Tag(value.id, value.name, value.slug, value.count));
-        });
-      store.commit("setTags",tmpTags)
-    });
-  }
   getCommentById2(id:number,callback=undefined){
     if(id==null||id==0){
       return;
     }
-    var theMedia = undefined;
+    var theComment = undefined;
     let that = this;
-    store.state.medias.forEach(function(val,key){
+    store.state.medias.forEach(function(val:any,key){
       val.comments.forEach(function(comment:any,key2){
       if(comment.id==id){
-        theMedia = comment;
+        theComment = comment;
       }
       });
     });
-    if(theMedia==undefined){
+    if(theComment==undefined){
       //eventBus.$emit('loadMediaByCommentId',id);
       that.receiveMediaByCommentId(id,callback)
     } else {
@@ -912,13 +698,11 @@ if(localStorage.getItem('cookiePolicy')!="read"){
         callback();
       }
     }
-    return theMedia
+    return theComment
   }
 
   receiveMediaByCommentId(cid:number,callback=undefined):void{
     let that = this;
-    var theKey;
-    var existsAlready = false;
     $.getJSON("/internal-api/medias/byCommentId/"+cid, function name(data) {
       data = data.data;
       var m = that.jsonToMedia(data)
@@ -971,17 +755,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     });
     return returner;
   }
-  findMediaByName(mediaName:string):Media{
-    var returnMedia = undefined;
-    let that = this;
-    console.warn("[findMediaByName] deprecated function")
-    $.each(store.state.medias, function(key,value){
-      if(value.urlTitle==mediaName){
-        returnMedia=value;
-      }
-    });
-    return returnMedia;
-  }
+
   findMediaById(id:number,callback=undefined,getIfUndefined=true):Media{
     var returnMedia = undefined;
     let that = this;
@@ -1005,13 +779,13 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
 
   
-  jsonToMedia(value){
+  jsonToMedia(value:any){
     let that = this;
-    var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, this.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,this.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes,value.tracks,value.category_id,value.intro_start,value.outro_start,value.intro_end,value.outro_end)
+    var m = new Media(value.id,value.title, value.description, value.source, value.poster_source,value.duration, value.simpleType,value.techType, value.type, store.getters.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,this.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes,value.tracks,value.category_id,value.intro_start,value.outro_start,value.intro_end,value.outro_end)
     $.each( m.comments, function( key1, value1 ) {
       m.comments[key1] = that.fillUser(value1);
       //console.log(that.fillUser(value1))
-      m.comments[key1].user = that.getUserById(value1.user_id)
+      m.comments[key1].user = store.getters.getUserById(value1.user_id)
     });
     m.comments = m.comments.sort(MediaSorter.byCreatedAt)
     m.comments.sort(MediaSorter.byCreatedAtComments);
@@ -1024,49 +798,23 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     if(forceUpdate){
       store.commit("clearMedias")
     }
-    if(this.totalMedias>store.state.medias.length){
+    if(store.state.totalMedias>store.state.medias.length){
     $.getJSON(url, function name(data) {
         $.each( data.data, function( key, value ) {
             var m = that.jsonToMedia(value)
             store.commit("updateOrAddMedia",m)
         });
 
-        if(theVue==undefined){
-
-        }
         if(that.treecatptions!=undefined){
           theVue.treecatptions = that.treecatptions;
         }
-        if(theVue.$route.params.profileId != undefined){
-          theVue.user = that.getUserById(theVue.$route.params.profileId)
-        }
-
-        /*if(theVue.$route.params.currentTitle!=undefined){
-          if(that.findMediaByName(theVue.$route.params.currentTitle)==undefined){
-            that.receiveMediaByName(theVue.$route.params.currentTitle,function(id){
-              that.currentMediaId = id
-              that.nextMedias = that.nextVideosList(id)
-              theVue.nextvideos = that.nextMedias
-            });
-          }else {
-            that.nextMedias = that.nextVideosList(that.findMediaByName(theVue.$route.params.currentTitle).id)
-            theVue.nextvideos = that.nextMedias
-          }
-        }*/
-        /*if(theVue.$route.params.editTitle!=undefined){
-          if(that.findMediaByName(theVue.$route.params.editTitle)==undefined){
-            that.receiveMediaByName(encodeURIComponent(theVue.$route.params.editTitle),function(id){
-              that.currentMediaId = id
-            });
-          }
-        }*/
 
         if((theVue.$router.currentRoute.path=="/search")) {
           theVue.searching();
         }
         if(loadCount==0&&replaceCount==0){
-          if(that.totalMedias==store.state.medias.length){
-            theVue.alert("All medias are loaded","warning")
+          if(store.state.totalMedias==store.state.medias.length){
+            theVue.alert("All medias are loaded","info")
           }
         } else {
           theVue.alert("Load "+loadCount+" and "+replaceCount+" medias already existed.")
@@ -1078,37 +826,12 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
   }
 
-  getUserById(id:number):User{
-    var search:User = new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{},"",false)
-    $.each( store.state.users, function( key, value ) {
-      if(value.id == id){
-        search = value;
-      }
-    });
-    return search;
-  }
-  getMediasByUser(id:number){
-    var userMedias = []
-    $.each( store.state.medias, function( key, value ) {
-      if(value.user_id == id){
-        userMedias.push(value)
-      }
-    });
-    return userMedias;
-  }
 
 };
 
 if(sm==undefined){
-  var sm;
+  var sm:any;
 }
 export function init(baseUrl:string) {
   sm = new siteManager(baseUrl);
-
-
-  eventBus.$on('overviewPlayClick', title => {
-    theVue.title = title;
-    // deprecated, only example for eventbus
-  });
-
 }

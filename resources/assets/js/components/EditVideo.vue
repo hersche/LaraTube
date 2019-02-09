@@ -123,7 +123,7 @@
   import MarkdownCreator from './MarkdownCreator'
   import SingleMediaView from './SingleMediaView'
   export default {
-    props: ['baseUrl','categories','csrf','treecatptions'],
+    props: ['baseUrl','treecatptions'],
     mounted: function () {
     //  this.$refs.croppieRef.bind({
     //    url: '/img/404/poster.png',
@@ -162,7 +162,12 @@
       })
     },
     computed: {
-      // a computed getter
+      categories: function(){
+        return store.state.categories
+      },
+      csrf: function(){
+        return store.getters.getCSRF()
+      },
       currentmedia: function(){
         return this.getCurrentMedia()
       }
