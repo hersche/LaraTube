@@ -42,6 +42,8 @@ var theMediaSorter = new MediaSorter();
 var i18n:VueI18n;
 
 
+
+
 class siteManager {
   nextMedias:Array<Media>;
   usedSearchTerms:any;

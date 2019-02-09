@@ -259,3 +259,20 @@ export const store = new Vuex.Store({
     
 
     `;
+    
+    if (document.addEventListener)
+{
+    document.addEventListener('webkitfullscreenchange', exitHandler, false);
+    document.addEventListener('mozfullscreenchange', exitHandler, false);
+    document.addEventListener('fullscreenchange', exitHandler, false);
+    document.addEventListener('MSFullscreenChange', exitHandler, false);
+}
+
+function exitHandler()
+{
+    if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null)
+    {
+        eventBus.$emit("playerGoFullscreen", false)
+        $('#mediaDiv').css("height","100%")
+    }
+}

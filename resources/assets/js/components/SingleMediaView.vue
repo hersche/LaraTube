@@ -1,12 +1,12 @@
 <template>
-  <div v-if="currentmedia!=undefined">
+  <div v-if="currentmedia!=undefined" id="playDiv">
     <div class="row" >
       <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="text-center">
           <p>
             <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
-          <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" id="audioVisual"></canvas>
+          <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" @click="player.togglePlay()" @dblclick="visualFullScreen()" id="audioVisual"></canvas>
           <vue-plyr v-if="currentmedia.type=='torrentVideo'" :options="playerConfig" ref="player">
             <video class="col-12" id="torrentPlayer"  controls :poster="currentmedia.poster_source">
               <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
@@ -32,7 +32,7 @@
             <div data-plyr-provider="youtube" v-if="currentmedia.type=='youtube'" :data-plyr-embed-id="currentmedia.source"></div>
             <div data-plyr-provider="vimeo" v-if="currentmedia.type=='vimeo'" :data-plyr-embed-id="currentmedia.source"></div>
           </vue-plyr>
-          <a v-if="currentmedia.type=='localAudio'" class="btn btn-primary col-1 float-right" @click="visualFullScreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
+
 
         </div>
 
@@ -57,38 +57,7 @@
     props: ['autoplay','baseUrl','canloadmore','currentmedia'],
     methods: {
       visualFullScreen(){
-        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-          if(visualizer!=undefined){
-            $('#audioVisual').css("height","400px")
-            $('#audioVisual').css("width","100%")
-            visualizer.setRendererSize(400, 400);
-          }
-        } else {
-          var element = $('#audioVisual')[0];
-          if (element.requestFullscreen) {
-            element.requestFullscreen();
-          } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-          } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-          } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
-          }
-          if(visualizer!=undefined){
-            $('#audioVisual').css("height","100vh")
-            $('#audioVisual').css("width","100vw")
-            visualizer.setRendererSize($(window).width(), $(window).height());
-          }
-        }
+        eventBus.$emit('mediaGoFullscreen','');
       },
 
       // this and it's initTorrentAfterRemove method exist this way by try to remove the old torrent properly.
@@ -259,7 +228,22 @@
           that.player.currentTime = Number(that.currentmedia.intro_end)
         })
       }
-      
+      eventBus.$on('playerGoFullscreen', isFullscreen => {
+        that.goFullscreen()
+        if(isFullscreen){
+          if(this.currentmedia.type=='localAudio'){
+            $('#audioVisual').css("height","100vh")
+            $('#audioVisual').css("width","100vw")
+            visualizer.setRendererSize($(document).width(), $(document).height());
+          }
+        } else {
+          if(this.currentmedia.type=='localAudio'){
+            $('#audioVisual').css("height","400px")
+            $('#audioVisual').css("width","100%")
+            visualizer.setRendererSize(400, 400);
+          }
+        }
+      });    
       if(localStorage.getItem("mediaPosition"+this.currentmedia.id)!=undefined&localStorage.getItem("mediaPosition"+this.currentmedia.id)!=''){
         $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+localStorage.getItem("mediaPosition"+this.currentmedia.id)+"s")
       } else {
