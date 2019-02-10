@@ -22,19 +22,23 @@
               <vs-dropdown-item>{{ currentmedia.type }}</vs-dropdown-item>
             </vs-dropdown-menu>
           </vs-dropdown>
+          <a id="mfs" class="btn btn-sm btn-primary col-1 float-right" @click="mediaGoFullscreen()"><vs-icon size="small" icon="fullscreen"></vs-icon></a>
           <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
           <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end }}s)</button>          
-            <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
-            <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
-            <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
-            <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
-              <div id="userAvatar" :text="currentmedia.user.name">
-                <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
-                <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+currentmedia.user.avatar" alt="avatar" style="max-height: 20px;" />
-              </div>
+          <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
+          <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
+          <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
+          <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
+          <div id="userAvatar" :text="currentmedia.user.name">
+            <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
+            <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+currentmedia.user.avatar" alt="avatar" style="max-height: 20px;" />
+          </div>
             </router-link>
             <b-tooltip target="userAvatar" placement="top">
               <p>Uploaded by {{ currentmedia.user.name }}</p>
+            </b-tooltip>
+            <b-tooltip target="mfs" placement="top">
+              <p>Document fullscreen</p>
             </b-tooltip>
             <b-tooltip target="created_at" placement="top">
               <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
@@ -63,7 +67,7 @@
               <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
             </button>
 
-            <a class="btn btn-primary col-1 float-right" @click="mediaGoFullscreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
+            
             <span v-if="loggeduserid==currentmedia.user.id|currentuser.admin" class="">
               <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
             </span>
@@ -83,10 +87,10 @@
 
 
       <div class="comments col-sm-8 col-12 float-left">
-        <comments v-bind:csrf="csrf" v-bind:level="'0'" v-bind:commentlist="currentmedia.comments" v-bind:loggeduserid="loggeduserid" v-bind:currentmedia="currentmedia"></comments>
+        <comments class="bg-light" v-bind:csrf="csrf" v-bind:level="'0'" v-bind:commentlist="currentmedia.comments" v-bind:loggeduserid="loggeduserid" v-bind:currentmedia="currentmedia"></comments>
       </div>
 
-      <div class="col-sm-4 col-12 float-right">
+      <div class="col-sm-4 col-12 float-right bg-light">
         <h4>{{ $t('Next') }} {{ $t('medias') }}</h4>
         <p>{{ $t('Sort by') }} <sortSelect></sortSelect></p>
         <p>
@@ -306,7 +310,6 @@
 
     mounted(){
       let that = this;
-    //  this.currentmedia = this.getCurrentMedia()
       if(localStorage.getItem("autoplay")=='true'){
         this.autoplay=true;
       }

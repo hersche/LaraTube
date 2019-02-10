@@ -229,7 +229,6 @@
         })
       }
       eventBus.$on('playerGoFullscreen', isFullscreen => {
-        that.goFullscreen()
         if(isFullscreen){
           if(this.currentmedia.type=='localAudio'){
             $('#audioVisual').css("height","100vh")
