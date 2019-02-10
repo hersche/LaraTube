@@ -1,40 +1,29 @@
 <template>
   <div v-if="currentmedia!=undefined" style="overflow-y:auto;overflow-x:hidden;" id="mediaDiv">
-      <mediaView v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
-      <div class="col-xs-12 col-sm-12 col-md-12"></div>
-      <div class="card">
-        <div class="card-header">
-          <span class='h3'>{{ currentmedia.title }}</span>
-          <div class="float-right">
-
-            <span class="float-left"><vs-input-number v-if="currentmedia.type=='localAudio'" v-model="audioVisualChangeSeconds" :step="0.1"/></span>
-            <span v-if="currentmedia.type=='localAudio'" >
-              <button class="btn btn-sm btn-primary" @click="previousVisual()"><vs-icon icon="skip_previous"></vs-icon></button>
-              <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
-                <option value="Poster">Poster</option>
-                <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
-              </select>
-              <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
-            </span>
-            <vs-dropdown vs-trigger-click class="btn-sm"  >
-  <a href.prevent class="btn btn-sm btn-primary">
-    More
-
-  </a>
-
-  <vs-dropdown-menu class="">
-    <vs-dropdown-item v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'">
-      Torrent-info
-    </vs-dropdown-item>
-    <vs-dropdown-item>
-      {{ currentmedia.type }}
-    </vs-dropdown-item>
-  </vs-dropdown-menu>
-</vs-dropdown>
-            <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
-            <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">
-              Skip intro ({{ currentmedia.intro_end }}s)
-            </button>          
+    <mediaView v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
+    <div class="col-xs-12 col-sm-12 col-md-12"></div>
+    <div class="card">
+      <div class="card-header">
+        <span class='h3'>{{ currentmedia.title }}</span>
+        <div class="float-right">
+          <span class="float-left"><vs-input-number v-if="currentmedia.type=='localAudio'" v-model="audioVisualChangeSeconds" :step="0.1"/></span>
+          <span v-if="currentmedia.type=='localAudio'" >
+            <button class="btn btn-sm btn-primary" @click="previousVisual()"><vs-icon icon="skip_previous"></vs-icon></button>
+            <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
+              <option value="Poster">Poster</option>
+              <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
+            </select>
+            <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
+          </span>
+          <vs-dropdown vs-trigger-click class="btn-sm"  >
+            <a href.prevent class="btn btn-sm btn-primary">More</a>
+            <vs-dropdown-menu class="">
+              <vs-dropdown-item v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'">Torrent-info</vs-dropdown-item>
+              <vs-dropdown-item>{{ currentmedia.type }}</vs-dropdown-item>
+            </vs-dropdown-menu>
+          </vs-dropdown>
+          <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
+          <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end }}s)</button>          
             <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
             <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
             <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
@@ -55,8 +44,8 @@
               <h5>{{ currentCat.title }}</h5>
               <p>{{ currentCat.description }}</p>
             </b-tooltip>
-
-
+            
+            
             <button id="like" v-if="mylike==1" type="button" @click="like(0,'like')" class="btn btn-sm btn-success">
               <vs-icon icon="thumb_up"></vs-icon>
               <span class="ml-1" id="likeCount">{{ likes }}</span>
@@ -65,8 +54,6 @@
               <vs-icon icon="thumb_up"></vs-icon>
               <span class="ml-1" id="likeCount">{{ likes }}</span>
             </button>
-
-
             <button id="dislike" v-if="mylike==-1" type="button" @click="like(0,'dislike')" class="btn btn-sm btn-success">
               <vs-icon icon="thumb_down"></vs-icon>
               <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
@@ -76,7 +63,7 @@
               <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
             </button>
 
-          <a class="btn btn-primary col-1 float-right" @click="mediaGoFullscreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
+            <a class="btn btn-primary col-1 float-right" @click="mediaGoFullscreen()"><vs-icon size="big" icon="fullscreen"></vs-icon></a>
             <span v-if="loggeduserid==currentmedia.user.id|currentuser.admin" class="">
               <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
             </span>
@@ -104,12 +91,13 @@
         <p>{{ $t('Sort by') }} <sortSelect></sortSelect></p>
         <p>
           <vs-switch v-model="autoplay"/>
-          <span for="">Autoplay</span></p>
-            <div v-for="item in nextMedias"  class="" v-if="item.id!=currentmedia.id">
-              <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
-            </div>
-            <div v-if="nextMedias.length==0">No more next medias</div>
-            <button class="btn btn-block btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
+          <span for="">Autoplay</span>
+        </p>
+        <div v-for="item in nextMedias"  class="" v-if="item.id!=currentmedia.id">
+          <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
+        </div>
+        <div v-if="nextMedias.length==0">No more next medias</div>
+        <button class="btn btn-block btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
       </div>
       <b-modal  style="width:520px;" id="torrentmodal" title="Torrent-infos">
         <p>Peers: {{ peers }}</p>
@@ -119,7 +107,6 @@
         <p><vs-switch v-model="chartEnabled"/><label>Enable chart (workaround)</label></p>
         <p><apexchart v-if="chartEnabled" width="100%" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
       </b-modal>
-
   </div>
 </template>
 <script>
@@ -152,7 +139,6 @@
         eventBus.$emit('mediaGoFullscreen','');
       },
       goFullscreen(){
-        
         if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
           if (document.exitFullscreen) {
             document.exitFullscreen();
@@ -164,11 +150,6 @@
             document.msExitFullscreen();
           }
           $('#mediaDiv').css("height","100%")
-          if(this.currentmedia.type=="localAudio"){
-            $('#audioVisual').css("height","400px")
-            $('#audioVisual').css("width","100%")
-            //visualizer.setRendererSize(400, 400);
-          }
           eventBus.$emit('playerGoFullscreen',false);
           
         } else {
@@ -183,11 +164,6 @@
             element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
           } else if (element.msRequestFullscreen) {
             element.msRequestFullscreen();
-          }
-          if(this.currentmedia.type=="localAudio"){
-            $('#audioVisual').css("height","100vh")
-            $('#audioVisual').css("width","100vw")
-            //visualizer.setRendererSize($(document).width(), $(document).height());
           }
           eventBus.$emit('playerGoFullscreen',true);
         }
@@ -286,21 +262,20 @@
       audiovisualtype: function(val){
         localStorage.setItem('audioVisualType',this.audiovisualtype);
         eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
-  },
-  medias: function(val){
-    console.log("medias change")
-  //  this.currentmedia = this.getCurrentMedia();
-    if(this.currentmedia!=undefined){
-
-      this.mylike = Number(this.currentmedia.myLike);
-      this.likes = this.currentmedia.likes;
-      this.dislikes = this.currentmedia.dislikes;
-    }
-},
-  audioVisualChangeSeconds:function(val){
-    localStorage.setItem('audioVisualChangeSeconds',this.audioVisualChangeSeconds);
-    eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
-  }
+      },
+      medias: function(val){
+        console.log("medias change")
+        //  this.currentmedia = this.getCurrentMedia();
+        if(this.currentmedia!=undefined){
+          this.mylike = Number(this.currentmedia.myLike);
+          this.likes = this.currentmedia.likes;
+          this.dislikes = this.currentmedia.dislikes;
+        }
+      },
+      audioVisualChangeSeconds:function(val){
+        localStorage.setItem('audioVisualChangeSeconds',this.audioVisualChangeSeconds);
+        eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
+      }
     },
     computed: {
       csrf: function(){
@@ -350,11 +325,6 @@
 
       eventBus.$on('mediaGoFullscreen', isFullscreen => {
         that.goFullscreen()
-        if(isFullscreen){
-          
-        } else {
-          
-        }
       });
       eventBus.$emit('audioVisualType',[this.audiovisualtype,this.audioVisualChangeSeconds]);
       eventBus.$on('torrentChartData', chartData => {

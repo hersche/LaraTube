@@ -255,24 +255,24 @@ export const store = new Vuex.Store({
             <span class="label--not-pressed plyr__tooltip" role="tooltip">Enter fullscreen</span>
         </button>
     </div>
-
-    
-
     `;
     
-    if (document.addEventListener)
-{
-    document.addEventListener('webkitfullscreenchange', exitHandler, false);
-    document.addEventListener('mozfullscreenchange', exitHandler, false);
-    document.addEventListener('fullscreenchange', exitHandler, false);
-    document.addEventListener('MSFullscreenChange', exitHandler, false);
-}
-
-function exitHandler()
-{
-    if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null)
-    {
-        eventBus.$emit("playerGoFullscreen", false)
-        $('#mediaDiv').css("height","100%")
+    /*
+    * Small hack for reset css-settings. It's here, because it should be only inited once.
+    * Best place: MediaComponent
+    * Listen for: exit fullscreen
+    * Thanks to: stackoverflow!
+    */
+    if (document.addEventListener){
+      document.addEventListener('webkitfullscreenchange', exitHandler, false);
+      document.addEventListener('mozfullscreenchange', exitHandler, false);
+      document.addEventListener('fullscreenchange', exitHandler, false);
+      document.addEventListener('MSFullscreenChange', exitHandler, false);
     }
-}
+
+    function exitHandler(){
+      if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null){
+        $('#mediaDiv').css("height","100%")
+        eventBus.$emit("playerGoFullscreen", false)
+      }
+    }
