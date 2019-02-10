@@ -13,7 +13,7 @@
     <router-link to="/" class="btn btn-primary">Home</router-link>
   </p>
 -->
-  <router-view v-bind:treecatptions="treecatptions" v-bind:medias="medias" v-bind:catlevel="Number(0)" v-bind:search="search" :key="$route.fullPath" v-bind:tagenabled="true" v-bind:canloadmore="canloadmore"></router-view>
+  <router-view v-bind:treecatptions="treecatptions" v-bind:medias="medias" v-bind:catlevel="Number(0)" v-bind:search="search" v-bind:tagenabled="true" v-bind:canloadmore="canloadmore"></router-view>
 
 </div>
 @endsection

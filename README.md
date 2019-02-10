@@ -25,15 +25,11 @@ By license, you can use the software for anything. If i (the developer) detect t
 - Tags
 - Various filters (type, search, tags)
 - Live crop/rotate/"edit" for uploading images
+- Markdown everywhere
+- Media-bookmark with offline localStorage
+- Intro/Outro-support (not finished yet)
 
 ## TODO-features
-
-- Redo categories-view visually, this one is horrible for now
-  - Catch specific category-videos
-- Change receive-mechanism to better catch the wanted medias
-   - Sort and types should matter
-   - Need to exclude already loaded medias (tried, but not work yet)
-
 
 ## Wanted features
 

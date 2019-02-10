@@ -1,6 +1,6 @@
 <template>
-  <div v-if="currentmedia!=undefined" style="overflow-y:auto;overflow-x:hidden;" id="mediaDiv">
-    <mediaView v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
+  <div v-if="currentmedia!=undefined" style="overflow-y:auto;overflow-x:hidden;" class="bg-light" id="mediaDiv">
+    <mediaView :key="$route.fullPath" v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
     <div class="col-xs-12 col-sm-12 col-md-12"></div>
     <div class="card">
       <div class="card-header">
@@ -15,14 +15,15 @@
             </select>
             <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
           </span>
-          <vs-dropdown vs-trigger-click class="btn-sm"  >
+          <vs-button id="mfs" color="success" type="gradient" icon="fullscreen"  @click="mediaGoFullscreen()"></vs-button>
+          <vs-dropdown vs-trigger-click class="btn-sm">
             <a href.prevent class="btn btn-sm btn-primary">More</a>
             <vs-dropdown-menu class="">
               <vs-dropdown-item v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'">Torrent-info</vs-dropdown-item>
               <vs-dropdown-item>{{ currentmedia.type }}</vs-dropdown-item>
             </vs-dropdown-menu>
           </vs-dropdown>
-          <a id="mfs" class="btn btn-sm btn-primary col-1 float-right" @click="mediaGoFullscreen()"><vs-icon size="small" icon="fullscreen"></vs-icon></a>
+          
           <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
           <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end }}s)</button>          
           <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
