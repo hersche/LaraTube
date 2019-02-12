@@ -18,7 +18,7 @@ use App\Http\Resources\User as UserResource;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+if(function_exists("getMediaOrder")==false){
 function getMediaOrder($sortByInput){
   $ascDesc = 'desc';
   $sortBy = 'updated_at';
@@ -49,8 +49,8 @@ function getMediaOrder($sortByInput){
     $sortBy = 'type';
   }
   return [$ascDesc,$sortBy];
+};
 }
-
 Auth::routes();
 Route::get('/', function () {
     return view('base');
