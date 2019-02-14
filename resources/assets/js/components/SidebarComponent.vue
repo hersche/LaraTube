@@ -1,12 +1,20 @@
 <template lang="html">
+<div>
+  <v-toolbar fixed dark color="primary" style="z-index:99999">
+    <v-toolbar-side-icon @click="active=true"></v-toolbar-side-icon>
+    <router-link class="" to="/"><v-toolbar-title class="white--text" to="/">LaraTube</v-toolbar-title></router-link>
 
-  <div id="parentx" class=" fixed-top bg-light">
-    <vs-navbar class="nabarx" style="">
-      <vs-button @click="active=true" type="flat" icon="menu"></vs-button>
-      <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
-      <vs-spacer></vs-spacer>
-      <input icon="search" :placeholder="$t('Search')+'...'" id="theLiveSearch" class="col-3 col-md-3" @keyup="searching()" @focus="searching()" />
-    </vs-navbar>
+    <v-spacer></v-spacer>
+    
+    <v-text-field
+  hide-details
+  append-icon="search"
+  single-line
+  id="theLiveSearch"
+  :placeholder="$t('Search')+'...'"
+  @keyup="searching()" @focus="searching()"
+></v-text-field>
+    </v-toolbar>
     
     
     <v-navigation-drawer
