@@ -42,10 +42,10 @@
     <span class="btn btn-primary" v-if="theTestMedia==undefined" @click="testMedia()">Test link and extend infos</span>
     <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
     <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
-    <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('intro_start')">Set intro start</span>
-    <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('outro_start')">Set outro start</span>
-    <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('intro_end')">Set intro end</span>
-    <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('outro_end')">Set outro end</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro_start')">Set intro start</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro_start')">Set outro start</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro_end')">Set intro end</span>
+    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro_end')">Set outro end</span>
     
     <div v-if="mediaType!='localAudio'&mediaType!='localVideo'" class="form-group">
         <label>{{ $t('Duration') }}</label>
@@ -53,19 +53,19 @@
     </div>
     <div class="form-group row">
         <label>{{ $t('Intro start') }}</label>
-        <input placeholder="Time in seconds" class="form-control" :value="currentmedia.intro_start" id="intro_start" name="intro_start" type="text">
+        <input placeholder="Time in seconds" class="form-control" id="intro_start" name="intro_start" type="text">
     </div>
     <div class="form-group row">
         <label>{{ $t('Outro start') }}</label>
-        <input placeholder="Time in seconds" class="form-control" :value="currentmedia.outro_start" id="outro_start" name="outro_start" type="text">
+        <input placeholder="Time in seconds" class="form-control" id="outro_start" name="outro_start" type="text">
     </div>
     <div class="form-group row">
         <label>{{ $t('Intro end') }}</label>
-        <input placeholder="Time in seconds" class="form-control" :value="currentmedia.intro_end" id="intro_end" name="intro_end" type="text">
+        <input placeholder="Time in seconds" class="form-control" id="intro_end" name="intro_end" type="text">
     </div>
     <div class="form-group row">
         <label>{{ $t('Outro end') }}</label>
-        <input placeholder="Time in seconds" class="form-control" :value="currentmedia.outro_end" id="outro_end" name="outro_end" type="text">
+        <input placeholder="Time in seconds" class="form-control" id="outro_end" name="outro_end" type="text">
     </div>
     <div class="form-group">
         <label>Media-poster:</label>

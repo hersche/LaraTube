@@ -4,99 +4,236 @@
     <vs-navbar class="nabarx" style="">
       <vs-button @click="active=true" type="flat" icon="menu"></vs-button>
       <router-link class="" to="/"><vs-navbar-title>LaraTube</vs-navbar-title></router-link>
-      
-      
-<vs-spacer></vs-spacer>
+      <vs-spacer></vs-spacer>
       <input icon="search" :placeholder="$t('Search')+'...'" id="theLiveSearch" class="col-3 col-md-3" @keyup="searching()" @focus="searching()" />
     </vs-navbar>
-    <vs-sidebar parent="body" default-index="1" :reduce="false" :reduce-not-hover-expand="false"  color="primary" class="sidebarx" spacer v-model="active">
-      <div slot="header" class="header-sidebar">
-        <div class="row">
-      <treeselect class="col-10" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
-      <vs-button @click="active=false" class="" size="small" radius color="danger" type="gradient" icon="close"></vs-button>
+    
+    
+    <v-navigation-drawer
+  v-model="active"
+  fixed
+  style="z-index:99999; height: 100%;overflow-x:auto; max-width:90%;"
+  dark
+  temporary
+>
+      <v-list-tile>
+        <v-list-tile-action>
+          <v-icon>call_merge</v-icon>
+        </v-list-tile-action>
+        <treeselect class="" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
+      </v-list-tile>
+<v-list-tile>
+<v-list-tile-action>
+  <v-icon>language</v-icon>
+</v-list-tile-action>
+<v-list-tile-content>
+  <v-list-tile-title>
+    <select id="langSelect" class="float-right custom-select custom-select-sm ml-1" v-model="lang" >
+      <option value="en">EN</option>
+      <option value="de">DE</option>
+    </select></v-list-tile-title>
+</v-list-tile-content>
+</v-list-tile>
+  <v-list class="pa-1">
+
+    <v-list-tile  avatar tag="div" v-if="currentuser.id!=0" :style="'background-image:url('+currentuser.background+');'">
+      <v-badge left color="orange" overlap>
+        <router-link class="small" slot="badge" to="/notifications">{{ n }}</router-link>
+        <router-link :to="'/profile/'+currentuser.id">
+        <v-list-tile-avatar >
+          <img :src="currentuser.avatar">
+        </v-list-tile-avatar>
+      </router-link>
+      </v-badge>
+
+      <v-list-tile-content>
+        <v-list-tile-title>{{ currentuser.name }}</v-list-tile-title>
+      </v-list-tile-content>
+
+      <v-list-tile-action>
+<v-button @click="active=false" small fab color="orange" style="cursor:pointer;"><v-icon>close</v-icon></v-button>
+      </v-list-tile-action>
+    </v-list-tile>
+  </v-list>
+
+  <v-list class="pt-0" dense>
+
+
+      
+
+    <v-list-tile to="/">
+      <v-list-tile-action>
+        <v-icon>home</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Home') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+    
+    <v-list-tile to="/charts">
+      <v-list-tile-action>
+        <v-icon>multiline_chart</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Charts') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+
+    <v-list-tile to="/categories">
+      <v-list-tile-action>
+        <v-icon>category</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Categories') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+    
+    <v-list-tile to="/tags">
+      <v-list-tile-action>
+        <v-icon>tag</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Tags') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+  
+
+    
+    
+    <v-list-group
+      prepend-icon="warning"
+      no-action
+      v-if="currentuser.admin"
+    >
+      <v-list-tile slot="activator">
+        <v-list-tile-title>Admin</v-list-tile-title>
+      </v-list-tile>
+      <v-list-tile to="/admin/users">
+        <v-list-tile-action>
+          <v-icon>account_box</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>{{ $t('Users') }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+    </v-list-group>
+    <v-list-group
+      prepend-icon="build"
+      no-action
+    >
+      <v-list-tile slot="activator">
+        <v-list-tile-title>Debug</v-list-tile-title>
+      </v-list-tile>
+      <v-list-tile>
+        <v-list-tile-action>
+          <v-icon>multiline_chart</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>{{ $t('Medias') }}: {{ medias.length }} / {{ tm }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
+      <v-list-tile>
+        <v-list-tile-action>
+          <v-icon>account_box</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>{{ $t('Users') }}: {{ users.length }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      
+      <v-list-tile>
+        <v-list-tile-action>
+          <v-icon>tag</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>{{ $t('Tags') }}: {{ tags.length }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      
+      <v-list-tile @click="emitLoadAllMedias()">
+        <v-list-tile-action>
+          <v-icon>category</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Load all {{ $t('medias') }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      
+      <v-list-tile @click="emitRefreshMedias()">
+        <v-list-tile-action>
+          <v-icon>category</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Reset data</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+    </v-list-group>
+    
+    
+    <v-list-tile v-if="currentuser.id==0" to="/login">
+      <v-list-tile-action>
+        <v-icon>exit_to_app</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Login') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+
+    <v-list-tile v-if="currentuser.id==0" to="/register">
+      <v-list-tile-action>
+        <v-icon>person_add</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Register') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+
+    <v-list-tile v-if="currentuser.id!=0" to="/editprofile">
+      <v-list-tile-action>
+        <v-icon>settings</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Settings') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+      
+    <v-list-tile v-if="currentuser.id!=0" @click="emitLogout()" >
+      <v-list-tile-action>
+        <v-icon>power_settings_new</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('Logout') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+    
+    <v-list-tile to="/about">
+      <v-list-tile-action>
+        <v-icon>help</v-icon>
+      </v-list-tile-action>
+      <v-list-tile-content>
+        <v-list-tile-title>{{ $t('About') }}</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+    
+  </v-list>
+</v-navigation-drawer>
+<v-fab-transition>
+  <v-btn
+    fab
+    v-if="currentuser.id!=0"
+    dark
+    small
+    fixed
+    bottom
+    right
+    to="/upload"
+  >
+    <v-icon>add</v-icon>
+  </v-btn>
+</v-fab-transition>
+</v-toolbar>
     </div>
-      <div class="col-12 pl-0 pr-0">
-      <label class="custom-control-label col-6" for="langSelect">Language</label>
-      <select id="langSelect" class="col-6 float-right custom-select custom-select-sm" v-model="lang" >
-        <option value="en">EN</option>
-        <option value="de">DE</option>
-      </select>
-
-    </div>
-      <div v-if="currentuser.id!=0" class="col-12 text-center"  :style="'background-image:url('+currentuser.background+');'">
-        <router-link class="" to="/notifications">
-          <vs-avatar :badge="n" to="/notifications" size="70px" :src="currentuser.avatar"/>
-        </router-link>
-        <h4><router-link class="btn btn-sm btn-success" :to="'/profile/'+currentuser.id">{{ currentuser.name }}</router-link></h4>
-        <span>
-          <router-link class="btn btn-sm btn-success" to="/upload">{{ $t("Upload") }}</router-link>
-          <router-link class="btn btn-sm btn-success" to="/myvideos">{{ $t("My") }} {{ $t("medias") }}</router-link>
-        </span>
-      </div>
-    </div>
-      <!-- The existing vs-select doesn't work here. This does, but isn't elegant (yet) -->
-      <!-- <select
-        placeholder="Types"
-        multiple
-        class="selectExample"
-        v-model="dataTypes"
-        >
-        <option value="audio" text="Audio" >Audio</option>
-        <option value="video" text="Video" >Video</option>
-      </select> -->
-      <vs-sidebar-item index="1" icon="home" to="/">
-        Home
-      </vs-sidebar-item>
-      <vs-sidebar-item index="9" to="/categories" icon="category">
-        {{ $t('Categories') }}
-      </vs-sidebar-item>
-      <vs-sidebar-item index="3" icon="tag" to="/tags">
-        {{ $t('Tags') }}
-      </vs-sidebar-item>
-      <vs-sidebar-item index="2" icon="multiline_chart" to="/charts" >
-        Charts
-      </vs-sidebar-item>
-
-      <vs-sidebar-item index="4" to="/about" icon="multiline_chart">
-        {{ $t('About') }}
-      </vs-sidebar-item>
-      <vs-sidebar-item index="5" @click="emitGetNewMedias()">
-        Check 4 new medias
-      </vs-sidebar-item>
-
-      <vs-sidebar-group v-if="currentuser.admin" title="Admin">
-        <vs-sidebar-item index="7.1" to="/admin/users">
-          {{ $t('Users') }}
-        </vs-sidebar-item>
-     </vs-sidebar-group>
-       <vs-sidebar-group title="Dev options">
-         <vs-sidebar-item index="6.1" @click="emitLoadAllMedias()">
-           Load all {{ $t('medias') }}
-          </vs-sidebar-item>
-         <vs-sidebar-item index="6.2" @click="emitRefreshMedias()">
-           Reset data
-         </vs-sidebar-item>
-         <vs-sidebar-item>{{ $t('Medias') }} {{ $t('loaded') }}: {{ medias.length }} / {{ tm }}</vs-sidebar-item>
-         <vs-sidebar-item>{{ $t('Users') }} {{ $t('loaded') }}: {{ users.length }}</vs-sidebar-item>
-         <vs-sidebar-item>{{ $t('Tags') }} {{ $t('loaded') }}: {{ tags.length }}</vs-sidebar-item>
-
-
-      </vs-sidebar-group>
-
-
-
-      <div class="footer-sidebar" slot="footer">
-        <vs-button v-if="currentuser.id==0" to="/login" icon="exit_to_app" color="success" type="flat">{{ $t("Login") }}</vs-button>
-        <vs-button v-if="currentuser.id==0" to="/register" icon="person_add" color="success" type="flat">{{ $t("Register") }}</vs-button>
-        <vs-button v-if="currentuser.id!=0" @click="emitLogout()" icon="power_settings_new" color="danger" type="flat">{{ $t("Logout") }}</vs-button>
-        <form v-if="currentuser.id!=0" id="logoutForm" action="/logout" method="POST" style="display: none;">
-            <input type="hidden" name="_token" :value="csrf">
-        </form>
-        <vs-button v-if="currentuser.id!=0" icon="settings" to="/editprofile" color="primary" type="border"></vs-button>
-      </div>
-
-    </vs-sidebar>
-  </div>
 
 </template>
 
@@ -200,6 +337,7 @@ export default {
     lang:'en',
     dataTypes: ["audio","video"],
     n:0,
+    mini:false,
     
     treeTypes: [{id:'audio',label:'Audio'},{id:'video',label:'Video'}]
     

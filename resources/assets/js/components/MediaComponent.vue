@@ -4,18 +4,21 @@
     <div class="col-xs-12 col-sm-12 col-md-12"></div>
     <div class="card">
       <div class="card-header">
-        <span class='h3'>{{ currentmedia.title }}</span>
-        <div class="float-right">
+      
+        <div style="float:right;width:100%;">
           <span class="float-left"><vs-input-number v-if="currentmedia.type=='localAudio'" v-model="audioVisualChangeSeconds" :step="0.1"/></span>
-          <span v-if="currentmedia.type=='localAudio'" >
-            <button class="btn btn-sm btn-primary" @click="previousVisual()"><vs-icon icon="skip_previous"></vs-icon></button>
+          <span v-if="currentmedia.type=='localAudio'" class="" >
+            <v-btn color="blue" small @click="previousVisual()"><v-icon>skip_previous</v-icon></v-btn>
             <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
               <option value="Poster">Poster</option>
               <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
             </select>
-            <button class="btn btn-sm btn-primary" @click="nextVisual()"><vs-icon icon="skip_next"></vs-icon></button>
+            <v-btn color="blue" small @click="nextVisual()"><v-icon>skip_next</v-icon></v-btn>
           </span>
-          <vs-button id="mfs" color="success" type="gradient" icon="fullscreen"  @click="mediaGoFullscreen()"></vs-button>
+        </div>
+        <div style="float:right;width:100%;">
+
+          <v-btn id="mfs" small color="blue" @click="mediaGoFullscreen()"><v-icon>fullscreen</v-icon></v-btn>
           <vs-dropdown vs-trigger-click class="btn-sm">
             <a href.prevent class="btn btn-sm btn-primary">More</a>
             <vs-dropdown-menu class="">
@@ -25,7 +28,7 @@
           </vs-dropdown>
           
           <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
-          <button class="btn btn-sm btn-warning mr-1" @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end }}s)</button>          
+          <v-btn color="blue" small @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end.toFixed(1) }}s)</v-btn>          
           <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
           <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
           <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
@@ -73,7 +76,9 @@
               <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
             </span>
           </div>
-          <div class="card-body"><VueMarkdown :source="currentmedia.description"></VueMarkdown></div>
+          <div class="card-body">
+            <span class='h3'>{{ currentmedia.title }}</span>
+            <VueMarkdown :source="currentmedia.description"></VueMarkdown></div>
           <div class="card-footer">
             <span v-for="tag in currentmedia.tags">
               <router-link class=""  :to="'/tags/'+tag.name" >

@@ -17,6 +17,9 @@ import 'vuesax/dist/vuesax.css'; //Vuesax styles
 import VuePlyr from 'vue-plyr';
 import VueI18n from 'vue-i18n';
 import Treeselect from '@riophae/vue-treeselect';
+import Vuetify from 'vuetify';
+import 'vuetify/dist/vuetify.min.css';
+Vue.use(Vuetify);
 // import VueMarkdown from 'vue-markdown'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';

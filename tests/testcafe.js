@@ -16,7 +16,7 @@ test('Tags', async t => {
     await t
         .click('.vs-navbar > .vs-component')
         .click(Selector('.material-icons').withText('tag'))
-        .click('.vs-sidebar--background')
+        //.click('.vs-sidebar--background')
         .click(Selector('.btn-primary').withText('35C3'))
         // Use the assertion to check if the actual header text is equal to the expected one
         .expect(Selector('.sgfText').withText('ChaosWest').textContent).contains('ChaosWest');
@@ -26,15 +26,15 @@ test('Login and logout', async t => {
     await t
         .click('.vs-navbar > .vs-component')
         .click(Selector('.material-icons').withText('exit_to_app'))
-        .click('.vs-sidebar--background')
+        //.click('.vs-sidebar--background')
         .typeText('#email', 'bla@bla.bla')
         .typeText('#password', 'blabla')
         .click('.col-md-8 > .btn-primary')
         .click('.vs-navbar > .vs-component')
         // Use the assertion to check if the actual header text is equal to the expected one
-        .expect(Selector('.header-sidebar').textContent).contains('bla')
+        .expect(Selector('.v-navigation-drawer').textContent).contains('bla')
         .click(Selector('.material-icons').withText('power_settings_new'))
-        .expect(Selector('.header-sidebar').textContent).notContains('bla')
+        .expect(Selector('.v-navigation-drawer').textContent).notContains('bla')
         ;
 });
 
