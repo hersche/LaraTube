@@ -16,12 +16,17 @@
   dark
   temporary
 >
-      <v-list-tile>
-        <v-list-tile-action>
-          <v-icon>call_merge</v-icon>
-        </v-list-tile-action>
-        <treeselect class="" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
-      </v-list-tile>
+  <v-list-tile>
+    <v-list-tile-action>
+      <v-button @click="active=false" small fab color="orange" style="cursor:pointer;"><v-icon>close</v-icon></v-button>
+    </v-list-tile-action>  
+  </v-list-tile>
+  <v-list-tile>
+    <v-list-tile-action>
+      <v-icon>call_merge</v-icon>
+    </v-list-tile-action>
+    <treeselect class="" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
+  </v-list-tile>
 <v-list-tile>
 <v-list-tile-action>
   <v-icon>language</v-icon>
@@ -31,7 +36,8 @@
     <select id="langSelect" class="float-right custom-select custom-select-sm ml-1" v-model="lang" >
       <option value="en">EN</option>
       <option value="de">DE</option>
-    </select></v-list-tile-title>
+    </select>
+  </v-list-tile-title>
 </v-list-tile-content>
 </v-list-tile>
   <v-list class="pa-1">
@@ -50,16 +56,10 @@
         <v-list-tile-title>{{ currentuser.name }}</v-list-tile-title>
       </v-list-tile-content>
 
-      <v-list-tile-action>
-<v-button @click="active=false" small fab color="orange" style="cursor:pointer;"><v-icon>close</v-icon></v-button>
-      </v-list-tile-action>
     </v-list-tile>
   </v-list>
 
   <v-list class="pt-0" dense>
-
-
-      
 
     <v-list-tile to="/">
       <v-list-tile-action>
