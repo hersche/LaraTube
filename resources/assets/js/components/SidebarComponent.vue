@@ -26,7 +26,7 @@
 >
   <v-list-tile>
     <v-list-tile-action>
-      <v-button @click="active=false" small fab color="orange" style="cursor:pointer;"><v-icon>close</v-icon></v-button>
+      <v-btn @click="active=false" small fab color="orange" style="cursor:pointer;"><v-icon>close</v-icon></v-btn>
     </v-list-tile-action>  
   </v-list-tile>
   <v-list-tile>

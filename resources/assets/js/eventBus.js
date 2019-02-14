@@ -39,13 +39,14 @@ export const store = new Vuex.Store({
           return m
         },
         getMediasByUserId: (state) => (userId, filtered=true) => {
-          var m = state.medias.filter(media => media.user_id===userId)
+          var m = state.medias.filter(media => media.user_id===Number(userId))
           if(filtered){
-            m = state.medias.filter(media => state.filterTypes.includes(media.simpleType))
+            m = m.filter(media => state.filterTypes.includes(media.simpleType))
           }
           return m
         },
         getMediaById: (state) => (id) => {
+          id = Number(id)
           var m = state.medias.find(media => media.id === id)
           if(m==undefined){
             if(state.blockGetRequest==false){
@@ -82,6 +83,7 @@ export const store = new Vuex.Store({
           return m
         },
         getUserById: (state) => (id) => {
+          id = Number(id)
           var u = state.users.find(u => u.id == id)
           if(u==undefined){
             u=new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{},"",false)

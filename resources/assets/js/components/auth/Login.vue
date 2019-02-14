@@ -1,53 +1,46 @@
 <template>
 <div class="">
-    <div class="card">
-        <div class="card-header">{{ $t('Login') }}</div>
+  <h1 class="text-center">{{ $t('Login') }}</h1>
+          <v-form
+            ref="form"
+            id="loginForm"
+            v-model="valid"
+            lazy-validation
+            >
+            <v-text-field
+              v-model="email"
+              :rules="emailRules"
+              label="E-mail"
+              name="email"
+              required
+              ></v-text-field>
+              
+              <v-text-field
+                v-model="password"
+                :append-icon="show1 ? 'visibility_off' : 'visibility'"
+                :rules="[rules.required, rules.min]"
+                :type="show1 ? 'text' : 'password'"
+                name="password"
+                :label="$t('Password')"
+                hint="At least 8 characters"
+                counter
+                @click:append="show1 = !show1"
+              ></v-text-field>
+              <v-checkbox
+                v-model="checkbox"
+                label="Remember me"
+                name="remember"
+                required
+              ></v-checkbox>
 
-        <div class="card-body">
-            <form method="POST" action="/login" id="loginForm" aria-label="The Login">
-                <div class="form-group row">
-                    <label for="email" class="col-sm-4 col-form-label text-md-right">E-Mail Address</label>
-                    <div class="col-md-6">
-                      <input type="hidden" name="_token" :value="csrf">
-                      <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
-
-                    <div class="col-md-6">
-                        <input id="password" type="password" class="form-control" name="password" required>
-
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-md-6 offset-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                            <label class="form-check-label" for="remember">
-                                Remember Me
-                            </label>
-                        </div>
-                    </div>
-                </div>
-              </form>
-                <div class="form-group row mb-0">
-                    <div class="col-md-8 offset-md-4">
-                      <button @click="submitLogin()" class="btn btn-primary">
+              </v-form>
+                      <v-btn @click="submitLogin()">
                           {{ $t('Login') }}
-                      </button>
+                      </v-btn>
 
                         <a class="btn btn-link" href="">
                             Forgot Your Password?
                         </a>
-                    </div>
-                </div>
-
-
-        </div>
-    </div>
 </div>
 </template>
 
@@ -58,6 +51,16 @@
     props: ['baseUrl'],
     data(){
       return {
+        valid:true,
+        email:'',
+        password:'',
+        show1:false,
+        checkbox:false,
+        rules: {
+          required: value => !!value || 'Required.',
+          min: v => v.length >= 8 || 'Min 8 characters',
+          emailMatch: () => ('The email and password you entered don\'t match')
+        }
       }
     },
     computed: {
