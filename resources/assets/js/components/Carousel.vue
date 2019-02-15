@@ -1,6 +1,6 @@
 <template>
 
-  <v-carousel>
+  <v-carousel style="height: 90vh;">
     <v-carousel-item
       v-for="(item,i) in medias"
       :key="i"
@@ -23,7 +23,7 @@
     <span class="title text-center font-weight-bold headline">{{ item.title }}</span>
   </v-card-title>
 
-  <v-card-text class="" style="max-height: 50vh; overflow-x: auto;">
+  <v-card-text class="" style="max-height: 40vh; overflow-x: auto;">
     <VueMarkdown :source="item.description"></VueMarkdown>
   </v-card-text>
 
