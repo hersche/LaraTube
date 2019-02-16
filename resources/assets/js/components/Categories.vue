@@ -4,7 +4,9 @@
       <router-link v-if="currentuser.admin" to="/newcat/" class="btn btn-block btn-warning btn-sm">
         <vs-icon icon="create"></vs-icon>{{ $t("Create") }} {{ $t("category") }}
       </router-link>
-      <treeselect instanceId="catoverviewtree" v-if="treecatptions!=undefined" :multiple="false" :append-to-body="false" :always-open="true" v-model="catids" name="parent_id"  :options="treecatptions" />
+      <!-- TODO: Make margin-bottom as needed and therefore flexible - temporary fix for responsiveness,
+        but stops working with more cat's -->
+      <treeselect instanceId="catoverviewtree" :style="'margin-bottom: 150px;'" v-if="treecatptions!=undefined" :multiple="false" :append-to-body="false" :always-open="true" v-model="catids" name="parent_id"  :options="treecatptions" />
 
     </p>
 

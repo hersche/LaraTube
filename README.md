@@ -31,6 +31,9 @@ By license, you can use the software for anything. If i (the developer) detect t
 
 ## TODO-features
 
+- Implement Vuetify to replace VueSax and VueBootstrap
+- Make use of baseUrl - right now, subdirectories are not useable for install
+
 ## Wanted features
 
 Things i would love to implement, but where i'm either not shure how to implement it or simply doesn't have prioritised it yet.
@@ -56,6 +59,8 @@ Basicly extact the same as laravel
 
 ## Quick install
 
+The following is meaned to use in bash/via ssh and eventualy need some expirience.
+
 Best practice is to git clone the project. After, go into the project-directory, to run the following commands.
 
 For debian before composer..
@@ -65,6 +70,8 @@ For debian before composer..
 For get all dependencies
 
     composer install
+    
+Setup the .env-file with a existing database
 
 For secure authenification
 
@@ -73,6 +80,8 @@ For secure authenification
 Create DB
 
     php artisan migrate
+    
+(for setup again): php artisan migrate:fresh
 
 For generate first data in the db
 

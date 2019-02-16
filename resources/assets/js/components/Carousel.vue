@@ -8,11 +8,12 @@
     >
     <v-card
   class="mx-auto mt-4"
-  color="#26c6da"
+  cycle="false"
   dark
   max-width="60vw"
   style="opacity: 0.9"
 >
+
   <v-card-title>
     <v-icon
       large
@@ -25,6 +26,18 @@
 
   <v-card-text class="" style="max-height: 40vh; overflow-x: auto;">
     <VueMarkdown :source="item.description"></VueMarkdown>
+    <div style="overflow-y:auto;">
+      <span v-for="tag in item.tags" >
+        <router-link class="" :to="'/tags/'+tag.name" >
+          <v-chip small>
+            <v-avatar class="teal">
+              <v-icon>tag</v-icon>
+            </v-avatar>
+            {{ tag.name }}
+          </v-chip>
+        </router-link>
+      </span>
+    </div>
   </v-card-text>
 
   <v-card-actions>
@@ -63,12 +76,12 @@
   >
     <v-btn hidden-sm-and-down :to="'/mediaedit/'+item.title" v-if="loggeduserid==item.user.id|currentuser.admin">
     <v-icon class="mr-1">settings</v-icon>
-    <span class="subheading mr-2">{{ $t('Edit') }}</span>
+    <span class="subheading mr-2 hidden-sm-and-down" >{{ $t('Edit') }}</span>
   </v-btn>
   
     <v-btn :to="'/media/'+item.urlTitle">
     <v-icon class="mr-1">play_circle_filled</v-icon>
-    <span class="subheading">{{ $t('Play') }}</span>
+    <span class="subheading hidden-sm-and-down" >{{ $t('Play') }}</span>
   </v-btn>
   </v-layout>
   </v-card-actions>
