@@ -1,9 +1,7 @@
 <template>
   <v-tabs
     v-model="active"
-    color="cyan"
     dark
-    slider-color="yellow"
   >
   <v-tab
   key="0"
