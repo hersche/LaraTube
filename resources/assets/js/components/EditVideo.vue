@@ -8,19 +8,20 @@
           <input type="hidden" value="" name="image" id="addMediaImage" />
           <input placeholder="Media-title" class="form-control" :value="currentmedia.title" name="title" type="text">
         </div>
-        <div class="form-group row">
-          <label>{{ $t('Type') }} (only for restore):</label>
-          <select name="type" v-model="mediaType">
-            <option value="localAudio">Local audio</option>
-            <option value="localVideo">Local video</option>
-            <option value="directVideo">Direct video</option>
-            <option value="directAudio">Direct audio</option>
-            <option value="torrentAudio">Torrent audio</option>
-            <option value="torrentVideo">Torrent video</option>
-            <option value="youtube">Youtube</option>
-            <option value="vimeo">Vimeo</option>
-          </select>
-        </div>
+        <v-select
+        v-model="mediaType" name="type"
+        attach
+        :items="[
+        {text:$t('Local') +' '+$t('audio'),value:'localAudio'},
+        {text:$t('Direct') +' '+$t('audio'),value:'directAudio'},
+        {text:$t('Local') +' '+$t('video'),value:'localVideo'},
+        {text:$t('Direct') +' '+$t('video'),value:'directVideo'},
+        {text:$t('Torrent') +' '+$t('video'),value:'torrentVideo'},
+        {text:$t('Youtube'),value:'youtube'},
+        {text:$t('Vimeo'),value:'vimeo'},
+        ]"
+        :label="$t('Mediatype')"
+        ></v-select>
         <div class="form-group row">
           <label>{{ $t('Category') }}</label>
           <treeselect v-model="catid" name="category_id" :multiple="false" :options="treecatptions" />

@@ -36,7 +36,7 @@
     </v-list-tile-action>
     <v-select
   v-model="dataTypes"
-  :items="['audio','video']"
+  :items="[{value:'audio',text:$t('Audio')},{value:'video',text:$t('Video')}]"
   deletable-chips
   attach
   :label="$t('Mediatypes')"
@@ -51,8 +51,8 @@
     <v-select
   v-model="lang"
   attach
-  deletable-chips
-  :items="['en','de']"
+  chips
+  :items="[{value:'en',text:'English'},{value:'de',text:'Deutsch'}]"
   :label="$t('Language')"
 ></v-select>
 <!--    <select id="langSelect" class="float-right custom-select custom-select-sm ml-1" v-model="lang" >
