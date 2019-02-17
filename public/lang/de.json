@@ -1,6 +1,9 @@
 {
   "default": {
     "Rotate":"Rotiere",
+    "Language":"Sprache",
+    "Mediatypes":"Medienarten",
+    "Home":"Start",
     "left":"links",
     "Users": "Benutzer",
     "Medias": "Medien",
