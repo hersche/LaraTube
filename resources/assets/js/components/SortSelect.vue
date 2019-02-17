@@ -1,5 +1,5 @@
 <template>
-  <select @change="sortBy()" id="sortBy" value="created_at" v-model="selectVal">
+  <select @change="sortBy()" id="sortBy" class="custom-select" value="created_at" v-model="selectVal">
     <option value="created_at">{{ $t('Created at') }}</option>
     <option value="created_at_reverse">{{ $t('Created at') }} ({{ $t('reverse') }})</option>
     <option value="updated_at">{{ $t('Updated at') }}</option>

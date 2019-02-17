@@ -1,10 +1,12 @@
 <template>
   <div>
     <div class="row text-center text-lg-left" id="profilevideos">
-    <div v-for="item in medias"  class="col-lg-4 col-md-4 col-xs-6">
-        <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
-    </div>
 
+      <v-layout row wrap>
+      <v-flex xs12 sm12 md6 lg6 v-for="item in medias" :key="item.id" >
+        <singleField class="ml-2"  v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
+  </v-flex>
+</v-layout>
     </div>
 <p class="btn-block btn-sm btn btn-info" @click="emitLoadMore()" v-if="canloadmore">Scroll down or click to load more</p>
   </div>

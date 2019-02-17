@@ -34,9 +34,11 @@ header('Access-Control-Allow-Origin: *');
       <main class="py-4 mt-5 col-12 mb-3">
         <div class="">
           <div class="d-flex justify-content-center">
-            <div class="col-sm-12 col-12 col-lg-10" id="outerContainer">
+            <v-flex xs12 sm12 md10 lg9 >
+            <div class="" id="outerContainer">
               @yield('content')
             </div>
+          </v-flex>
           </div>
         </div>
       </main>

@@ -119,30 +119,30 @@ export class MediaSorter {
     }
     static byLikes(a, b) {
         if (a.likes < b.likes)
-            return -1;
-        if (a.likes > b.likes)
             return 1;
+        if (a.likes > b.likes)
+            return -1;
         return 0;
     }
     static byLikesReverse(a, b) {
         if (a.likes < b.likes)
-            return 1;
-        if (a.likes > b.likes)
             return -1;
+        if (a.likes > b.likes)
+            return 1;
         return 0;
     }
     static byDislikes(a, b) {
         if (a.dislikes < b.dislikes)
-            return -1;
-        if (a.dislikes > b.dislikes)
             return 1;
+        if (a.dislikes > b.dislikes)
+            return -1;
         return 0;
     }
     static byDislikesReverse(a, b) {
         if (a.dislikes < b.dislikes)
-            return 1;
-        if (a.dislikes > b.dislikes)
             return -1;
+        if (a.dislikes > b.dislikes)
+            return 1;
         return 0;
     }
     static byCreatedAt(a, b) {

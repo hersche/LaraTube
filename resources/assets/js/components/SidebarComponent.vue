@@ -5,16 +5,17 @@
     <router-link class="" to="/"><v-toolbar-title class="white--text" to="/">LaraTube</v-toolbar-title></router-link>
 
     <v-spacer></v-spacer>
-    
-    <v-text-field
-  hide-details
-  append-icon="search"
-  single-line
-  id="theLiveSearch"
-  :placeholder="$t('Search')+'...'"
-  @keyup="searching()" @focus="searching()"
-></v-text-field>
-    </v-toolbar>
+    <v-flex xs5 sm4 md3 lg3 align-right>
+      <v-text-field
+      hide-details
+      append-icon="search"
+      single-line
+      id="theLiveSearch"
+      :placeholder="$t('Search')+'...'"
+      @keyup="searching()" @focus="searching()"
+      ></v-text-field>
+    </v-flex>
+  </v-toolbar>
     
     
     <v-navigation-drawer
@@ -33,20 +34,31 @@
     <v-list-tile-action>
       <v-icon>call_merge</v-icon>
     </v-list-tile-action>
-    <treeselect class="" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" />
+    <v-select
+  v-model="dataTypes"
+  :items="['audio','video']"
+  deletable-chips
+  attach
+  :label="$t('Mediatypes')"
+  multiple
+></v-select>
+  <!--  <treeselect class="" instanceId="dataTypeTree" v-if="treeTypes!=undefined" :multiple="true" :append-to-body="false" :always-open="false" v-model="dataTypes"  :options="treeTypes" /> -->
   </v-list-tile>
 <v-list-tile>
 <v-list-tile-action>
   <v-icon>language</v-icon>
 </v-list-tile-action>
-<v-list-tile-content>
-  <v-list-tile-title>
-    <select id="langSelect" class="float-right custom-select custom-select-sm ml-1" v-model="lang" >
+    <v-select
+  v-model="lang"
+  attach
+  deletable-chips
+  :items="['en','de']"
+  :label="$t('Language')"
+></v-select>
+<!--    <select id="langSelect" class="float-right custom-select custom-select-sm ml-1" v-model="lang" >
       <option value="en">EN</option>
       <option value="de">DE</option>
-    </select>
-  </v-list-tile-title>
-</v-list-tile-content>
+    </select>-->
 </v-list-tile>
   <v-list class="pa-1">
 
