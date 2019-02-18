@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>{{ $t('Medias') }} ({{ filter }})</h3>
-    <p>{{ $t('Sort by') }} <sortSelect></sortSelect></p>
+    <sortSelect></sortSelect>
     <carousel v-bind:medias="medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></carousel>
     <p class="btn-block btn-sm btn btn-info" @click="emitLoadMore()" v-if="canloadmore">{{ $t('Load') }} {{ $t('more') }} ({{ medias.length}}/{{ totalMedias }} {{ $t('loaded') }} {{ $t('medias') }})</p>
     <p class="btn-block btn-sm btn btn-danger btn-disabled" v-if="canloadmore==false">All medias loaded</p>

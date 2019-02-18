@@ -1,22 +1,31 @@
 <template>
-  <select @change="sortBy()" id="sortBy" class="custom-select" value="created_at" v-model="selectVal">
-    <option value="created_at">{{ $t('Created at') }}</option>
-    <option value="created_at_reverse">{{ $t('Created at') }} ({{ $t('reverse') }})</option>
-    <option value="updated_at">{{ $t('Updated at') }}</option>
-    <option value="updated_at_reverse">{{ $t('Updated at') }} ({{ $t('reverse') }})</option>
-    <option value="title">{{ $t('Title') }}</option>
-    <option value="title_reverse">{{ $t('Title') }} ({{ $t('reverse') }})</option>
-    <option value="type">By type</option>
-    <option value="type_reverse">By type (reverse)</option>
-    <option value="simpleType">By simpletype</option>
-    <option value="simpleType_reverse">By simpletype ({{ $t('reverse') }})</option>
-    <option value="comments">By comments</option>
-    <option value="comments_reverse">By comments ({{ $t('reverse') }})</option>
-    <option value="likes">By likes</option>
-    <option value="likes_reverse">By likes ({{ $t('reverse') }})</option>
-    <option value="dislikes">By dislikes</option>
-    <option value="dislikes_reverse">By dislikes ({{ $t('reverse') }})</option>
-  </select>
+
+  <v-select
+  v-model="selectVal"
+  @change="sortBy()"
+  attach
+  :items="[
+  {text:$t('Created at'),value:'created_at'},
+  {text:$t('Created at')+' '+$t('reverse'),value:'created_at_reverse'},
+  {text:$t('Updated at'),value:'updated_at'},
+  {text:$t('Updated at') +' '+$t('reverse'),value:'updated_at_reverse'},
+  {text:$t('Title'),value:'title'},
+  {text:$t('Title')+' '+$t('reverse'),value:'title_reverse'},
+  {text:$t('Title'),value:'title'},
+  {text:$t('Title')+' '+$t('reverse'),value:'title_reverse'},
+  {text:$t('Type'),value:'type'},
+  {text:$t('Type')+' '+$t('reverse'),value:'type_reverse'},
+  {text:$t('SimpleType'),value:'simpleType'},
+  {text:$t('SimpleType')+' '+$t('reverse'),value:'simpleType_reverse'},
+  {text:$t('Comments'),value:'comments'},
+  {text:$t('Comments')+' '+$t('reverse'),value:'comments_reverse'},  
+  {text:$t('Likes'),value:'likes'},
+  {text:$t('Likes')+' '+$t('reverse'),value:'likes_reverse'}, 
+  {text:$t('Dislikes'),value:'dislikes'},
+  {text:$t('Disikes')+' '+$t('reverse'),value:'dislikes_reverse'},   
+  ]"
+  :label="$t('Sort by')"
+  ></v-select>
 </template>
 <script>
   import { eventBus } from '../eventBus.js';
