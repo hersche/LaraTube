@@ -3,10 +3,10 @@
     <h3>{{ $t('Medias') }} ({{ filter }})</h3>
     <sortSelect></sortSelect>
     <carousel v-bind:medias="medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></carousel>
-    <p class="btn-block btn-sm btn btn-info" @click="emitLoadMore()" v-if="canloadmore">{{ $t('Load') }} {{ $t('more') }} ({{ medias.length}}/{{ totalMedias }} {{ $t('loaded') }} {{ $t('medias') }})</p>
+    <v-btn color="blue" @click="emitLoadMore()" v-if="canloadmore">{{ $t('Load') }} {{ $t('more') }} ({{ medias.length}}/{{ totalMedias }} {{ $t('loaded') }} {{ $t('medias') }})</v-btn>
     <p class="btn-block btn-sm btn btn-danger btn-disabled" v-if="canloadmore==false">All medias loaded</p>
     <SwiperView v-bind:medias="medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></SwiperView>
-    <p class="btn-block btn-sm btn btn-info" @click="emitLoadMore()" v-if="canloadmore">{{ $t('Load') }} {{ $t('more') }} ({{ medias.length}}/{{ totalMedias }} {{ $t('loaded') }} {{ $t('medias') }})</p>
+    <v-btn color="blue" @click="emitLoadMore()" v-if="canloadmore">{{ $t('Load') }} {{ $t('more') }} ({{ medias.length}}/{{ totalMedias }} {{ $t('loaded') }} {{ $t('medias') }})</v-btn>
     <gallery v-bind:medias="medias" v-bind:currentuser="currentuser" v-bind:canloadmore="canloadmore" v-bind:loggeduserid="loggeduserid"></gallery>
   </div>
 </template>

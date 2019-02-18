@@ -131,6 +131,7 @@
       <v-text-field
         :label="$t('Tags')"
         name="tags"
+        :hint="$t('Separate tags with space')"
         ></v-text-field>
 
 

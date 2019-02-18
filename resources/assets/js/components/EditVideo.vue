@@ -1,13 +1,22 @@
 <template>
     <div v-if="currentmedia!=undefined" class="col-xs-12 col-sm-12 col-md-12">
-      <h4>{{ $t('Edit') }} {{ $t('media') }}</h4>
+      <h1 class="text-center">{{ $t('Edit') }} {{ $t('media') }}</h1>
       <form id="theForm">
-        <div class="form-group row">
-          <label>{{ $t('Title') }}</label>
-          <input type="hidden" name="_token" :value="csrf">
-          <input type="hidden" value="" name="image" id="addMediaImage" />
-          <input placeholder="Media-title" class="form-control" :value="currentmedia.title" name="title" type="text">
-        </div>
+        
+        <v-text-field
+          :label="$t('Title')"
+          name="title"
+          :value="currentmedia.title"
+          ></v-text-field>
+          <div class="form-group row">
+            <label>{{ $t('Category') }}</label>
+            <treeselect v-model="catid" name="category_id" :multiple="false" :options="treecatptions" />
+            <!-- <select name="category_id" v-model="catid" ><option value="">None</option><option v-for="item in categories" :value="item.id">{{ item.title }}</option></select> -->
+          </div>
+          <MarkdownCreator :theText="currentmedia.description" theId="description" theTitle="Description" ></MarkdownCreator>
+        <input type="hidden" name="_token" :value="csrf">
+        <input type="hidden" value="" name="image" id="addMediaImage" />
+
         <v-select
         v-model="mediaType" name="type"
         attach
@@ -32,31 +41,56 @@
           <input readonly class="form-control" :value="currentmedia.source" id="" name="" type="text">
         </div>
         <mediaView v-bind:currentmedia="currentmedia" v-if="currentmedia!=undefined" v-bind:autoplay="false"></mediaView>
-        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="durationTestMedia()">Set duration</span>
-        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('intro_start')">Set intro start</span>
-        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('outro_start')">Set outro start</span>
-        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('intro_end')">Set intro end</span>
-        <span class="btn btn-primary" v-if="currentmedia!=undefined" @click="positionTestMedia('outro_end')">Set outro end</span>
-        <div class="form-group row">
-            <label>{{ $t('Duration') }}</label>
-            <input placeholder="00:00:00" class="form-control" :value="currentmedia.duration" id="duration" name="duration" type="text">
-        </div>
-        <div class="form-group row">
-            <label>{{ $t('Intro start') }}</label>
-            <input placeholder="Time in seconds" class="form-control" :value="currentmedia.intro_start" id="intro_start" name="intro_start" type="text">
-        </div>
-        <div class="form-group row">
-            <label>{{ $t('Outro start') }}</label>
-            <input placeholder="Time in seconds" class="form-control" :value="currentmedia.outro_start" id="outro_start" name="outro_start" type="text">
-        </div>
-        <div class="form-group row">
-            <label>{{ $t('Intro end') }}</label>
-            <input placeholder="Time in seconds" class="form-control" :value="currentmedia.intro_end" id="intro_end" name="intro_end" type="text">
-        </div>
-        <div class="form-group row">
-            <label>{{ $t('Outro end') }}</label>
-            <input placeholder="Time in seconds" class="form-control" :value="currentmedia.outro_end" id="outro_end" name="outro_end" type="text">
-        </div>
+        <v-btn color="blue" @click="durationTestMedia()">Set duration</v-btn>
+        <v-btn color="blue" v-if="currentmedia!=undefined" @click="positionTestMedia('intro_start')">Set intro start</v-btn>
+        <v-btn color="blue" v-if="currentmedia!=undefined" @click="positionTestMedia('outro_start')">Set outro start</v-btn>
+        <v-btn color="blue" v-if="currentmedia!=undefined" @click="positionTestMedia('intro_end')">Set intro end</v-btn>
+        <v-btn color="blue" v-if="currentmedia!=undefined" @click="positionTestMedia('outro_end')">Set outro end</v-btn>
+        
+        <v-text-field
+          v-if="currentmedia.type!='localAudio'&currentmedia.type!='localVideo'"
+          :label="$t('Duration')"
+          name="duration"
+          v-model="duration"
+          ></v-text-field>
+          <v-layout row wrap>
+        <v-flex xs12 sm6>  
+          <v-text-field
+            :label="$t('Intro start')"
+            name="intro_start"
+            v-model="intro_start"
+            :placeholder="$t('Time in seconds')"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm6>
+            <v-text-field
+              :label="$t('Intro end')"
+              name="intro_end"
+              v-model="intro_end"
+              :placeholder="$t('Time in seconds')"
+              ></v-text-field>  
+            </v-flex>
+          <v-flex xs12 sm6>
+            <v-text-field
+              :label="$t('Outro start')"
+              name="outro_start"
+              v-model="outro_start"
+              :placeholder="$t('Time in seconds')"
+              ></v-text-field>
+            </v-flex>
+
+              <v-flex xs12 sm6>    
+              <v-text-field
+                :label="$t('Outro end')"
+                name="outro_end"
+                v-model="outro_end"
+                :placeholder="$t('Time in seconds')"
+                ></v-text-field>
+              </v-flex>
+        </v-layout>
+        
+        
+
         <div class="form-group row">
           <label>{{ $t('Poster') }}</label>
           <vue-croppie
@@ -70,23 +104,18 @@
           </vue-croppie>
           <input type="hidden" id="posterBase" name="poster" :value="cropped" />
           <!-- Rotate angle is Number -->
-          <button @click="rotate(-90,$event)">{{ $t("Rotate") }} {{ $t("left") }}</button>
-          <button @click="rotate(90,$event)">{{ $t("Rotate") }} {{ $t("right") }}</button>
+          <v-btn color="blue" @click="rotate(-90,$event)">{{ $t("Rotate") }} {{ $t("left") }}</v-btn>
+          <v-btn color="blue" @click="rotate(90,$event)">{{ $t("Rotate") }} {{ $t("right") }}</v-btn>
           <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="unimportant" type="file">
           <div id="poster"></div>
         </div>
-        <div class="form-group row">
-          <label>{{ $t('Description') }}</label>
-          <MarkdownCreator :theText="currentmedia.description" theId="description" theTitle="Description" ></MarkdownCreator>
-        </div>
-        <div class="form-group row">
-          <label>Tags (separate with spaces):</label>
-          <input id="tags" type="text" class="form-control" name="tags" :value="currentmedia.tagString" >
-        </div>
-        <div class="form-group row">
-          <label>Subtitles</label>
-          <b-button class="float-right text-right" @click="showModal">Manage</b-button>
-        </div>
+        <v-text-field
+          :label="$t('Tags')"
+          name="tags"
+          :value="currentmedia.tagString"
+          :hint="$t('Separate tags with space')"
+          ></v-text-field>
+          <v-btn  @click="showModal">{{ $t('Manage') }} {{ $t('subtitles')}}</v-btn>
       </form>
       <b-modal ref="myModalRef" hide-footer title="Using Component Methods">
         <h4 v-if="currentmedia.tracks.length>0">Existing tracks</h4>
@@ -132,19 +161,21 @@
     //this.currentmedia=this.getCurrentMedia();
     eventBus.$on('playerSetDuration', duration => {
       console.log("receive duration: "+this.secondsToHms(duration))
-      $("#duration").val(this.secondsToHms(duration))
+      //$("#duration").val(this.secondsToHms(duration))
+      this.duration = this.secondsToHms(duration)
     });
-    eventBus.$on('playerSetIntroStart', duration => {
-      $("#intro_start").val(duration)
+    eventBus.$on('playerSetIntroStart', is => {
+      //$("#intro_start").val(duration)
+      this.intro_start = is
     });
-    eventBus.$on('playerSetOutroStart', duration => {
-      $("#outro_start").val(duration)
+    eventBus.$on('playerSetOutroStart', o => {
+      this.outro_start = o
     });
-    eventBus.$on('playerSetIntroEnd', duration => {
-      $("#intro_end").val(duration)
+    eventBus.$on('playerSetIntroEnd', ie => {
+      this.intro_end = ie
     });
-    eventBus.$on('playerSetOutroEnd', duration => {
-      $("#outro_end").val(duration)
+    eventBus.$on('playerSetOutroEnd', oe => {
+      this.outro_end = oe
     });
     },
     components: {
@@ -170,11 +201,19 @@
         return store.getters.getCSRF()
       },
       currentmedia: function(){
-        return this.getCurrentMedia()
+        var m = this.getCurrentMedia()
+        if(m!=undefined){
+          this.duration = m.duration 
+          this.intro_start = m.intro_start
+          this.intro_end = m.intro_end
+          this.outro_start = m.outro_start
+          this.outro_end = m.outro_end
+        }
+        return m
       }
     },
     watch:{
-      medias: function(val){
+      currentmedia: function(val){
         //this.currentmedia = this.getCurrentMedia();
       },
     },
@@ -336,6 +375,11 @@ rotate(rotationAngle,event) {
         editpicloaded:false,
         showdismissiblealert: false,
         cropped: null,
+        duration: '',
+        intro_start:0,
+        intro_end:0,
+        outro_start:0,
+        outro_end:0,
         blockGetRequest:false,
         medias:store.state.medias
       }
