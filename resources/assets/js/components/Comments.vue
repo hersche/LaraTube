@@ -1,26 +1,7 @@
 <template>
   <div>
     <div v-if="level==0">
-    <h4>{{ $t('Comments') }} <a class="btn btn-sm" @click="refreshMedia()"><vs-icon icon="refresh"></vs-icon></a></h4>
-<!--  <vs-tabs v-if="loggeduserid!=0">
-    <vs-tab vs-label="Edit">
-      <div>
-    <form class="form-inline mb-1" id="commentForm" >
-      <input type="hidden" name="_token" :value="csrf">
-      <input id="media_id" name="media_id" type="hidden" :value="currentmedia.id">
-      <input id="parent_id" name="parent_id" type="hidden" value="0">
-      <p class="col-12"><vs-textarea :label="$t('Comment')" :placeholder="$t('Comment')+'...'" v-model="tmptexts[0]" id="comment_body" name="body" /></p>
-      <input type="button" class="ml-1 btn btn-sm btn-success float-right" :value="$t('Send')+' '+$t('comment')" @click="sendComment();" />
-    </form>
-  </div>
-  </vs-tab>
-  <vs-tab vs-label="Preview">
-    <div>
-      <VueMarkdown v-if="tmptexts[0]!=''" :source="tmptexts[0]"></VueMarkdown>
-      <h1 v-if="tmptexts[0]==''||tmptexts[0]==null">No text for preview</h1>
-    </div>
-  </vs-tab>
-</vs-tabs> -->
+    <h4>{{ $t('Comments') }} <v-btn @click="refreshMedia()"><v-icon>refresh</v-icon></v-btn></h4>
     <form class="form-inline mb-1 col-12" id="commentForm" >
       <input type="hidden" name="_token" :value="csrf">
       <input id="media_id" name="media_id" type="hidden" :value="currentmedia.id">
@@ -33,36 +14,11 @@
   <div v-for="(comment,i) in commentlist" :class="'comment mb-2 row col-12 pl-'+Number(level)" :id='"cid"+comment.id'>
       <div class="comment-content col-12">
           <h6 class="small comment-meta"><router-link class="btn btn-sm btn-primary mr-2" :to="'/profile/'+comment.user.id"><img class="" style="width:25px;"  :src="'/'+comment.user.avatar" alt="avatar" /> {{ comment.user.name }}</router-link> {{ comment.created_at_readable}}
-              <span @click="openConfirm(comment.id)" v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><vs-icon icon="delete"></vs-icon></span>
+              <span @click="openConfirm(comment.id)" v-if="loggeduserid==comment.user_id" class="float-right btn btn-sm btn-danger" onclick=""><v-icon>delete</v-icon></span>
           </h6>
           <div class="comment-body">
           <p><VueMarkdown :source="comment.body"></VueMarkdown></p>
           <div class="row">
-
-            <!--  <vs-collapse class="col-8 col-md-8 col-sm-12 float-left" v-if="loggeduserid!=0">
-                <vs-collapse-item >
-                  <div slot="header">
-                    <vs-icon icon="reply"></vs-icon>{{ $t("Reply") }}
-                  </div>
-                  <vs-tabs v-if="loggeduserid!=0">
-                    <vs-tab vs-label="Edit">
-                      <div>
-                  <form class="form-inline mb-1" :id="'commentForm'+comment.id" >
-                    <input type="hidden" name="_token" :value="csrf">
-                    <input id="media_id" name="media_id" type="hidden" :value="currentmedia.id">
-                    <input id="parent_id" name="parent_id" type="hidden" :value="comment.id">
-                    <p class="col-12"><vs-textarea :label="$t('Comment')" :placeholder="$t('Comment')+'...'" v-model="tmptexts[comment.title]"  :id="'comment_body'+comment.id" name="body" /></p>
-                    <input type="button" class="ml-1 btn btn-sm btn-success float-right" :value="$t('Send')+' '+$t('comment')" @click="sendComment(comment.id);" />
-                  </form>
-                </div>
-              </vs-tab>
-              <vs-tab vs-label="Preview">
-                <div>
-                  <VueMarkdown v-if="tmptexts[comment.title]!=''" :source="tmptexts[comment.title]"></VueMarkdown>
-                  <h1 v-if="tmptexts[comment.title]==''||tmptexts[comment.title]==null">No text for preview</h1>
-                </div>
-              </vs-tab>
-            </vs-tabs> -->
             <div class="col-12 pl-0 pr-0">
             <v-btn id="like" color="success" v-if="comment.myLike==1" type="button" @click="like(comment,0,'like')" class="float-left">
               <v-icon>thumb_up</v-icon>

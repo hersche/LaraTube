@@ -115,36 +115,59 @@
           :value="currentmedia.tagString"
           :hint="$t('Separate tags with space')"
           ></v-text-field>
-          <v-btn  @click="showModal">{{ $t('Manage') }} {{ $t('subtitles')}}</v-btn>
+          
+          
+    <v-dialog
+        v-model="dialog"
+        width="500"
+      >
+      <v-btn
+      slot="activator"
+      color="red lighten-2"
+        dark
+      >
+        {{ $t('Manage') }} {{ $t('subtitles')}}
+      </v-btn>
+      <v-card>
+        <v-card-title
+          class="headline grey lighten-2"
+          primary-title
+          v-if="currentmedia.tracks.length>0"
+          >
+            Existing tracks
+          </v-card-title>
+
+          <v-card-text>
+            <ul >
+              <li v-for="track in currentmedia.tracks" class="mb-3">
+                <a class="text-left" target="_blank" :href="track.source">{{ track.lang }}</a> <a class="btn btn-danger btn-sm float-right" @click="deleteTrack(track.id)">{{ track.lang }} <vs-icon icon="delete"></vs-icon></a>
+              </li>
+            </ul>
+  
+            <div class="d-block text-center">
+              <h4>Add track</h4>
+              <form id="addTrackForm">
+                <div class="form-group row">
+                  <label>Language</label>
+                  <input type="text" class="form-control" name="lang" />
+                  <input type="hidden" class="form-control" name="media_id" :value="currentmedia.id" />
+                </div>
+                <div class="form-group row">
+                    <label>File</label>
+                    <input id="track" name="track" accept=".srt,.vtt" class="form-control" type="file">
+                  </div>
+                </form>
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="submitTrack();" color="green" >Upload track</v-btn>
+              <v-btn @click="hideModal">Upload track and close</v-btn>
+              <v-btn @click="dialog=false" color="yellow">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>  
       </form>
-      <b-modal ref="myModalRef" hide-footer title="Using Component Methods">
-        <h4 v-if="currentmedia.tracks.length>0">Existing tracks</h4>
-        <ul >
-          <li v-for="track in currentmedia.tracks" class="mb-3">
-            <a class="text-left" target="_blank" :href="track.source">{{ track.lang }}</a> <a class="btn btn-danger btn-sm float-right" @click="deleteTrack(track.id)">{{ track.lang }} <vs-icon icon="delete"></vs-icon></a>
-          </li>
-        </ul>
-        <div class="d-block text-center">
-          <h4>Add track</h4>
-          <form id="addTrackForm">
-            <div class="form-group row">
-              <label>Language</label>
-              <input type="text" class="form-control" name="lang" />
-              <input type="hidden" class="form-control" name="media_id" :value="currentmedia.id" />
-            </div>
-            <div class="form-group row">
-              <label>File</label>
-              <input id="track" name="track" accept=".srt,.vtt" class="form-control" type="file">
-            </div>
-          </form>
-        </div>
-        <div class="row">
-          <b-btn @click="submitTrack();" class="mt-3 col-4" variant="outline-success" block >Upload track</b-btn>
-          <b-btn class="mt-3 col-4" variant="outline-danger" block @click="hideModal">Upload track and close</b-btn>
-          <b-btn @click="$refs.myModalRef.hide()" class="mt-3 col-4" variant="outline-success" block >Cancel</b-btn>
-        </div>
-      </b-modal>
-      <button @click="submitAction();" class="btn btn-success" ><vs-icon icon="save"></vs-icon>{{ $t('Save') }}</button> <button @click="openConfirm();" class="btn btn-danger float-right" ><vs-icon icon="delete"></vs-icon>{{ $t('Delete') }}</button>
+      <v-btn @click="submitAction();" color="green" ><v-icon>save</v-icon>{{ $t('Save') }}</v-btn> <v-btn @click="openConfirm();" color="red" class="float-right" ><v-icon>delete</v-icon>{{ $t('Delete') }}</v-btn>
     </div>
 </template>
 <script>
@@ -380,6 +403,7 @@ rotate(rotationAngle,event) {
         intro_end:0,
         outro_start:0,
         outro_end:0,
+        dialog:false,
         blockGetRequest:false,
         medias:store.state.medias
       }

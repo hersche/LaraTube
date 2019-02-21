@@ -2,10 +2,12 @@
   <v-card class="mb-2"><div class="subheading text-center">{{ item.title }}</div>
     <v-layout>
       <v-flex xs5 style="height:160px;">
-        <v-img
-          :src="item.poster_source"
-          contain
-        ></v-img>
+        <router-link :to="'/media/'+item.urlTitle">
+          <v-img
+            :src="item.poster_source"
+            contain
+            ></v-img>
+        </router-link>
         <div class="pl-1" v-if="item.duration!='0'">{{ item.duration }}</div>
         <div class="pl-1">{{ item.created_at_readable }}</div>
         <div class="pl-1">{{ item.type }}</div>

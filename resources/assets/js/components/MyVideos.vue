@@ -4,8 +4,8 @@
     <div class="row text-center text-lg-left" id="profilevideos">
     <div v-for="item in medias" v-if="item.user_id==loggeduserid"  class="col-lg-4 col-md-4 col-xs-6">
         <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
-        <router-link class="btn btn-sm btn-info float-left" :to="'/mediaedit/'+item.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t("Edit") }}</router-link>
-        <button class="btn btn-sm btn-danger float-right" @click="openConfirm(item.id,item.title)" ><vs-icon icon="delete"></vs-icon>{{ $t("Delete") }}</button>
+        <v-btn color="green" class="float-left" :to="'/mediaedit/'+item.urlTitle"><v-icon>edit</v-icon>{{ $t("Edit") }}</v-btn>
+        <v-btn color="red" class="float-right" @click="openConfirm(item.id,item.title)" ><v-icon>delete</v-icon>{{ $t("Delete") }}</v-btn>
     </div>
 
     </div>

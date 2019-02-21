@@ -21,7 +21,7 @@
 
       </form>
 
-      <button @click="submitAction();" class="btn btn-success" ><vs-icon icon="save"></vs-icon>{{ $t('Save') }}</button> <button @click="openConfirm();" class="btn btn-danger float-right" ><vs-icon icon="delete"></vs-icon>{{ $t('Delete') }}</button>
+      <v-btn @click="submitAction();" color="green" ><v-icon>save</v-icon>{{ $t('Save') }}</v-btn> <v-btn @click="openConfirm();" color="red" class="float-right" ><v-icon>delete</v-icon>{{ $t('Delete') }}</v-btn>
     </div>
 </template>
 <script>

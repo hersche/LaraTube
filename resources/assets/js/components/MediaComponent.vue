@@ -22,11 +22,58 @@
           <vs-dropdown vs-trigger-click class="btn-sm">
             <a href.prevent class="btn btn-sm btn-primary">More</a>
             <vs-dropdown-menu class="">
+
+
+              
               <vs-dropdown-item v-b-modal.torrentmodal class="mr-1 btn-sm" v-if="currentmedia.techType=='torrent'">Torrent-info</vs-dropdown-item>
               <vs-dropdown-item>{{ currentmedia.type }}</vs-dropdown-item>
             </vs-dropdown-menu>
           </vs-dropdown>
           
+          <v-dialog
+          v-if="currentmedia.techType=='torrent'"
+v-model="torrentDialog"
+width="500"
+>
+<v-btn
+slot="activator"
+color="red lighten-2"
+dark
+>
+Torrent-details
+</v-btn>
+
+<v-card>
+<v-card-title
+  class="headline grey lighten-2"
+  primary-title
+>
+  Torrent-details
+</v-card-title>
+
+<v-card-text>
+  <p>Peers: {{ peers }}</p>
+  <p>Downloadspeed: {{ downloadspeed }}</p>
+  <p>Uploadspeed: {{ uploadspeed }}</p>
+  <p>Downloadpercent: {{ downloadpercent }}</p>
+  <p><v-switch v-model="chartEnabled" label="Enable chart (workaround)"</v-switch></p>
+  <p><apexchart v-if="chartEnabled" width="100%" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
+</v-card-text>
+
+<v-divider></v-divider>
+
+<v-card-actions>
+  <v-spacer></v-spacer>
+  <v-btn
+    color="primary"
+    flat
+    @click="torrentDialog = false"
+  >
+    Close
+  </v-btn>
+</v-card-actions>
+</v-card>
+</v-dialog>
           <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
           <v-btn color="blue" small @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end.toFixed(1) }}s)</v-btn>          
           <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
@@ -54,26 +101,26 @@
             </b-tooltip>
             
             
-            <button id="like" v-if="mylike==1" type="button" @click="like(0,'like')" class="btn btn-sm btn-success">
-              <vs-icon icon="thumb_up"></vs-icon>
+            <v-btn id="like" v-if="mylike==1" type="button" @click="like(0,'like')" color="green">
+              <v-icon>thumb_up</v-icon>
               <span class="ml-1" id="likeCount">{{ likes }}</span>
-            </button>
-            <button id="like" v-else type="button" @click="like(1,'like')" class="btn btn-sm btn-primary">
-              <vs-icon icon="thumb_up"></vs-icon>
+            </v-btn>
+            <v-btn id="like" v-else type="button" @click="like(1,'like')" color="blue">
+              <v-icon>thumb_up</v-icon>
               <span class="ml-1" id="likeCount">{{ likes }}</span>
-            </button>
-            <button id="dislike" v-if="mylike==-1" type="button" @click="like(0,'dislike')" class="btn btn-sm btn-success">
-              <vs-icon icon="thumb_down"></vs-icon>
+            </v-btn>
+            <v-btn id="dislike" v-if="mylike==-1" type="button" @click="like(0,'dislike')" color="green">
+              <v-icon>thumb_down</v-icon>
               <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
-            </button>
-            <button id="dislike" v-else type="button" @click="like(-1,'dislike')" class="btn btn-sm btn-primary">
-              <vs-icon icon="thumb_down"></vs-icon>
+            </v-btn>
+            <v-btn id="dislike" v-else type="button" @click="like(-1,'dislike')" color="blue">
+              <v-icon>thumb_down</v-icon>
               <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
-            </button>
+            </v-btn>
 
             
             <span v-if="loggeduserid==currentmedia.user.id|currentuser.admin" class="">
-              <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><vs-icon icon="edit"></vs-icon>{{ $t('Edit') }}</router-link>
+              <router-link class="btn btn-sm btn-info ml-1" :to="'/mediaedit/'+currentmedia.urlTitle"><v-icon>edit</v-icon>{{ $t('Edit') }}</router-link>
             </span>
           </div>
           <div class="card-body">
@@ -82,9 +129,12 @@
           <div class="card-footer">
             <span v-for="tag in currentmedia.tags">
               <router-link class=""  :to="'/tags/'+tag.name" >
-                <vs-chip color="primary">
-                  <vs-avatar icon="tag" />{{ tag.name }}
-                </vs-chip>
+                <v-chip class="small" small>
+                  <v-avatar class="teal">
+                    <v-icon>tag</v-icon>
+                  </v-avatar>
+                  {{ tag.name }}
+                </v-chip>
               </router-link>
             </span>
           </div>
@@ -96,12 +146,11 @@
         <comments class="bg-light" v-bind:csrf="csrf" v-bind:level="'0'" v-bind:commentlist="currentmedia.comments" v-bind:loggeduserid="loggeduserid" v-bind:currentmedia="currentmedia"></comments>
       </div>
 
-      <div class="col-sm-4 col-12 float-right bg-light">
+      <div data-app class="col-sm-4 col-12 float-right bg-light">
         <h4>{{ $t('Next') }} {{ $t('medias') }}</h4>
         <p>{{ $t('Sort by') }} <sortSelect></sortSelect></p>
         <p>
-          <vs-switch v-model="autoplay"/>
-          <span for="">Autoplay</span>
+          <v-switch v-model="autoplay" :label="$t('Autoplay')"></v-switch>
         </p>
         <div v-for="item in nextMedias"  class="" v-if="item.id!=currentmedia.id">
           <singleField v-bind:item="item" v-bind:loggeduserid="loggeduserid"></singleField>
@@ -110,13 +159,7 @@
         <button class="btn btn-block btn-danger" v-if="canloadmore" @click="emitLoadMore()">Load more</button>
       </div>
       <b-modal  style="width:520px;" id="torrentmodal" title="Torrent-infos">
-        <p>Peers: {{ peers }}</p>
-        <p>Downloadspeed: {{ downloadspeed }}</p>
-        <p>Uploadspeed: {{ uploadspeed }}</p>
-        <p>Downloadpercent: {{ downloadpercent }}</p>
-        <p><vs-switch v-model="chartEnabled"/><label>Enable chart (workaround)</label></p>
-        <p><apexchart v-if="chartEnabled" width="100%" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
-      </b-modal>
+        </b-modal>
   </div>
 </template>
 <script>
@@ -349,6 +392,7 @@
   },
   data(){
     return {
+      torrentDialog:false,
       blockGetRequest:false,
       mylike:0,
       savedPosition:0,

@@ -4,7 +4,7 @@
       <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="text-center">
           <p>
-            <img class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
+            <img @click="player.togglePlay()" @dblclick="visualFullScreen()" class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
           <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" @click="player.togglePlay()" @dblclick="visualFullScreen()" id="audioVisual"></canvas>
           <vue-plyr v-if="currentmedia.type=='torrentVideo'" :options="playerConfig" ref="player">

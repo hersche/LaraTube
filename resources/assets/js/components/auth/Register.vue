@@ -70,14 +70,10 @@
                           required
                           ></v-text-field>
                       <MarkdownCreator theText="" theId="bio" :theTitle="$t('Biographie')" :theHint="$t('Some words about you')+'...'" ></MarkdownCreator>
-                      <div class="form-group row">
-                          <label for="public" class="col-md-4 col-form-label text-md-right">Public</label>
 
-                          <div class="col-md-6">
-                              <vs-switch v-model="public"/>
+                              <v-switch v-model="public" :label="$t('Public')+' '+$t('account')"></v-switch>
                               <input type="hidden" name="public" :value="Number(public)" />
-                          </div>
-                      </div>
+
 
 
                       <v-text-field
