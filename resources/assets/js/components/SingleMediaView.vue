@@ -1,8 +1,5 @@
 <template>
   <div v-if="currentmedia!=undefined" id="playDiv">
-    <div class="row" >
-      <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="text-center">
           <p>
             <img @click="player.togglePlay()" @dblclick="visualFullScreen()" class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
@@ -32,12 +29,6 @@
             <div data-plyr-provider="youtube" v-if="currentmedia.type=='youtube'" :data-plyr-embed-id="currentmedia.source"></div>
             <div data-plyr-provider="vimeo" v-if="currentmedia.type=='vimeo'" :data-plyr-embed-id="currentmedia.source"></div>
           </vue-plyr>
-
-
-        </div>
-
-      </div>
-    </div>
   </div>
 </template>
 <script>

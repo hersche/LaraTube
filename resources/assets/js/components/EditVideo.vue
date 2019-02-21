@@ -231,6 +231,7 @@
           this.intro_end = m.intro_end
           this.outro_start = m.outro_start
           this.outro_end = m.outro_end
+          this.mediaType = m.type
         }
         return m
       }
