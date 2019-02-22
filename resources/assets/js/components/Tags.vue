@@ -1,14 +1,17 @@
 <template>
 
 <div>
-  <div v-if="tagenabled!=undefined&tagenabled!=false" >
-      <div><input type="text" v-model="filterTags" placeholder="Filter tags"></div>
+  <div v-if="tagenabled!=undefined&tagenabled!=false" >        
+        <v-text-field
+          :label="$t('Filter tags')"
+          v-model="filterTags"
+          ></v-text-field>
       <div v-for="(item,index) in tags"  @click="changeCheck(item.name)" v-if="item.name.toLowerCase().indexOf(filterTags.toLowerCase())>-1" class="btn btn-primary ml-1 mb-1">
         <input type="checkbox" class="d-none"  @click="checkTag(item.name)" :id="'tagId'+item.name" v-model="selectedTags" :value="item" />
         {{ item.name }} ({{item.count}}x)
       </div>
 </div>
-<p>Sort by <sortSelect></sortSelect></p>
+<sortSelect></sortSelect>
       <div class="row text-center text-lg-left" id="profilevideos">
         <div v-for="(item1,index) in medias" v-if="filterMedia(item1,selectedTags)==true" class="col-lg-4 col-md-4 col-xs-6">
           <singleField v-bind:item="item1"></singleField>

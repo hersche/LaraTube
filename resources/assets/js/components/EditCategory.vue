@@ -2,18 +2,16 @@
     <div v-if="currentcat!=undefined" class="col-xs-12 col-sm-12 col-md-12">
       <h4>Edit category</h4>
       <form id="theForm">
-        <div class="form-group row">
-          <label>{{ $t('Title') }}</label>
           <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
           <input :placeholder="$t('Title')+'...'" class="form-control" name="title" :value="currentcat.title" type="text">
-        </div>
-        <div class="form-group row">
-          <label>{{ $t('Description') }}</label>
-          <p class="col-8">
+          <v-text-field
+            :label="$t('Title')"
+            name="title"
+            :value="currentcat.title"
+            ></v-text-field>
             <MarkdownCreator :theText="currentcat.description" theId="description" theTitle="Description" ></MarkdownCreator>
-          </p>
-        </div>
+
         <div class="form-group row">
           <label>{{ $t('Parent') }}-{{ $t('category') }}</label>
           <treeselect v-model="catid" name="parent_id" :multiple="false" :options="treecatptions" />

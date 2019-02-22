@@ -19,7 +19,7 @@
 </template>
 <script>
   import { eventBus,store } from '../eventBus.js';
-  import TagComponent from './TagComponent'
+  import Tags from './Tags'
   import UserList from './UserList'
   export default {
     props: ['item','search','canloadmore'],
@@ -31,7 +31,7 @@
     },
     components : {
         'userlist': UserList,
-        'gallery': TagComponent
+        'gallery': Tags
     },
     mounted(){
       this.$parent.$nextTick(function () {

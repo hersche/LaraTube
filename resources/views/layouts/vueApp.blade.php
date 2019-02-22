@@ -30,7 +30,7 @@ header('Access-Control-Allow-Origin: *');
   </head>
   <body class="">
     <div id="app" v-cloak >
-      <thesidebar></thesidebar>
+      <thesidebar :alertshown="alertshown" :alerttext="alerttext" :alertcolor="alertcolor"></thesidebar>
       <main class="py-4 mt-5 col-12 mb-3">
         <div class="">
           <div class="d-flex justify-content-center">

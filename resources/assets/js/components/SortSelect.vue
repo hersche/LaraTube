@@ -3,7 +3,6 @@
   <v-select
   v-model="selectVal"
   @change="sortBy()"
-  attach
   :items="[
   {text:$t('Created at'),value:'created_at'},
   {text:$t('Created at')+' '+$t('reverse'),value:'created_at_reverse'},
@@ -22,7 +21,7 @@
   {text:$t('Likes'),value:'likes'},
   {text:$t('Likes')+' '+$t('reverse'),value:'likes_reverse'}, 
   {text:$t('Dislikes'),value:'dislikes'},
-  {text:$t('Disikes')+' '+$t('reverse'),value:'dislikes_reverse'},   
+  {text:$t('Dislikes')+' '+$t('reverse'),value:'dislikes_reverse'},   
   ]"
   :label="$t('Sort by')"
   ></v-select>

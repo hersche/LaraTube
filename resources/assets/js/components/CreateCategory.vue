@@ -1,19 +1,16 @@
 <template>
     <div class="col-xs-12 col-sm-12 col-md-12">
-      <h4>Create category</h4>
+      <h1 class="text-center">{{ $t('Create') }} {{ $t('category') }}</h1>
       <form id="theForm">
-        <div class="form-group row">
-          <label>{{ $('Title') }}</label>
           <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
-          <input placeholder="Media-title" class="form-control" name="title" type="text">
-        </div>
-        <div class="form-group row">
-          <label>{{ $('Description') }}</label>
-          <p>
+
+        <v-text-field
+          :label="$t('Title')"
+          name="title"
+          ></v-text-field>
             <MarkdownCreator theText="" theId="description" theTitle="Description" ></MarkdownCreator>
-          </p>
-        </div>
+
         <div class="form-group row">
           <label>{{ $t('Parent') }}-{{ $t('category') }}</label>
           <treeselect v-model="catid" name="parent_id" :multiple="false" :options="treecatptions" />
