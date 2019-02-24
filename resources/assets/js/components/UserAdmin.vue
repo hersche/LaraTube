@@ -21,11 +21,29 @@
   </template>
   <template slot="expand" slot-scope="props">
   <v-card flat>
-    <v-card-title>
+    <v-img
+:src="props.item.background"
+
+>
+<v-container fill-height fluid>
+  <v-layout fill-height>
+    <v-flex xs12 align-end flexbox>                <v-avatar large>
+            <img
+              :src="props.item.avatar"
+              :alt="props.item.name"
+            >
+          </v-avatar>
+        </v-flex>
+</v-layout>
+</v-container>
+        </v-img>
+    <v-card-title primary-title>
       {{ props.item.name }}
+
+
     </v-card-title>
     <v-card-text>
-      {{ props.item.bio }}
+      <VueMarkdown :source="props.item.bio"></VueMarkdown>
 
     </v-card-text>
     <v-card-actions>
@@ -45,6 +63,7 @@
 <script>
   import { eventBus, store } from '../eventBus.js';
   import SingleGalleryField from './SingleGalleryField'
+  import VueMarkdown from 'vue-markdown'
   export default {
     props: ['baseUrl','canloadmore'],
     data(){
@@ -127,7 +146,8 @@
       },
     },
     components : {
-        'singleField': SingleGalleryField
+        'singleField': SingleGalleryField,
+        VueMarkdown
     }
   }
 </script>
