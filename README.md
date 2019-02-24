@@ -12,6 +12,12 @@ However, it's whished on the developers side to not use this software for:
 
 By license, you can use the software for anything. If i (the developer) detect this on the bugtracker or in personal contact, it can lead to deny personal help or loosing contact - this is my right.
 
+## Documentation
+
+Manuals for users, admins and devs can be found here: https://gitlab.com/hersche/LaraTube/wikis/home
+
+For the quick-setup-text, go here: https://gitlab.com/hersche/LaraTube/wikis/Setup-LaraTube
+
 ## Features
 
 - Various audio- and video-types (including webtorrent)
@@ -43,56 +49,3 @@ Things i would love to implement, but where i'm either not shure how to implemen
   - PDF, EPUB
   - Pictures
 - Breakless click through a package of various medias (like a playlist, but presentation-able)
-
-## Requirements
-
-Basicly extact the same as laravel
-
-- PHP >= 7.1.3.
-- OpenSSL PHP Extension.
-- PDO PHP Extension.
-- Mbstring PHP Extension.
-- Tokenizer PHP Extension.
-- XML PHP Extension.
-- Ctype PHP Extension.
-- JSON PHP Extension.
-
-## Quick install
-
-The following is meaned to use in bash/via ssh and eventualy need some expirience.
-
-Best practice is to git clone the project. After, go into the project-directory, to run the following commands.
-
-For debian before composer..
-
-    apt-get install php7.3-xml php7.3-mbstring
-
-For get all dependencies
-
-    composer install
-    
-Setup the .env-file with a existing database
-
-For secure authenification
-
-    php artisan key:generate
-
-Create DB
-
-    php artisan migrate
-    
-(for setup again): php artisan migrate:fresh
-
-For generate first data in the db
-
-    php artisan db:seed -v
-
-Make a storage-link (if avatars and uploads don't work...)
-
-    ln -s /your-path/storage/app/public /your-path/public/
-
-Result should be a browseable "public/public/" - if you are confused about, this is OK!    
-
-For oauth2 (unused yet)
-
-    php artisan passport:install
