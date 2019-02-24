@@ -4,7 +4,6 @@
       <form id="theForm">
           <input type="hidden" name="_token" :value="csrf">
           <input type="hidden" value="" name="image" id="addMediaImage" />
-          <input :placeholder="$t('Title')+'...'" class="form-control" name="title" :value="currentcat.title" type="text">
           <v-text-field
             :label="$t('Title')"
             name="title"
@@ -19,7 +18,7 @@
 
       </form>
 
-      <button @click="submitAction();" class="btn btn-success" ><vs-icon icon="save"></vs-icon>{{ $t('Save') }}</button> <button @click="openConfirm();" class="btn btn-danger float-right" >Delete</button>
+      <v-btn @click="submitAction();" color="green" ><v-icon>save</v-icon>{{ $t('Save') }}</v-btn> <v-btn @click="openConfirm();" color="red" class="float-right" ><v-icon>delete</v-icon>Delete</v-btn>
     </div>
 </template>
 <script>

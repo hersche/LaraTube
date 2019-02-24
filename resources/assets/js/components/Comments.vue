@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div v-if="level==0">
-    <h4>{{ $t('Comments') }} <v-btn @click="refreshMedia()"><v-icon>refresh</v-icon></v-btn></h4>
-    <form class="form-inline mb-1 col-12" id="commentForm" >
+    <div v-if="(level==0)">
+    <h2 class="text-center">{{ $t('Comments') }} <v-btn @click="refreshMedia()" small icon><v-icon small>refresh</v-icon></v-btn></h2>
+    <form class="form-inline mb-1 col-12" id="commentForm" v-if="loggeduserid!=0"  >
       <input type="hidden" name="_token" :value="csrf">
       <input id="media_id" name="media_id" type="hidden" :value="currentmedia.id">
       <input id="parent_id" name="parent_id" type="hidden" value="0">
       <MarkdownCreator class="col-12" v-if="loggeduserid!=0" :theText="tmptexts[0]" theId="body" :theTitle="$t('Comment')" :theHint="$t('What you think about it')+'...'" ></MarkdownCreator>
-      <input type="button" class="ml-1 btn btn-sm btn-success float-right" :value="$t('Send')+' '+$t('comment')" @click="sendComment();" />
+      <v-btn class="ml-1 float-right" color="green" small @click="sendComment();" >{{ $t('Send')+' '+$t('comment') }}</v-btn>
     </form>
 
   </div>
@@ -20,21 +20,21 @@
           <p><VueMarkdown :source="comment.body"></VueMarkdown></p>
           <div class="row">
             <div class="col-12 pl-0 pr-0">
-            <v-btn id="like" color="success" v-if="comment.myLike==1" type="button" @click="like(comment,0,'like')" class="float-left">
-              <v-icon>thumb_up</v-icon>
+            <v-btn small id="like" color="green" v-if="comment.myLike==1" type="button" @click="like(comment,0,'like')" class="float-left">
+              <v-icon small>thumb_up</v-icon>
               <span class="small" id="likeCount">{{ comment.likes }}</span>
             </v-btn>
-            <v-btn id="like" v-else type="button" @click="like(comment,1,'like')" class="float-left">
-              <v-icon>thumb_up</v-icon>
+            <v-btn small color="blue" id="like" v-else type="button" @click="like(comment,1,'like')" class="float-left">
+              <v-icon small>thumb_up</v-icon>
               <span class="small" id="likeCount">{{ comment.likes }}</span>
             </v-btn>
 
-            <v-btn id="dislike" color="success" v-if="comment.myLike==-1" type="button" @click="like(comment,0,'dislike')" class="float-right">
-              <v-icon>thumb_down</v-icon>
+            <v-btn small color="red" id="dislike" v-if="comment.myLike==-1" type="button" @click="like(comment,0,'dislike')" class="float-right">
+              <v-icon small>thumb_down</v-icon>
               <span class="small ml-1" id="dislikeCount">{{ comment.dislikes }}</span>
             </v-btn>
-            <v-btn id="dislike" v-else type="button" @click="like(comment,-1,'dislike')" class="float-right">
-              <v-icon>thumb_down</v-icon>
+            <v-btn small color="blue" id="dislike" v-else type="button" @click="like(comment,-1,'dislike')" class="float-right">
+              <v-icon small>thumb_down</v-icon>
               <span class="small ml-1" id="dislikeCount">{{ comment.dislikes }}</span>
             </v-btn>
           </div>

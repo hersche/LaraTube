@@ -19,7 +19,15 @@ import VueI18n from 'vue-i18n';
 import Treeselect from '@riophae/vue-treeselect';
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+    theme: {
+        primary: '#3f51b5',
+        secondary: '#b0bec5',
+        accent: '#8c9eff',
+        success: 'green',
+        error: '#b71c1c'
+    }
+});
 // import VueMarkdown from 'vue-markdown'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
@@ -123,7 +131,7 @@ class siteManager {
             { path: '/mediaedit/:editTitle', component: editVideoComp }
         ];
         eventBus.$on('alert', a => {
-            theVue.alert(a.text, a.type);
+            theVue.alert(a.text);
         });
         eventBus.$on('getNotifications', url => {
             that.receiveNotifications(url, function () {
@@ -155,6 +163,9 @@ class siteManager {
             that.receiveMedias("/internal-api/media" + that.getIgnoreParam(), true, function () {
                 that.updateCSRF();
             });
+        });
+        eventBus.$on('closeAlarm', title => {
+            theVue.alertshown = false;
         });
         eventBus.$on('loadAllMedias', title => {
             that.receiveMedias("/internal-api/medias/all" + that.getIgnoreParam(), false, function () {

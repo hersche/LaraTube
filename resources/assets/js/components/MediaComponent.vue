@@ -1,30 +1,42 @@
 <template>
   <div v-if="currentmedia!=undefined" style="overflow-y:auto;overflow-x:hidden;" class="bg-light" id="mediaDiv">
-    
-    <div class="col-xs-12 col-sm-12 col-md-12"></div>
     <v-card>
       <mediaView :key="$route.fullPath" v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
       <v-card-actions>
-          <span class="float-left"><vs-input-number v-if="currentmedia.type=='localAudio'" v-model="audioVisualChangeSeconds" :step="0.1"/></span>
+          <span class="float-left">
+            <v-text-field
+  label="Seconds (for visualiser)"
+  mask="#"
+  v-if="currentmedia.type=='localAudio'"
+  v-model="audioVisualChangeSeconds"
+></v-text-field>
+</span>
           <span v-if="currentmedia.type=='localAudio'" class="" >
-            <v-btn color="blue" small @click="previousVisual()"><v-icon>skip_previous</v-icon></v-btn>
+            <v-btn icon color="blue" small @click="previousVisual()"><v-icon>skip_previous</v-icon></v-btn>
             <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
               <option value="Poster">Poster</option>
               <option v-for="(value, key, index) in visualPresets" :value="key">{{ visualTypesShort(key) }}</option>
             </select>
-            <v-btn color="blue" small @click="nextVisual()"><v-icon>skip_next</v-icon></v-btn>
+            <v-btn icon color="blue" small @click="nextVisual()"><v-icon small>skip_next</v-icon></v-btn>
           </span>
 
-          <v-btn id="mfs" small color="blue" @click="mediaGoFullscreen()"><v-icon>fullscreen</v-icon></v-btn>
-          <vs-dropdown vs-trigger-click class="btn-sm">
-            <a href.prevent class="btn btn-sm btn-primary">More</a>
-            <vs-dropdown-menu class="">
-
-
-              
-            <vs-dropdown-item>{{ currentmedia.type }}</vs-dropdown-item>
-            </vs-dropdown-menu>
-          </vs-dropdown>
+          <v-btn id="mfs" icon small color="blue" @click="mediaGoFullscreen()"><v-icon small>fullscreen</v-icon></v-btn>
+          <v-menu offset-y>
+  <v-btn
+    slot="activator"
+    color="primary"
+    dark
+    small
+  >
+    {{ $t('More') }}
+  </v-btn>
+  <v-list>
+    <v-list-tile
+    >
+      <v-list-tile-title>{{ currentmedia.type }}</v-list-tile-title>
+    </v-list-tile>
+  </v-list>
+</v-menu>
           
           <v-dialog
           v-if="currentmedia.techType=='torrent'"
@@ -71,18 +83,22 @@ Torrent-details
 </v-card-actions>
 </v-card>
 </v-dialog>
-          <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="torrentdownloadurl!=''&(currentmedia.techType=='torrent')" >Download file</a>
+          <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="(torrentdownloadurl!=''&&(currentmedia.techType=='torrent'))" >Download file</a>
           <v-btn color="blue" small @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end.toFixed(1) }}s)</v-btn>          
-          <span id="created_at" class="btn btn-sm btn-info mr-1">{{ currentmedia.created_at_readable }}</span>
+          <v-btn small id="created_at" class="mr-1">{{ currentmedia.created_at_readable }}</v-btn>
           
-          <router-link id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="btn btn-sm btn-info mr-1">{{ currentCat.title }}</router-link>
-          <span v-else class="btn btn-sm btn-warning mr-1">{{ $t('No category') }}</span>
-          <router-link class="btn btn-sm btn-primary" :to="'/profile/'+currentmedia.user.id">
-          <div id="userAvatar" :text="currentmedia.user.name">
-            <img v-if="currentmedia.user.avatar==''" class="mx-auto rounded-circle img-fluid" src="/img/404/avatar.png" alt="avatar" style="max-height: 20px;" />
-            <img v-else class="mx-auto rounded-circle img-fluid" :src="'/'+currentmedia.user.avatar" alt="avatar" style="max-height: 20px;" />
-          </div>
-            </router-link>
+          <v-btn small id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="mr-1">{{ currentCat.title }}</v-btn>
+          <v-btn small v-else class="mr-1">{{ $t('No category') }}</v-btn>
+
+          
+          <router-link :to="'/profile/'+currentmedia.user.id" class="ml-1" id="userAvatar">
+          <v-list-tile-avatar color="grey darken-3" >
+            <v-img
+              class="elevation-6"
+              :src="currentmedia.user.avatar"
+            ></v-img>
+          </v-list-tile-avatar>
+        </router-link>
             <b-tooltip target="userAvatar" placement="top">
               <p>Uploaded by {{ currentmedia.user.name }}</p>
             </b-tooltip>
@@ -99,21 +115,30 @@ Torrent-details
             </b-tooltip>
             
             
-            <v-btn id="like" small v-if="mylike==1" type="button" @click="like(0,'like')" color="green">
-              <v-icon>thumb_up</v-icon>
-              <span class="ml-1" id="likeCount">{{ likes }}</span>
+            <v-btn  id="like" small v-if="mylike==1" type="button" @click="like(0,'like')" color="green">
+            
+              <v-badge class="ml-3 small" left color="green" >
+                <span slot="badge" class="small">{{ likes }}</span>
+              <v-icon small>thumb_up</v-icon>
+            </v-badge>
             </v-btn>
-            <v-btn id="like" small v-else type="button" @click="like(1,'like')" color="blue">
-              <v-icon>thumb_up</v-icon>
-              <span class="ml-1" id="likeCount">{{ likes }}</span>
+            <v-btn  id="like" small v-else type="button" @click="like(1,'like')" color="blue">
+              <v-badge class="ml-3 small" left color="green" >
+                <span slot="badge" class="small">{{ likes }}</span>
+              <v-icon small>thumb_up</v-icon>
+            </v-badge>
             </v-btn>
-            <v-btn id="dislike" small v-if="mylike==-1" type="button" @click="like(0,'dislike')" color="green">
-              <v-icon>thumb_down</v-icon>
-              <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
+            <v-btn  id="dislike" small v-if="mylike==-1" type="button" @click="like(0,'dislike')" color="green">
+              <v-badge class="ml-3 small" left color="red" >
+                <span slot="badge" class="small">{{ dislikes }}</span>
+              <v-icon small>thumb_down</v-icon>
+            </v-badge>
             </v-btn>
-            <v-btn id="dislike" small v-else type="button" @click="like(-1,'dislike')" color="blue">
-              <v-icon>thumb_down</v-icon>
-              <span class="ml-1" id="dislikeCount">{{ dislikes }}</span>
+            <v-btn  id="dislike" small v-else type="button" @click="like(-1,'dislike')" color="blue">
+              <v-badge class="ml-3 small" left color="red" >
+                <span slot="badge" class="small">{{ dislikes }}</span>
+              <v-icon small>thumb_down</v-icon>
+            </v-badge>
             </v-btn>
 
             
@@ -130,7 +155,7 @@ Torrent-details
               <router-link class=""  :to="'/tags/'+tag.name" >
                 <v-chip class="small" small>
                   <v-avatar class="teal">
-                    <v-icon>tag</v-icon>
+                    <v-icon small>tag</v-icon>
                   </v-avatar>
                   {{ tag.name }}
                 </v-chip>

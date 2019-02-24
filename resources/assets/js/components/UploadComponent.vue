@@ -17,9 +17,10 @@
          v-model="mediaType" name="type"
          attach
          :items="[
+         {text:$t('Import') +' '+$t('local') +' '+$t('audio'),value:'localAudioImport'},
          {text:$t('Local') +' '+$t('audio'),value:'localAudio'},
          {text:$t('Direct') +' '+$t('audio'),value:'directAudio'},
-         {text:$t('Local') +' '+$t('video'),value:'localVideo'},
+         {text:$t('Import') +' '+$t('local') +' '+$t('video'),value:'localVideoImport'},
          {text:$t('Direct') +' '+$t('video'),value:'directVideo'},
          {text:$t('Torrent') +' '+$t('video'),value:'torrentVideo'},
          {text:$t('Youtube'),value:'youtube'},
@@ -27,6 +28,19 @@
          ]"
          :label="$t('Mediatype')"
          ></v-select>
+         <div v-if="mediaType=='localAudioImport'|mediaType=='localVideoImport'" class="form-group">
+             <label>Media import</label>
+             <p>Choose the file to import. </p>
+             
+             
+             <v-select
+             name="source"
+             v-model="source"
+             attach
+             :items="importableFiles"
+             :label="$t('File to import')"
+             ></v-select>
+         </div>
     <div v-if="mediaType=='localAudio'|mediaType=='localVideo'" class="form-group">
         <label>Media-file</label>
         <p>Local mean you upload it directly. </p>
@@ -38,6 +52,7 @@
       placeholder="https://server/file.mp4.mp3"
       :hint="$t('Can be from a foreign server')"
       name="source"
+      v-model="source"
       ></v-text-field>  
     <v-text-field
       v-if="mediaType=='torrentAudio'|mediaType=='torrentVideo'"
@@ -45,22 +60,24 @@
       placeholder="magnet://"
       :hint="$t('Often very long addresses')"
       name="source"
+      v-model="source"
       ></v-text-field>
     <v-text-field
       v-if="mediaType=='youtube'|mediaType=='vimeo'"
       :label="$t('Youtube or Vimeo')"
       :placeholder="$t('Add only the ID of the video')"
       :hint="$t('Like bTqVqk7FSmY or 76979871')"
+      v-model="source"
       name="source"
       ></v-text-field>
     <mediaView v-bind:currentmedia="theTestMedia" v-if="theTestMedia!=undefined" v-bind:autoplay="false"></mediaView>
-    <span class="btn btn-primary" v-if="theTestMedia==undefined" @click="testMedia()">Test link and extend infos</span>
-    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</span>
-    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</span>
-    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro_start')">Set intro start</span>
-    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro_start')">Set outro start</span>
-    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('intro_end')">Set intro end</span>
-    <span class="btn btn-primary" v-if="theTestMedia!=undefined" @click="positionTestMedia('outro_end')">Set outro end</span>
+    <v-btn color="blue" small v-if="(theTestMedia==undefined&&mediaType!='localAudioImport'&&mediaType!='localVideoImport')" @click="testMedia()">Test link and extend infos</v-btn>
+    <v-btn color="blue" small v-if="theTestMedia!=undefined" @click="removeTestMedia()">Remove test</v-btn>
+    <v-btn color="blue" small v-if="theTestMedia!=undefined" @click="durationTestMedia()">Add duration</v-btn>
+    <v-btn color="blue" small v-if="theTestMedia!=undefined" @click="positionTestMedia('intro_start')">Set intro start</v-btn>
+    <v-btn color="blue" small v-if="theTestMedia!=undefined" @click="positionTestMedia('outro_start')">Set outro start</v-btn>
+    <v-btn color="blue" small v-if="theTestMedia!=undefined" @click="positionTestMedia('intro_end')">Set intro end</v-btn>
+    <v-btn color="blue" small v-if="theTestMedia!=undefined" @click="positionTestMedia('outro_end')">Set outro end</v-btn>
     
     <v-text-field
     v-if="mediaType!='localAudio'&mediaType!='localVideo'"
@@ -184,7 +201,18 @@
         this.outro_end = duration
       });
     },
-
+    watch: {
+      mediaType: function(val){
+        let that = this
+        if(val=="localAudioImport"||val=="localVideoImport"){
+          $.getJSON('/import-files').done(function(data){
+            that.importableFiles = data
+          });
+        } else {
+          this.importableFiles = []
+        }
+      }
+    },
     methods: {
       secondsToHms(d) {
         // THX stackoverflow! i'm lazy ;)
@@ -195,6 +223,10 @@
         return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
       },
       testMedia(){
+        if(this.source==''){
+          eventBus.$emit('alert',{ text:'Define a source first',type:'error'});
+          return
+        }
         var techType;
         if(this.mediaType=="localAudio"||this.mediaType=="directAudio"){
           techType = "audio";
@@ -299,7 +331,9 @@ rotate(rotationAngle,event) {
         intro_end:0,
         outro_start:0,
         outro_end:0,
+        source:'',
         theTestMedia:undefined,
+        importableFiles:[],
         mty:[
           {text:'Local audio',value:'localAudio'},
           {text:'Direct audio',value:'directAudio'},

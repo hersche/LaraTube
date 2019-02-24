@@ -1,57 +1,42 @@
 <template>
   <div>
-    <vs-table search :data="users">
-          <template slot="header">
-            <h3>{{ $t('Users') }}</h3>
-          </template>
-          <template slot="thead">
-            <vs-th sort-key="name">{{ $t('Username') }}</vs-th>
-            <vs-th sort-key="email">{{ $t('Email') }}</vs-th>
-            <vs-th sort-key="created_at">{{ $t('Created at') }}</vs-th>
-            <vs-th sort-key="updated_at">{{ $t('Updated at') }}</vs-th>
-          </template>
+    
+    <v-data-table
+  :items="users"
+  :headers="[
+  { text: 'Id', value: 'id' },
+  { text: 'Name', value: 'name' },
+  { text: 'Email', value: 'email' },
+  { text: 'Admin', value: 'admin' },
+  ]"
+  :expand="true"
+>
+  <template slot="items" slot-scope="props">
+    <tr @click="props.expanded = !props.expanded">
+    <td class="text-xs-right">{{ props.item.id }}</td>
+    <td class="text-xs-right">{{ props.item.name }}</td>
+    <td class="text-xs-right">{{ props.item.email }}</td>
+    <td class="text-xs-right">{{ props.item.admin }}</td>
+  </tr>
+  </template>
+  <template slot="expand" slot-scope="props">
+  <v-card flat>
+    <v-card-title>
+      {{ props.item.name }}
+    </v-card-title>
+    <v-card-text>
+      {{ props.item.bio }}
 
-          <template slot-scope="{data}">
-            <vs-tr :key="indextr" v-for="(tr, indextr) in data" >
-              <vs-td :data="data[indextr].name">
-                {{data[indextr].name}}
-              </vs-td>
-              <vs-td :data="data[indextr].email">
-                {{data[indextr].email}}
-              </vs-td>
-              <vs-td :data="data[indextr].created_at">
-                {{ $d(new Date(data[indextr].created_at),'short') }}
-              </vs-td>
-              <vs-td :data="data[indextr].updated_at">
-                {{ $d(new Date(data[indextr].updated_at),'short') }}
-              </vs-td>
-              <template class="expand-user" slot="expand">
-                <div class="con-expand-users">
-                  <div class="con-btns-user">
-                    <div class="con-userx">
-                      <vs-avatar size="45px" :src="data[indextr].avatar"/>
-                      <span>
-                        {{ tr.name }}
-                      </span>
-                      <p> {{ data[indextr].bio }} </p>
-                    </div>
-
-                    <div>
-                      <vs-button vs-type="gradient" size="small" :to="'/profile/'+tr.id" color="success" icon="send"></vs-button>
-                      <vs-button vs-type="flat" @click="openConfirm(tr.id)" size="small" color="danger" icon="delete_sweep"></vs-button>
-                      <vs-button v-if="data[indextr].admin" vs-type="flat" @click="rmAdmin(tr.id)" size="small" color="danger" icon="">Unmake admin</vs-button>
-                      <vs-button v-if="data[indextr].admin==false" vs-type="flat" @click="mkAdmin(tr.id)" size="small" color="danger" icon="">Make admin</vs-button>
-                    </div>
-                  </div>
-                  <vs-list>
-                    <vs-list-item icon="mail" title="Email" :subtitle="tr.email">
-                  </vs-list-item>
-                </vs-list>
-              </div>
-            </template>
-          </vs-tr>
-        </template>
-      </vs-table>
+    </v-card-text>
+    <v-card-actions>
+          <v-btn small :to="'/profile/'+props.item.id" color="green" icon><v-icon>send</v-icon></v-btn>
+          <v-btn  @click="openConfirm(props.item.id)" small color="red" icon><v-icon>delete_sweep</v-icon></v-btn>
+          <v-btn v-if="props.item.admin"  @click="rmAdmin(props.item.id)" small color="red" >Unmake admin</v-btn>
+          <v-btn v-if="props.item.admin==false"  @click="mkAdmin(props.item.id)" small color="red">Make admin</v-btn>
+        </v-card-actions>
+  </v-card>
+</template>
+</v-data-table>
       <form id="hiddenCSRFForm" class="d-none">
         <input type="hidden" name="_token" :value="csrf">
       </form>

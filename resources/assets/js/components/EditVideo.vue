@@ -140,7 +140,7 @@
           <v-card-text>
             <ul >
               <li v-for="track in currentmedia.tracks" class="mb-3">
-                <a class="text-left" target="_blank" :href="track.source">{{ track.lang }}</a> <a class="btn btn-danger btn-sm float-right" @click="deleteTrack(track.id)">{{ track.lang }} <vs-icon icon="delete"></vs-icon></a>
+                <a class="text-left" target="_blank" :href="track.source">{{ track.lang }}</a> <a class="btn btn-danger btn-sm float-right" @click="deleteTrack(track.id)">{{ track.lang }} <v-icon>delete</v-icon></a>
               </li>
             </ul>
   

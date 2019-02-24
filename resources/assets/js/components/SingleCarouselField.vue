@@ -1,38 +1,72 @@
 <template>
-  <div :style="'background-image:url(\''+item.poster_source+'\');'">
-
-                <vs-row vs-justify="center">
-                  <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="10">
-                    <vs-card style="opacity: 0.75; "  >
-                      <div style="height: 35vh; overflow-x: auto;">
-                    <div slot="header">
-                        <h3>{{ item.title }}</h3>
-                        <h5>({{ item.created_at_readable }})</h5>
-                      </div>
-                      <div>
-                        <div style=""><VueMarkdown :source="item.description"></VueMarkdown></div>
-                        <div>
-                          <span v-for="tag in item.tags" >
-                            <router-link class="" :to="'/tags/'+tag.name" >
-                              <vs-chip color="primary">
-                                <vs-avatar icon="tag" />
-                                {{ tag.name }}
-                              </vs-chip>
+                    <v-card style="opacity: 0.75; "  >
+                      <div class="subheading text-center">{{ item.title }}</div>
+                        <v-layout>
+                          <v-flex xs5 style="height:160px; overflow-x:auto;">
+                            <router-link :to="'/media/'+item.urlTitle">
+                              <v-img
+                                :src="item.poster_source"
+                                contain
+                                ></v-img>
                             </router-link>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                      <div slot="footer">
-                        <vs-row vs-justify="flex-end" style="flex-flow: row!important;">
-                          <vs-button class="mr-1" v-if="loggeduserid==item.user.id" icon="settings" :title="$t('Edit')+' '+$t('media')" :to="'/mediaedit/'+item.title"></vs-button>
-                          <vs-button icon="play_circle_filled" :title="$t('Play')+' '+$t('media')" :to="'/media/'+item.urlTitle"></vs-button>
-                        </vs-row>
-                      </div>
-                    </vs-card>
-                  </vs-col>
-                </vs-row>
-        </div>
+                            <div class="pl-1" v-if="item.duration!='0'">{{ item.duration }}</div>
+                            <div class="pl-1">{{ item.created_at_readable }}</div>
+                            <div class="pl-1">{{ item.type }}</div>
+                          </v-flex>
+                          <v-flex xs6 sm7 md7 lg7>
+                            <v-card-title primary-title style="height: 160px; overflow-x:auto; padding-top: 0px;">
+                              <div>
+                                
+                                <VueMarkdown :source="item.description"></VueMarkdown>
+
+                              </div>
+                            </v-card-title>
+                          </v-flex>
+                        </v-layout>
+                        <v-card-text>
+                          <div>      <span v-for="tag in item.tags" >
+                                  <router-link class="" :to="'/tags/'+tag.name" >
+                                    <v-chip class="small" small>
+                                      <v-avatar class="teal">
+                                        <v-icon>tag</v-icon>
+                                      </v-avatar>
+                                      {{ tag.name }}
+                                    </v-chip>
+                                  </router-link>
+                                </span>
+                              </div>  
+                        </v-card-text>
+                        <v-card-actions class="">
+
+                          <v-btn :to="'/media/'+item.urlTitle">
+                          <v-icon class="mr-1">play_circle_filled</v-icon>
+                          <span class="hidden-sm-and-down" >{{ $t('Play') }}</span>
+                        </v-btn>
+                          <v-spacer></v-spacer>
+                          <router-link :to="'/profile/'+item.user.id" class="ml-1">
+                          <v-list-tile-avatar color="grey darken-3" >
+                            <v-img
+                              class="elevation-6"
+                              :src="item.user.avatar"
+                            ></v-img>
+                          </v-list-tile-avatar>
+                        </router-link>
+                          <v-badge class="ml-1 small" left color="blue" overlap>
+                            <span slot="badge" class="small">{{ item.comments.length }}</span>
+                          <v-icon>comment</v-icon>
+                        </v-badge>
+                        
+                        <v-badge class="ml-3 small" left color="green" overlap>
+                          <span slot="badge" class="small">{{ item.likes }}</span>
+                        <v-icon>thumb_up</v-icon>
+                      </v-badge>
+                      <v-badge class="ml-3 small" left color="red" overlap>
+                        <span slot="badge" class="small">{{ item.dislikes }}</span>
+                      <v-icon >thumb_down</v-icon>
+                      </v-badge>
+
+                        </v-card-actions>
+                    </v-card>
 </template>
 <script>
   import { eventBus, store } from '../eventBus.js';

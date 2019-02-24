@@ -8,8 +8,8 @@
       <h4>{{ $t("Notifications") }}</h4>
       <div v-for="item in notifications"  class="text-center">
         <div v-if="item.type==='App\\Notifications\\LikeReceived'">
-          <vs-divider color="success">{{ item.created_at }}</vs-divider>
-           <vs-chip color="warning" class="float-right" v-if="item.read_at==null" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)" closable><vs-avatar icon="markunread" />{{ $t('Unread') }}!</vs-chip>
+          <v-divider>{{ item.created_at }}</v-divider>
+          <v-chip  @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)" class="float-right" close v-if="item.read_at==null" >{{ $t('Unread') }}!</v-chip>
 
           <p>{{ $t("User") }} <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link> {{ getLikeString(item.data.like) }}
             <span v-if="(item.data.media_id!=null&&item.data.media_id!=0)">
@@ -30,8 +30,8 @@
         
         
         <div v-else>
-          <vs-divider color="success">{{ item.created_at }}</vs-divider>
-           <vs-chip color="warning" class="float-right" v-if="item.read_at==null" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)" closable><vs-avatar icon="markunread" />{{ $t('Unread') }}!</vs-chip>
+          <v-divider>{{ item.created_at }}</v-divider>
+           <v-chip class="float-right" v-if="item.read_at==null" @click="emitMarkNotifications('/internal-api/notifications/markasread/'+item.id)" close><v-icon>markunread</v-icon>{{ $t('Unread') }}!</v-chip>
 
           <p>{{ $t("User") }} <router-link :to="'/profile/'+item.data.user_id">{{ getUserById(item.data.user_id).name }}</router-link> commented
             <span>

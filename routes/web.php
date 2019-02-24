@@ -1,5 +1,7 @@
 <?php
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Storage;
 use App\Media;
 use App\Comment;
 use App\Category;
@@ -56,7 +58,10 @@ Route::get('/', function () {
     return view('base');
 });
 
-
+Route::get('/import-files', function () {
+  $files = Storage::allFiles("import");
+  return $files;
+});
 Route::get('/internal-api/info', function () {
     return response()->json(["data"=>["media_count"=>Media::count(),"can_admin"=>Auth::user()->can('admin')]],200);
 });
@@ -65,33 +70,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users','UserController');
 });
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout' );
-/*
-Route::post('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
-Route::put('/user/updateAvatar','UserController@updateAvatar')->name('users.updateAvatar');
-Route::put('/user/updateBackground','UserController@updateBackground')->name('users.updateBackground');
-
-Route::get('/media/add','MediaController@addMedia')->name('medias.add');
-
-Route::put('/media','MediaController@create')->name('mediaasdasds.create');
-Route::get('/media/edit/{title}','MediaController@editView')->name('medias.editView');
-Route::post('/media/edit/{title}','MediaController@edit')->name('medias.edit');
-Route::get('/media/delete/{title}','MediaController@destroy')->name('medias.delete');
-Route::get('/media/{title}', 'MediaController@show')->name('media.show');
-
-Route::get('/tags', 'MediaController@tags')->name('tags');
-Route::get('/tags/{tags}', 'MediaController@tagsFilter')->name('tags.filter');
-
-Route::post('/directUpload','MediaController@directUpload')->name('medias.directuploadAjax');
-Route::put('/directUpload','MediaController@directUpload');
-Route::get('/media','MediaController@index')->name('media');
-Route::put('/like','MediaController@like')->name('media.like');
-Route::post('/like','MediaController@like')->name('media222.like');
-Route::get('/like','MediaController@like')->name('media222.like');
-Route::get('/friends','UserController@profile')->name('friends');
-Route::get('/profile/edit','UserController@selfEdit')->name('users.selfedit');
-Route::get('/profile/{name}','UserController@profileview')->name('profile.view');
-
-*/
 Route::put('/friends','UserController@changeFriends')->name('friends');
 
 
