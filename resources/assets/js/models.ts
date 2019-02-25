@@ -157,3 +157,20 @@ export class Notification {
     this.created_at = created_at
   }
 }
+
+export class Playlist {
+  id:number;
+  title:string;
+  description:string;
+  media_ids:Array<number>
+  read_at:string
+  created_at:any
+  constructor(id:number,title:string,description:string,media_ids:Array<number>,read_at:string,created_at:any){
+    this.id=id;
+    this.title=title;
+    this.description=description;
+    this.media_ids = media_ids
+    this.read_at = read_at;
+    this.created_at = created_at
+  }
+}

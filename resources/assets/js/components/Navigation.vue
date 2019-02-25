@@ -238,20 +238,52 @@
     
   </v-list>
 </v-navigation-drawer>
-<v-fab-transition>
+
+<v-speed-dial
+  v-model="speedDeal"
+  bottom
+  v-if="currentuser.id!=0"
+  right
+  fixed
+>
+  <v-btn
+    slot="activator"
+    v-model="speedDeal"
+    color="blue darken-2"
+    dark
+    fab
+  >
+    <v-icon>account_circle</v-icon>
+    <v-icon>close</v-icon>
+  </v-btn>
   <v-btn
     fab
-    v-if="currentuser.id!=0"
     dark
     small
-    fixed
-    bottom
-    right
+    color="green"
+  >
+    <v-icon>edit</v-icon>
+  </v-btn>
+  <v-btn
+    fab
+    dark
+    small
+    color="indigo"
     to="/upload"
   >
     <v-icon>add</v-icon>
   </v-btn>
-</v-fab-transition>
+  <v-btn
+    fab
+    dark
+    small
+    color="red"
+  >
+    <v-icon>delete</v-icon>
+  </v-btn>
+</v-speed-dial>
+
+
 </v-toolbar>
 
 <v-snackbar
@@ -354,9 +386,12 @@ export default {
   },
   watch:{
     alarmEnabledInternal: function(val){
-      eventBus.$emit('closeAlarm',"");
+      if(val==false){
+        eventBus.$emit('closeAlarm',"");
+      }
     },
     alertshown: function(val){
+      console.log("react to alertshown",val)
       this.alarmEnabledInternal = val
     },  
     lang:function(val){
@@ -385,6 +420,7 @@ export default {
     n:0,
     mini:false,
     alarmEnabledInternal:false,
+    speedDeal:false,
     treeTypes: [{id:'audio',label:'Audio'},{id:'video',label:'Video'}]
     
 

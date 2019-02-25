@@ -92,3 +92,13 @@ export class Notification {
         this.created_at = created_at;
     }
 }
+export class Playlist {
+    constructor(id, title, description, media_ids, read_at, created_at) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.media_ids = media_ids;
+        this.read_at = read_at;
+        this.created_at = created_at;
+    }
+}

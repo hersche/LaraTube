@@ -2,7 +2,7 @@ var baseUrl:string;
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Router from 'vue-router';
-import BootstrapVue from 'bootstrap-vue'
+//import BootstrapVue from 'bootstrap-vue'
 import VueCroppie from 'vue-croppie';
 
 import { eventBus,store } from './eventBus';
@@ -11,10 +11,10 @@ import dateTranslation from './dateTranslation';
 import { MediaSorter, Search } from './tools';
 import { User, Media, Tag, Category, Notification } from './models';
 import VueApexCharts from 'vue-apexcharts'
-import Vuesax from 'vuesax'
+//import Vuesax from 'vuesax'
 import 'material-icons/iconfont/material-icons.css';
 import 'plyr/dist/plyr.css';
-import 'vuesax/dist/vuesax.css' //Vuesax styles
+//import 'vuesax/dist/vuesax.css' //Vuesax styles
 import VuePlyr from 'vue-plyr'
 import VueI18n from 'vue-i18n'
 import Treeselect from '@riophae/vue-treeselect'
@@ -35,10 +35,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 //import Echo from "laravel-echo"
 Vue.use(Vuex)
 Vue.use(Router)
-Vue.use(BootstrapVue);
+//Vue.use(BootstrapVue);
 Vue.use(VueCroppie);
 Vue.use(VueApexCharts)
-Vue.use(Vuesax)
+// Vue.use(Vuesax)
 Vue.use(VuePlyr)
 Vue.use(VueI18n)
 // Vue.use(VueMarkdown)
@@ -155,7 +155,8 @@ class siteManager {
       { path: '/mediaedit/:editTitle', component: editVideoComp }
     ]
     eventBus.$on('alert', a => {
-        theVue.alert(a.text)
+      console.log("received create alert")
+        theVue.alert(a.text,a.type)
     });
     eventBus.$on('getNotifications', url => {
       that.receiveNotifications(url,function(){
@@ -423,17 +424,14 @@ class siteManager {
       }
    }),
     methods:{
-      alert(msg,type="info",icon=''){
+      alert(msg,type="green",icon=''){
+        console.log("alert-method")
         this.alertshown=true
         this.alerttext=msg
         this.alertcolor=type
         // this.$vs.notify({title:msg,text:'',icon:icon,color:type,position:'bottom-center'})
       },
       openLoading(){
-        this.$vs.loading()
-        setTimeout( ()=> {
-          this.$vs.loading.close()
-        }, 2000);
       },
       searching() {
         var s =  $("#theLiveSearch").val();
@@ -496,7 +494,7 @@ theVue.$router.afterEach((to, from) => {
 //  theVue.$vs.loading.close()
 })
 if(localStorage.getItem('cookiePolicy')!="read"){
-  theVue.$vs.notify({
+  /*theVue.$vs.notify({
     title:'We use cookies and the offline-storage',
     text:'Some of your informations are saved in your browser or on the server (mostly in case of login).<br /> With a Ok you acceppt this. <br /> <a class="btn btn-success" onclick="localStorage.setItem(\'cookiePolicy\',\'read\');">Ok</a>',
     color:'primary',
@@ -504,7 +502,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     click:()=>{
 
     },
-  })
+  })*/
 }
 
   }

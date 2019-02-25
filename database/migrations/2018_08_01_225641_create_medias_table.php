@@ -17,6 +17,7 @@ class CreateMediasTable extends Migration
             $table->increments('id');
             $table->string('title')->unique();
             $table->string('type')->default('');
+            $table->string('file_type')->default('');
             $table->string('poster_source')->default('');
             $table->text('source');
             $table->string('duration')->default('0');
@@ -29,6 +30,7 @@ class CreateMediasTable extends Migration
             $table->integer('intro_end')->default(0);
             $table->integer('outro_start')->default(0);
             $table->integer('outro_end')->default(0);
+            $table->integer('license_id')->default(0);
             $table->enum('allowed_group', ['public', 'family', 'acquaintances', 'close_friends'])->default('public');
             $table->timestamps();
         });

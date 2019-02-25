@@ -85,8 +85,17 @@ Torrent-details
 </v-dialog>
           <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="(torrentdownloadurl!=''&&(currentmedia.techType=='torrent'))" >Download file</a>
           <v-btn color="blue" small @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end.toFixed(1) }}s)</v-btn>          
-          <v-btn small id="created_at" class="mr-1">{{ currentmedia.created_at_readable }}</v-btn>
+          <v-btn small class="mr-1" v-on="data.on">{{ currentmedia.created_at_readable }}</v-btn>
+          <v-tooltip bottom>
+  <template #activator="data">
+          <v-btn small class="mr-1" v-on="data.on">{{ currentmedia.created_at_readable }}</v-btn>
           
+        </template>
+        <span>
+          <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
+          <p>{{ $t('Updated at') }} {{ $d(new Date(currentmedia.updated_at.date),'short') }}</p>
+        </span>
+</v-tooltip>
           <v-btn small id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="mr-1">{{ currentCat.title }}</v-btn>
           <v-btn small v-else class="mr-1">{{ $t('No category') }}</v-btn>
 
@@ -99,20 +108,16 @@ Torrent-details
             ></v-img>
           </v-list-tile-avatar>
         </router-link>
-            <b-tooltip target="userAvatar" placement="top">
+          <!--  <b-tooltip target="userAvatar" placement="top">
               <p>Uploaded by {{ currentmedia.user.name }}</p>
             </b-tooltip>
             <b-tooltip target="mfs" placement="top">
               <p>Document fullscreen</p>
             </b-tooltip>
-            <b-tooltip target="created_at" placement="top">
-              <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
-              <p>{{ $t('Updated at') }} {{ $d(new Date(currentmedia.updated_at.date),'short') }}</p>
-            </b-tooltip>
             <b-tooltip target="category" v-if="currentCat!=undefined" placement="top">
               <h5>{{ currentCat.title }}</h5>
               <p>{{ currentCat.description }}</p>
-            </b-tooltip>
+            </b-tooltip> -->
             
             
             <v-btn  id="like" small v-if="mylike==1" type="button" @click="like(0,'like')" color="green">

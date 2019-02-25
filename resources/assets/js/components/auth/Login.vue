@@ -11,11 +11,13 @@
               v-model="email"
               label="E-mail"
               name="email"
+              v-on:keyup.enter="submitLogin()"
               required
               ></v-text-field>
               
               <v-text-field
                 v-model="password"
+                v-on:keyup.enter="submitLogin()"
                 :append-icon="show1 ? 'visibility_off' : 'visibility'"
                 :rules="[rules.required, rules.min]"
                 :type="show1 ? 'text' : 'password'"
