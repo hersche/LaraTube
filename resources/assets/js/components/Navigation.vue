@@ -144,6 +144,42 @@
       <v-list-tile slot="activator">
         <v-list-tile-title>Debug</v-list-tile-title>
       </v-list-tile>
+      <v-list-group
+        prepend-icon="warning"
+        no-action
+        sub-group
+        v-if="currentuser.id!=0"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Oauth</v-list-tile-title>
+        </v-list-tile>
+        <v-list-tile to="/passport/clients">
+          <v-list-tile-action>
+            <v-icon>account_box</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ $t('Clients') }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        
+        <v-list-tile to="/passport/personalaccess">
+          <v-list-tile-action>
+            <v-icon>account_box</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ $t('Personal access tokens') }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        
+        <v-list-tile to="/passport/authorizedclients">
+          <v-list-tile-action>
+            <v-icon>account_box</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ $t('authorized clients') }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list-group>
       <v-list-tile>
         <v-list-tile-action>
           <v-icon>multiline_chart</v-icon>

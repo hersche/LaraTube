@@ -155,6 +155,7 @@
 </template>
 
 <script>
+const axios = require('axios');
     export default {
         /*
          * The component's data.
@@ -248,7 +249,8 @@
                         })
                         .catch(error => {
                             if (typeof error.response.data === 'object') {
-                                this.form.errors = _.flatten(_.toArray(error.response.data.errors));
+                              console.log("an error happened?? ", error.response.data)
+                                //this.form.errors = _.flatten(_.toArray(error.response.data.errors));
                             } else {
                                 this.form.errors = ['Something went wrong. Please try again.'];
                             }
