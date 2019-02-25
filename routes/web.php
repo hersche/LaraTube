@@ -3,9 +3,13 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Storage;
 use App\Media;
+use App\Playlist;
+use App\License;
 use App\Comment;
 use App\Category;
 use App\DirectTag;
+use App\Http\Resources\License as LicenseResource;
+use App\Http\Resources\Playlist as PlaylistResource;
 use App\Http\Resources\Media as MediaResource;
 use App\Http\Resources\Category as CategoryResource;
 use App\User;
@@ -58,9 +62,15 @@ Route::get('/', function () {
     return view('base');
 });
 
-Route::get('/import-files', function () {
+Route::get('/internal-api/import-files', function () {
   $files = Storage::allFiles("import");
   return $files;
+});
+Route::get('/internal-api/playlists', function () {
+  return PlaylistResource::collection(Playlist::where('user_id', '=' ,Auth::id())->orWhere('public',1)->get());
+});
+Route::get('/internal-api/licenses', function () {
+  return LicenseResource::collection(License::all());
 });
 Route::get('/internal-api/info', function () {
     return response()->json(["data"=>["media_count"=>Media::count(),"can_admin"=>Auth::user()->can('admin')]],200);

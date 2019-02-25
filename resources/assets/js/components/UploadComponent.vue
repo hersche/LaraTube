@@ -205,7 +205,7 @@
       mediaType: function(val){
         let that = this
         if(val=="localAudioImport"||val=="localVideoImport"){
-          $.getJSON('/import-files').done(function(data){
+          $.getJSON('/internal-api/import-files').done(function(data){
             that.importableFiles = data
           });
         } else {
