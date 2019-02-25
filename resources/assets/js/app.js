@@ -2,7 +2,7 @@
 ** First file for initialise everything
 **/
 window.$ = window.jQuery = require('jquery');
-require('bootstrap');
+//require('bootstrap');
 var $ = require('jquery');
 var WebTorrent = require('webtorrent')
 

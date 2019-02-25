@@ -1,5 +1,6 @@
 <template>
     <div class="">
+      <h1 class="text-center">{{ $t('Charts') }}</h1>
       <p>The numbers on this chart represent only your loaded medias. To see all medias, go to the menu -> Developer options -> Load all medias</p>
       <p>This can take a while / need performance.</p>
       <div class="">
