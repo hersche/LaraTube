@@ -211,7 +211,6 @@
 </template>
 
 <script>
-const axios = require('axios');
     export default {
         /*
          * The component's data.
