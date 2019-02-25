@@ -1,8 +1,8 @@
 <template>
 
   <v-select
+  attach
   :key="$route.fullPath+'sortselect'"
-  single-line
   menu-props='{"closeOnClick":true, "closeOnContentClick":true, "openOnClick":false, "maxHeight":300}'
   v-model="selectVal"
   :items="[

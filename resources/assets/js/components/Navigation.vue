@@ -1,5 +1,5 @@
 <template lang="html">
-<div data-app>
+<div>
   <v-toolbar fixed dark color="primary" style="z-index:99999">
     <v-toolbar-side-icon @click="active=true"></v-toolbar-side-icon>
     <router-link class="" to="/"><v-toolbar-title class="white--text" to="/">LaraTube</v-toolbar-title></router-link>

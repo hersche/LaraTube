@@ -4,7 +4,7 @@
           <v-img
             :src="item.poster_source"
             contain
-            ><div class="text-center bg-info text-dark" style="opacity:.7; overflow-x:hidden; height: 20%;">{{ item.title }}</div></v-img>
+            ><div class="text-center bg-dark text-white" style="opacity:.9; overflow-x:hidden; height: 20%;">{{ item.title }}</div></v-img>
         </router-link>
   </v-card>
 </template>
