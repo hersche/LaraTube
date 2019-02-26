@@ -23,12 +23,12 @@ use App\Http\Resources\Comment as CommentResource;
 */
 //Route::post('login', 'Auth\LoginController@login');
 //Route::post('register', 'API\RegisterController@register');
-Auth::routes();
+// Auth::routes();
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+/*
 Route::get('/user', function () {
     return UserResource::collection(User::where("public","=",1)->get());
 });
@@ -36,7 +36,7 @@ Route::get('/user', function () {
 Route::get('/user/{id}', function ($id) {
     return new UserResource(User::find($id));
 });
-
+*/
 
 
 Route::get('/media', function (Request $request) {
