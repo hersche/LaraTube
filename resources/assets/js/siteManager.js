@@ -312,7 +312,7 @@ class siteManager {
             if (tagName != '') {
                 if (that.catchedTagMedias.includes(tagName) == false) {
                     that.catchedTagMedias.push(tagName);
-                    that.receiveMedias("/api/tags/" + tagName, false, function () {
+                    that.receiveMedias("/internal-api/tags/" + tagName, false, function () {
                     });
                 }
             }
@@ -640,7 +640,7 @@ class siteManager {
         return res;
     }
     receiveTags(callback = undefined) {
-        $.getJSON("/api/tags", function name(data) {
+        $.getJSON("/internal-api/tags", function name(data) {
             var tmpTags = [];
             $.each(data.data, function (key, value) {
                 tmpTags.push(new Tag(value.id, value.name, value.slug, value.count));

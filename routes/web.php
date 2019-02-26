@@ -8,6 +8,7 @@ use App\License;
 use App\Comment;
 use App\Category;
 use App\DirectTag;
+use App\Http\Resources\Tag as TagResource;
 use App\Http\Resources\License as LicenseResource;
 use App\Http\Resources\Playlist as PlaylistResource;
 use App\Http\Resources\Media as MediaResource;
@@ -215,3 +216,24 @@ Route::post('/internal-api/users/mkAdmin/{id}','UserController@mkAdmin');
 Route::post('/internal-api/users/rmAdmin/{id}','UserController@rmAdmin');
 Route::delete('/internal-api/user/{id}','UserController@destroy');
 Route::delete('/internal-api/comment/{id}','CommentController@destroy');
+Route::get('/internal-api/tags', function () {
+    return TagResource::collection(DirectTag::all());
+});
+
+Route::get('/internal-api/tags/{tags}', function (Request $request,$tags) {
+  $tagArrayExtract = explode(' ', $tags);
+  $tagArray = array();
+  foreach($tagArrayExtract as $tag){
+    if(starts_with($tag, '#')){
+      array_push($tagArray, substr($tag,1));
+    } else {
+      array_push($tagArray, $tag);
+    }
+  }
+  if($request->input('tagsCombine')=="true"){
+    $medias = Media::withAllTags($tagArray)->get();
+  } else {
+    $medias = Media::withAnyTag($tagArray)->get();
+  }
+    return MediaResource::collection($medias);
+});
