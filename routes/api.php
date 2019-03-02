@@ -24,9 +24,9 @@ use App\Http\Resources\Comment as CommentResource;
 //Route::post('login', 'Auth\LoginController@login');
 //Route::post('register', 'API\RegisterController@register');
 // Auth::routes();
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::get('/user', function (Request $request) {
     return $request->user();
-});
+})->middleware('scope:userprofile');;
 
 /*
 Route::get('/user', function () {
