@@ -33,7 +33,9 @@ class Media extends Model
     public function tracks() {
       return Track::where("media_id","=",$this->id)->get();
     }
-
+    public function sources() {
+      return Track::where("media_id","=",$this->id)->get();
+    }
     public function comments() {
     //  ->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')
       $comments = Comment::where('media_id', '=' ,$this->id)->where("parent_id","=","0")->get()->sortByDesc('created_at');

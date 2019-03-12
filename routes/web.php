@@ -15,6 +15,7 @@ use App\Http\Resources\Media as MediaResource;
 use App\Http\Resources\Category as CategoryResource;
 use App\User;
 use App\Http\Resources\User as UserResource;
+//URL::forceScheme('https');
 /*
 |--------------------------------------------------------------------------
 | Web Routes

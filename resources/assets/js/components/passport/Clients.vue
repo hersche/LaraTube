@@ -330,7 +330,9 @@ const axios = require('axios')
                     })
                     .catch(error => {
                         if (typeof error.response.data === 'object') {
-                            form.errors = _.flatten(_.toArray(error.response.data.errors));
+                          //  form.errors = _.flatten(_.toArray(error.response.data.errors));
+                          console.log(error.response.data.errors)
+                          form.errors = ['Something went wrong 2. Please try again.'];
                         } else {
                             form.errors = ['Something went wrong. Please try again.'];
                         }

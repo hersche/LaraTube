@@ -17,16 +17,15 @@ header('Access-Control-Allow-Origin: *');
       <meta id="loggedUserId" content="{{ Auth::id() }}">
     @endguest
     <title>{{ config('app.name', 'LaraTube') }}</title>
-    <script>var baseUrl = "{{ url("/") }}/";</script>
+    <script>var baseUrl = "/";</script>
     <!-- Scripts -->
     @yield('header-before-js')
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="js/app.js" defer></script>
 
     @yield('header')
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <!--  <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet"> -->
+    <link href="css/app.css" rel="stylesheet">                                           
   </head>
   <body class="">
     <div id="app" v-cloak >
