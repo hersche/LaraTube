@@ -7,6 +7,7 @@
           v-model="valid"
           lazy-validation
           >
+          <input type="hidden" name="ajaxLogin" value="1">
                       <input type="hidden" name="_token" :value="csrf">
                       <div class="form-group row">
                           <label class="col-md-4 col-form-label text-md-right">Avatar</label>

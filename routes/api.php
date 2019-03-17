@@ -26,7 +26,7 @@ use App\Http\Resources\Comment as CommentResource;
 // Auth::routes();
 //URL::forceScheme('https');
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return new UserResource($request->user());
 })->middleware('scope:userprofile');;
 
 /*

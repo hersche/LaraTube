@@ -28,8 +28,8 @@ class User extends JsonResource
       return [
           'id' => $this->id,
           'name' => $this->name,
-          'avatar' => $this->avatar(),
-          'background' => $this->background(),
+          'avatar' => env('APP_URL', "")."/".$this->avatar(),
+          'background' => env('APP_URL', "")."/".$this->background(),
           'bio' => $this->bio,
           'tagString' => $this->tagString(),
           'mediaIds' => $mediaIds,

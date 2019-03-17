@@ -41,8 +41,10 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function authenticated(Request $request, $user)
+  /*  public function authenticated(Request $request, $user)
     {
+    //  var_dump($request->all());
+    //  exit();
         if (!empty(Auth::id())) {
           //echo "logged in";
           UserSettings::firstOrCreate(['user_id' => Auth::id()]);
@@ -53,7 +55,7 @@ class LoginController extends Controller
         //  echo "not logged in";
           return response()->json(["data"=>["error_msg"=>"Login failed"]],403);
         }
-    }
+    }*/
     /**
      * Custom logout function with no redirect if ajax.
      *
@@ -78,7 +80,8 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
-
+      //  var_dump($request->all());
+      //  exit();
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
@@ -88,7 +91,12 @@ class LoginController extends Controller
         }
 
         if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
+          UserSettings::firstOrCreate(['user_id' => Auth::id()]);
+          //return response('{"success"}', 200);
+          if(!empty($request->input("ajaxLogin"))){
+            return new UserSettingsRessource(UserSettings::where('user_id', '=' ,Auth::id())->firstOrFail());
+          }
+          return $this->sendLoginResponse($request);
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts

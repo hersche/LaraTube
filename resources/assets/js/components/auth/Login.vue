@@ -7,6 +7,8 @@
             v-model="valid"
             lazy-validation
             >
+            <input type="hidden" name="_token" :value="csrf">
+            <input type="hidden" name="ajaxLogin" value="1">
             <v-text-field
               v-model="email"
               label="E-mail"
