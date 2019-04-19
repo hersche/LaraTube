@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Media;
+use App\MediaSource;
+use App\MediaChapter;
+use App\MediaView;
 use App\User;
 use App\Notifications\LikeReceived;
 use App\Http\Resources\Media as MediaResource;
@@ -33,10 +36,74 @@ class MediaController extends Controller
 
     public function deleteTrack(Request $request,$trackid){
       if(!empty(Auth::id())){
-      $media = Media::find(Track::find($trackid)->media_id);
-      Track::find($trackid)->delete();
-      return new MediaResource($media);
+        $media = Media::find(Track::find($trackid)->media_id);
+        Track::find($trackid)->delete();
+        return new MediaResource($media);
+      }
     }
+    private function getMediaOrder($sortByInput){
+      $ascDesc = 'desc';
+      $sortBy = 'updated_at';
+      //$sortByInput = $request->input('sortBy');
+      if($sortByInput=="title"){
+        $ascDesc = 'asc';
+        $sortBy = 'title';
+      } else if($sortByInput=="title_reverse"){
+        $ascDesc = 'desc';
+        $sortBy = 'title';
+      }else if($sortByInput=="created_at"){
+        $ascDesc = 'asc';
+        $sortBy = 'created_at';
+      }else if($sortByInput=="created_at_reverse"){
+        $ascDesc = 'desc';
+        $sortBy = 'created_at';
+      }else if($sortByInput=="updated_at"){
+        $ascDesc = 'asc';
+        $sortBy = 'updated_at';
+      }else if($sortByInput=="updated_at_reverse"){
+        $ascDesc = 'desc';
+        $sortBy = 'updated_at';
+      }else if($sortByInput=="type"){
+        $ascDesc = 'asc';
+        $sortBy = 'type';
+      }else if($sortByInput=="type_reverse"){
+        $ascDesc = 'desc';
+        $sortBy = 'type';
+      }
+      return [$ascDesc,$sortBy];
+    }
+    public function getById(Request $request,$id){
+      return new MediaResource(Media::where('id', '=' ,$id)->firstOrFail());
+    }
+    public function getByTitle(Request $request,$title){
+      $title = urldecode($title);
+      return new MediaResource(Media::where('title', '=' ,$title)->firstOrFail());
+    }
+    public function getAll(Request $request){
+      $sortBy = getMediaOrder($request->input('sortBy'));
+      return MediaResource::collection(Media::orderBy($sortBy[1], $sortBy[0])->whereNotIn('id', explode(",",$request->input('i')))->get());
+    }
+    
+    public function get(Request $request){
+      $types = explode(",",$request->input('types'));
+      $tArr = [];
+      foreach($types as $type){
+        if($type=="audio"){
+          $tArr = array_merge($tArr,['localAudio','torrentAudio','directAudio']);
+        }
+        if($type=="video"){
+          $tArr = array_merge($tArr,['localVideo','torrentVideo','directVideo','youtube','vimeo']);
+        }
+      }
+      // wheretIn('type', )
+      $sortBy = getMediaOrder($request->input('sortBy'));
+      $res = Media::orderBy($sortBy[1], $sortBy[0])->whereIn('base_type', $types)->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+
+      if(empty($res->count())){
+        // Ignore the types, allows faster change. Still secondary
+        $res = Media::orderBy($sortBy[1], $sortBy[0])->whereNotIn('id', explode(",",$request->input('i')))->limit(3)->get();
+      }
+    return MediaResource::collection($res);
     }
     /**
      * Show the form for creating a new resource.
@@ -75,7 +142,8 @@ class MediaController extends Controller
             array_push($tagArray, $tag);
           }
         }
-        $media = Media::create(['title' =>  $request->input('title'),'source' => $source,'poster_source' => '','duration' => $duration, 'description' => $request->input('description'), 'type' => $request->input('type'), 'user_id' => Auth::id(),'category_id' =>  $request->input('category_id'),]);
+        $media = Media::create(['title' =>  $request->input('title'), 'description' => $request->input('description'), 'user_id' => Auth::id(),'category_id' =>  $request->input('category_id'),]);
+        MediaSource::create(['media_id'=>$media->id,'source' => $source,'poster_source' => '','duration' => $duration, 'type' => $request->input('type')]);
         $media->poster_source = $this->processPoster($media->id,$request->input('poster'));
         $media->save();
         $media->retag($tagArray);
@@ -191,7 +259,7 @@ class MediaController extends Controller
         //
         
         $media = Media::where('id', '=' ,$id)->firstOrFail();
-        if((Auth::id()==$media->user_id)||(Auth::user()->can('admin'))){
+        if((Auth::id()==$media->user_id)||(Auth::user()->hasRole('admin'))){
         $extension = pathinfo($media->source);
         if(!empty($extension['extension'])){
           $extension = $extension['extension'];

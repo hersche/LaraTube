@@ -13,17 +13,24 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+      
+      Schema::create('password_securities', function (Blueprint $table) {
+        $table->increments('id');
+        $table->integer('user_id');
+        $table->boolean('enabled')->default(false);
+        $table->string('secret')->nullable();
+        $table->timestamps();
+      });
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('channel_name')->default('');
+            $table->bigIncrements('id');
+            $table->string('name')->default('');
+            $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->string('password');
+            $table->string('password')->default('');
             $table->text('bio')->nullable();
             $table->boolean('public')->default(false);
-            $table->string('avatar_source')->default('');
-            $table->string('background_source')->default('');
-            $table->string('api_token', 60)->unique()->nullable();
+            $table->string('avatar')->default('');
+            $table->string('background')->default('');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
@@ -37,6 +44,7 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+      Schema::dropIfExists('password_securities');
+      Schema::dropIfExists('users');
     }
 }

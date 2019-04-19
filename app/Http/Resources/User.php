@@ -7,6 +7,17 @@ use Auth;
 
 class User extends JsonResource
 {
+  private function getUserIds($users,$rid=true){
+    $ids = array();
+    foreach($users as $u){
+      if($u->recipient_id!=Auth::id()){
+        array_push($ids,$u->recipient_id);
+      } else {
+        array_push($ids,$u->sender_id);
+      }
+    }
+    return $ids;
+  }
     /**
      * Transform the resource into an array.
      *
@@ -19,24 +30,57 @@ class User extends JsonResource
       foreach($this->medias() as $media){
         array_push($mediaIds, $media->id);
       }
+
       $email = '';
-      if(!empty(\Auth::id())){
-        if(\Auth::user()->can('admin')){
+      $google2fa_url = "";
+      $admin = false;
+      if(!empty(Auth::id())){
+        if(Auth::user()->level()>(int)config('adminlevel')){
+          $email = $this->email;
+          $admin = true;
+        }
+        if($this->id==Auth::id()){
           $email = $this->email;
         }
+        
+      }
+      $avatar = $this->avatar();
+      if((substr( $avatar, 0, 4 ) === "http")==false){
+        $avatar = env('MIX_APP_URL', "")."/".$avatar;
+      }
+      $background = $this->background();
+      if((substr( $background, 0, 4 ) === "http")==false){
+        $background = env('MIX_APP_URL', "")."/".$background;
+      }
+      $bio = $this->bio;
+      if(is_null($bio)){
+        $bio="";
+      }
+      $simpleRoleArray = [];
+      $i=0;
+      foreach($this->roles as $role){
+        $simpleRoleArray[$i] = ["slug"=>$role->slug,"level"=>$role->level];
+        $i++;
       }
       return [
           'id' => $this->id,
           'name' => $this->name,
-          'avatar' => env('APP_URL', "")."/".$this->avatar(),
-          'background' => env('APP_URL', "")."/".$this->background(),
-          'bio' => $this->bio,
+          'username' => $this->username,
+          'avatar' => $avatar,
+          'background' => $background,
+          'bio' => $bio,
           'tagString' => $this->tagString(),
           'mediaIds' => $mediaIds,
           'public' => $this->public,
-          'admin' => $this->can('admin'),
+          'admin' => $admin,
           'email' => $email,
-          'api_token' => $this->api_token,
+          'friends' => [
+            'pending' => $this->getUserIds($this->getPendingFriendships()),
+            'accepted' => $this->getUserIds($this->getAcceptedFriendships()),
+            'denied' => $this->getUserIds($this->getDeniedFriendships()),
+            'blocked' => $this->getUserIds($this->getBlockedFriendships()),
+            'pendingRequests' => $this->getUserIds($this->getFriendRequests(),false),
+          ],
           'created_at' => $this->created_at,
           'updated_at' => $this->updated_at,
       ];

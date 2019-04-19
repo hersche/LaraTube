@@ -67,39 +67,41 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
+      if(config("app.auth")=="local"){
         $this->validator($request->all())->validate();
 
         $user = User::create($request->all());
 
-        $avatar_source = 'public/user/avatars/'.$user->name.'.png';
+        $avatar = 'public/user/avatars/'.$user->username.'.png';
         $data = $request->input('avatar');
         if(!empty($data)){
           //echo $data;
           list($type, $data) = explode(';', $data);
           list(, $data)      = explode(',', $data);
           $data = base64_decode($data);
-          Storage::put('public/user/avatars/'.$user->name.'.png', $data);
+          Storage::put('public/user/avatars/'.$user->username.'.png', $data);
         } else {
-          $avatar_source = '';
+          $avatar = '';
         }
-        $background_source = 'public/user/backgrounds/'.$user->name.'.png';
+        $background = 'public/user/backgrounds/'.$user->username.'.png';
         $data = $request->input('background');
         if(!empty($data)){
           list($type, $data) = explode(';', $data);
           list(, $data)      = explode(',', $data);
           $data = base64_decode($data);
-          Storage::put('public/user/backgrounds/'.$user->name.'.png', $data);
+          Storage::put('public/user/backgrounds/'.$user->username.'.png', $data);
         } else {
-          $background_source = '';
+          $background = '';
         }
-        $user->avatar_source = $avatar_source;
-        $user->background_source = $background_source;
+        $user->avatar = $avatar;
+        $user->background = $background;
         $user->password = Hash::make($request->input('password'));
         $user->save();
         $this->guard()->login($user);
         return new UserSettingsRessource(UserSettings::firstOrCreate(['user_id' => Auth::id()]));
-      //  return $this->registered($request, $user)
-        //               ?: redirect($this->redirectPath());
+      } else {
+        return response('{"auth":notallowed}', 401);
+      }
     }
 
     /**

@@ -1,16 +1,42 @@
 <template>
   <div v-if="currentmedia!=undefined" style="overflow-y:auto;overflow-x:hidden;" class="bg-light" id="mediaDiv">
     <v-card>
-      <mediaView :key="$route.fullPath" v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
+      
+      <mediaView :key="$route.fullPath" v-bind:currentsource="currentmedia.sources[currentSource]" v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
       <v-card-actions>
+
+    
+    <!--
+        <v-expansion-panel>
+<v-expansion-panel-content
+>
+  <template v-slot:header>
+    <div>Fallbacks</div>
+  </template>
+  <v-card>
+    <v-card-text>fadfafdssdaf<div v-for="item in currentmedia.sources">{{ item.source }}</div></v-card-text>
+  </v-card>
+</v-expansion-panel-content>
+</v-expansion-panel>
+<v-expansion-panel>
+<v-expansion-panel-content
+>
+<template v-slot:header>
+  <div>Chapters</div>
+</template>
+<v-card>
+  <v-card-text>fasdasfdasfd<div v-for="item in currentmedia.chapters">{{ item.title }}</div></v-card-text>
+</v-card>
+</v-expansion-panel-content>
+</v-expansion-panel>-->
           <span class="float-left">
             <v-text-field
-  label="Seconds (for visualiser)"
-  mask="#"
-  v-if="currentmedia.type=='localAudio'"
-  v-model="audioVisualChangeSeconds"
-></v-text-field>
-</span>
+            label="Seconds (for visualiser)"
+            mask="#"
+            v-if="currentmedia.type=='localAudio'"
+            v-model="audioVisualChangeSeconds"
+            ></v-text-field>
+          </span>
           <span v-if="currentmedia.type=='localAudio'" class="" >
             <v-btn icon color="blue" small @click="previousVisual()"><v-icon>skip_previous</v-icon></v-btn>
             <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
@@ -39,7 +65,7 @@
 </v-menu>
           
           <v-dialog
-          v-if="currentmedia.techType=='torrent'"
+          v-if="currentmedia.sources[currentSource].techType=='torrent'"
 v-model="torrentDialog"
 width="500"
 >
@@ -83,8 +109,8 @@ Torrent-details
 </v-card-actions>
 </v-card>
 </v-dialog>
-          <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="(torrentdownloadurl!=''&&(currentmedia.techType=='torrent'))" >Download file</a>
-          <v-btn color="blue" small @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end.toFixed(1) }}s)</v-btn>          
+          <a href.prevent :href="torrentdownloadurl" v-b-modal.torrentmodal class="mr-1" v-if="(torrentdownloadurl!=''&&(currentmedia.sources[currentSource].techType=='torrent'))" >Download file</a>
+          <!-- <v-btn color="blue" small @click="skipIntro(currentmedia.intro_end)" v-if="currentmedia.intro_end!=0">Skip intro ({{ currentmedia.intro_end.toFixed(1) }}s)</v-btn>          -->
           <v-btn small class="mr-1" v-on="data.on">{{ currentmedia.created_at_readable }}</v-btn>
           <v-tooltip bottom>
   <template #activator="data">
@@ -92,8 +118,8 @@ Torrent-details
           
         </template>
         <span>
-          <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
-          <p>{{ $t('Updated at') }} {{ $d(new Date(currentmedia.updated_at.date),'short') }}</p>
+        <!--  <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
+          <p>{{ $t('Updated at') }} {{ $d(new Date(currentmedia.updated_at.date),'short') }}</p> -->
         </span>
 </v-tooltip>
           <v-btn small id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="mr-1">{{ currentCat.title }}</v-btn>
@@ -198,7 +224,7 @@ Torrent-details
   
   import { User, Media, Tag } from '../models';
   import butterchurnPresets from 'butterchurn-presets';
-  var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
+  // var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
   const presets = butterchurnPresets.getPresets();
 
   export default {
@@ -434,6 +460,7 @@ Torrent-details
       audioVisualChangeSeconds:0.0,
       autoplay:false,
       visualizer:'',
+      currentSource:0,
       lasttorrentid:'',
       audiovisualtype:'Flexi - alien fish pond',
       downloadspeed: '',

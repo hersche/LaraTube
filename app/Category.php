@@ -8,7 +8,7 @@ class Category extends Model
 {
     //
     protected $fillable = [
-        'title', 'description','avatar_source','background_source', 'parent_id'
+        'title', 'description','avatar','background', 'parent_id'
     ];
     public function parent() {
       return Category::find($this->parent_id);

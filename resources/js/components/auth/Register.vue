@@ -11,51 +11,13 @@
                       <input type="hidden" name="_token" :value="csrf">
                       <div class="form-group row">
                           <label class="col-md-4 col-form-label text-md-right">Avatar</label>
-                          <!-- the result -->
-                          <vue-croppie
-                            ref="croppieAvatarRef"
-                            :enableOrientation="true"
-                            :enableResize="false"
-                            @result="resultAvatar"
-                            :viewport="{ width: 180, height: 180, type: 'circle' }"
-                            :boundary="{ width: 200, height: 200 }"
-                            @update="updateAvatar">
-                            </vue-croppie>
-
-                            <input type="hidden" id="avatarBase" name="avatar" :value="avatarCropped" />
-
-                            <!-- Rotate angle is Number -->
-                            <div class="col-md-8 col-form-label text-md-right">
-                            <button @click="rotateAvatar(-90,$event)">Rotate Left</button>
-                            <button @click="rotateAvatar(90,$event)">Rotate Right</button>
-                            <input id="avatarUpload" @change="avatarChange()" name="avatarf" type="file">
-                          </div>
-                          <div id="avatar"></div>
+                          <Cropper v-bind:width="180" v-bind:height="180" type="circle" name="avatar" ></Cropper>
                       </div>
 
 
                       <div class="form-group row">
                           <label class="col-md-4 col-form-label text-md-right">Background</label>
-                          <!-- the result -->
-                          <vue-croppie
-                            ref="croppieBackgroundRef"
-                            :enableOrientation="true"
-                            :enableResize="false"
-                            @result="resultBackground"
-                            :viewport="{ width: 1200, height: 394, type: 'square' }"
-                            :boundary="{ width: 800, height: 394 }"
-                            @update="updateBackground">
-                            </vue-croppie>
-
-                            <input type="hidden" id="backgroundBase" name="background" :value="backgroundCropped" />
-
-                            <!-- Rotate angle is Number -->
-                            <div class="col-md-8 col-form-label text-md-right">
-                            <button @click="rotateBackground(-90,$event)">Rotate Left</button>
-                            <button @click="rotateBackground(90,$event)">Rotate Right</button>
-                          <input id="backgroundUpload" @change="backgroundChange()" name="backgroundf" type="file">
-                        </div>
-                          <div id="background"></div>
+                          <Cropper v-bind:width="800" v-bind:height="394" type="square" name="background" ></Cropper>
                       </div>
                       <v-text-field
                         v-model="name"
@@ -117,18 +79,14 @@
 <script>
   import { eventBus,store } from '../../eventBus.js';
   import MarkdownCreator from '../MarkdownCreator'
+  import Cropper from '../cropp'
   export default {
     components: {
-      MarkdownCreator
+      MarkdownCreator,
+      Cropper
     },
     props: ['baseUrl'],
     mounted: function () {
-      this.$refs.croppieAvatarRef.bind({
-        url: '/img/404/avatar.png',
-      })
-      this.$refs.croppieBackgroundRef.bind({
-        url: '/img/404/background.png',
-      })
     },
     computed: {
       csrf: function(){
@@ -141,10 +99,10 @@
           this.editpicloaded=true;
           /*console.log("redo picture")
           this.$refs.croppieAvatarRef.bind({
-            url: this.currentuser.avatar_source,
+            url: this.currentuser.avatar,
           })
           this.$refs.croppieBackgroundRef.bind({
-            url: this.currentuser.background_source,
+            url: this.currentuser.background,
           })
           */
         }
@@ -173,36 +131,15 @@
       }
     },
     methods: {
-      avatarChange(){
-        var reader = new FileReader();
-        let that = this;
-       reader.onload = function (e) {
-         that.$refs.croppieAvatarRef.bind({
-             url: e.target.result,
-         });
-        }
-        reader.readAsDataURL($("#avatarUpload")[0].files[0]);
-
-      },
-      backgroundChange(){
-        var reader = new FileReader();
-        let that = this;
-       reader.onload = function (e) {
-         that.$refs.croppieBackgroundRef.bind({
-             url: e.target.result,
-         });
-        }
-        reader.readAsDataURL($("#backgroundUpload")[0].files[0]);
-
-      },
       submitAction() {
         let that = this;
-        console.log("the form")
-        console.log($("#theForm")[0])
+        var d = new FormData($("#theForm")[0]);
+        d.delete("avatarFile")
+        d.delete("backgroundFile")
         $.ajax({
             url: '/internal-api/register',
             type: 'POST',
-            data: new FormData($("#theForm")[0]),
+            data: d,
             cache: false,
             contentType: false,
             processData: false,
@@ -215,39 +152,6 @@
         });
         return false;
       },
-      // CALBACK USAGE
-      resultAvatar(output) {
-        this.avatarCropped = output;
-      },
-      resultBackground(output) {
-        this.backgroundCropped = output;
-      },
-      updateAvatar(val) {
-        let options = {
-          format: 'png'
-        }
-        this.$refs.croppieAvatarRef.result(options, (output) => {
-          this.avatarCropped = output;
-        });
-      },
-      updateBackground(val) {
-        let options = {
-          format: 'png'
-        }
-        this.$refs.croppieBackgroundRef.result(options, (output) => {
-          this.backgroundCropped = output;
-        });
-      },
-      rotateAvatar(rotationAngle,event) {
-        // Rotates the image
-        if (event) event.preventDefault()
-        this.$refs.croppieAvatarRef.rotate(rotationAngle);
-      },
-      rotateBackground(rotationAngle,event) {
-        // Rotates the image
-        if (event) event.preventDefault()
-        this.$refs.croppieBackgroundRef.rotate(rotationAngle);
-      }
     },
   }
 </script>

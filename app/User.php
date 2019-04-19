@@ -6,15 +6,14 @@ use App\Media;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
+use jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Hootlex\Friendships\Traits\Friendable;
+use App\Traits\FriendableTempFix;
 class User extends Authenticatable
 {
-  use HasApiTokens, Notifiable;
+  use HasApiTokens, Notifiable, HasRoleAndPermission;
   use \Conner\Tagging\Taggable;
-  use HasRoles;
-  use Friendable;
+  use FriendableTempFix;
   use Notifiable;
   use SoftDeletes;
   //protected $table = 'users';
@@ -24,7 +23,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id','name', 'email', 'password','public', 'bio', 'avatar_source', 'background_source'
+        'name','username','roles', 'email', 'password','public', 'bio', 'avatar', 'background'
     ];
 
     /**
@@ -35,37 +34,40 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-    public function generateToken()
-    {
-        $this->api_token = $user->createToken('web-api')->accessToken;
-        $this->save();
-
-        return $this->api_token;
-    }
     public function medias(){
       return $this->hasMany('App\Media');
     }
+    
+    public function passwordSecurity()
+    {
+      $ps = $this->hasOne('App\PasswordSecurity');
+      if(empty($ps)){
+        $ps = [];
+      }
+      return $ps;
+    }
+    
     public function email(){
       $email = '';
       if(!empty(\Auth::id())){
-      if(\Auth::user()->can('admin')){
+      if(\Auth::user()->hasRole('admin')){
         $email = $this->email;
       }
       }
       return $email;
     }
     public function avatar(){
-      if(empty($this->avatar_source)){
+      if(empty($this->avatar)){
         return "img/404/avatar.png";
       }
-      return $this->avatar_source;
+      return $this->avatar;
     }
 
     public function background(){
-      if(empty($this->background_source)){
+      if(empty($this->background)){
         return "img/404/background.png";
       }
-      return $this->background_source;
+      return $this->background;
     }
 
     public function created_at_readable(){

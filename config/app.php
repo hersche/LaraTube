@@ -14,7 +14,15 @@ return [
     */
 
     'name' => env('APP_NAME', 'LaraTube'),
-
+    
+    'auth'  => env('MIX_APP_AUTH', 'local'),
+    'oauthclientid' => env('OAUTH_CLIENT_ID', '0'),
+    'oauthclientsecret' => env('OAUTH_CLIENT_SECRET', '0'),
+    'oauthclientcallback' => env('OAUTH_CLIENT_CALLBACK', '0'),
+    'oauthclienttoken' => env('OAUTH_CLIENT_TOKEN', '0'),
+    'oauthclientauthorize' => env('OAUTH_CLIENT_AUTHORIZE', '0'),
+    'oauthclientuntrustedssl' => env('OAUTH_CLIENT_ALLOW_UNTRUSTED_SSL', 'false'),
+    
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -155,7 +163,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Spatie\Permission\PermissionServiceProvider::class,
+        // Spatie\Permission\PermissionServiceProvider::class,
         \Conner\Tagging\Providers\TaggingServiceProvider::class,
 
     ],

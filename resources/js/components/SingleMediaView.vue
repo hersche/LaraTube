@@ -1,34 +1,35 @@
 <template>
-  <div v-if="currentmedia!=undefined" id="playDiv">
+  <div v-if="currentsource!=undefined" id="playDiv">
           <p>
-            <img @click="player.togglePlay()" @dblclick="visualFullScreen()" class="img-fluid" :src="currentmedia.poster_source" v-if="currentmedia.type=='directAudio'|(currentmedia.type=='localAudio'&audiovisualtype=='Poster')">
+            <img @click="player.togglePlay()" @dblclick="visualFullScreen()" class="img-fluid" :src="currentmedia.poster_source" v-if="currentsource.type=='directAudio'|(currentsource.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
-          <canvas v-if="currentmedia.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" @click="player.togglePlay()" @dblclick="visualFullScreen()" id="audioVisual"></canvas>
-          <vue-plyr v-if="currentmedia.type=='torrentVideo'" :options="playerConfig" ref="player">
+          <canvas v-if="currentsource.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" @click="player.togglePlay()" @dblclick="visualFullScreen()" id="audioVisual"></canvas>
+          <vue-plyr v-if="currentsource.type=='torrentVideo'" :options="playerConfig" ref="player">
             <video class="col-12" id="torrentPlayer"  controls :poster="currentmedia.poster_source">
-              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+              <track v-for="track in currentsource.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </video>
           </vue-plyr>
-          <vue-plyr v-if="currentmedia.techType=='video'&&currentmedia.type!='youtube'&&currentmedia.type!='vimeo'" :options="playerConfig" ref="player">
-            <video  controls :src="currentmedia.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
-              <source :src="currentmedia.source" type="video/mp4"></source>
-              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+          <vue-plyr v-if="currentsource.techType=='video'&&currentsource.type!='youtube'&&currentsource.type!='vimeo'" :options="playerConfig" ref="player">
+            <video  controls :src="currentsource.source" :poster="currentmedia.poster_source" class="col-12" id="videoPlayer"  >
+              <source :src="currentsource.source" type="video/mp4"></source>
+              <track v-for="track in currentsource.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </video>
           </vue-plyr>
-          <vue-plyr v-if="currentmedia.type=='torrentAudio'" :options="playerConfig" ref="player">
+          <vue-plyr v-if="currentsource.type=='torrentAudio'" :options="playerConfig" ref="player">
             <audio class="col-12" id="torrentPlayer2"  controls :poster="currentmedia.poster_source">
-              <track v-for="track in currentmedia.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
+              <track v-for="track in currentsource.tracks" :label="track.title" kind="subtitles" :srclang="track.title" :src="'/'+track.source">
             </audio>
           </vue-plyr>
-          <vue-plyr v-if="currentmedia.type=='directAudio'||currentmedia.type=='localAudio'" :options="playerConfig" ref="player">
-            <audio v-if="currentmedia.type=='directAudio'||currentmedia.type=='localAudio'" class="text-center col-11"  :src="currentmedia.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
-              <source id="audioSource" :src="currentmedia.source" type="audio/mp3"></source>
+          <vue-plyr v-if="currentsource.type=='directAudio'||currentsource.type=='localAudio'" :options="playerConfig" ref="player">
+            <audio v-if="currentsource.type=='directAudio'||currentsource.type=='localAudio'" class="text-center col-11"  :src="currentsource.source" id="audioPlayer"  preload autobuffer   controls :poster="currentmedia.poster_source">
+              <source id="audioSource" :src="currentsource.source" type="audio/mp3"></source>
             </audio>
           </vue-plyr>
-          <vue-plyr v-if="currentmedia.type=='youtube'||currentmedia.type=='vimeo'" :options="playerConfig" ref="player">
-            <div data-plyr-provider="youtube" v-if="currentmedia.type=='youtube'" :data-plyr-embed-id="currentmedia.source"></div>
-            <div data-plyr-provider="vimeo" v-if="currentmedia.type=='vimeo'" :data-plyr-embed-id="currentmedia.source"></div>
+          <vue-plyr v-if="currentsource.type=='youtube'||currentsource.type=='vimeo'" :options="playerConfig" ref="player">
+            <div data-plyr-provider="youtube" v-if="currentsource.type=='youtube'" :data-plyr-embed-id="currentsource.source"></div>
+            <div data-plyr-provider="vimeo" v-if="currentsource.type=='vimeo'" :data-plyr-embed-id="currentsource.source"></div>
           </vue-plyr>
+
   </div>
 </template>
 <script>
@@ -45,7 +46,7 @@
   const presets = butterchurnPresets.getPresets();
 
   export default {
-    props: ['autoplay','baseUrl','canloadmore','currentmedia'],
+    props: ['autoplay','baseUrl','canloadmore','currentsource','currentmedia'],
     methods: {
       visualFullScreen(){
         eventBus.$emit('mediaGoFullscreen','');
@@ -66,23 +67,23 @@
 
       initTorrentAfterRemove(){
         let that = this;
-        if(this.currentmedia.techType=="video"){
+        if(this.currentsource.techType=="video"){
           this.inited=true
         }
-        else if(this.currentmedia.techType=="torrent"){
+        else if(this.currentsource.techType=="torrent"){
           console.log("start to setup torrent")
           this.inited=true
           let that = this;
           //  var player = new plyr('#torrentPlayer');
-          client.add(this.currentmedia.source, function (torrent) {
+          client.add(this.currentsource.source, function (torrent) {
             theTorrent = torrent;
             // Torrents can contain many files. Let's use the .mp4 file
             var file = theTorrent.files.find(function (file) {
             that.lasttorrentid = theTorrent.magnetURI;
-            if(that.currentmedia.type=='torrentVideo'){
+            if(that.currentsource.type=='torrentVideo'){
               return file.name.endsWith('.mp4')
             }
-            if(that.currentmedia.type=='torrentAudio'){
+            if(that.currentsource.type=='torrentAudio'){
               return file.name.endsWith('.mp3')
             }
           })
@@ -120,7 +121,7 @@
             }
             file.renderTo('video#torrentPlayer');
           });
-      } else if(this.currentmedia.type=='localAudio'&this.audiovisualtype!='Poster'){
+      } else if(this.currentsource.type=='localAudio'&this.audiovisualtype!='Poster'){
           this.inited=true
           $('#audioPlayer')[0].crossOrigin = 'Anonymous'
           audioCtx = new AudioContext();
@@ -140,7 +141,7 @@
             visualizer.render();
           }, 100);
         }
-        if(this.currentmedia.type=="torrentAudio"||this.currentmedia.type=="torrentVideo"){
+        if(this.currentsource.type=="torrentAudio"||this.currentsource.type=="torrentVideo"){
           setTimeout(function(){
             if(that.autoplay){
               that.player.play();
@@ -154,7 +155,7 @@
         this.player.on('ended', () => {
           if(that.autoplay){
             console.log('movie ended')
-            eventBus.$emit('autoplayNextVideo',that.currentmedia.id);
+            eventBus.$emit('autoplayNextVideo',that.currentsource.id);
           }
         })
       },
@@ -181,14 +182,14 @@
       //  console.log("route-watch")
       //  console.log(val)
       //  this.inited = false;
-      //  this.currentmedia = this.getCurrentMedia()
+      //  this.currentsource = this.getcurrentsource()
       //  this.initTorrent()
       },
-      'currentmedia':function(val){
+      'currentsource':function(val){
         if(theTorrent!=undefined){
           let that = this
           theTorrent.destroy(function(){
-            console.log("torrent destroyed on vue-currentmedia-change-method")
+            console.log("torrent destroyed on vue-currentsource-change-method")
             that.initTorrent()
           });
         }
@@ -222,50 +223,50 @@
       let that = this;
       this.initTorrent()
       
-      if(this.currentmedia.intro_end==0){
+      if(this.currentsource.intro_end==0){
         $("#skipIntroBtn").hide()
       } else {
         $("#skipIntroBtn").on('click',function(){
-          that.player.currentTime = Number(that.currentmedia.intro_end)
+          that.player.currentTime = Number(that.currentsource.intro_end)
         })
       }
       eventBus.$on('playerGoFullscreen', isFullscreen => {
         if(isFullscreen){
-          if(this.currentmedia.type=='localAudio'){
+          if(this.currentsource.type=='localAudio'){
             $('#audioVisual').css("height","100vh")
             $('#audioVisual').css("width","100vw")
             visualizer.setRendererSize($(document).width(), $(document).height());
           }
-          if(this.currentmedia.simpleType=="video"){
+          if(this.currentsource.simpleType=="video"){
             $("video").css("height","100vh")
             $("video").css("width","100vw")
           }
         } else {
-          if(this.currentmedia.type=='localAudio'){
+          if(this.currentsource.type=='localAudio'){
             $('#audioVisual').css("height","400px")
             $('#audioVisual').css("width","100%")
             visualizer.setRendererSize(400, 400);
           }
-          if(this.currentmedia.simpleType=="video"){
+          if(this.currentsource.simpleType=="video"){
             $("video").css("height","100%")
             $("video").css("width","100%")
           }
         }
       });    
-      if(localStorage.getItem("mediaPosition"+this.currentmedia.id)!=undefined&localStorage.getItem("mediaPosition"+this.currentmedia.id)!=''){
-        $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+localStorage.getItem("mediaPosition"+this.currentmedia.id)+"s")
+      if(localStorage.getItem("mediaPosition"+this.currentsource.id)!=undefined&localStorage.getItem("mediaPosition"+this.currentsource.id)!=''){
+        $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+localStorage.getItem("mediaPosition"+this.currentsource.id)+"s")
       } else {
         $("#jumpToSavedPositionBtnTooltip").html("No position set yet - set one under More")
       }  
       
       $("#jumpToSavedPositionBtn").on('click',function(){
-        if(localStorage.getItem("mediaPosition"+that.currentmedia.id)!=undefined&localStorage.getItem("mediaPosition"+that.currentmedia.id)!=''){
-          that.player.currentTime = Number(localStorage.getItem("mediaPosition"+that.currentmedia.id))
+        if(localStorage.getItem("mediaPosition"+that.currentsource.id)!=undefined&localStorage.getItem("mediaPosition"+that.currentsource.id)!=''){
+          that.player.currentTime = Number(localStorage.getItem("mediaPosition"+that.currentsource.id))
         }    
       })
       $("#savePositionBtn").on('click',function(){
         $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+that.player.currentTime+"s")
-        localStorage.setItem("mediaPosition"+that.currentmedia.id,that.player.currentTime)
+        localStorage.setItem("mediaPosition"+that.currentsource.id,that.player.currentTime)
         that.$vs.notify({title:'Position saved',text:'at '+that.player.currentTime.toFixed(2)+'s',icon:'save',color:'success',position:'bottom-center'})   
       })
       eventBus.$on('playerJumpTo', seconds => {

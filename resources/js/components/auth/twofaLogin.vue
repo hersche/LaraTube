@@ -1,40 +1,21 @@
 <template>
 <div class="">
-  <h1 class="text-center">{{ $t('Login') }}</h1>
+  <h1 class="text-center">{{ $t('2FA-Login') }}</h1>
           <v-form
             ref="form"
-            id="loginForm"
+            id="oneTimePasswordForm"
             v-model="valid"
             lazy-validation
             >
             <input type="hidden" name="_token" :value="csrf">
             <input type="hidden" name="ajaxLogin" value="1">
             <v-text-field
-              v-model="email"
-              label="E-mail"
-              name="email"
+              label="2fa-Token"
+              name="one_time_password"
               v-on:keyup.enter="submitLogin()"
               required
               ></v-text-field>
               
-              <v-text-field
-                v-model="password"
-                v-on:keyup.enter="submitLogin()"
-                :append-icon="show1 ? 'visibility_off' : 'visibility'"
-                :rules="[rules.required, rules.min]"
-                :type="show1 ? 'text' : 'password'"
-                name="password"
-                :label="$t('Password')"
-                hint="At least 8 characters"
-                counter
-                @click:append="show1 = !show1"
-              ></v-text-field>
-              <v-checkbox
-                v-model="checkbox"
-                label="Remember me"
-                name="remember"
-                required
-              ></v-checkbox>
 
               </v-form>
                       <v-btn @click="submitLogin()">
@@ -49,6 +30,7 @@
 
 
 <script>
+ const $ = require("jquery");
   import { eventBus,store } from '../../eventBus.js';
   export default {
     props: ['baseUrl'],
@@ -75,17 +57,17 @@
       submitLogin() {
         let that = this;
         $.ajax({
-            url: '/internal-api/login',
+            url: '/2faVerify',
             type: 'POST',
-            data: new FormData($("#loginForm")[0]),
+            data: new FormData($("#oneTimePasswordForm")[0]),
             cache: false,
             contentType: false,
             processData: false,
             complete : function(res) {
               if(res.status==200){
                 eventBus.$emit('login',res.responseJSON.data);
-              } else if(res.status==422){
-                eventBus.$emit('loginFailed',"");
+              } else if(res.status==401){
+                eventBus.$emit('alert',"2-factor auth failed");
               }
               console.log("received login")
             //  eventBus.$emit('refreshMedia',that.currentmedia.id);

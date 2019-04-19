@@ -21,8 +21,40 @@ class UserController extends Controller
   //     $this->middleware('permission:admin');
     //   $this->middleware('permission:user-admin');
   }
-
-
+  public function changeRoles(Request $request){
+    if(Auth::user()->level()>(int)config('adminlevel')){
+      //$user = User::find($request->input("uid"));
+      $slugArray = explode(",",$request->input("roles"));
+      $i = 0;
+      $tmpArr = array();
+      foreach(config('roles.models.role')::all() as $r){
+        foreach($slugArray as $s){
+        if($s==$r->slug){
+          array_push($tmpArr,$r->id);
+        }
+        }
+        //$i++;
+      }
+      $user = config('roles.defaultUserModel')::find($request->input("uid"));
+      
+      $user->syncRoles($tmpArr);
+      return $this->get($request);
+    }
+    //return response()->json(["data"=>["msg"=>"mkAdmin!"]],200);
+  }
+    public function changePassword(Request $request)
+    {
+      if(Auth::user()->level()>0){
+        if(Hash::check($request->input("oldpass"), Auth::user()->password)){
+          $user = User::find(Auth::id());
+          if($request->input("newpass")==$request->input("newpass2")){
+            $user->password = $request->input("newpass");
+            $user->save();
+            return $this->get($request);
+          }
+        }
+      }
+    }  
 
     public function info(){
       $au = Auth::id();
@@ -91,29 +123,29 @@ class UserController extends Controller
         }
         $user = User::find($id);
         $user->update($input);
-        $avatar_source = 'public/user/avatars/'.$user->name.'.png';
+        $avatar = 'public/user/avatars/'.$user->username.'.png';
         $data = $request->input('avatar');
         if(!empty($data)){
           //echo $data;
           list($type, $data) = explode(';', $data);
           list(, $data)      = explode(',', $data);
           $data = base64_decode($data);
-          Storage::put('public/user/avatars/'.$user->name.'.png', $data);
+          Storage::put('public/user/avatars/'.$user->username.'.png', $data);
         } else {
-          $avatar_source = '';
+          $avatar = '';
         }
-        $background_source = 'public/user/backgrounds/'.$user->name.'.png';
+        $background = 'public/user/backgrounds/'.$user->username.'.png';
         $data = $request->input('background');
         if(!empty($data)){
           list($type, $data) = explode(';', $data);
           list(, $data)      = explode(',', $data);
           $data = base64_decode($data);
-          Storage::put('public/user/backgrounds/'.$user->name.'.png', $data);
+          Storage::put('public/user/backgrounds/'.$user->username.'.png', $data);
         } else {
-          $background_source = '';
+          $background = '';
         }
-        $user->avatar_source = $avatar_source;
-        $user->background_source = $background_source;
+        $user->avatar = $avatar;
+        $user->background = $background;
 
         $user->save();
         if(!empty($request->input('roles'))){

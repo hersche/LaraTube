@@ -10,8 +10,10 @@ export const store = new Vuex.Store({
       state: {
         filterTypes:["video","audio"],
         medias:[],
+        env:undefined,
         loginId:Number($("#loggedUserId").attr("content")),
         categories:[],
+        twofactor:undefined,
         users:[],
         tags:[],
         notifications:[],
@@ -35,7 +37,7 @@ export const store = new Vuex.Store({
           return nextVideos;
         },
         getMediasByTypes: (state) => () => {
-          var m = state.medias.filter(media => state.filterTypes.includes(media.simpleType))
+          var m = state.medias.filter(media => state.filterTypes.includes(media.baseType))
           return m
         },
         getMediasByUserId: (state) => (userId, filtered=true) => {
@@ -86,7 +88,7 @@ export const store = new Vuex.Store({
           id = Number(id)
           var u = state.users.find(u => u.id == id)
           if(u==undefined){
-            u=new User(0,"None","/img/404/avatar.png","/img/404/background.png","None-profile",{},"",false)
+            u=new User({id:0,name:"None",username:"",avatar:"/img/404/avatar.png",background:"/img/404/background.png",description:"None-profile",admin:false})
           }
           return u
         },
@@ -186,11 +188,17 @@ export const store = new Vuex.Store({
           $('meta[name="csrf-token"]').attr('content',CSRF)
           state.CSRF = CSRF;
         },
+        setTwofactor(state,two){
+          state.twofactor = two
+        },
         setTotalMedias(state,totalMedias){
           state.totalMedias = totalMedias
         },
         setLoginId(state,loginId){
           state.loginId = loginId
+        },
+        setEnv(state,env){
+          state.env = env
         },
       }
     }) 

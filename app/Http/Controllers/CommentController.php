@@ -29,7 +29,7 @@ class CommentController extends Controller
         //
         $comment = Comment::where('id', '=' ,$id)->firstOrFail();
         $mid = $comment->media_id;
-        if((Auth::id()==$comment->user_id)||(Auth::user()->can('admin'))){
+        if((Auth::id()==$comment->user_id)||(Auth::user()->hasRole('admin'))){
           foreach($comment->childs() as $c){
             $c->delete();
           }

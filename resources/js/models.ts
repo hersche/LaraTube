@@ -4,28 +4,29 @@ export class User{
   avatar:string;
   background:string;
   bio:string;
+  roles:string;
   mediaIds:any;
   tagString:string;
   publicState:boolean;
   admin:boolean;
   email:string;
-
+  friends:any;
   created_at:any;
   updated_at:any;
-  constructor(id:number,name:string,avatar:string,background:string,bio:string,mediaIds:any,tagString:string,publicState:boolean,admin:boolean=false,email:string='',created_at='',updated_at=''){
-    this.id=id;
-    this.name = name;
-    this.avatar = avatar;
-    this.background = background;
-    this.bio = bio;
-    this.mediaIds = mediaIds;
-    this.tagString = tagString;
-    this.publicState = publicState;
-    this.admin = admin;
-    this.email = email;
-
-    this.created_at = created_at;
-    this.updated_at = updated_at;
+  constructor(jData:any){
+    this.id=jData.id;
+    this.name = jData.name;
+    this.avatar = jData.avatar;
+    this.background = jData.background;
+    this.bio = jData.bio;
+    this.mediaIds = jData.mediaIds;
+    this.tagString = jData.tagString;
+    this.publicState = jData.publicState;
+    this.roles = jData.roles;
+    this.email = jData.email;
+    this.friends = jData.friends;
+    this.created_at = jData.created_at;
+    this.updated_at = jData.updated_at;
 
   }
   toJson(){
@@ -36,7 +37,10 @@ export class Media {
   id:number;
   title:string;
   description:string;
-  source:string;
+  sources:any;
+  chapters:any;
+  view:any;
+  totalView:any;
   poster_source:string;
   duration:string;
   type:string;
@@ -53,6 +57,7 @@ export class Media {
   tagString:string;
   myLike:number;
   likes:number;
+  baseType:string;
   dislikes:number;
   urlTitle:string;
   tracks:any;
@@ -62,17 +67,18 @@ export class Media {
   outro_start:number;
   intro_end:number;
   outro_end:number;
-  constructor(id:number,title:string,description:string,source:string,poster_source:string,duration:string,simpleType:string,techType:string,type:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number,intro_start=0,outro_start=0,intro_end=0,outro_end=0,){
+  constructor(id:number,title:string,description:string,sources:any,baseType:string,chapters:any,view:any,totalView:any,poster_source:string,duration:string,user:any,user_id:any,created_at:string,updated_at:string,created_at_readable:string,comments:any,tags:any,myLike:number,likes:number,dislikes:number,tracks:any,category_id:number){
     this.id=id;
+    this.baseType = baseType;
     this.title = title;
+    this.chapters = chapters;
+    this.view = view;
+    this.totalView = totalView;
     this.urlTitle = encodeURIComponent(this.title)
     this.description = description;
-    this.source = source;
+    this.sources = sources;
     this.poster_source = poster_source;
     this.duration = duration;
-    this.type = type;
-    this.simpleType = simpleType;
-    this.techType = techType;
     this.user = user;
     this.user_id = user_id;
     this.comments = comments;
@@ -86,10 +92,6 @@ export class Media {
     this.tagString = this.tagStringing();
     this.tracks = tracks;
     this.category_id = category_id;
-    this.intro_start = Number(intro_start);
-    this.outro_start = Number(outro_start);
-    this.intro_end = Number(intro_end);
-    this.outro_end = Number(outro_end);
   //  this.category = category;
   }
   tagStringing(){
@@ -100,7 +102,7 @@ export class Media {
     return theTagString;
   }
   toJson(){
-    return "{title:'"+this.title+"',description:'"+this.description+"',source:'"+this.source
+    return "{title:'"+this.title+"',description:'"+this.description+"',sources:'"+this.sources
   }
 
 }
@@ -138,7 +140,7 @@ export class Category {
     this.children = [];
     let that = this;
     $.each( children, function( key1, value ) {
-      that.children.push(new Category(value.id, value.title, value.description, value.avatar_source,value.background_source,value.parent_id,value.children))
+      that.children.push(new Category(value.id, value.title, value.description, value.avatar,value.background,value.parent_id,value.children))
     });
   }
 }

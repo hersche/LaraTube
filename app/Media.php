@@ -15,7 +15,7 @@ class Media extends Model
     use Searchable;
     //
     protected $fillable = [
-        'id', 'title', 'source','duration','poster_source','intro_start','intro_end','outro_start','outro_end', 'type', 'description', 'user_id','category_id','comments', 'category_id','next_id'
+        'id', 'title','poster_source','description', 'user_id','category_id','comments', 'category_id','next_id'
     ];
     protected $hidden = [
 
@@ -34,27 +34,31 @@ class Media extends Model
       return Track::where("media_id","=",$this->id)->get();
     }
     public function sources() {
-      return Track::where("media_id","=",$this->id)->get();
+    //  return Track::where("media_id","=",$this->id)->get();
+      return $this->hasMany('App\MediaSource');
     }
     public function comments() {
     //  ->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')
-      $comments = Comment::where('media_id', '=' ,$this->id)->where("parent_id","=","0")->get()->sortByDesc('created_at');
-      return $comments;
-    //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
+      //$comments = Comment::where('media_id', '=' ,$this->id)->where("parent_id","=","0")->get()->sortByDesc('created_at');
+      //return $comments;
+      return $this->hasMany('App\Comment')->where('parent_id',0)->orderBy('created_at');
     }
-
-    public function likeObjects() {
-    //  ->orWhere('title', 'LIKE' ,'%'.strtolower($title).'%')
-      return Like::where('media_id', '=',$this->id)->get();
-    //  return $this->hasMany('App\Comment', 'medias_id')->sortByDesc('created_at');
+    public function view()
+    {
+        return $this->hasOne('App\MediaView', 'user_id',Auth::id());
     }
-
+    public function license()
+    {
+        return $this->hasOne('App\License');
+    }
+    public function totalView(){
+      return $this->hasMany('App\MediaView')->sum('seconds');
+    }
+    public function chapters()
+    {
+        return $this->hasMany('App\MediaChapter');
+    }
     public function myLike($request){
-      //echo "Auth: ";
-      //echo $request->user('api')->id;
-      //echo auth()->guard('api')->user()->id;
-      //echo " this id ";
-      //echo $this->id;
       $like = Like::where('media_id', '=',$this->id)->where('user_id',Auth::id())->first();
       if(empty($like)){
         return "0";
@@ -93,21 +97,7 @@ class Media extends Model
       }
       return url("/")."/".$this->poster_source;
     }
-    public function simpleType(){
-      if(($this->type=="directAudio")||($this->type=="localAudio")||($this->type=="torrentAudio")) {
-        return "audio";
-      }
-      return "video";
-    }
 
-    public function techType(){
-      if(($this->type=="torrentAudio")||($this->type=="torrentVideo")) {
-        return "torrent";
-      } else if(($this->type=="directAudio")||($this->type=="localAudio")) {
-        return "audio";
-      }
-      return "video";
-    }
 
     public function tagString(){
       $string = "";

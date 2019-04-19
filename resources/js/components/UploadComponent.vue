@@ -13,19 +13,22 @@
         </div>
         <MarkdownCreator theText="" theId="description" theTitle="Description" ></MarkdownCreator>
         <input type="hidden" name="_token" :value="csrf">
+        
+        <v-select
+        v-model="mediaBaseType" name="type"
+        attach
+        :items="[
+        {text:$t('Video'),value:'video'},
+        {text:$t('Audio') +' '+$t('audio'),value:'audio'},
+        ]"
+        :label="$t('Mediabasetype')"
+        ></v-select>
+        
+        
          <v-select
          v-model="mediaType" name="type"
          attach
-         :items="[
-         {text:$t('Import') +' '+$t('local') +' '+$t('audio'),value:'localAudioImport'},
-         {text:$t('Local') +' '+$t('audio'),value:'localAudio'},
-         {text:$t('Direct') +' '+$t('audio'),value:'directAudio'},
-         {text:$t('Import') +' '+$t('local') +' '+$t('video'),value:'localVideoImport'},
-         {text:$t('Direct') +' '+$t('video'),value:'directVideo'},
-         {text:$t('Torrent') +' '+$t('video'),value:'torrentVideo'},
-         {text:$t('Youtube'),value:'youtube'},
-         {text:$t('Vimeo'),value:'vimeo'},
-         ]"
+         :items="mediaTypes"
          :label="$t('Mediatype')"
          ></v-select>
          <div v-if="mediaType=='localAudioImport'|mediaType=='localVideoImport'" class="form-group">
@@ -173,6 +176,22 @@
       csrf: function(){
         return store.getters.getCSRF()
       },
+      mediaTypes: function(){
+
+        if(baseType=="video"){
+          return [
+                  {text:$t('Import') +' '+$t('local') +' '+$t('video'),value:'localVideoImport'},
+                  {text:$t('Direct') +' '+$t('video'),value:'directVideo'},
+                  {text:$t('Torrent') +' '+$t('video'),value:'torrentVideo'},
+                  {text:$t('Youtube'),value:'youtube'},
+                  {text:$t('Vimeo'),value:'vimeo'},]
+        } else {
+          return [{text:$t('Import') +' '+$t('local') +' '+$t('audio'),value:'localAudioImport'},
+                  {text:$t('Local') +' '+$t('audio'),value:'localAudio'},
+                  {text:$t('Direct') +' '+$t('audio'),value:'directAudio'},]
+        }
+        
+      }
     },
     mounted: function () {
       let that = this;
@@ -331,6 +350,7 @@ rotate(rotationAngle,event) {
         intro_end:0,
         outro_start:0,
         outro_end:0,
+        mediaBaseType:'',
         source:'',
         theTestMedia:undefined,
         importableFiles:[],
