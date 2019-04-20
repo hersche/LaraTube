@@ -241,12 +241,11 @@ class siteManager {
             theVue.alert("Login failed", "danger", "error");
         });
         eventBus.$on('loadUserVideos', userid => {
-            if (userid != 0) {
-                that.receiveMedias("/internal-api/medias/by/" + userid + this.getIgnoreParam());
-            }
-            else {
-                console.warn("[event loadUserVideos] userid was 0");
-            }
+            //  if(userid!=0){
+            that.receiveMedias("/internal-api/medias/by/" + userid + this.getIgnoreParam());
+            //} else {
+            //  console.warn("[event loadUserVideos] userid was 0")
+            //}
         });
         eventBus.$on('sortBy', sortBy => {
             theMediaSorter.setSortBy(sortBy);

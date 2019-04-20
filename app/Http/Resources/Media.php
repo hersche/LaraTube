@@ -55,8 +55,8 @@ class Media extends JsonResource
           /*'intro_start' => $this->intro_start,
           'outro_start' => $this->outro_start,
           'intro_end' => $this->intro_end,
-          'outro_end' => $this->outro_end,
-          'tracks' => TrackResource::collection($this->tracks()),*/
+          'outro_end' => $this->outro_end,*/
+          'tracks' => TrackResource::collection($this->tracks()),
           'comments' => CommentResource::collection($comments),
           'created_at' => $this->created_at,
           'created_at_readable' => $this->created_at->diffForHumans(),

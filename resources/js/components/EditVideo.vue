@@ -93,7 +93,8 @@
 
         <div class="form-group row">
           <label>{{ $t('Poster') }}</label>
-          <vue-croppie
+          <Cropper v-bind:theurl="currentmedia.poster" v-bind:width="700" v-bind:height="394" type="square" name="avatar" ></Cropper>
+          <!-- <vue-croppie
             ref="croppieRef"
             :enableOrientation="true"
             :enableResize="false"
@@ -103,11 +104,12 @@
             @update="update">
           </vue-croppie>
           <input type="hidden" id="posterBase" name="poster" :value="cropped" />
+        -->
           <!-- Rotate angle is Number -->
-          <v-btn color="blue" @click="rotate(-90,$event)">{{ $t("Rotate") }} {{ $t("left") }}</v-btn>
+          <!-- <v-btn color="blue" @click="rotate(-90,$event)">{{ $t("Rotate") }} {{ $t("left") }}</v-btn>
           <v-btn color="blue" @click="rotate(90,$event)">{{ $t("Rotate") }} {{ $t("right") }}</v-btn>
           <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="unimportant" type="file">
-          <div id="poster"></div>
+          <div id="poster"></div> -->
         </div>
         <v-text-field
           :label="$t('Tags')"
@@ -128,7 +130,7 @@
       >
         {{ $t('Manage') }} {{ $t('subtitles')}}
       </v-btn>
-      <v-card>
+      <v-card v-if="currentmedia.tracks!=undefined">
         <v-card-title
           class="headline grey lighten-2"
           primary-title
@@ -171,6 +173,7 @@
     </div>
 </template>
 <script>
+  import Cropper from './cropp'
   import { eventBus, store } from '../eventBus.js';
   import { Media }  from '../models';
   import MarkdownCreator from './MarkdownCreator'

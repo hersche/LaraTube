@@ -126,7 +126,9 @@
     <div class="form-group">
         <label>Media-poster</label>
         <!-- the result -->
-        <vue-croppie
+        <Cropper v-bind:width="700" v-bind:height="394" type="square" name="poster" ></Cropper>
+      
+      <!--  <vue-croppie
           ref="croppieRef"
           :enableOrientation="true"
           :enableResize="false"
@@ -137,12 +139,12 @@
           </vue-croppie>
 
           <input type="hidden" id="posterBase" name="poster" :value="cropped" />
-
+        -->
           <!-- Rotate angle is Number -->
-          <button @click="rotate(-90,$event)">Rotate Left</button>
+          <!--<button @click="rotate(-90,$event)">Rotate Left</button>
           <button @click="rotate(90,$event)">Rotate Right</button>
         <input id="posterUpload" accept=".png,.jpg,.jpeg" @change="posterChange()" name="poster" type="file">
-        <div id="poster"></div>
+        <div id="poster"></div>-->
     </div>
     <input type="hidden" value="" name="image" id="addMediaImage" />
 
@@ -162,6 +164,7 @@
     </div>
 </template>
 <script>
+  import Cropper from './cropp'
   import { eventBus,store } from '../eventBus.js';
   import { User, Media, Tag } from '../models';
   import SingleMediaView from './SingleMediaView'
@@ -267,7 +270,7 @@
       positionTestMedia(type){
         eventBus.$emit('playerGetPosition',type);
       },
-      posterChange(){
+      /* posterChange(){
         var reader = new FileReader();
         let that = this;
        reader.onload = function (e) {
@@ -280,7 +283,7 @@
       },
       uploadProgress(){
 
-    },
+    },*/
       submitAction() {
         let that = this;
         if(this.linkTested==false){
@@ -321,7 +324,7 @@
         return false;
       },
 // CALBACK USAGE
-result(output) {
+/*result(output) {
     this.cropped = output;
 },
 update(val) {
@@ -336,7 +339,7 @@ rotate(rotationAngle,event) {
     // Rotates the image
     if (event) event.preventDefault()
     this.$refs.croppieRef.rotate(rotationAngle);
-}
+}*/
     },
     data(){
       return {

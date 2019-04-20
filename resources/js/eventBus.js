@@ -43,7 +43,7 @@ export const store = new Vuex.Store({
         getMediasByUserId: (state) => (userId, filtered=true) => {
           var m = state.medias.filter(media => media.user_id===Number(userId))
           if(filtered){
-            m = m.filter(media => state.filterTypes.includes(media.simpleType))
+            m = m.filter(media => state.filterTypes.includes(media.baseType))
           }
           return m
         },

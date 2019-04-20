@@ -102,7 +102,10 @@
     },
     // a computed getter
     usermedias: function () {
-      return store.getters.getMediasByUserId(Number(store.state.loginId))
+      
+      var d = store.getters.getMediasByUserId(Number(this.$route.params.profileId))
+      console.log("usermedias? ",d)
+      return d;
     },
   }
   }
