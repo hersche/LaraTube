@@ -26,11 +26,11 @@ use App\Http\Resources\Comment as CommentResource;
 // Auth::routes();
 //URL::forceScheme('https');
 
-if(config("app.auth")=="local"){
+//if(config("app.auth")=="local"){
   Route::get('/user', function (Request $request) {
     return new UserResource($request->user());
-  })->middleware('scope:userprofile');;
-}
+  })->middleware('scope:profile');
+//}
 
 /*
 Route::get('/user', function () {

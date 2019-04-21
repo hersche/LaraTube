@@ -90,9 +90,9 @@ Route::post('/internal-api/friends/denyRequest', 'FriendController@denyRequest')
 Route::post('/internal-api/friends/unfriend', 'FriendController@unfriend');
 
 
-
-Route::get('/api/oauth/login', 'OauthClientController@oauthLogin');
-
+if(config("app.auth")=="oauth"){
+Route::get('/login', 'OauthClientController@oauthLogin')->name("login");
+}
 Route::get('/api/auth/callback', 'OauthClientController@oauthCallback');
 
 

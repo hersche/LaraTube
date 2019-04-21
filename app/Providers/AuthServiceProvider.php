@@ -27,8 +27,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         Passport::routes();
         Passport::tokensCan([
-          'userprofile' => 'User profile',
-          'mediaupload' => 'Upload medias',
+          'profile' => 'User profile',
+          'notifications' => 'Notification-exchange',
         ]);
         
         Passport::setDefaultScope([

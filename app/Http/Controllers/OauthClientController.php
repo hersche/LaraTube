@@ -48,7 +48,7 @@ class OauthClientController extends Controller
       
     public function oauthRefreshUser(Request $request){
       if(config("app.auth")=="oauth"){
-        $response = $this->gc->get('https://auth.host/api/user', [
+        $response = $this->gc->get(config("app.oauthbaseurl").'/api/user', [
             'headers' => [
                 'Authorization' => 'Bearer '.session()->get('token.access_token')
             ]
@@ -64,7 +64,7 @@ class OauthClientController extends Controller
   
     public function oauthGetUser(Request $request){
       if(config("app.auth")=="oauth"){
-        $response = $this->gc->get('https://auth.host/api/user', [
+        $response = $this->gc->get(config("app.oauthbaseurl").'/api/user', [
             'headers' => [
                 'Authorization' => 'Bearer '.session()->get('token.access_token')
             ]
@@ -80,10 +80,10 @@ class OauthClientController extends Controller
     public function oauthLogin(Request $request){
       if(config("app.auth")=="oauth"){
         $query = http_build_query([
-            'client_id' => 1, // Replace with Client ID
+            'client_id' => config('app.oauthclientid'), // Replace with Client ID
             'redirect_uri' => config('app.oauthclientcallback'),
             'response_type' => 'code',
-            'scope' => ''
+            'scope' => 'profile notifications'
         ]);
        return redirect(config('app.oauthclientauthorize').'?'.$query);
      }
