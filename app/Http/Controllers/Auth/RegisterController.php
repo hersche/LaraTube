@@ -70,7 +70,7 @@ class RegisterController extends Controller
       if(config("app.auth")=="local"){
         $this->validator($request->all())->validate();
 
-        $user = User::create($request->all());
+        $user = User::create($request->except(['avatar','background','_token']));
 
         $avatar = 'public/user/avatars/'.$user->username.'.png';
         $data = $request->input('avatar');
