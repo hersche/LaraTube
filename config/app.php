@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'LaraTube'),
-    
+
     'auth'  => env('MIX_APP_AUTH', 'local'),
     'oauthbaseurl' => env('OAUTH_CLIENT_BASEURL','0'),
     'oauthclientid' => env('OAUTH_CLIENT_ID', '0'),
@@ -23,7 +23,8 @@ return [
     'oauthclienttoken' => env('OAUTH_CLIENT_BASEURL','0').env('OAUTH_CLIENT_TOKEN', '0'),
     'oauthclientauthorize' => env('OAUTH_CLIENT_BASEURL','0').env('OAUTH_CLIENT_AUTHORIZE', '0'),
     'oauthclientuntrustedssl' => env('OAUTH_CLIENT_ALLOW_UNTRUSTED_SSL', 'false'),
-    
+
+    'ssl_url' => env('APP_SSL_URL', false),
     /*
     |--------------------------------------------------------------------------
     | Application Environment
