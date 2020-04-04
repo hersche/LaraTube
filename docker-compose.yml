@@ -1,0 +1,68 @@
+version: '3'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-php
+    image: php
+    container_name: laratube-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: laratube-app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      laratube-app-network:
+        ipv4_address: 172.46.0.2
+    extra_hosts:
+      - "chihuti:172.43.0.1"
+      - "auther:172.42.0.1"
+      - "laratube:172.46.0.2"
+
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: laratube-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8095:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      laratube-app-network:
+        ipv4_address: 172.46.0.3
+    extra_hosts:
+      - "laratube-app:172.46.0.2"
+
+  #MySQL Service
+  db:
+    image: mysql:latest
+    container_name: laratube-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "33067:3306"
+    environment:
+      MYSQL_DATABASE: laratube
+      MYSQL_ROOT_PASSWORD: defaultPassword
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      laratube-app-network:
+        ipv4_address: 172.46.0.4
+
+#Docker Networks
+networks:
+  laratube-app-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.46.0.0/16
