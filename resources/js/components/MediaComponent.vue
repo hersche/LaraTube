@@ -1,11 +1,11 @@
 <template>
   <div v-if="currentmedia!=undefined" style="overflow-y:auto;overflow-x:hidden;" class="bg-light" id="mediaDiv">
     <v-card>
-      
+
       <mediaView :key="$route.fullPath" v-bind:currentsource="currentmedia.sources[currentSource]" v-bind:currentmedia="currentmedia" v-bind:autoplay="autoplay"></mediaView>
       <v-card-actions>
 
-    
+
     <!--
         <v-expansion-panel>
 <v-expansion-panel-content
@@ -33,11 +33,11 @@
             <v-text-field
             label="Seconds (for visualiser)"
             mask="#"
-            v-if="currentmedia.type=='localAudio'"
+            v-if="currentmedia.sources.find(source => source.type =='localAudio') != undefined"
             v-model="audioVisualChangeSeconds"
             ></v-text-field>
           </span>
-          <span v-if="currentmedia.type=='localAudio'" class="" >
+          <span v-if="currentmedia.sources.find(source => source.type =='localAudio') != undefined" class="" >
             <v-btn icon color="blue" small @click="previousVisual()"><v-icon>skip_previous</v-icon></v-btn>
             <select id="visualList" value="Flexi - alien fish pond" v-model="audiovisualtype">
               <option value="Poster">Poster</option>
@@ -45,7 +45,6 @@
             </select>
             <v-btn icon color="blue" small @click="nextVisual()"><v-icon small>skip_next</v-icon></v-btn>
           </span>
-
           <v-btn id="mfs" icon small color="blue" @click="mediaGoFullscreen()"><v-icon small>fullscreen</v-icon></v-btn>
           <v-menu offset-y>
   <v-btn
@@ -63,7 +62,7 @@
     </v-list-tile>
   </v-list>
 </v-menu>
-          
+
           <v-dialog
           v-if="currentmedia.sources[currentSource].techType=='torrent'"
 v-model="torrentDialog"
@@ -91,7 +90,7 @@ Torrent-details
   <p>Downloadspeed: {{ downloadspeed }}</p>
   <p>Uploadspeed: {{ uploadspeed }}</p>
   <p>Downloadpercent: {{ downloadpercent }}</p>
-  <p><v-switch v-model="chartEnabled" label="Enable chart (workaround)"</v-switch></p>
+  <p><v-switch v-model="chartEnabled" label="Enable chart (workaround)"></v-switch></p>
   <p><apexchart v-if="chartEnabled" width="100%" type="line" id="chart3" :options="chartOptions2" :series="chartData"></apexchart></p>
 </v-card-text>
 
@@ -115,7 +114,7 @@ Torrent-details
           <v-tooltip bottom>
   <template #activator="data">
           <v-btn small class="mr-1" v-on="data.on">{{ currentmedia.created_at_readable }}</v-btn>
-          
+
         </template>
         <span>
         <!--  <p>{{ $t('Created at') }} {{ $d(new Date(currentmedia.created_at.date),'short') }}</p>
@@ -125,7 +124,7 @@ Torrent-details
           <v-btn small id="category" :to="'/category/'+currentCat.urlTitle" v-if="currentCat!=undefined" class="mr-1">{{ currentCat.title }}</v-btn>
           <v-btn small v-else class="mr-1">{{ $t('No category') }}</v-btn>
 
-          
+
           <router-link :to="'/profile/'+currentmedia.user.id" class="ml-1" id="userAvatar">
           <v-list-tile-avatar color="grey darken-3" >
             <v-img
@@ -144,10 +143,10 @@ Torrent-details
               <h5>{{ currentCat.title }}</h5>
               <p>{{ currentCat.description }}</p>
             </b-tooltip> -->
-            
-            
+
+
             <v-btn  id="like" small v-if="mylike==1" type="button" @click="like(0,'like')" color="green">
-            
+
               <v-badge class="ml-3 small" left color="green" >
                 <span slot="badge" class="small">{{ likes }}</span>
               <v-icon small>thumb_up</v-icon>
@@ -172,7 +171,7 @@ Torrent-details
             </v-badge>
             </v-btn>
 
-            
+
               <v-btn small v-if="loggeduserid==currentmedia.user.id|currentuser.admin" color="blue" :to="'/mediaedit/'+currentmedia.urlTitle"><v-icon>edit</v-icon>{{ $t('Edit') }}</v-btn>
         </v-card-actions>
           <v-card-title primary-title>
@@ -221,7 +220,7 @@ Torrent-details
   import SingleMediaView from './SingleMediaView'
   import SortSelect from './SortSelect'
   import VueMarkdown from 'vue-markdown'
-  
+
   import { User, Media, Tag } from '../models';
   import butterchurnPresets from 'butterchurn-presets';
   // var emptyMedia = new Media(0,"None","","","","","","","",new User(0,"None","img/404/avatar.png","img/404/background.png","", "", {},false),"","","","","",0,0,0,[],0);
@@ -256,7 +255,7 @@ Torrent-details
           }
           $('#mediaDiv').css("height","100%")
           eventBus.$emit('playerGoFullscreen',false);
-          
+
         } else {
           var element = $('#mediaDiv');
           element.css("height","100vh")
@@ -405,7 +404,7 @@ Torrent-details
     },
     updated: function () {
       this.$nextTick(function () {
-        
+
       });
     },
 

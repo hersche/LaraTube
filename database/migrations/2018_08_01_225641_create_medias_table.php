@@ -34,7 +34,7 @@ class CreateMediasTable extends Migration
             $table->enum('allowed_group', ['public', 'family', 'acquaintances', 'close_friends'])->default('public');
             $table->timestamps();
         });
-        
+
         Schema::create('media_sources', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->default('');
@@ -48,7 +48,7 @@ class CreateMediasTable extends Migration
             $table->integer('media_id')->nullable()->references('id')->on('medias')->default(0);
             $table->timestamps();
         });
-        
+
         Schema::create('media_chapters', function (Blueprint $table) {
             $table->increments('id')->unique();
             $table->string('title');
@@ -72,6 +72,8 @@ class CreateMediasTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('media_chapters');
+        Schema::dropIfExists('media_views');
         Schema::dropIfExists('medias');
         Schema::dropIfExists('media_sources');
         Schema::dropIfExists('media_chapter');
