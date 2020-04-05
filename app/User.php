@@ -46,6 +46,19 @@ class User extends Authenticatable
       return $ps;
     }
 
+    public function level() {
+        $roles = explode(',',$this->roles);
+        $foundVal = 0;
+        foreach ($roles as $role){
+            $splitRole = explode(':',$role);
+            $level = intval($splitRole[1]);
+            if($foundVal<$level){
+                $foundVal = $level;
+            }
+        }
+        return $foundVal;
+    }
+
     public function email(){
       $email = '';
       if(!empty(\Auth::id())){
