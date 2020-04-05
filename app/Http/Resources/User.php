@@ -42,7 +42,7 @@ class User extends JsonResource
         if($this->id==Auth::id()){
           $email = $this->email;
         }
-        
+
       }
       $avatar = $this->avatar();
       if((substr( $avatar, 0, 4 ) === "http")==false){
@@ -58,9 +58,10 @@ class User extends JsonResource
       }
       $simpleRoleArray = [];
       $i=0;
-      foreach($this->roles as $role){
-        $simpleRoleArray[$i] = ["slug"=>$role->slug,"level"=>$role->level];
-        $i++;
+      foreach(explode(',',$this->roles) as $role){
+          $splitRoles = explode(':',$role);
+          $simpleRoleArray[$i] = ["slug"=>$splitRoles[0],"level"=>$splitRoles[1]];
+          $i++;
       }
       return [
           'id' => $this->id,
