@@ -51,6 +51,9 @@ class User extends Authenticatable
         $foundVal = 0;
         foreach ($roles as $role){
             $splitRole = explode(':',$role);
+            if(empty($splitRole[1])){
+                continue;
+            }
             $level = intval($splitRole[1]);
             if($foundVal<$level){
                 $foundVal = $level;
