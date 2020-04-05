@@ -13,7 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-      
+
       Schema::create('password_securities', function (Blueprint $table) {
         $table->increments('id');
         $table->integer('user_id');
@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('name')->default('');
             $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->string('password')->default('');
+            $table->string('roles')->default('');
             $table->text('bio')->nullable();
             $table->boolean('public')->default(false);
             $table->string('avatar')->default('');
