@@ -60,6 +60,9 @@ class User extends JsonResource
       $i=0;
       foreach(explode(',',$this->roles) as $role){
           $splitRoles = explode(':',$role);
+          if(empty($splitRoles[1])){
+              continue;
+          }
           $simpleRoleArray[$i] = ["slug"=>$splitRoles[0],"level"=>$splitRoles[1]];
           $i++;
       }
