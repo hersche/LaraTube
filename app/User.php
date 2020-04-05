@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\FriendableTempFix;
 class User extends Authenticatable
 {
-  use HasApiTokens, Notifiable, HasRoleAndPermission;
+  use HasRoleAndPermission;
   use \Conner\Tagging\Taggable;
   use FriendableTempFix;
   use Notifiable;
@@ -37,7 +37,7 @@ class User extends Authenticatable
     public function medias(){
       return $this->hasMany('App\Media');
     }
-    
+
     public function passwordSecurity()
     {
       $ps = $this->hasOne('App\PasswordSecurity');
@@ -46,7 +46,7 @@ class User extends Authenticatable
       }
       return $ps;
     }
-    
+
     public function email(){
       $email = '';
       if(!empty(\Auth::id())){

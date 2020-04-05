@@ -14,10 +14,10 @@ use App\Http\Resources\User as UserResource;
 
 class OauthClientController extends Controller
 {
-  
+
     use AuthenticatesUsers;
     private $gc;
-      
+
     public function __construct(){
       $verifySSL = true;
       if(config("app.oauthclientuntrustedssl")=="true"){
@@ -29,8 +29,8 @@ class OauthClientController extends Controller
               'verify' => $verifySSL
       ]);
     }
-    
-    
+
+
     private function getUser($res){
       $u = User::where(["email"=>$res["data"]["email"]])->first();
       if(empty($u)){
@@ -42,7 +42,7 @@ class OauthClientController extends Controller
           $u->save();
         }
       }
-      
+
       $u->detachAllPermissions();
       foreach($res["data"]["roles"] as $role){
         $roleAndLevel = explode(":",$role);
@@ -54,7 +54,7 @@ class OauthClientController extends Controller
       //$res["data"]["roles"]=join(",",$res["data"]["roles"]);
       return $u;
     }
-      
+
     public function oauthRefreshUser(Request $request){
       if(config("app.auth")=="oauth"){
         $response = $this->gc->get(config("app.oauthbaseurl").'/api/user', [
@@ -69,8 +69,8 @@ class OauthClientController extends Controller
         $u->save();
         return new UserResource($u);
       }
-    }  
-  
+    }
+
     public function oauthGetUser(Request $request){
       if(config("app.auth")=="oauth"){
         $response = $this->gc->get(config("app.oauthbaseurl").'/api/user', [
@@ -85,9 +85,8 @@ class OauthClientController extends Controller
         return redirect("/");
       }
       }
-      
+
     public function oauthLogin(Request $request){
-      if(config("app.auth")=="oauth"){
         $query = http_build_query([
             'client_id' => config('app.oauthclientid'), // Replace with Client ID
             'redirect_uri' => config('app.oauthclientcallback'),
@@ -95,12 +94,10 @@ class OauthClientController extends Controller
             'scope' => 'profile notifications'
         ]);
        return redirect(config('app.oauthclientauthorize').'?'.$query);
-     }
+
     }
     //
     public function oauthCallback(Request $request){
-      if(config("app.auth")=="oauth"){
-
         $response = $this->gc->post(config('app.oauthclienttoken'), [
           'form_params' => [
           'grant_type' => 'authorization_code',
@@ -108,11 +105,10 @@ class OauthClientController extends Controller
           'client_secret' => config('app.oauthclientsecret'), // Replace with client secret
           'redirect_uri' => config('app.oauthclientcallback'),
           'code' => $request->code,
-          ]  
+          ]
         ]);
         session()->put('token', json_decode((string) $response->getBody(), true));
         return redirect('/api/auth/getOauthUser');
       }
-    }
 
 }

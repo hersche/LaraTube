@@ -59,14 +59,16 @@ function getMediaOrder($sortByInput){
   return [$ascDesc,$sortBy];
 };
 }
+/*
 if(config("app.auth")=="local"){
   Auth::routes();
 }
+*/
 Route::get('/', function () {
     return view('base');
 });
 
-
+/*
 Route::get('/2fa','PasswordSecurityController@show2faForm');
 Route::post('/generate2faSecret','PasswordSecurityController@generate2faSecret')->name('generate2faSecret');
 Route::post('/2fa','PasswordSecurityController@enable2fa')->name('enable2fa');
@@ -82,6 +84,7 @@ Route::post('/internal-api/settings/disable/twofactor', 'PasswordSecurityControl
 
 Route::post('/internal-api/settings/password','UserController@changePassword');
 Route::post('/internal-api/users/changeroles', 'UserController@changeRoles');
+*/
 Route::post('/internal-api/friends/block', 'FriendController@block');
 Route::post('/internal-api/friends/unblock', 'FriendController@unblock');
 Route::post('/internal-api/friends/friendRequest', 'FriendController@friendRequest');
@@ -89,10 +92,7 @@ Route::post('/internal-api/friends/acceptRequest', 'FriendController@acceptReque
 Route::post('/internal-api/friends/denyRequest', 'FriendController@denyRequest');
 Route::post('/internal-api/friends/unfriend', 'FriendController@unfriend');
 
-
-if(config("app.auth")=="oauth"){
 Route::get('/login', 'OauthClientController@oauthLogin')->name("login");
-}
 Route::get('/api/auth/callback', 'OauthClientController@oauthCallback');
 
 
@@ -194,14 +194,10 @@ Route::get('/internal-api/medias/byCatId/{id}', function (Request $request,$id) 
   return MediaResource::collection(Media::orderBy($sortBy[1], $sortBy[0])->where('category_id', '=' ,$id)->whereNotIn('id', explode(",",$request->input('i')))->get());
 });
 Route::get('/internal-api/medias/byCommentId/{id}', function ($id) {
-//  echo Comment::find($id)->media_id;
-  //echo Media::find(Comment::find($id)->media_id)->id;
     return new MediaResource(Media::where('id', '=' ,Comment::find($id)->media_id)->firstOrFail());
 });
 Route::post('/internal-api/media/{id}','MediaController@edit')->name('mediasapi.edit');
 Route::delete('/internal-api/media/{id}','MediaController@destroy')->name('mediasapi.delete');
-Route::post('/internal-api/login', 'Auth\LoginController@login');
-Route::post('/internal-api/register', 'Auth\RegisterController@register');
 Route::get('/internal-api/medias/by/{user}', function (Request $request,$user) {
     return MediaResource::collection(Media::where('user_id', '=' ,$user)->whereNotIn('id', explode(",",$request->input('i')))->get());
 });

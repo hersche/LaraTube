@@ -68,7 +68,7 @@ class siteManager {
     store.commit("setEnv",env)
     this.init()
   }
-  
+
   init(){
     store.commit("reset")
     this.blockScrollExecution = false;
@@ -79,7 +79,7 @@ class siteManager {
     this.nextMedias=[];
     this.initReceive()
   }
-  
+
   initReceive(){
     let that = this
     this.updateCSRF(function(){
@@ -89,7 +89,7 @@ class siteManager {
             that.initVue();
             that.receiveMedias("/internal-api/media"+that.getIgnoreParam(),false,function(){
               that.receiveNotifications();
-            });    
+            });
             if(that.notificationTimer!=undefined){
               clearInterval(that.notificationTimer);
             }
@@ -109,16 +109,16 @@ class siteManager {
     var profileComp = Vue.component('profile', require("./components/ProfileComponent.vue"));
     var editProfileComp = Vue.component('editprofile', require("./components/settings/EditProfile.vue"));
     var tagComp = Vue.component('tags', require("./components/Tags.vue"));
-    var loginComp = Vue.component('login', require("./components/auth/Login.vue"));
+    // var loginComp = Vue.component('login', require("./components/auth/Login.vue"));
     var registerComp = Vue.component('register', require("./components/auth/Register.vue"));
-    
+
     var personalAccessTokensComp = Vue.component('PersonalAccessTokens', require("./components/passport/PersonalAccessTokens.vue"));
     var clientsComp = Vue.component('Clients', require("./components/passport/Clients.vue"));
     var authorizedClientsComp = Vue.component('AuthorizedClients', require("./components/passport/AuthorizedClients.vue"));
     var faLoginComp = Vue.component('twofaLogin', require("./components/auth/twofaLogin.vue"));
     // how place this? may better let this routine static?
     // var resetComp = Vue.component('reset', require("./components/auth/Reset.vue"));
-    var twofaComp = Vue.component('twofa', require("./components/settings/twofa.vue"));
+    // var twofaComp = Vue.component('twofa', require("./components/settings/twofa.vue"));
     var uploadComp = Vue.component('upload', require("./components/UploadComponent.vue"));
     var searchComp = Vue.component('search', require("./components/SearchComponent.vue"));
     var chartsComp = Vue.component('search', require("./components/ChartsComponent.vue"));
@@ -134,7 +134,7 @@ class siteManager {
     var ceComp = Vue.component('thesidebar', require("./components/EditCategory.vue"));
     var singleCatComp = Vue.component('thesidebar', require("./components/Category.vue"));
     var friendsComp = Vue.component('friends', require("./components/settings/Friends.vue"));
-    var passwordComp = Vue.component('friends', require("./components/settings/password.vue"));
+    // var passwordComp = Vue.component('friends', require("./components/settings/password.vue"));
 
 
 
@@ -145,14 +145,14 @@ class siteManager {
       { path: '/profile/:profileId', component: profileComp },
       { path: '/tags', component: tagComp },
       { path: '/settings/friends', component: friendsComp },
-      { path: '/settings/password', component: passwordComp },
+      // { path: '/settings/password', component: passwordComp },
       { path: '/tags/:tagName', component: tagComp },
-      { path: '/login', component: loginComp },
-      { path: '/twofaLogin', component: faLoginComp },
+      // { path: '/login', component: loginComp },
+      // { path: '/twofaLogin', component: faLoginComp },
       { path: '/passport/clients', component: clientsComp },
       { path: '/passport/personalaccess', component: personalAccessTokensComp },
       { path: '/settings/profile', component: editProfileComp },
-      { path: '/settings/twofa', component: twofaComp },
+      // { path: '/settings/twofa', component: twofaComp },
       { path: '/settings/apps', component: authorizedClientsComp },
       { path: '/register', component: registerComp },
       { path: '/upload', component: uploadComp },
@@ -192,7 +192,7 @@ class siteManager {
         theVue.alert(theVue.$t("User")+" "+theVue.$t("edited"))
         if(id!=''&&id!=undefined){
           theVue.$router.push("/profile/"+id)
-        }    
+        }
       })
 
     });
@@ -206,14 +206,14 @@ class siteManager {
         that.updateCSRF();
       })
     });
-    
+
     eventBus.$on('closeAlarm', title => {
       theVue.alertshown = false
     });
     eventBus.$on('loadAllMedias', title => {
       that.receiveMedias("/internal-api/medias/all"+that.getIgnoreParam(),false,function(){
         theVue.canloadmore=false
-        that.updateCSRF();      
+        that.updateCSRF();
       })
 
     });
@@ -255,8 +255,8 @@ class siteManager {
         that.updateCSRF();
         theVue.alert("Welcome back, "+store.getters.getUserById(store.state.loginId).name,"success","exit_to_app")
       });
-      
-      
+
+
     });
     eventBus.$on('logout', settings => {
       store.commit("setLoginId", 0)
@@ -273,7 +273,7 @@ class siteManager {
         //} else {
         //  console.warn("[event loadUserVideos] userid was 0")
         //}
-      
+
     });
     eventBus.$on('sortBy', sortBy => {
       theMediaSorter.setSortBy(sortBy)
@@ -469,7 +469,7 @@ class siteManager {
                 theVue.userResult = so.userResult
               });
             }, 300);
-          } 
+          }
             var so = new Search(s.toString(),store.getters.getMediasByTypes(),store.state.tags,store.state.users);
             theVue.search = so;
             console.log(so.userResult)
@@ -531,9 +531,9 @@ if(localStorage.getItem('cookiePolicy')!="read"){
   }
 }
 
-  
+
   /*
-  * 
+  *
   */
   fillUser(comment:any){
     let that = this;
@@ -546,8 +546,8 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     comment.childs = comment.childs.sort(MediaSorter.byCreatedAtComments)
     return comment;
   }
-  
-  
+
+
   getLang(lang:string){
     if(this.loadedLangs.includes(lang)==false){
       this.loadedLangs.push(lang)
@@ -559,8 +559,8 @@ if(localStorage.getItem('cookiePolicy')!="read"){
       i18n.locale = lang
     }
   }
-  
-  
+
+
   /*
   * Old: Update the CSRF-Token from server for all forms
   * New: Refresh CSRF AND totalMedias, which is needed to get medias.
@@ -815,7 +815,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     return returnMedia;
   }
 
-  
+
   jsonToMedia(value:any){
     let that = this;
     var m = new Media(value.id,value.title, value.description, value.sources,value.base_type,value.chapters,value.view,value.totalView, value.poster_source,value.duration, store.getters.getUserById(value.user_id),value.user_id,value.created_at,value.updated_at,value.created_at_readable,value.comments,this.getTagsByIdArray(value.tagsIds),value.myLike,value.likes,value.dislikes,value.tracks,value.category_id)
@@ -828,7 +828,7 @@ if(localStorage.getItem('cookiePolicy')!="read"){
     m.comments.sort(MediaSorter.byCreatedAtComments);
     return m
   }
-  
+
   receiveMedias(url="/internal-api/media"+this.getIgnoreParam(),forceUpdate=false,callback=undefined):void{
     let that = this;
     var loadCount=0,replaceCount=0;
@@ -872,5 +872,5 @@ if(sm==undefined){
 }
 export function init(env:any) {
   sm = new siteManager(env);
-  
+
 }

@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+
 # Install extensions
 RUN pecl install imagick && docker-php-ext-enable imagick
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
@@ -53,9 +54,9 @@ COPY . /var/www
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
+RUN npm --global install typescript
 # Change current user to www
 USER www
-
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
