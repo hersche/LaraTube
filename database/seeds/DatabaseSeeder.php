@@ -342,10 +342,10 @@ $mv1 = MediaView::create(['media_id'=>$m1->id,'seconds'=>90,'user_id'=>4]);
 */
      //$u->assignRole($permissions);
      $role = config('roles.models.role')::where('name', '=', 'Admin')->first();
-     $u->attachRole($role);
-     $u1->attachRole($role);
-     $u2->attachRole($role);
-     $u3->attachRole($role);
+     // $u->attachRole($role);
+     // $u1->attachRole($role);
+     // $u2->attachRole($role);
+     // $u3->attachRole($role);
      /*$u->syncPermissions($permissions);
      $u->save();
      $u1->syncPermissions($permissions);
