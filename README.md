@@ -3,9 +3,11 @@ I did not find too much time and interest to continue much on this software. Rig
 
 Of course, anyone can fork and continue with the project. The general security-flows should be ok, but I write this notice because Github alerted me about library-vulnerabilities.
 
-Therefore, be aware that there can vulnerabilities come up! I will update them this time, but the project does not get the needed attention.
+Therefore, be aware that vulnerabilities can come up! In fact, there are some vulnerable libraries used in the client. I think most of them affecting node on a server (not affecting the client in the browser, we use node only for compiling) or rather advanced XSS - i would recommend to not have a public instance. While writing this text, i updated the libs as good as possible, but i will not keep a eye on it!
 
 There's however a usecase which can make sense: for internal networks to share your medias. I would need to write a way to import medias from the storage with a command/job. Could be interesting as a short task - feel free to do a PR/MR. 
+
+Be also aware that the docker-setup is ment to be a developer-setup. You might rather should use system-packages for a productive system.
 
 Last update:
 - nvm is integrated in docker-container for easy development. Because of sensitive libs, it's set to node 14 (only to compile)
