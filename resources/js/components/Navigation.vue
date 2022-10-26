@@ -16,8 +16,8 @@
       ></v-text-field>
     </v-flex>
   </v-toolbar>
-    
-    
+
+
     <v-navigation-drawer
   v-model="active"
   fixed
@@ -28,7 +28,7 @@
   <v-list-tile>
     <v-list-tile-action>
       <v-btn @click="active=false" small fab color="orange" style="cursor:pointer;"><v-icon>close</v-icon></v-btn>
-    </v-list-tile-action>  
+    </v-list-tile-action>
   </v-list-tile>
   <v-list-tile>
     <v-list-tile-action>
@@ -89,7 +89,7 @@
         <v-list-tile-title>{{ $t('Home') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile to="/charts">
       <v-list-tile-action>
         <v-icon>multiline_chart</v-icon>
@@ -107,7 +107,7 @@
         <v-list-tile-title>{{ $t('Categories') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile to="/tags">
       <v-list-tile-action>
         <v-icon>tag</v-icon>
@@ -116,15 +116,15 @@
         <v-list-tile-title>{{ $t('Tags') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-  
 
-    
-    
+
+
+
     <v-list-group
       prepend-icon="settings"
       no-action
       v-if="currentuser.admin"
-    >    
+    >
     <v-list-tile slot="activator">
 
       <v-list-tile-title>Admin</v-list-tile-title>
@@ -138,7 +138,7 @@
         <v-list-tile-title>Users</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile to="/admin/roles">
       <v-list-tile-action>
         <v-icon>reorder</v-icon>
@@ -173,7 +173,7 @@
             <v-list-tile-title>{{ $t('Clients') }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        
+
         <v-list-tile to="/passport/personalaccess">
           <v-list-tile-action>
             <v-icon>account_box</v-icon>
@@ -200,7 +200,7 @@
           <v-list-tile-title>{{ $t('Users') }}: {{ users.length }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
-      
+
       <v-list-tile>
         <v-list-tile-action>
           <v-icon>tag</v-icon>
@@ -209,7 +209,7 @@
           <v-list-tile-title>{{ $t('Tags') }}: {{ tags.length }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
-      
+
       <v-list-tile @click="emitLoadAllMedias()">
         <v-list-tile-action>
           <v-icon>get_app</v-icon>
@@ -218,7 +218,7 @@
           <v-list-tile-title>{{ $t('Load') }} {{ $t('all') }} {{ $t('medias') }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
-      
+
       <v-list-tile @click="emitRefreshMedias()">
         <v-list-tile-action>
           <v-icon>clear_all</v-icon>
@@ -228,7 +228,7 @@
         </v-list-tile-content>
       </v-list-tile>
     </v-list-group>
-    
+
 
     <v-list-tile v-if="((currentuser.id==0)&&(auth=='oauth'))" href="/login">
       <v-list-tile-action>
@@ -238,7 +238,7 @@
         <v-list-tile-title>{{ $t('Oauthlogin') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile v-if="((currentuser.id==0)&&(auth=='local'))" to="/login">
       <v-list-tile-action>
         <v-icon>exit_to_app</v-icon>
@@ -261,14 +261,14 @@
       prepend-icon="settings"
       no-action
       v-if="currentuser.id!=0"
-    >    
+    >
     <v-list-tile slot="activator">
 
       <v-list-tile-title>{{ $t('Settings') }}</v-list-tile-title>
 
     </v-list-tile>
 
-    
+
     <v-list-tile to="/settings/profile">
       <v-list-tile-action>
         <v-icon>account_circle</v-icon>
@@ -286,7 +286,7 @@
         <v-list-tile-title>{{ $t('Friends') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile to="/settings/apps">
       <v-list-tile-action>
         <v-icon>apps</v-icon>
@@ -295,8 +295,8 @@
         <v-list-tile-title>{{ $t('Manage apps') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
-    
+
+
     <v-list-tile to="/settings/2fa">
       <v-list-tile-action>
         <v-icon>security</v-icon>
@@ -305,7 +305,7 @@
         <v-list-tile-title>2factor-Auth</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile to="/settings/password">
       <v-list-tile-action>
         <v-icon>lock</v-icon>
@@ -315,7 +315,7 @@
       </v-list-tile-content>
     </v-list-tile>
   </v-list-group>
-      
+
     <v-list-tile v-if="currentuser.id!=0" @click="emitLogout()" >
       <v-list-tile-action>
         <v-icon>power_settings_new</v-icon>
@@ -324,7 +324,7 @@
         <v-list-tile-title>{{ $t('Logout') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
     <v-list-tile to="/about">
       <v-list-tile-action>
         <v-icon>help</v-icon>
@@ -333,7 +333,7 @@
         <v-list-tile-title>{{ $t('About') }}</v-list-tile-title>
       </v-list-tile-content>
     </v-list-tile>
-    
+
   </v-list>
 </v-navigation-drawer>
 
@@ -476,13 +476,13 @@ export default {
     currentuser(){
       return store.getters.getUserById(store.state.loginId)
     },
-    tags: function(){ 
+    tags: function(){
       return store.state.tags
     },
-    users: function(){ 
+    users: function(){
       return store.state.users
     },
-    tm: function(){ 
+    tm: function(){
       return store.state.totalMedias
     },
     medias: function(){
@@ -498,7 +498,7 @@ export default {
     alertshown: function(val){
       console.log("react to alertshown",val)
       this.alarmEnabledInternal = val
-    },  
+    },
     lang:function(val){
       localStorage.setItem("language",val);
       eventBus.$emit('languageChange',val);
@@ -527,41 +527,45 @@ export default {
     alarmEnabledInternal:false,
     speedDeal:false,
     treeTypes: [{id:'audio',label:'Audio'},{id:'video',label:'Video'}]
-    
+
 
   })
 }
 </script>
 
-<style lang="stylus">
-.vue-treeselect__multi-value
-  display inline-flex
-  overflow hidden
-vs-navbar >>> .vue-treeselect__menu
-  width 100px
-  padding-left 15px
-  padding-bottom 15px
-  z-index 999999
-.header-sidebar
-  display flex
-  align-items center
-  justify-content center
-  flex-direction column
-  width 100%
-  h4
-    display flex
-    align-items center
-    justify-content center
-    width 100%
-    > button
-      margin-left 10px
-.footer-sidebar
-  display flex
-  align-items center
-  justify-content space-between
-  width 100%
-  > button
-      border 0px solid rgba(0,0,0,0) !important
-      border-left 1px solid rgba(0,0,0,.07) !important
-      border-radius 0px !important
+<style>
+.vue-treeselect__multi-value {
+    display: inline-flex;
+    overflow: hidden; }
+
+vs-navbar > > > .vue-treeselect__menu {
+    width: 100px;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    z-index: 999999; }
+
+.header-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%; }
+.header-sidebar h4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; }
+.header-sidebar h4 > button {
+    margin-left: 10px; }
+
+.footer-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%; }
+.footer-sidebar > button {
+    border: 0px solid transparent !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.07) !important;
+    border-radius: 0px !important; }
+
 </style>

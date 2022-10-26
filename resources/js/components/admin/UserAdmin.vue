@@ -1,6 +1,6 @@
 <template>
   <div>
-    
+
     <v-data-table
     :items="users"
     :headers="[
@@ -40,7 +40,7 @@
             <v-img :src="props.item.background">
               <v-container fill-height fluid>
                 <v-layout fill-height>
-                  <v-flex xs12 align-end flexbox> 
+                  <v-flex xs12 align-end flexbox>
                     <v-avatar large>
                       <img :src="props.item.avatar" :alt="props.item.name">
                     </v-avatar>
@@ -169,19 +169,19 @@ import { eventBus,store } from '../../eventBus.js';
   }
 </script>
 
-<style lang="stylus">
-.con-expand-users
-  .con-btns-user
-    display flex
-    padding 10px
-    padding-bottom 0px
-    align-items center
-    justify-content space-between
-    .con-userx
-      display flex
-      align-items center
-      justify-content flex-start
-  .list-icon
-    i
-      font-size .9rem !important
+<style>
+.con-expand-users .con-btns-user {
+    display: flex;
+    padding: 10px;
+    padding-bottom: 0px;
+    align-items: center;
+    justify-content: space-between; }
+.con-expand-users .con-btns-user .con-userx {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; }
+
+.con-expand-users .list-icon i {
+    font-size: .9rem !important; }
+
 </style>

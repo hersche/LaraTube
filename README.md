@@ -5,7 +5,16 @@ Of course, anyone can fork and continue with the project. The general security-f
 
 Therefore, be aware that there can vulnerabilities come up! I will update them this time, but the project does not get the needed attention.
 
-There's however a usecase which can make sense: for internal systems. I would need to write a way to import medias with a command. Could be interesting as a short task - feel free to do a PR/MR. 
+There's however a usecase which can make sense: for internal networks to share your medias. I would need to write a way to import medias from the storage with a command/job. Could be interesting as a short task - feel free to do a PR/MR. 
+
+Last update:
+- nvm is integrated in docker-container for easy development. Because of sensitive libs, it's set to node 14 (only to compile)
+- js- and php-libs are updated (as much as possible) and work with `yarn run dev` (`yarn run prod` breaks at runtime, not investigated)
+- webtorrent is removed. skeletton is still included, but with websockets as dependency, it made issues
+- some sass-styling was converted to classic css in order to get a rid of sass-dependency (which breaks with newer node-versions)
+- migrate & seeding was tested and with everything above in mind, it showed me the correct UI - not tested any further for now.
+
+Have fun!
 
 # Welcome to LaraTube (WIP)
 

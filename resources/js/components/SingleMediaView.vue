@@ -38,8 +38,8 @@
   import { User, Media, Tag } from '../models';
   import butterchurn from 'butterchurn';
   import butterchurnPresets from 'butterchurn-presets';
-  var WebTorrent = require('webtorrent')
-  var client = new WebTorrent();
+  //var WebTorrent = require('webtorrent')
+  //var client = new WebTorrent();
   let theTorrent;
   var torrentInterval;
   var audioCtx, audioNode, gainNode, visualizer;
@@ -55,14 +55,14 @@
       // this and it's initTorrentAfterRemove method exist this way by try to remove the old torrent properly.
       // i did this as proper as possible, but it's still in the client's array :/
       initTorrent(){
-        let that = this;
+        /*let that = this;
           if(client.torrents.length>0){
               client.torrents[0].destroy(function(){
                 that.initTorrent();
               })
           } else {
             that.initTorrentAfterRemove();
-          }
+          }*/
       },
 
       initTorrentAfterRemove(){
@@ -75,7 +75,7 @@
           this.inited=true
           let that = this;
           //  var player = new plyr('#torrentPlayer');
-          client.add(this.currentsource.source, function (torrent) {
+          /* client.add(this.currentsource.source, function (torrent) {
             theTorrent = torrent;
             // Torrents can contain many files. Let's use the .mp4 file
             var file = theTorrent.files.find(function (file) {
@@ -120,7 +120,7 @@
               that.torrentdownloadurl = torrent.torrentFileBlobURL
             }
             file.renderTo('video#torrentPlayer');
-          });
+          });*/
       } else if(this.currentsource.type=='localAudio'&this.audiovisualtype!='Poster'){
           this.inited=true
           $('#audioPlayer')[0].crossOrigin = 'Anonymous'
@@ -194,7 +194,7 @@
           });
         }
         this.initTorrent()
-        
+
       }
     },
     computed: {
@@ -222,7 +222,7 @@
     mounted(){
       let that = this;
       this.initTorrent()
-      
+
       if(this.currentsource.intro_end==0){
         $("#skipIntroBtn").hide()
       } else {
@@ -252,22 +252,22 @@
             $("video").css("width","100%")
           }
         }
-      });    
+      });
       if(localStorage.getItem("mediaPosition"+this.currentsource.id)!=undefined&localStorage.getItem("mediaPosition"+this.currentsource.id)!=''){
         $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+localStorage.getItem("mediaPosition"+this.currentsource.id)+"s")
       } else {
         $("#jumpToSavedPositionBtnTooltip").html("No position set yet - set one under More")
-      }  
-      
+      }
+
       $("#jumpToSavedPositionBtn").on('click',function(){
         if(localStorage.getItem("mediaPosition"+that.currentsource.id)!=undefined&localStorage.getItem("mediaPosition"+that.currentsource.id)!=''){
           that.player.currentTime = Number(localStorage.getItem("mediaPosition"+that.currentsource.id))
-        }    
+        }
       })
       $("#savePositionBtn").on('click',function(){
         $("#jumpToSavedPositionBtnTooltip").html("Jump to position "+that.player.currentTime+"s")
         localStorage.setItem("mediaPosition"+that.currentsource.id,that.player.currentTime)
-        that.$vs.notify({title:'Position saved',text:'at '+that.player.currentTime.toFixed(2)+'s',icon:'save',color:'success',position:'bottom-center'})   
+        that.$vs.notify({title:'Position saved',text:'at '+that.player.currentTime.toFixed(2)+'s',icon:'save',color:'success',position:'bottom-center'})
       })
       eventBus.$on('playerJumpTo', seconds => {
         that.player.currentTime = Number(seconds)

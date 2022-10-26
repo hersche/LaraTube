@@ -20,15 +20,7 @@ import VueI18n from 'vue-i18n'
 import Treeselect from '@riophae/vue-treeselect'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
-Vue.use(Vuetify, {
-  theme: {
-    primary: '#3f51b5',
-    secondary: '#b0bec5',
-    accent: '#8c9eff',
-    success: 'green',
-    error: '#b71c1c'
-  }
-})
+Vue.use(Vuetify)
 // import VueMarkdown from 'vue-markdown'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
