@@ -15,6 +15,7 @@ Last update:
 - webtorrent is removed. skeletton is still included, but with websockets as dependency, it made issues
 - some sass-styling was converted to classic css in order to get a rid of sass-dependency (which breaks with newer node-versions)
 - migrate & seeding was tested and with everything above in mind, it showed me the correct UI - not tested any further for now.
+- you can import now files which are in `public/uploads/medias` with the command `php artisan import:medias`. The command is very rudimentary and should be extended.
 
 Have fun!
 
