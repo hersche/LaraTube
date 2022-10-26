@@ -83,9 +83,9 @@ return [
     | Default Seeds
     |--------------------------------------------------------------------------
     |
-    | These are the default package seeds. You can seed the package built
-    | in seeds without having to seed them. These seed directly from
-    | the package. These are not the published seeds.
+    | These are the default package seeders. You can seed the package built
+    | in seeders without having to seed them. These seed directly from
+    | the package. These are not the published seeders.
     |
     */
 

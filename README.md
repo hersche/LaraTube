@@ -1,4 +1,15 @@
+# Important notice
+I did not find too much time and interest to continue much on this software. Right now, I'm working with different frameworks and will not necessarely end-up in a video-plattform.
+
+Of course, anyone can fork and continue with the project. The general security-flows should be ok, but I write this notice because Github alerted me about library-vulnerabilities.
+
+Therefore, be aware that there can vulnerabilities come up! I will update them this time, but the project does not get the needed attention.
+
+There's however a usecase which can make sense: for internal systems. I would need to write a way to import medias with a command. Could be interesting as a short task - feel free to do a PR/MR. 
+
 # Welcome to LaraTube (WIP)
+
+In general, this project is on Gitlab: https://gitlab.com/hersche/LaraTube
 
 This project is a multimedia-plattform for various scenarios, primary for video and audio (via upload, link and webtorrent).
 
@@ -11,6 +22,7 @@ However, it's whished on the developers side to not use this software for:
 - Pro army / police / fashist / racist-sites
 
 By license, you can use the software for anything. If i (the developer) detect this on the bugtracker or in personal contact, it can lead to deny personal help or loosing contact - this is my right.
+(this step was motivated by the prior project)
 
 ## Documentation
 

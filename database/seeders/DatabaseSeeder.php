@@ -1,5 +1,5 @@
 <?php
-
+namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use App\User;
@@ -10,6 +10,8 @@ use App\MediaChapter;
 use App\Like;
 use App\Comment;
 use App\Category;
+
+
 
 class DatabaseSeeder extends Seeder
 {
