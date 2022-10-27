@@ -1,7 +1,7 @@
 <template>
   <div v-if="currentsource!=undefined" id="playDiv">
           <p>
-            <img @click="player.togglePlay()" @dblclick="visualFullScreen()" class="img-fluid" :src="currentmedia.poster_source" v-if="currentsource.type=='directAudio'|(currentsource.type=='localAudio'&audiovisualtype=='Poster')">
+            <img @click="player.togglePlay()" @dblclick="visualFullScreen()" class="img-fluid" :src="currentmedia.poster_source" v-if="currentsource.type=='directAudio'||(currentsource.type=='localAudio'&audiovisualtype=='Poster')">
           </p>
           <canvas v-if="currentsource.type=='localAudio'&audiovisualtype!='Poster'"  class="col-12" style="height: 400px; width:100%;" @click="player.togglePlay()" @dblclick="visualFullScreen()" id="audioVisual"></canvas>
           <vue-plyr v-if="currentsource.type=='torrentVideo'" :options="playerConfig" ref="player">
@@ -25,10 +25,21 @@
               <source id="audioSource" :src="currentsource.source" type="audio/mp3"></source>
             </audio>
           </vue-plyr>
-          <vue-plyr v-if="currentsource.type=='youtube'||currentsource.type=='vimeo'" :options="playerConfig" ref="player">
-            <div data-plyr-provider="youtube" v-if="currentsource.type=='youtube'" :data-plyr-embed-id="currentsource.source"></div>
-            <div data-plyr-provider="vimeo" v-if="currentsource.type=='vimeo'" :data-plyr-embed-id="currentsource.source"></div>
+          <vue-plyr class="plyr__video-embed" id="player" :data-plyr-provider="currentsource.type" :data-plyr-embed-id="currentsource.source" v-if="currentsource.type=='youtube'" :options="playerConfig" ref="player">
+              <iframe
+                  style="width: 100%; height: 100%;"
+                  :src='"https://www.youtube.com/embed/"+currentsource.source+"?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1"'
+                  allowfullscreen
+                  allowtransparency
+                  allow="autoplay"
+              ></iframe>
+            <!-- <div data-plyr-provider="youtube" v-if="currentsource.type=='youtube'" :data-plyr-embed-id="currentsource.source"></div>
+            <div data-plyr-provider="vimeo" v-if="currentsource.type=='vimeo'" :data-plyr-embed-id="currentsource.source"></div> -->
           </vue-plyr>
+      <vue-plyr class="plyr__video-embed" id="player" :data-plyr-provider="currentsource.type" :data-plyr-embed-id="currentsource.source" v-if="currentsource.type=='vimeo'" :options="playerConfig" ref="player">
+
+          <div data-plyr-provider="vimeo" v-if="currentsource.type=='vimeo'" :data-plyr-embed-id="currentsource.source"></div>
+      </vue-plyr>
 
   </div>
 </template>
@@ -141,7 +152,7 @@
             visualizer.render();
           }, 100);
         }
-        if(this.currentsource.type=="torrentAudio"||this.currentsource.type=="torrentVideo"){
+       if(this.currentsource.type=="torrentAudio"||this.currentsource.type=="torrentVideo"){
           setTimeout(function(){
             if(that.autoplay){
               that.player.play();
@@ -221,7 +232,7 @@
     },
     mounted(){
       let that = this;
-      this.initTorrent()
+      this.initTorrentAfterRemove()
 
       if(this.currentsource.intro_end==0){
         $("#skipIntroBtn").hide()
